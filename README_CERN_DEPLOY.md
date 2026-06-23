@@ -54,7 +54,7 @@ curl -I "$ROUTE_URL/assets/montages/W03F7_DATA1_chip_87.jpg"
 
 ## Custom CERN hostname
 
-The included `openshift/route.yaml` does not hard-code a host. OKD will assign a route host automatically. If CERN Web Frameworks allocates a `*.web.cern.ch` hostname, add it under `spec.host` in `openshift/route.yaml` or configure the host through the CERN Web Frameworks UI, depending on the service workflow.
+The included `openshift/route.yaml` now requests the cleaner host `etroc-solder-inspection.app.cern.ch` instead of the default `<route>-<project>.app.cern.ch` pattern. If CERN Web Frameworks later allocates a `*.web.cern.ch` hostname, replace `spec.host` in `openshift/route.yaml` or configure the host through the CERN Web Frameworks UI, depending on the service workflow.
 
 ## Public route exposure
 
@@ -73,3 +73,22 @@ oc annotate route etroc-solder-inspection \
 ```
 
 Then verify from outside CERN.
+
+
+## Shortening the default route URL
+
+If the first route was created as `etroc-solder-inspection-etroc-solder-inspection.app.cern.ch`, apply the updated route manifest or patch the host directly:
+
+```bash
+oc apply -f openshift/route.yaml
+# or
+oc patch route etroc-solder-inspection --type=merge \
+  -p '{"spec":{"host":"etroc-solder-inspection.app.cern.ch"}}'
+```
+
+Verify:
+
+```bash
+oc get route etroc-solder-inspection
+curl -I https://etroc-solder-inspection.app.cern.ch/
+```
