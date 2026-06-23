@@ -35,3 +35,16 @@ Do not paste tokens into shared terminals/logs.
 ```bash
 PROJECT_NAME=my-existing-cern-webapp-project ./deploy_lxplus_okd.sh
 ```
+
+
+## Finding `oc` and kubeconfig after a previous run
+
+If `/tmp/$USER/oc-client/oc` does not exist, the script likely used a system-provided `oc` from lxplus `PATH`. Use this robust discovery snippet:
+
+```bash
+export KUBECONFIG=/tmp/$USER/etroc-solder-inspection-okd/kubeconfig
+OC=$(command -v oc || find /tmp/$USER -path '*/oc' -type f -perm -111 2>/dev/null | head -1)
+echo "OC=$OC"
+[ -n "$OC" ] || { echo "oc not found; re-run deploy_lxplus_okd.sh"; exit 1; }
+$OC project etroc-solder-inspection
+```
