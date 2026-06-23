@@ -1,0 +1,22 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: etroc-solder-inspection
+  labels:
+    app: etroc-solder-inspection
+spec:
+  source:
+    type: Git
+    git:
+      uri: https://github.com/pyoung527/etroc-visual-no-ball-report.git
+      ref: main
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: Containerfile
+  output:
+    to:
+      kind: ImageStreamTag
+      name: etroc-solder-inspection:latest
+  triggers:
+    - type: ConfigChange

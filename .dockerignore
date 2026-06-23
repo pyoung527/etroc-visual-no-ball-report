@@ -1,0 +1,6 @@
+.git
+_verify.html
+*.log
+.DS_Store
+README_CERN_DEPLOY.md
+openshift/

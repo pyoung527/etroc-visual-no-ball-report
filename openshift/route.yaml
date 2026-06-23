@@ -1,0 +1,15 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: etroc-solder-inspection
+  labels:
+    app: etroc-solder-inspection
+spec:
+  to:
+    kind: Service
+    name: etroc-solder-inspection
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
