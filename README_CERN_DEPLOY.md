@@ -55,3 +55,21 @@ curl -I "$ROUTE_URL/assets/montages/W03F7_DATA1_chip_87.jpg"
 ## Custom CERN hostname
 
 The included `openshift/route.yaml` does not hard-code a host. OKD will assign a route host automatically. If CERN Web Frameworks allocates a `*.web.cern.ch` hostname, add it under `spec.host` in `openshift/route.yaml` or configure the host through the CERN Web Frameworks UI, depending on the service workflow.
+
+## Public route exposure
+
+The route manifest explicitly sets:
+
+```yaml
+haproxy.router.openshift.io/ip_whitelist: "0.0.0.0/0 ::/0"
+```
+
+CERN OKD may otherwise default routes to CERN-network-only CIDRs. If external users see `Empty reply from server` while lxplus receives `HTTP/1.1 200 OK`, re-apply the route or run:
+
+```bash
+oc annotate route etroc-solder-inspection \
+  haproxy.router.openshift.io/ip_whitelist='0.0.0.0/0 ::/0' \
+  --overwrite
+```
+
+Then verify from outside CERN.

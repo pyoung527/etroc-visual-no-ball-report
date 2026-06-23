@@ -4,6 +4,8 @@ metadata:
   name: etroc-solder-inspection
   labels:
     app: etroc-solder-inspection
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: "0.0.0.0/0 ::/0"
 spec:
   to:
     kind: Service
