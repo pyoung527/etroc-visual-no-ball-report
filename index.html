@@ -1,0 +1,1590 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ETROC Final Visual No-Ball Chip Table</title>
+  <style>
+    :root {
+      --forest: #104b3a;
+      --forest-2: #0c372b;
+      --paper: #fbfaf4;
+      --panel: #ffffff;
+      --line: #e6e0d2;
+      --ink: #18201d;
+      --muted: #6d756f;
+      --green: #2ca25f;
+      --blue: #2f6fdd;
+      --yellow: #d7a900;
+      --red: #d7301f;
+      --need: #8b8b8b;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      line-height: 1.45;
+    }
+    header {
+      background: linear-gradient(135deg, var(--forest), var(--forest-2));
+      color: #fffdf2;
+      padding: 34px 42px 30px;
+      border-bottom: 7px solid #d9c56f;
+    }
+    header .eyebrow { letter-spacing: .16em; text-transform: uppercase; opacity: .72; font-size: 12px; }
+    h1 { margin: 8px 0 10px; font-size: 34px; line-height: 1.08; font-weight: 760; }
+    .subtitle { max-width: 1100px; color: #edf4ec; font-size: 15px; }
+    main { padding: 28px 42px 48px; }
+    .summary-grid { display: grid; grid-template-columns: repeat(6, minmax(140px, 1fr)); gap: 14px; margin-bottom: 20px; }
+    .metric { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; box-shadow: 0 6px 22px rgba(16,75,58,.06); }
+    .metric .label { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
+    .metric .value { font-size: 30px; font-weight: 760; margin-top: 4px; }
+    .wafer-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 18px 0 26px; }
+    .wafer-card { background: #f5f2e8; border: 1px solid var(--line); border-radius: 16px; padding: 16px; }
+    .wafer-title { font-size: 20px; font-weight: 760; color: var(--forest); margin-bottom: 8px; }
+    .wafer-metrics { display: flex; flex-wrap: wrap; gap: 8px 14px; color: #33413b; font-size: 13px; }
+    section { margin-top: 28px; }
+    h2 { font-size: 22px; margin: 0 0 10px; color: var(--forest-2); }
+    .note { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
+    .table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 28px rgba(16,75,58,.06); }
+    table { width: 100%; border-collapse: collapse; min-width: 1120px; }
+    th, td { border-bottom: 1px solid #eee7d9; padding: 10px 12px; text-align: left; vertical-align: middle; font-size: 13px; }
+    th { position: sticky; top: 0; z-index: 1; background: #eae3cf; color: #25332d; font-size: 12px; text-transform: uppercase; letter-spacing: .055em; }
+    tbody tr:nth-child(even) { background: #fbfaf7; }
+    tbody tr.no-ball-row { background: #fff8ec; }
+    tbody tr:hover { background: #eef6ef; }
+    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .chip { font-weight: 700; }
+    .status { display: inline-flex; align-items: center; justify-content: center; min-width: 42px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 750; }
+    .status.yes { background: #ffe0d8; color: var(--red); border: 1px solid #ffb7a9; }
+    .status.no { background: #edf2ee; color: #68746d; border: 1px solid #d9e1dc; }
+    .pos-badge { display: inline-block; margin: 2px 4px 2px 0; padding: 3px 7px; border-radius: 8px; background: #ffe4d8; color: #9d1b10; font-weight: 750; font-variant-numeric: tabular-nums; }
+    .muted, .muted-text { color: var(--muted); }
+    .green-text { color: var(--green); font-weight: 650; }
+    .blue-text { color: var(--blue); font-weight: 650; }
+    .yellow-text { color: var(--yellow); font-weight: 650; }
+    .red-text { color: var(--red); font-weight: 750; }
+    .bar { display: flex; width: 180px; height: 12px; overflow: hidden; border-radius: 999px; background: #eee; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+    .seg { display: block; height: 100%; }
+    .seg.green { background: var(--green); }
+    .seg.blue { background: var(--blue); }
+    .seg.yellow { background: var(--yellow); }
+    .seg.red { background: var(--red); }
+    .seg.need { background: var(--need); }
+    .tabs { display: flex; gap: 10px; flex-wrap: wrap; margin: 24px 0 18px; }
+    .tab-button { border: 1px solid var(--line); background: #fffdf8; color: var(--forest); border-radius: 999px; padding: 10px 16px; font: inherit; font-weight: 750; cursor: pointer; box-shadow: 0 4px 14px rgba(16,75,58,.05); }
+    .tab-button.active { background: var(--forest); color: #fffdf2; border-color: var(--forest); }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .visual-page-card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 14px; box-shadow: 0 8px 28px rgba(16,75,58,.06); }
+    .visual-page-card img { display: block; width: 100%; max-width: 2400px; height: auto; margin: 0 auto; border-radius: 10px; }
+    .visual-actions { display: flex; justify-content: flex-end; margin: 0 0 10px; }
+    .visual-actions a { color: var(--forest); font-weight: 750; text-decoration: none; border: 1px solid var(--line); border-radius: 10px; padding: 7px 10px; background: #fffdf8; }
+    .chip-row { cursor: zoom-in; }
+    .chip-row:focus { outline: 3px solid rgba(47,111,221,.35); outline-offset: -3px; }
+    .chip-row td:first-child::before { content: '⊞'; color: var(--forest); font-weight: 800; margin-right: 6px; }
+    .modal { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; padding: 26px; background: rgba(9, 24, 19, .78); z-index: 20; }
+    .modal.open { display: flex; }
+    .modal-card { width: min(96vw, 1600px); max-height: 94vh; background: #fffdf7; border-radius: 18px; overflow: hidden; box-shadow: 0 24px 80px rgba(0,0,0,.42); border: 1px solid rgba(255,255,255,.28); }
+    .modal-head { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 12px 16px; background: var(--forest); color: #fff; }
+    .modal-title { font-weight: 760; }
+    .modal-actions { display: flex; align-items: center; gap: 10px; }
+    .modal-actions a, .modal-actions button { border: 1px solid rgba(255,255,255,.45); background: rgba(255,255,255,.12); color: #fff; border-radius: 10px; padding: 7px 10px; font: inherit; text-decoration: none; cursor: pointer; }
+    .modal-actions a:hover, .modal-actions button:hover { background: rgba(255,255,255,.22); }
+    .modal-body { max-height: calc(94vh - 56px); overflow: auto; padding: 12px; background: #f4f1e7; }
+    .modal-body img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 22px rgba(0,0,0,.16); }
+    footer { color: var(--muted); font-size: 12px; margin-top: 28px; }
+    @media (max-width: 1000px) {
+      main, header { padding-left: 20px; padding-right: 20px; }
+      .summary-grid { grid-template-columns: repeat(2, 1fr); }
+      .wafer-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="eyebrow">ETROC optical inspection final report</div>
+    <h1>Final Visual No-Ball Chip Table</h1>
+    <div class="subtitle">All-wafer relaxed shape threshold result. Visual no-ball is counted from final RED / optical no-ball cells; YELLOW remains optical attention for shape or alignment and is not counted as no-ball.</div>
+  </header>
+  <main>
+    <div class="summary-grid">
+      <div class="metric"><div class="label">Total chips</div><div class="value">72</div></div>
+      <div class="metric"><div class="label">No-ball chips</div><div class="value red-text">19</div></div>
+      <div class="metric"><div class="label">No-ball positions</div><div class="value red-text">29</div></div>
+      <div class="metric"><div class="label">GREEN total</div><div class="value green-text">13402</div></div>
+      <div class="metric"><div class="label">BLUE total</div><div class="value blue-text">4181</div></div>
+      <div class="metric"><div class="label">YELLOW total</div><div class="value yellow-text">820</div></div>
+    </div>
+
+    <div class="wafer-grid">
+      
+          <article class="wafer-card">
+            <div class="wafer-title">W03F7</div>
+            <div class="wafer-metrics">
+              <span><b>9</b> chips</span>
+              <span><b>5</b> no-ball chips</span>
+              <span><b>9</b> no-ball positions</span>
+              <span><b>113</b> yellow</span>
+            </div>
+          </article>
+          <article class="wafer-card">
+            <div class="wafer-title">W04F2</div>
+            <div class="wafer-metrics">
+              <span><b>36</b> chips</span>
+              <span><b>9</b> no-ball chips</span>
+              <span><b>15</b> no-ball positions</span>
+              <span><b>321</b> yellow</span>
+            </div>
+          </article>
+          <article class="wafer-card">
+            <div class="wafer-title">W07D3</div>
+            <div class="wafer-metrics">
+              <span><b>27</b> chips</span>
+              <span><b>5</b> no-ball chips</span>
+              <span><b>5</b> no-ball positions</span>
+              <span><b>386</b> yellow</span>
+            </div>
+          </article>
+    </div>
+
+    <nav class="tabs" aria-label="Visual no-ball table views">
+      <button class="tab-button active" type="button" data-tab="visual-tab">Card visual</button>
+      <button class="tab-button" type="button" data-tab="interactive-tab">Interactive table + montage</button>
+    </nav>
+
+    <div id="visual-tab" class="tab-panel active">
+      <section>
+        <h2>Corrected visual card table</h2>
+        <p class="note">Card-style visual summary. Red cards are visual no-ball chips; amber-bordered green cards are low-height optical-present conflicts and are not counted as visual no-ball.</p>
+        <div class="visual-page-card">
+          <div class="visual-actions"><a href="assets/images/visual_no_ball_chip_card_table_corrected.png" target="_blank" rel="noopener">Open image</a></div>
+          <img src="assets/images/visual_no_ball_chip_card_table_corrected.png" alt="Corrected visual no-ball chip card table" />
+        </div>
+      </section>
+    </div>
+
+    <div id="interactive-tab" class="tab-panel">
+    <section>
+      <h2>No-ball chips only</h2>
+      <p class="note">Condensed list of chips that contain at least one final visual no-ball position. Click any chip row to open its montage overlay.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Wafer</th><th>Batch</th><th>Chip</th><th>No-ball count</th><th>Positions</th><th>GREEN</th><th>BLUE</th><th>YELLOW</th><th>RED</th></tr></thead>
+          <tbody>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_87.jpg" data-title="W03F7 DATA1 chip 87 montage" aria-label="Open W03F7 DATA1 chip 87 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">87</td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">72</span><span class="pos-badge">98</span></td>
+            <td class="num green-text">156</td>
+            <td class="num blue-text">89</td>
+            <td class="num yellow-text">9</td>
+            <td class="num red-text">2</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_88.jpg" data-title="W03F7 DATA1 chip 88 montage" aria-label="Open W03F7 DATA1 chip 88 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">88</td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">221</span><span class="pos-badge">225</span></td>
+            <td class="num green-text">174</td>
+            <td class="num blue-text">71</td>
+            <td class="num yellow-text">9</td>
+            <td class="num red-text">2</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_89.jpg" data-title="W03F7 DATA1 chip 89 montage" aria-label="Open W03F7 DATA1 chip 89 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">89</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">128</span></td>
+            <td class="num green-text">172</td>
+            <td class="num blue-text">77</td>
+            <td class="num yellow-text">6</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_97.jpg" data-title="W03F7 DATA1 chip 97 montage" aria-label="Open W03F7 DATA1 chip 97 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">97</td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">56</span><span class="pos-badge">230</span></td>
+            <td class="num green-text">228</td>
+            <td class="num blue-text">10</td>
+            <td class="num yellow-text">16</td>
+            <td class="num red-text">2</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_99.jpg" data-title="W03F7 DATA1 chip 99 montage" aria-label="Open W03F7 DATA1 chip 99 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">99</td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">17</span><span class="pos-badge">113</span></td>
+            <td class="num green-text">146</td>
+            <td class="num blue-text">94</td>
+            <td class="num yellow-text">14</td>
+            <td class="num red-text">2</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_52.jpg" data-title="W04F2 data chip 52 montage" aria-label="Open W04F2 data chip 52 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">52</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">156</span></td>
+            <td class="num green-text">152</td>
+            <td class="num blue-text">98</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_62.jpg" data-title="W04F2 data2 chip 62 montage" aria-label="Open W04F2 data2 chip 62 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">62</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">254</span></td>
+            <td class="num green-text">164</td>
+            <td class="num blue-text">87</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_63.jpg" data-title="W04F2 data2 chip 63 montage" aria-label="Open W04F2 data2 chip 63 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">63</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">189</span></td>
+            <td class="num green-text">134</td>
+            <td class="num blue-text">99</td>
+            <td class="num yellow-text">22</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_66.jpg" data-title="W04F2 data2 chip 66 montage" aria-label="Open W04F2 data2 chip 66 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">66</td>
+            <td class="num no-ball-count">3</td>
+            <td class="positions"><span class="pos-badge">77</span><span class="pos-badge">88</span><span class="pos-badge">135</span></td>
+            <td class="num green-text">198</td>
+            <td class="num blue-text">39</td>
+            <td class="num yellow-text">16</td>
+            <td class="num red-text">3</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_72.jpg" data-title="W04F2 data4 chip 72 montage" aria-label="Open W04F2 data4 chip 72 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">72</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">20</span></td>
+            <td class="num green-text">163</td>
+            <td class="num blue-text">87</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_77.jpg" data-title="W04F2 data4 chip 77 montage" aria-label="Open W04F2 data4 chip 77 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">77</td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">171</span><span class="pos-badge">206</span></td>
+            <td class="num green-text">171</td>
+            <td class="num blue-text">76</td>
+            <td class="num yellow-text">7</td>
+            <td class="num red-text">2</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_86.jpg" data-title="W04F2 data4 chip 86 montage" aria-label="Open W04F2 data4 chip 86 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">86</td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">97</span><span class="pos-badge">109</span></td>
+            <td class="num green-text">184</td>
+            <td class="num blue-text">66</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">2</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_88.jpg" data-title="W04F2 data4 chip 88 montage" aria-label="Open W04F2 data4 chip 88 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">88</td>
+            <td class="num no-ball-count">3</td>
+            <td class="positions"><span class="pos-badge">49</span><span class="pos-badge">185</span><span class="pos-badge">186</span></td>
+            <td class="num green-text">183</td>
+            <td class="num blue-text">53</td>
+            <td class="num yellow-text">17</td>
+            <td class="num red-text">3</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_89.jpg" data-title="W04F2 data4 chip 89 montage" aria-label="Open W04F2 data4 chip 89 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">89</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">120</span></td>
+            <td class="num green-text">190</td>
+            <td class="num blue-text">53</td>
+            <td class="num yellow-text">12</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_32.jpg" data-title="W07D3 DATA2 chip 32 montage" aria-label="Open W07D3 DATA2 chip 32 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">32</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">50</span></td>
+            <td class="num green-text">236</td>
+            <td class="num blue-text">15</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_69.jpg" data-title="W07D3 DATA3 chip 69 montage" aria-label="Open W07D3 DATA3 chip 69 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">69</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">117</span></td>
+            <td class="num green-text">156</td>
+            <td class="num blue-text">24</td>
+            <td class="num yellow-text">75</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_70.jpg" data-title="W07D3 DATA3 chip 70 montage" aria-label="Open W07D3 DATA3 chip 70 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">70</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">127</span></td>
+            <td class="num green-text">168</td>
+            <td class="num blue-text">63</td>
+            <td class="num yellow-text">24</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_112.jpg" data-title="W07D3 DATA3 chip 112 montage" aria-label="Open W07D3 DATA3 chip 112 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">112</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">156</span></td>
+            <td class="num green-text">140</td>
+            <td class="num blue-text">111</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">1</td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_115.jpg" data-title="W07D3 DATA3 chip 115 montage" aria-label="Open W07D3 DATA3 chip 115 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">115</td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">203</span></td>
+            <td class="num green-text">180</td>
+            <td class="num blue-text">39</td>
+            <td class="num yellow-text">36</td>
+            <td class="num red-text">1</td>
+          </tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>All chips</h2>
+      <p class="note">Full 72-chip table. Category bar shows GREEN / BLUE / YELLOW / RED / NEED_INSPECT proportions per chip. Click any chip row to open its montage overlay.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Wafer</th><th>Batch</th><th>Chip</th><th>Visual no-ball</th><th>No-ball count</th><th>Positions</th><th>GREEN</th><th>BLUE</th><th>YELLOW</th><th>RED</th><th>NEED</th><th>Category mix</th></tr></thead>
+          <tbody>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_87.jpg" data-title="W03F7 DATA1 chip 87 montage" aria-label="Open W03F7 DATA1 chip 87 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">87</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">72</span><span class="pos-badge">98</span></td>
+            <td class="num green-text">156</td>
+            <td class="num blue-text">89</td>
+            <td class="num yellow-text">9</td>
+            <td class="num red-text">2</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:60.9375%" title="GREEN: 156"></span><span class="seg blue" style="width:34.7656%" title="BLUE: 89"></span><span class="seg yellow" style="width:3.5156%" title="YELLOW: 9"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_88.jpg" data-title="W03F7 DATA1 chip 88 montage" aria-label="Open W03F7 DATA1 chip 88 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">88</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">221</span><span class="pos-badge">225</span></td>
+            <td class="num green-text">174</td>
+            <td class="num blue-text">71</td>
+            <td class="num yellow-text">9</td>
+            <td class="num red-text">2</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:67.9688%" title="GREEN: 174"></span><span class="seg blue" style="width:27.7344%" title="BLUE: 71"></span><span class="seg yellow" style="width:3.5156%" title="YELLOW: 9"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_89.jpg" data-title="W03F7 DATA1 chip 89 montage" aria-label="Open W03F7 DATA1 chip 89 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">89</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">128</span></td>
+            <td class="num green-text">172</td>
+            <td class="num blue-text">77</td>
+            <td class="num yellow-text">6</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:67.1875%" title="GREEN: 172"></span><span class="seg blue" style="width:30.0781%" title="BLUE: 77"></span><span class="seg yellow" style="width:2.3438%" title="YELLOW: 6"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_95.jpg" data-title="W03F7 DATA1 chip 95 montage" aria-label="Open W03F7 DATA1 chip 95 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">95</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">204</td>
+            <td class="num blue-text">34</td>
+            <td class="num yellow-text">18</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:79.6875%" title="GREEN: 204"></span><span class="seg blue" style="width:13.2812%" title="BLUE: 34"></span><span class="seg yellow" style="width:7.0312%" title="YELLOW: 18"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_96.jpg" data-title="W03F7 DATA1 chip 96 montage" aria-label="Open W03F7 DATA1 chip 96 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">96</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">229</td>
+            <td class="num blue-text">9</td>
+            <td class="num yellow-text">18</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:89.4531%" title="GREEN: 229"></span><span class="seg blue" style="width:3.5156%" title="BLUE: 9"></span><span class="seg yellow" style="width:7.0312%" title="YELLOW: 18"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_97.jpg" data-title="W03F7 DATA1 chip 97 montage" aria-label="Open W03F7 DATA1 chip 97 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">97</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">56</span><span class="pos-badge">230</span></td>
+            <td class="num green-text">228</td>
+            <td class="num blue-text">10</td>
+            <td class="num yellow-text">16</td>
+            <td class="num red-text">2</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:89.0625%" title="GREEN: 228"></span><span class="seg blue" style="width:3.9062%" title="BLUE: 10"></span><span class="seg yellow" style="width:6.2500%" title="YELLOW: 16"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_99.jpg" data-title="W03F7 DATA1 chip 99 montage" aria-label="Open W03F7 DATA1 chip 99 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">99</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">17</span><span class="pos-badge">113</span></td>
+            <td class="num green-text">146</td>
+            <td class="num blue-text">94</td>
+            <td class="num yellow-text">14</td>
+            <td class="num red-text">2</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:57.0312%" title="GREEN: 146"></span><span class="seg blue" style="width:36.7188%" title="BLUE: 94"></span><span class="seg yellow" style="width:5.4688%" title="YELLOW: 14"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_100.jpg" data-title="W03F7 DATA1 chip 100 montage" aria-label="Open W03F7 DATA1 chip 100 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">100</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">198</td>
+            <td class="num blue-text">46</td>
+            <td class="num yellow-text">12</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:77.3438%" title="GREEN: 198"></span><span class="seg blue" style="width:17.9688%" title="BLUE: 46"></span><span class="seg yellow" style="width:4.6875%" title="YELLOW: 12"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W03F7_DATA1_chip_102.jpg" data-title="W03F7 DATA1 chip 102 montage" aria-label="Open W03F7 DATA1 chip 102 montage">
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num chip">102</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">171</td>
+            <td class="num blue-text">74</td>
+            <td class="num yellow-text">11</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:66.7969%" title="GREEN: 171"></span><span class="seg blue" style="width:28.9062%" title="BLUE: 74"></span><span class="seg yellow" style="width:4.2969%" title="YELLOW: 11"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_44.jpg" data-title="W04F2 data chip 44 montage" aria-label="Open W04F2 data chip 44 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">44</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">231</td>
+            <td class="num blue-text">21</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:90.2344%" title="GREEN: 231"></span><span class="seg blue" style="width:8.2031%" title="BLUE: 21"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_45.jpg" data-title="W04F2 data chip 45 montage" aria-label="Open W04F2 data chip 45 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">45</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">128</td>
+            <td class="num blue-text">124</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:50.0000%" title="GREEN: 128"></span><span class="seg blue" style="width:48.4375%" title="BLUE: 124"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_52.jpg" data-title="W04F2 data chip 52 montage" aria-label="Open W04F2 data chip 52 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">52</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">156</span></td>
+            <td class="num green-text">152</td>
+            <td class="num blue-text">98</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:59.3750%" title="GREEN: 152"></span><span class="seg blue" style="width:38.2812%" title="BLUE: 98"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_53.jpg" data-title="W04F2 data chip 53 montage" aria-label="Open W04F2 data chip 53 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">53</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">199</td>
+            <td class="num blue-text">38</td>
+            <td class="num yellow-text">19</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:77.7344%" title="GREEN: 199"></span><span class="seg blue" style="width:14.8438%" title="BLUE: 38"></span><span class="seg yellow" style="width:7.4219%" title="YELLOW: 19"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_54.jpg" data-title="W04F2 data chip 54 montage" aria-label="Open W04F2 data chip 54 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">54</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">157</td>
+            <td class="num blue-text">79</td>
+            <td class="num yellow-text">20</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:61.3281%" title="GREEN: 157"></span><span class="seg blue" style="width:30.8594%" title="BLUE: 79"></span><span class="seg yellow" style="width:7.8125%" title="YELLOW: 20"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_55.jpg" data-title="W04F2 data chip 55 montage" aria-label="Open W04F2 data chip 55 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">55</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">193</td>
+            <td class="num blue-text">56</td>
+            <td class="num yellow-text">7</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:75.3906%" title="GREEN: 193"></span><span class="seg blue" style="width:21.8750%" title="BLUE: 56"></span><span class="seg yellow" style="width:2.7344%" title="YELLOW: 7"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_59.jpg" data-title="W04F2 data chip 59 montage" aria-label="Open W04F2 data chip 59 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">59</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">217</td>
+            <td class="num blue-text">37</td>
+            <td class="num yellow-text">2</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:84.7656%" title="GREEN: 217"></span><span class="seg blue" style="width:14.4531%" title="BLUE: 37"></span><span class="seg yellow" style="width:0.7812%" title="YELLOW: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_60.jpg" data-title="W04F2 data chip 60 montage" aria-label="Open W04F2 data chip 60 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">60</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">149</td>
+            <td class="num blue-text">102</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:58.2031%" title="GREEN: 149"></span><span class="seg blue" style="width:39.8438%" title="BLUE: 102"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data_chip_61.jpg" data-title="W04F2 data chip 61 montage" aria-label="Open W04F2 data chip 61 montage">
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num chip">61</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">151</td>
+            <td class="num blue-text">100</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:58.9844%" title="GREEN: 151"></span><span class="seg blue" style="width:39.0625%" title="BLUE: 100"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_62.jpg" data-title="W04F2 data2 chip 62 montage" aria-label="Open W04F2 data2 chip 62 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">62</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">254</span></td>
+            <td class="num green-text">164</td>
+            <td class="num blue-text">87</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:64.0625%" title="GREEN: 164"></span><span class="seg blue" style="width:33.9844%" title="BLUE: 87"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_63.jpg" data-title="W04F2 data2 chip 63 montage" aria-label="Open W04F2 data2 chip 63 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">63</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">189</span></td>
+            <td class="num green-text">134</td>
+            <td class="num blue-text">99</td>
+            <td class="num yellow-text">22</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:52.3438%" title="GREEN: 134"></span><span class="seg blue" style="width:38.6719%" title="BLUE: 99"></span><span class="seg yellow" style="width:8.5938%" title="YELLOW: 22"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_64.jpg" data-title="W04F2 data2 chip 64 montage" aria-label="Open W04F2 data2 chip 64 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">64</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">147</td>
+            <td class="num blue-text">92</td>
+            <td class="num yellow-text">17</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:57.4219%" title="GREEN: 147"></span><span class="seg blue" style="width:35.9375%" title="BLUE: 92"></span><span class="seg yellow" style="width:6.6406%" title="YELLOW: 17"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_65.jpg" data-title="W04F2 data2 chip 65 montage" aria-label="Open W04F2 data2 chip 65 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">65</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">178</td>
+            <td class="num blue-text">72</td>
+            <td class="num yellow-text">6</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:69.5312%" title="GREEN: 178"></span><span class="seg blue" style="width:28.1250%" title="BLUE: 72"></span><span class="seg yellow" style="width:2.3438%" title="YELLOW: 6"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_66.jpg" data-title="W04F2 data2 chip 66 montage" aria-label="Open W04F2 data2 chip 66 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">66</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">3</td>
+            <td class="positions"><span class="pos-badge">77</span><span class="pos-badge">88</span><span class="pos-badge">135</span></td>
+            <td class="num green-text">198</td>
+            <td class="num blue-text">39</td>
+            <td class="num yellow-text">16</td>
+            <td class="num red-text">3</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:77.3438%" title="GREEN: 198"></span><span class="seg blue" style="width:15.2344%" title="BLUE: 39"></span><span class="seg yellow" style="width:6.2500%" title="YELLOW: 16"></span><span class="seg red" style="width:1.1719%" title="RED: 3"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_67.jpg" data-title="W04F2 data2 chip 67 montage" aria-label="Open W04F2 data2 chip 67 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">67</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">198</td>
+            <td class="num blue-text">45</td>
+            <td class="num yellow-text">13</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:77.3438%" title="GREEN: 198"></span><span class="seg blue" style="width:17.5781%" title="BLUE: 45"></span><span class="seg yellow" style="width:5.0781%" title="YELLOW: 13"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_70.jpg" data-title="W04F2 data2 chip 70 montage" aria-label="Open W04F2 data2 chip 70 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">70</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">137</td>
+            <td class="num blue-text">115</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:53.5156%" title="GREEN: 137"></span><span class="seg blue" style="width:44.9219%" title="BLUE: 115"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_79.jpg" data-title="W04F2 data2 chip 79 montage" aria-label="Open W04F2 data2 chip 79 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">79</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">156</td>
+            <td class="num blue-text">89</td>
+            <td class="num yellow-text">11</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:60.9375%" title="GREEN: 156"></span><span class="seg blue" style="width:34.7656%" title="BLUE: 89"></span><span class="seg yellow" style="width:4.2969%" title="YELLOW: 11"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data2_chip_81.jpg" data-title="W04F2 data2 chip 81 montage" aria-label="Open W04F2 data2 chip 81 montage">
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num chip">81</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">156</td>
+            <td class="num blue-text">89</td>
+            <td class="num yellow-text">11</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:60.9375%" title="GREEN: 156"></span><span class="seg blue" style="width:34.7656%" title="BLUE: 89"></span><span class="seg yellow" style="width:4.2969%" title="YELLOW: 11"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_25.jpg" data-title="W04F2 data3 chip 25 montage" aria-label="Open W04F2 data3 chip 25 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">25</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">150</td>
+            <td class="num blue-text">97</td>
+            <td class="num yellow-text">9</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:58.5938%" title="GREEN: 150"></span><span class="seg blue" style="width:37.8906%" title="BLUE: 97"></span><span class="seg yellow" style="width:3.5156%" title="YELLOW: 9"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_26.jpg" data-title="W04F2 data3 chip 26 montage" aria-label="Open W04F2 data3 chip 26 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">26</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">148</td>
+            <td class="num blue-text">100</td>
+            <td class="num yellow-text">8</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:57.8125%" title="GREEN: 148"></span><span class="seg blue" style="width:39.0625%" title="BLUE: 100"></span><span class="seg yellow" style="width:3.1250%" title="YELLOW: 8"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_27.jpg" data-title="W04F2 data3 chip 27 montage" aria-label="Open W04F2 data3 chip 27 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">27</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">147</td>
+            <td class="num blue-text">101</td>
+            <td class="num yellow-text">8</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:57.4219%" title="GREEN: 147"></span><span class="seg blue" style="width:39.4531%" title="BLUE: 101"></span><span class="seg yellow" style="width:3.1250%" title="YELLOW: 8"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_28.jpg" data-title="W04F2 data3 chip 28 montage" aria-label="Open W04F2 data3 chip 28 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">28</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">135</td>
+            <td class="num blue-text">109</td>
+            <td class="num yellow-text">12</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:52.7344%" title="GREEN: 135"></span><span class="seg blue" style="width:42.5781%" title="BLUE: 109"></span><span class="seg yellow" style="width:4.6875%" title="YELLOW: 12"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_33.jpg" data-title="W04F2 data3 chip 33 montage" aria-label="Open W04F2 data3 chip 33 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">33</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">208</td>
+            <td class="num blue-text">42</td>
+            <td class="num yellow-text">6</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:81.2500%" title="GREEN: 208"></span><span class="seg blue" style="width:16.4062%" title="BLUE: 42"></span><span class="seg yellow" style="width:2.3438%" title="YELLOW: 6"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_34.jpg" data-title="W04F2 data3 chip 34 montage" aria-label="Open W04F2 data3 chip 34 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">34</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">165</td>
+            <td class="num blue-text">85</td>
+            <td class="num yellow-text">6</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:64.4531%" title="GREEN: 165"></span><span class="seg blue" style="width:33.2031%" title="BLUE: 85"></span><span class="seg yellow" style="width:2.3438%" title="YELLOW: 6"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_36.jpg" data-title="W04F2 data3 chip 36 montage" aria-label="Open W04F2 data3 chip 36 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">36</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">178</td>
+            <td class="num blue-text">74</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:69.5312%" title="GREEN: 178"></span><span class="seg blue" style="width:28.9062%" title="BLUE: 74"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_37.jpg" data-title="W04F2 data3 chip 37 montage" aria-label="Open W04F2 data3 chip 37 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">37</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">139</td>
+            <td class="num blue-text">108</td>
+            <td class="num yellow-text">9</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:54.2969%" title="GREEN: 139"></span><span class="seg blue" style="width:42.1875%" title="BLUE: 108"></span><span class="seg yellow" style="width:3.5156%" title="YELLOW: 9"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data3_chip_40.jpg" data-title="W04F2 data3 chip 40 montage" aria-label="Open W04F2 data3 chip 40 montage">
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num chip">40</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">224</td>
+            <td class="num blue-text">25</td>
+            <td class="num yellow-text">7</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:87.5000%" title="GREEN: 224"></span><span class="seg blue" style="width:9.7656%" title="BLUE: 25"></span><span class="seg yellow" style="width:2.7344%" title="YELLOW: 7"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_72.jpg" data-title="W04F2 data4 chip 72 montage" aria-label="Open W04F2 data4 chip 72 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">72</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">20</span></td>
+            <td class="num green-text">163</td>
+            <td class="num blue-text">87</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:63.6719%" title="GREEN: 163"></span><span class="seg blue" style="width:33.9844%" title="BLUE: 87"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_75.jpg" data-title="W04F2 data4 chip 75 montage" aria-label="Open W04F2 data4 chip 75 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">75</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">229</td>
+            <td class="num blue-text">10</td>
+            <td class="num yellow-text">17</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:89.4531%" title="GREEN: 229"></span><span class="seg blue" style="width:3.9062%" title="BLUE: 10"></span><span class="seg yellow" style="width:6.6406%" title="YELLOW: 17"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_76.jpg" data-title="W04F2 data4 chip 76 montage" aria-label="Open W04F2 data4 chip 76 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">76</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">192</td>
+            <td class="num blue-text">59</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:75.0000%" title="GREEN: 192"></span><span class="seg blue" style="width:23.0469%" title="BLUE: 59"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_77.jpg" data-title="W04F2 data4 chip 77 montage" aria-label="Open W04F2 data4 chip 77 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">77</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">171</span><span class="pos-badge">206</span></td>
+            <td class="num green-text">171</td>
+            <td class="num blue-text">76</td>
+            <td class="num yellow-text">7</td>
+            <td class="num red-text">2</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:66.7969%" title="GREEN: 171"></span><span class="seg blue" style="width:29.6875%" title="BLUE: 76"></span><span class="seg yellow" style="width:2.7344%" title="YELLOW: 7"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_78.jpg" data-title="W04F2 data4 chip 78 montage" aria-label="Open W04F2 data4 chip 78 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">78</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">203</td>
+            <td class="num blue-text">45</td>
+            <td class="num yellow-text">8</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:79.2969%" title="GREEN: 203"></span><span class="seg blue" style="width:17.5781%" title="BLUE: 45"></span><span class="seg yellow" style="width:3.1250%" title="YELLOW: 8"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_84.jpg" data-title="W04F2 data4 chip 84 montage" aria-label="Open W04F2 data4 chip 84 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">84</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">192</td>
+            <td class="num blue-text">62</td>
+            <td class="num yellow-text">2</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:75.0000%" title="GREEN: 192"></span><span class="seg blue" style="width:24.2188%" title="BLUE: 62"></span><span class="seg yellow" style="width:0.7812%" title="YELLOW: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_86.jpg" data-title="W04F2 data4 chip 86 montage" aria-label="Open W04F2 data4 chip 86 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">86</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">2</td>
+            <td class="positions"><span class="pos-badge">97</span><span class="pos-badge">109</span></td>
+            <td class="num green-text">184</td>
+            <td class="num blue-text">66</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">2</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:71.8750%" title="GREEN: 184"></span><span class="seg blue" style="width:25.7812%" title="BLUE: 66"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_88.jpg" data-title="W04F2 data4 chip 88 montage" aria-label="Open W04F2 data4 chip 88 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">88</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">3</td>
+            <td class="positions"><span class="pos-badge">49</span><span class="pos-badge">185</span><span class="pos-badge">186</span></td>
+            <td class="num green-text">183</td>
+            <td class="num blue-text">53</td>
+            <td class="num yellow-text">17</td>
+            <td class="num red-text">3</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:71.4844%" title="GREEN: 183"></span><span class="seg blue" style="width:20.7031%" title="BLUE: 53"></span><span class="seg yellow" style="width:6.6406%" title="YELLOW: 17"></span><span class="seg red" style="width:1.1719%" title="RED: 3"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W04F2_data4_chip_89.jpg" data-title="W04F2 data4 chip 89 montage" aria-label="Open W04F2 data4 chip 89 montage">
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num chip">89</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">120</span></td>
+            <td class="num green-text">190</td>
+            <td class="num blue-text">53</td>
+            <td class="num yellow-text">12</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:74.2188%" title="GREEN: 190"></span><span class="seg blue" style="width:20.7031%" title="BLUE: 53"></span><span class="seg yellow" style="width:4.6875%" title="YELLOW: 12"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_5.jpg" data-title="W07D3 DATA1 chip 5 montage" aria-label="Open W07D3 DATA1 chip 5 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">5</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">210</td>
+            <td class="num blue-text">41</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:82.0312%" title="GREEN: 210"></span><span class="seg blue" style="width:16.0156%" title="BLUE: 41"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_6.jpg" data-title="W07D3 DATA1 chip 6 montage" aria-label="Open W07D3 DATA1 chip 6 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">6</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">227</td>
+            <td class="num blue-text">9</td>
+            <td class="num yellow-text">20</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:88.6719%" title="GREEN: 227"></span><span class="seg blue" style="width:3.5156%" title="BLUE: 9"></span><span class="seg yellow" style="width:7.8125%" title="YELLOW: 20"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_8.jpg" data-title="W07D3 DATA1 chip 8 montage" aria-label="Open W07D3 DATA1 chip 8 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">8</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">213</td>
+            <td class="num blue-text">28</td>
+            <td class="num yellow-text">15</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:83.2031%" title="GREEN: 213"></span><span class="seg blue" style="width:10.9375%" title="BLUE: 28"></span><span class="seg yellow" style="width:5.8594%" title="YELLOW: 15"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_12.jpg" data-title="W07D3 DATA1 chip 12 montage" aria-label="Open W07D3 DATA1 chip 12 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">12</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">224</td>
+            <td class="num blue-text">26</td>
+            <td class="num yellow-text">6</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:87.5000%" title="GREEN: 224"></span><span class="seg blue" style="width:10.1562%" title="BLUE: 26"></span><span class="seg yellow" style="width:2.3438%" title="YELLOW: 6"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_13.jpg" data-title="W07D3 DATA1 chip 13 montage" aria-label="Open W07D3 DATA1 chip 13 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">13</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">224</td>
+            <td class="num blue-text">25</td>
+            <td class="num yellow-text">7</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:87.5000%" title="GREEN: 224"></span><span class="seg blue" style="width:9.7656%" title="BLUE: 25"></span><span class="seg yellow" style="width:2.7344%" title="YELLOW: 7"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_14.jpg" data-title="W07D3 DATA1 chip 14 montage" aria-label="Open W07D3 DATA1 chip 14 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">14</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">215</td>
+            <td class="num blue-text">36</td>
+            <td class="num yellow-text">5</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:83.9844%" title="GREEN: 215"></span><span class="seg blue" style="width:14.0625%" title="BLUE: 36"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_15.jpg" data-title="W07D3 DATA1 chip 15 montage" aria-label="Open W07D3 DATA1 chip 15 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">15</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">214</td>
+            <td class="num blue-text">31</td>
+            <td class="num yellow-text">11</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:83.5938%" title="GREEN: 214"></span><span class="seg blue" style="width:12.1094%" title="BLUE: 31"></span><span class="seg yellow" style="width:4.2969%" title="YELLOW: 11"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_17.jpg" data-title="W07D3 DATA1 chip 17 montage" aria-label="Open W07D3 DATA1 chip 17 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">17</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">223</td>
+            <td class="num blue-text">23</td>
+            <td class="num yellow-text">10</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:87.1094%" title="GREEN: 223"></span><span class="seg blue" style="width:8.9844%" title="BLUE: 23"></span><span class="seg yellow" style="width:3.9062%" title="YELLOW: 10"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA1_chip_18.jpg" data-title="W07D3 DATA1 chip 18 montage" aria-label="Open W07D3 DATA1 chip 18 montage">
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num chip">18</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">220</td>
+            <td class="num blue-text">15</td>
+            <td class="num yellow-text">21</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:85.9375%" title="GREEN: 220"></span><span class="seg blue" style="width:5.8594%" title="BLUE: 15"></span><span class="seg yellow" style="width:8.2031%" title="YELLOW: 21"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_20.jpg" data-title="W07D3 DATA2 chip 20 montage" aria-label="Open W07D3 DATA2 chip 20 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">20</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">233</td>
+            <td class="num blue-text">15</td>
+            <td class="num yellow-text">8</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:91.0156%" title="GREEN: 233"></span><span class="seg blue" style="width:5.8594%" title="BLUE: 15"></span><span class="seg yellow" style="width:3.1250%" title="YELLOW: 8"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_21.jpg" data-title="W07D3 DATA2 chip 21 montage" aria-label="Open W07D3 DATA2 chip 21 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">21</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">201</td>
+            <td class="num blue-text">48</td>
+            <td class="num yellow-text">7</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:78.5156%" title="GREEN: 201"></span><span class="seg blue" style="width:18.7500%" title="BLUE: 48"></span><span class="seg yellow" style="width:2.7344%" title="YELLOW: 7"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_27.jpg" data-title="W07D3 DATA2 chip 27 montage" aria-label="Open W07D3 DATA2 chip 27 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">27</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">215</td>
+            <td class="num blue-text">28</td>
+            <td class="num yellow-text">13</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:83.9844%" title="GREEN: 215"></span><span class="seg blue" style="width:10.9375%" title="BLUE: 28"></span><span class="seg yellow" style="width:5.0781%" title="YELLOW: 13"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_28.jpg" data-title="W07D3 DATA2 chip 28 montage" aria-label="Open W07D3 DATA2 chip 28 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">28</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">216</td>
+            <td class="num blue-text">37</td>
+            <td class="num yellow-text">3</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:84.3750%" title="GREEN: 216"></span><span class="seg blue" style="width:14.4531%" title="BLUE: 37"></span><span class="seg yellow" style="width:1.1719%" title="YELLOW: 3"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_29.jpg" data-title="W07D3 DATA2 chip 29 montage" aria-label="Open W07D3 DATA2 chip 29 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">29</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">208</td>
+            <td class="num blue-text">42</td>
+            <td class="num yellow-text">6</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:81.2500%" title="GREEN: 208"></span><span class="seg blue" style="width:16.4062%" title="BLUE: 42"></span><span class="seg yellow" style="width:2.3438%" title="YELLOW: 6"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_32.jpg" data-title="W07D3 DATA2 chip 32 montage" aria-label="Open W07D3 DATA2 chip 32 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">32</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">50</span></td>
+            <td class="num green-text">236</td>
+            <td class="num blue-text">15</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:92.1875%" title="GREEN: 236"></span><span class="seg blue" style="width:5.8594%" title="BLUE: 15"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_42.jpg" data-title="W07D3 DATA2 chip 42 montage" aria-label="Open W07D3 DATA2 chip 42 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">42</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">240</td>
+            <td class="num blue-text">13</td>
+            <td class="num yellow-text">3</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:93.7500%" title="GREEN: 240"></span><span class="seg blue" style="width:5.0781%" title="BLUE: 13"></span><span class="seg yellow" style="width:1.1719%" title="YELLOW: 3"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_56.jpg" data-title="W07D3 DATA2 chip 56 montage" aria-label="Open W07D3 DATA2 chip 56 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">56</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">245</td>
+            <td class="num blue-text">0</td>
+            <td class="num yellow-text">11</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:95.7031%" title="GREEN: 245"></span><span class="seg yellow" style="width:4.2969%" title="YELLOW: 11"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA2_chip_64.jpg" data-title="W07D3 DATA2 chip 64 montage" aria-label="Open W07D3 DATA2 chip 64 montage">
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num chip">64</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">192</td>
+            <td class="num blue-text">9</td>
+            <td class="num yellow-text">55</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:75.0000%" title="GREEN: 192"></span><span class="seg blue" style="width:3.5156%" title="BLUE: 9"></span><span class="seg yellow" style="width:21.4844%" title="YELLOW: 55"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_69.jpg" data-title="W07D3 DATA3 chip 69 montage" aria-label="Open W07D3 DATA3 chip 69 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">69</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">117</span></td>
+            <td class="num green-text">156</td>
+            <td class="num blue-text">24</td>
+            <td class="num yellow-text">75</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:60.9375%" title="GREEN: 156"></span><span class="seg blue" style="width:9.3750%" title="BLUE: 24"></span><span class="seg yellow" style="width:29.2969%" title="YELLOW: 75"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_70.jpg" data-title="W07D3 DATA3 chip 70 montage" aria-label="Open W07D3 DATA3 chip 70 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">70</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">127</span></td>
+            <td class="num green-text">168</td>
+            <td class="num blue-text">63</td>
+            <td class="num yellow-text">24</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:65.6250%" title="GREEN: 168"></span><span class="seg blue" style="width:24.6094%" title="BLUE: 63"></span><span class="seg yellow" style="width:9.3750%" title="YELLOW: 24"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_77.jpg" data-title="W07D3 DATA3 chip 77 montage" aria-label="Open W07D3 DATA3 chip 77 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">77</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">196</td>
+            <td class="num blue-text">43</td>
+            <td class="num yellow-text">17</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:76.5625%" title="GREEN: 196"></span><span class="seg blue" style="width:16.7969%" title="BLUE: 43"></span><span class="seg yellow" style="width:6.6406%" title="YELLOW: 17"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_88.jpg" data-title="W07D3 DATA3 chip 88 montage" aria-label="Open W07D3 DATA3 chip 88 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">88</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">157</td>
+            <td class="num blue-text">83</td>
+            <td class="num yellow-text">16</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:61.3281%" title="GREEN: 157"></span><span class="seg blue" style="width:32.4219%" title="BLUE: 83"></span><span class="seg yellow" style="width:6.2500%" title="YELLOW: 16"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_104.jpg" data-title="W07D3 DATA3 chip 104 montage" aria-label="Open W07D3 DATA3 chip 104 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">104</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">225</td>
+            <td class="num blue-text">30</td>
+            <td class="num yellow-text">1</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:87.8906%" title="GREEN: 225"></span><span class="seg blue" style="width:11.7188%" title="BLUE: 30"></span><span class="seg yellow" style="width:0.3906%" title="YELLOW: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_108.jpg" data-title="W07D3 DATA3 chip 108 montage" aria-label="Open W07D3 DATA3 chip 108 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">108</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">131</td>
+            <td class="num blue-text">125</td>
+            <td class="num yellow-text">0</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:51.1719%" title="GREEN: 131"></span><span class="seg blue" style="width:48.8281%" title="BLUE: 125"></span></div></td>
+          </tr>
+          <tr class="chip-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_110.jpg" data-title="W07D3 DATA3 chip 110 montage" aria-label="Open W07D3 DATA3 chip 110 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">110</td>
+            <td><span class="status no">NO</span></td>
+            <td class="num no-ball-count">0</td>
+            <td class="positions"><span class="muted">—</span></td>
+            <td class="num green-text">169</td>
+            <td class="num blue-text">84</td>
+            <td class="num yellow-text">3</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:66.0156%" title="GREEN: 169"></span><span class="seg blue" style="width:32.8125%" title="BLUE: 84"></span><span class="seg yellow" style="width:1.1719%" title="YELLOW: 3"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_112.jpg" data-title="W07D3 DATA3 chip 112 montage" aria-label="Open W07D3 DATA3 chip 112 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">112</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">156</span></td>
+            <td class="num green-text">140</td>
+            <td class="num blue-text">111</td>
+            <td class="num yellow-text">4</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:54.6875%" title="GREEN: 140"></span><span class="seg blue" style="width:43.3594%" title="BLUE: 111"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr>
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" data-montage="assets/montages/W07D3_DATA3_chip_115.jpg" data-title="W07D3 DATA3 chip 115 montage" aria-label="Open W07D3 DATA3 chip 115 montage">
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num chip">115</td>
+            <td><span class="status yes">YES</span></td>
+            <td class="num no-ball-count">1</td>
+            <td class="positions"><span class="pos-badge">203</span></td>
+            <td class="num green-text">180</td>
+            <td class="num blue-text">39</td>
+            <td class="num yellow-text">36</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td><div class="bar"><span class="seg green" style="width:70.3125%" title="GREEN: 180"></span><span class="seg blue" style="width:15.2344%" title="BLUE: 39"></span><span class="seg yellow" style="width:14.0625%" title="YELLOW: 36"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
+          </tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section>
+      <h2>Batch aggregate</h2>
+      <p class="note">Batch-level totals after manual/final labels were reapplied. Attention total = YELLOW + RED + NEED_INSPECT.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Wafer</th><th>Batch</th><th>Chips</th><th>GREEN</th><th>BLUE</th><th>YELLOW</th><th>RED</th><th>NEED</th><th>Attention</th><th>Attention rate</th></tr></thead>
+          <tbody>
+          <tr>
+            <td>W03F7</td>
+            <td>DATA1</td>
+            <td class="num">9</td>
+            <td class="num green-text">1678</td>
+            <td class="num blue-text">504</td>
+            <td class="num yellow-text">113</td>
+            <td class="num red-text">9</td>
+            <td class="num muted-text">0</td>
+            <td class="num">122</td>
+            <td class="num">5.3%</td>
+          </tr>
+          <tr>
+            <td>W04F2</td>
+            <td>data</td>
+            <td class="num">9</td>
+            <td class="num green-text">1577</td>
+            <td class="num blue-text">655</td>
+            <td class="num yellow-text">71</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td class="num">72</td>
+            <td class="num">3.1%</td>
+          </tr>
+          <tr>
+            <td>W04F2</td>
+            <td>data2</td>
+            <td class="num">9</td>
+            <td class="num green-text">1468</td>
+            <td class="num blue-text">727</td>
+            <td class="num yellow-text">104</td>
+            <td class="num red-text">5</td>
+            <td class="num muted-text">0</td>
+            <td class="num">109</td>
+            <td class="num">4.7%</td>
+          </tr>
+          <tr>
+            <td>W04F2</td>
+            <td>data3</td>
+            <td class="num">9</td>
+            <td class="num green-text">1494</td>
+            <td class="num blue-text">741</td>
+            <td class="num yellow-text">69</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td class="num">69</td>
+            <td class="num">3.0%</td>
+          </tr>
+          <tr>
+            <td>W04F2</td>
+            <td>data4</td>
+            <td class="num">9</td>
+            <td class="num green-text">1707</td>
+            <td class="num blue-text">511</td>
+            <td class="num yellow-text">77</td>
+            <td class="num red-text">9</td>
+            <td class="num muted-text">0</td>
+            <td class="num">86</td>
+            <td class="num">3.7%</td>
+          </tr>
+          <tr>
+            <td>W07D3</td>
+            <td>DATA1</td>
+            <td class="num">9</td>
+            <td class="num green-text">1970</td>
+            <td class="num blue-text">234</td>
+            <td class="num yellow-text">100</td>
+            <td class="num red-text">0</td>
+            <td class="num muted-text">0</td>
+            <td class="num">100</td>
+            <td class="num">4.3%</td>
+          </tr>
+          <tr>
+            <td>W07D3</td>
+            <td>DATA2</td>
+            <td class="num">9</td>
+            <td class="num green-text">1986</td>
+            <td class="num blue-text">207</td>
+            <td class="num yellow-text">110</td>
+            <td class="num red-text">1</td>
+            <td class="num muted-text">0</td>
+            <td class="num">111</td>
+            <td class="num">4.8%</td>
+          </tr>
+          <tr>
+            <td>W07D3</td>
+            <td>DATA3</td>
+            <td class="num">9</td>
+            <td class="num green-text">1522</td>
+            <td class="num blue-text">602</td>
+            <td class="num yellow-text">176</td>
+            <td class="num red-text">4</td>
+            <td class="num muted-text">0</td>
+            <td class="num">180</td>
+            <td class="num">7.8%</td>
+          </tr></tbody>
+        </table>
+      </div>
+    </section>
+    </div>
+
+
+    <div id="montageModal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modal-card">
+        <div class="modal-head">
+          <div id="modalTitle" class="modal-title">Chip montage</div>
+          <div class="modal-actions">
+            <a id="openMontage" href="#" target="_blank" rel="noopener">Open image</a>
+            <button id="closeModal" type="button">Close</button>
+          </div>
+        </div>
+        <div class="modal-body">
+          <img id="modalImage" src="" alt="Selected chip montage overlay" />
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (() => {
+        const modal = document.getElementById('montageModal');
+        const img = document.getElementById('modalImage');
+        const title = document.getElementById('modalTitle');
+        const openLink = document.getElementById('openMontage');
+        const closeBtn = document.getElementById('closeModal');
+        function openModal(row) {
+          const src = row.dataset.montage;
+          const label = row.dataset.title || 'Chip montage';
+          img.src = src;
+          img.alt = label + ' montage overlay';
+          title.textContent = label;
+          openLink.href = src;
+          modal.classList.add('open');
+          modal.setAttribute('aria-hidden', 'false');
+          closeBtn.focus();
+        }
+        function closeModal() {
+          modal.classList.remove('open');
+          modal.setAttribute('aria-hidden', 'true');
+          img.removeAttribute('src');
+        }
+        document.querySelectorAll('.tab-button').forEach(button => {
+          button.addEventListener('click', () => {
+            const targetId = button.dataset.tab;
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.toggle('active', b === button));
+            document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === targetId));
+          });
+        });
+        document.querySelectorAll('tr.chip-row').forEach(row => {
+          row.addEventListener('click', event => {
+            if (event.target.closest('a, button')) return;
+            openModal(row);
+          });
+          row.addEventListener('keydown', event => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault();
+              openModal(row);
+            }
+          });
+        });
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', event => {
+          if (event.target === modal) closeModal();
+        });
+        document.addEventListener('keydown', event => {
+          if (event.key === 'Escape' && modal.classList.contains('open')) closeModal();
+        });
+      })();
+    </script>
+
+    <footer>
+      Online report · Generated: 2026-06-23 14:48:12 · Source CSV: visual_no_ball_chip_table.csv
+    </footer>
+  </main>
+</body>
+</html>
