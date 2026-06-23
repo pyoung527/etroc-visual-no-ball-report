@@ -50,12 +50,15 @@
     .note { color: var(--muted); font-size: 13px; margin: 0 0 14px; }
     .table-wrap { overflow-x: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 28px rgba(16,75,58,.06); }
     table { width: 100%; border-collapse: collapse; min-width: 1120px; }
-    th, td { border-bottom: 1px solid #eee7d9; padding: 10px 12px; text-align: left; vertical-align: middle; font-size: 13px; }
+    th, td { border-bottom: 1px solid #eee7d9; padding: 10px 12px; text-align: center; vertical-align: middle; font-size: 13px; }
     th { position: sticky; top: 0; z-index: 1; background: #eae3cf; color: #25332d; font-size: 12px; text-transform: uppercase; letter-spacing: .055em; }
+    td:first-child, th:first-child { text-align: center; }
+    td.positions { text-align: center; }
+    .batch-aggregate-table th, .batch-aggregate-table td { text-align: center; }
     tbody tr:nth-child(even) { background: #fbfaf7; }
     tbody tr.no-ball-row { background: #fff8ec; }
     tbody tr:hover { background: #eef6ef; }
-    .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .num { text-align: center; font-variant-numeric: tabular-nums; }
     .chip { font-weight: 700; }
     .status { display: inline-flex; align-items: center; justify-content: center; min-width: 42px; padding: 3px 9px; border-radius: 999px; font-size: 11px; font-weight: 750; }
     .status.yes { background: #ffe0d8; color: var(--red); border: 1px solid #ffb7a9; }
@@ -66,7 +69,7 @@
     .blue-text { color: var(--blue); font-weight: 650; }
     .yellow-text { color: var(--yellow); font-weight: 650; }
     .red-text { color: var(--red); font-weight: 750; }
-    .bar { display: flex; width: 180px; height: 12px; overflow: hidden; border-radius: 999px; background: #eee; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+    .bar { display: flex; width: 180px; height: 12px; overflow: hidden; border-radius: 999px; background: #eee; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); margin: 0 auto; }
     .seg { display: block; height: 100%; }
     .seg.green { background: var(--green); }
     .seg.blue { background: var(--blue); }
@@ -1410,7 +1413,7 @@
       <h2>Batch aggregate</h2>
       <p class="note">Batch-level totals after manual/final labels were reapplied. Attention total = YELLOW + RED + NEED_INSPECT.</p>
       <div class="table-wrap">
-        <table>
+        <table class="batch-aggregate-table">
           <thead><tr><th>Wafer</th><th>Batch</th><th>Chips</th><th>GREEN</th><th>BLUE</th><th>YELLOW</th><th>RED</th><th>NEED</th><th>Attention</th><th>Attention rate</th></tr></thead>
           <tbody>
           <tr>
