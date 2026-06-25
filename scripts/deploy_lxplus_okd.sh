@@ -79,6 +79,9 @@ log "Starting build from GitHub source"
 "$OC" apply -f openshift/service.yaml
 "$OC" apply -f openshift/route.yaml
 
+log "Restarting deployment to pull the freshly built :latest image"
+"$OC" rollout restart "deployment/${APP_NAME}"
+
 log "Waiting for rollout"
 "$OC" rollout status "deployment/${APP_NAME}" --timeout=180s
 
