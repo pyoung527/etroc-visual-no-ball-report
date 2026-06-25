@@ -81,6 +81,34 @@
     .tab-button.active { background: var(--forest); color: #fffdf2; border-color: var(--forest); }
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
+    .board-shell { background: #fffdf7; border: 1px solid var(--line); border-radius: 18px; overflow: hidden; box-shadow: 0 10px 34px rgba(16,75,58,.07); }
+    .board-intro { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 16px 18px; background: #f5f0e4; border-bottom: 1px solid var(--line); }
+    .legend { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; font-size: 12px; color: #39463f; }
+    .legend-chip { display: inline-flex; align-items: center; gap: 6px; font-weight: 760; }
+    .legend-chip::before { content: ''; width: 14px; height: 14px; border-radius: 4px; display: inline-block; border: 1px solid rgba(0,0,0,.12); }
+    .legend-chip.red::before { background: var(--red); }
+    .legend-chip.green::before { background: #dff0d6; }
+    .board-wafer { margin: 0; padding: 0 18px 18px; }
+    .wafer-band { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; margin: 18px 0 12px; padding: 12px 14px; background: var(--forest); color: #fffdf2; border-radius: 14px; box-shadow: inset 0 -3px 0 rgba(217,197,111,.9); }
+    .wafer-band h2 { color: #fffdf2; margin: 0; font-size: 22px; letter-spacing: -.02em; }
+    .wafer-band span { color: #eaf2e9; font-size: 13px; }
+    .board-batch { display: grid; grid-template-columns: 132px 1fr; gap: 14px; align-items: stretch; margin: 12px 0; }
+    .batch-rail { border: 1px solid var(--line); border-radius: 14px; background: #f6f2e8; padding: 13px 12px; display: flex; flex-direction: column; justify-content: center; text-align: center; }
+    .batch-name { font-size: 17px; font-weight: 820; color: var(--forest); }
+    .batch-meta { margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.35; }
+    .chip-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
+    .chip-card { min-height: 104px; border-radius: 14px; padding: 10px; cursor: zoom-in; border: 1px solid rgba(16,75,58,.16); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 14px rgba(16,75,58,.05); transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
+    .chip-card:hover, .chip-card:focus { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(16,75,58,.11); outline: none; border-color: rgba(16,75,58,.42); }
+    .chip-card.no-ball { background: linear-gradient(180deg, #e33b2f 0%, #c9271c 100%); color: #fffaf2; border-color: #9e1e16; }
+    .chip-card.reviewed { background: #dff0d6; color: #173a28; }
+    .chip-card-top { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+    .chip-kicker { font-size: 10px; text-transform: uppercase; letter-spacing: .12em; opacity: .72; font-weight: 760; }
+    .chip-card-top strong { font-size: 25px; line-height: 1; font-variant-numeric: tabular-nums; }
+    .chip-card-count { align-self: flex-start; border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 820; background: rgba(255,255,255,.24); }
+    .chip-card.reviewed .chip-card-count { background: rgba(255,255,255,.55); color: #27633d; }
+    .chip-card-positions { min-height: 28px; display: flex; align-items: flex-end; flex-wrap: wrap; gap: 4px; }
+    .chip-card .pos-badge { margin: 0; padding: 3px 6px; border-radius: 7px; background: rgba(255,255,255,.22); color: #fffaf2; border: 1px solid rgba(255,255,255,.22); font-size: 12px; }
+    .card-empty { font-size: 11px; color: rgba(23,58,40,.68); font-weight: 720; }
     .visual-page-card { background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 14px; box-shadow: 0 8px 28px rgba(16,75,58,.06); }
     .visual-page-card img { display: block; width: 100%; max-width: 2400px; height: auto; margin: 0 auto; border-radius: 10px; }
     .visual-actions { display: flex; justify-content: flex-end; margin: 0 0 10px; }
@@ -103,6 +131,9 @@
       main, header { padding-left: 20px; padding-right: 20px; }
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
       .wafer-grid { grid-template-columns: 1fr; }
+      .board-batch { grid-template-columns: 1fr; }
+      .batch-rail { align-items: center; }
+      .chip-card-grid { grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); }
     }
   </style>
 </head>
@@ -160,11 +191,886 @@
 
     <div id="visual-tab" class="tab-panel active">
       <section>
-        <h2>Corrected visual card table</h2>
-        <p class="note">Card-style visual summary after manual conflict review. Red cards are final visual no-ball chips; green cards are reviewed non-no-ball chips. Unresolved conflicts are zero.</p>
-        <div class="visual-page-card">
-          <div class="visual-actions"><a href="assets/images/visual_no_ball_chip_card_table_corrected.png" target="_blank" rel="noopener">Open image</a></div>
-          <img src="assets/images/visual_no_ball_chip_card_table_corrected.png" alt="Corrected visual no-ball chip card table" />
+        <h2>Native card board</h2>
+        <p class="note">Interactive HTML version of the card visual after manual conflict review. Red cards are final visual no-ball chips; green cards are reviewed non-no-ball chips. Unresolved conflicts are zero. Click any chip card to open its montage overlay.</p>
+        <div class="board-shell">
+          <div class="board-intro">
+            <div class="legend" aria-label="Card legend">
+              <span class="legend-chip red">Final visual no-ball chip</span>
+              <span class="legend-chip green">Reviewed non-no-ball chip</span>
+            </div>
+            <div class="note" style="margin:0">Dataset: W03F7 / W04F2 / W07D3 · Final reviewed labels</div>
+          </div>
+          
+          <section class="board-wafer" id="wafer-W03F7">
+            <div class="wafer-band">
+              <h2>W03F7</h2>
+              <span>9 chips · 5 no-ball chips · 9 no-ball positions</span>
+            </div>
+            
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">DATA1</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>5</b> no-ball · <b>9</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_87.jpg"
+                  data-title="W03F7 DATA1 chip 87 montage"
+                  aria-label="Open W03F7 DATA1 chip 87 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>87</strong>
+                  </div>
+                  <div class="chip-card-count">2 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">72</span><span class="pos-badge">98</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_88.jpg"
+                  data-title="W03F7 DATA1 chip 88 montage"
+                  aria-label="Open W03F7 DATA1 chip 88 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>88</strong>
+                  </div>
+                  <div class="chip-card-count">2 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">221</span><span class="pos-badge">225</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_89.jpg"
+                  data-title="W03F7 DATA1 chip 89 montage"
+                  aria-label="Open W03F7 DATA1 chip 89 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>89</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">128</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_95.jpg"
+                  data-title="W03F7 DATA1 chip 95 montage"
+                  aria-label="Open W03F7 DATA1 chip 95 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>95</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_96.jpg"
+                  data-title="W03F7 DATA1 chip 96 montage"
+                  aria-label="Open W03F7 DATA1 chip 96 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>96</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_97.jpg"
+                  data-title="W03F7 DATA1 chip 97 montage"
+                  aria-label="Open W03F7 DATA1 chip 97 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>97</strong>
+                  </div>
+                  <div class="chip-card-count">2 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">56</span><span class="pos-badge">230</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_99.jpg"
+                  data-title="W03F7 DATA1 chip 99 montage"
+                  aria-label="Open W03F7 DATA1 chip 99 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>99</strong>
+                  </div>
+                  <div class="chip-card-count">2 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">17</span><span class="pos-badge">113</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_100.jpg"
+                  data-title="W03F7 DATA1 chip 100 montage"
+                  aria-label="Open W03F7 DATA1 chip 100 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>100</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W03F7_DATA1_chip_102.jpg"
+                  data-title="W03F7 DATA1 chip 102 montage"
+                  aria-label="Open W03F7 DATA1 chip 102 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>102</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article></div>
+              </div>
+          </section>
+          <section class="board-wafer" id="wafer-W04F2">
+            <div class="wafer-band">
+              <h2>W04F2</h2>
+              <span>36 chips · 9 no-ball chips · 15 no-ball positions</span>
+            </div>
+            
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">data</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>1</b> no-ball · <b>1</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_44.jpg"
+                  data-title="W04F2 data chip 44 montage"
+                  aria-label="Open W04F2 data chip 44 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>44</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_45.jpg"
+                  data-title="W04F2 data chip 45 montage"
+                  aria-label="Open W04F2 data chip 45 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>45</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_52.jpg"
+                  data-title="W04F2 data chip 52 montage"
+                  aria-label="Open W04F2 data chip 52 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>52</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">156</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_53.jpg"
+                  data-title="W04F2 data chip 53 montage"
+                  aria-label="Open W04F2 data chip 53 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>53</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_54.jpg"
+                  data-title="W04F2 data chip 54 montage"
+                  aria-label="Open W04F2 data chip 54 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>54</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_55.jpg"
+                  data-title="W04F2 data chip 55 montage"
+                  aria-label="Open W04F2 data chip 55 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>55</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_59.jpg"
+                  data-title="W04F2 data chip 59 montage"
+                  aria-label="Open W04F2 data chip 59 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>59</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_60.jpg"
+                  data-title="W04F2 data chip 60 montage"
+                  aria-label="Open W04F2 data chip 60 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>60</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data_chip_61.jpg"
+                  data-title="W04F2 data chip 61 montage"
+                  aria-label="Open W04F2 data chip 61 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>61</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article></div>
+              </div>
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">data2</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>3</b> no-ball · <b>5</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_62.jpg"
+                  data-title="W04F2 data2 chip 62 montage"
+                  aria-label="Open W04F2 data2 chip 62 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>62</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">254</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_63.jpg"
+                  data-title="W04F2 data2 chip 63 montage"
+                  aria-label="Open W04F2 data2 chip 63 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>63</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">189</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_64.jpg"
+                  data-title="W04F2 data2 chip 64 montage"
+                  aria-label="Open W04F2 data2 chip 64 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>64</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_65.jpg"
+                  data-title="W04F2 data2 chip 65 montage"
+                  aria-label="Open W04F2 data2 chip 65 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>65</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_66.jpg"
+                  data-title="W04F2 data2 chip 66 montage"
+                  aria-label="Open W04F2 data2 chip 66 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>66</strong>
+                  </div>
+                  <div class="chip-card-count">3 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">77</span><span class="pos-badge">88</span><span class="pos-badge">135</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_67.jpg"
+                  data-title="W04F2 data2 chip 67 montage"
+                  aria-label="Open W04F2 data2 chip 67 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>67</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_70.jpg"
+                  data-title="W04F2 data2 chip 70 montage"
+                  aria-label="Open W04F2 data2 chip 70 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>70</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_79.jpg"
+                  data-title="W04F2 data2 chip 79 montage"
+                  aria-label="Open W04F2 data2 chip 79 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>79</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data2_chip_81.jpg"
+                  data-title="W04F2 data2 chip 81 montage"
+                  aria-label="Open W04F2 data2 chip 81 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>81</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article></div>
+              </div>
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">data3</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>0</b> no-ball · <b>0</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_25.jpg"
+                  data-title="W04F2 data3 chip 25 montage"
+                  aria-label="Open W04F2 data3 chip 25 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>25</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_26.jpg"
+                  data-title="W04F2 data3 chip 26 montage"
+                  aria-label="Open W04F2 data3 chip 26 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>26</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_27.jpg"
+                  data-title="W04F2 data3 chip 27 montage"
+                  aria-label="Open W04F2 data3 chip 27 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>27</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_28.jpg"
+                  data-title="W04F2 data3 chip 28 montage"
+                  aria-label="Open W04F2 data3 chip 28 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>28</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_33.jpg"
+                  data-title="W04F2 data3 chip 33 montage"
+                  aria-label="Open W04F2 data3 chip 33 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>33</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_34.jpg"
+                  data-title="W04F2 data3 chip 34 montage"
+                  aria-label="Open W04F2 data3 chip 34 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>34</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_36.jpg"
+                  data-title="W04F2 data3 chip 36 montage"
+                  aria-label="Open W04F2 data3 chip 36 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>36</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_37.jpg"
+                  data-title="W04F2 data3 chip 37 montage"
+                  aria-label="Open W04F2 data3 chip 37 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>37</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data3_chip_40.jpg"
+                  data-title="W04F2 data3 chip 40 montage"
+                  aria-label="Open W04F2 data3 chip 40 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>40</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article></div>
+              </div>
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">data4</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>5</b> no-ball · <b>9</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_72.jpg"
+                  data-title="W04F2 data4 chip 72 montage"
+                  aria-label="Open W04F2 data4 chip 72 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>72</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">20</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_75.jpg"
+                  data-title="W04F2 data4 chip 75 montage"
+                  aria-label="Open W04F2 data4 chip 75 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>75</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_76.jpg"
+                  data-title="W04F2 data4 chip 76 montage"
+                  aria-label="Open W04F2 data4 chip 76 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>76</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_77.jpg"
+                  data-title="W04F2 data4 chip 77 montage"
+                  aria-label="Open W04F2 data4 chip 77 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>77</strong>
+                  </div>
+                  <div class="chip-card-count">2 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">171</span><span class="pos-badge">206</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_78.jpg"
+                  data-title="W04F2 data4 chip 78 montage"
+                  aria-label="Open W04F2 data4 chip 78 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>78</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_84.jpg"
+                  data-title="W04F2 data4 chip 84 montage"
+                  aria-label="Open W04F2 data4 chip 84 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>84</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_86.jpg"
+                  data-title="W04F2 data4 chip 86 montage"
+                  aria-label="Open W04F2 data4 chip 86 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>86</strong>
+                  </div>
+                  <div class="chip-card-count">2 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">97</span><span class="pos-badge">109</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_88.jpg"
+                  data-title="W04F2 data4 chip 88 montage"
+                  aria-label="Open W04F2 data4 chip 88 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>88</strong>
+                  </div>
+                  <div class="chip-card-count">3 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">49</span><span class="pos-badge">185</span><span class="pos-badge">186</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W04F2_data4_chip_89.jpg"
+                  data-title="W04F2 data4 chip 89 montage"
+                  aria-label="Open W04F2 data4 chip 89 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>89</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">120</span></div>
+                </article></div>
+              </div>
+          </section>
+          <section class="board-wafer" id="wafer-W07D3">
+            <div class="wafer-band">
+              <h2>W07D3</h2>
+              <span>27 chips · 5 no-ball chips · 5 no-ball positions</span>
+            </div>
+            
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">DATA1</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>0</b> no-ball · <b>0</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_5.jpg"
+                  data-title="W07D3 DATA1 chip 5 montage"
+                  aria-label="Open W07D3 DATA1 chip 5 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>5</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_6.jpg"
+                  data-title="W07D3 DATA1 chip 6 montage"
+                  aria-label="Open W07D3 DATA1 chip 6 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>6</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_8.jpg"
+                  data-title="W07D3 DATA1 chip 8 montage"
+                  aria-label="Open W07D3 DATA1 chip 8 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>8</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_12.jpg"
+                  data-title="W07D3 DATA1 chip 12 montage"
+                  aria-label="Open W07D3 DATA1 chip 12 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>12</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_13.jpg"
+                  data-title="W07D3 DATA1 chip 13 montage"
+                  aria-label="Open W07D3 DATA1 chip 13 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>13</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_14.jpg"
+                  data-title="W07D3 DATA1 chip 14 montage"
+                  aria-label="Open W07D3 DATA1 chip 14 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>14</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_15.jpg"
+                  data-title="W07D3 DATA1 chip 15 montage"
+                  aria-label="Open W07D3 DATA1 chip 15 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>15</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_17.jpg"
+                  data-title="W07D3 DATA1 chip 17 montage"
+                  aria-label="Open W07D3 DATA1 chip 17 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>17</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA1_chip_18.jpg"
+                  data-title="W07D3 DATA1 chip 18 montage"
+                  aria-label="Open W07D3 DATA1 chip 18 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>18</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article></div>
+              </div>
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">DATA2</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>1</b> no-ball · <b>1</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_20.jpg"
+                  data-title="W07D3 DATA2 chip 20 montage"
+                  aria-label="Open W07D3 DATA2 chip 20 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>20</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_21.jpg"
+                  data-title="W07D3 DATA2 chip 21 montage"
+                  aria-label="Open W07D3 DATA2 chip 21 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>21</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_27.jpg"
+                  data-title="W07D3 DATA2 chip 27 montage"
+                  aria-label="Open W07D3 DATA2 chip 27 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>27</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_28.jpg"
+                  data-title="W07D3 DATA2 chip 28 montage"
+                  aria-label="Open W07D3 DATA2 chip 28 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>28</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_29.jpg"
+                  data-title="W07D3 DATA2 chip 29 montage"
+                  aria-label="Open W07D3 DATA2 chip 29 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>29</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_32.jpg"
+                  data-title="W07D3 DATA2 chip 32 montage"
+                  aria-label="Open W07D3 DATA2 chip 32 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>32</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">50</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_42.jpg"
+                  data-title="W07D3 DATA2 chip 42 montage"
+                  aria-label="Open W07D3 DATA2 chip 42 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>42</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_56.jpg"
+                  data-title="W07D3 DATA2 chip 56 montage"
+                  aria-label="Open W07D3 DATA2 chip 56 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>56</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA2_chip_64.jpg"
+                  data-title="W07D3 DATA2 chip 64 montage"
+                  aria-label="Open W07D3 DATA2 chip 64 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>64</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article></div>
+              </div>
+              <div class="board-batch">
+                <div class="batch-rail">
+                  <div class="batch-name">DATA3</div>
+                  <div class="batch-meta"><b>9</b> chips · <b>4</b> no-ball · <b>4</b> px</div>
+                </div>
+                <div class="chip-card-grid">
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_69.jpg"
+                  data-title="W07D3 DATA3 chip 69 montage"
+                  aria-label="Open W07D3 DATA3 chip 69 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>69</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">117</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_70.jpg"
+                  data-title="W07D3 DATA3 chip 70 montage"
+                  aria-label="Open W07D3 DATA3 chip 70 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>70</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">127</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_77.jpg"
+                  data-title="W07D3 DATA3 chip 77 montage"
+                  aria-label="Open W07D3 DATA3 chip 77 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>77</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_88.jpg"
+                  data-title="W07D3 DATA3 chip 88 montage"
+                  aria-label="Open W07D3 DATA3 chip 88 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>88</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_104.jpg"
+                  data-title="W07D3 DATA3 chip 104 montage"
+                  aria-label="Open W07D3 DATA3 chip 104 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>104</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_108.jpg"
+                  data-title="W07D3 DATA3 chip 108 montage"
+                  aria-label="Open W07D3 DATA3 chip 108 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>108</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card reviewed" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_110.jpg"
+                  data-title="W07D3 DATA3 chip 110 montage"
+                  aria-label="Open W07D3 DATA3 chip 110 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>110</strong>
+                  </div>
+                  <div class="chip-card-count">0 px</div>
+                  <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_112.jpg"
+                  data-title="W07D3 DATA3 chip 112 montage"
+                  aria-label="Open W07D3 DATA3 chip 112 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>112</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">156</span></div>
+                </article>
+                <article class="chip-card no-ball" tabindex="0" role="button"
+                  data-montage="assets/montages/W07D3_DATA3_chip_115.jpg"
+                  data-title="W07D3 DATA3 chip 115 montage"
+                  aria-label="Open W07D3 DATA3 chip 115 montage">
+                  <div class="chip-card-top">
+                    <span class="chip-kicker">chip</span>
+                    <strong>115</strong>
+                  </div>
+                  <div class="chip-card-count">1 px</div>
+                  <div class="chip-card-positions"><span class="pos-badge">203</span></div>
+                </article></div>
+              </div>
+          </section>
         </div>
       </section>
     </div>
@@ -1563,7 +2469,8 @@
             document.querySelectorAll('.tab-panel').forEach(panel => panel.classList.toggle('active', panel.id === targetId));
           });
         });
-        document.querySelectorAll('tr.chip-row').forEach(row => {
+        const clickableCards = Array.from(document.querySelectorAll('tr.chip-row, .chip-card'));
+        clickableCards.forEach(row => {
           row.addEventListener('click', event => {
             if (event.target.closest('a, button')) return;
             openModal(row);
@@ -1586,7 +2493,7 @@
     </script>
 
     <footer>
-      Online report · Manual conflict review applied · Source CSV: visual_no_ball_chip_table.csv
+      Generated: 2026-06-26 08:08:21 · Dataset: final visual no-ball chip table · Manual conflict review applied
     </footer>
   </main>
 </body>
