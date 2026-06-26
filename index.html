@@ -97,7 +97,7 @@
     .batch-name { font-size: 17px; font-weight: 820; color: var(--forest); }
     .batch-meta { margin-top: 6px; color: var(--muted); font-size: 11px; line-height: 1.35; }
     .chip-card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 10px; }
-    .chip-card { min-height: 104px; border-radius: 14px; padding: 10px; cursor: zoom-in; border: 1px solid rgba(16,75,58,.16); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 14px rgba(16,75,58,.05); transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
+    .chip-card { min-height: 126px; border-radius: 14px; padding: 10px; cursor: zoom-in; border: 1px solid rgba(16,75,58,.16); display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 14px rgba(16,75,58,.05); transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease; }
     .chip-card:hover, .chip-card:focus { transform: translateY(-1px); box-shadow: 0 8px 24px rgba(16,75,58,.11); outline: none; border-color: rgba(16,75,58,.42); }
     .chip-card.no-ball { background: linear-gradient(180deg, #e33b2f 0%, #c9271c 100%); color: #fffaf2; border-color: #9e1e16; }
     .chip-card.reviewed { background: #dff0d6; color: #173a28; }
@@ -106,6 +106,15 @@
     .chip-card-top strong { font-size: 25px; line-height: 1; font-variant-numeric: tabular-nums; }
     .chip-card-count { align-self: flex-start; border-radius: 999px; padding: 3px 8px; font-size: 12px; font-weight: 820; background: rgba(255,255,255,.24); }
     .chip-card.reviewed .chip-card-count { background: rgba(255,255,255,.55); color: #27633d; }
+    .chip-gauge { width: 100%; margin: 6px 0 5px; }
+    .chip-gauge-track { display: flex; width: 100%; height: 8px; overflow: hidden; border-radius: 999px; background: rgba(255,255,255,.28); box-shadow: inset 0 0 0 1px rgba(0,0,0,.08); }
+    .chip-card.reviewed .chip-gauge-track { background: rgba(255,255,255,.52); }
+    .gauge-seg { display: block; height: 100%; }
+    .gauge-seg.green { background: #2ca25f; }
+    .gauge-seg.blue { background: #2f6fdd; }
+    .gauge-seg.yellow { background: #d7a900; }
+    .chip-gauge-label { display: flex; justify-content: space-between; gap: 4px; margin-top: 3px; font-size: 9px; line-height: 1; font-weight: 820; letter-spacing: .02em; color: rgba(255,255,255,.82); font-variant-numeric: tabular-nums; }
+    .chip-card.reviewed .chip-gauge-label { color: rgba(23,58,40,.72); }
     .chip-card-positions { min-height: 28px; display: flex; align-items: flex-end; flex-wrap: wrap; gap: 4px; }
     .chip-card .pos-badge { margin: 0; padding: 3px 6px; border-radius: 7px; background: rgba(255,255,255,.22); color: #fffaf2; border: 1px solid rgba(255,255,255,.22); font-size: 12px; }
     .card-empty { font-size: 11px; color: rgba(23,58,40,.68); font-weight: 720; }
@@ -223,6 +232,7 @@
                     <strong>87</strong>
                   </div>
                   <div class="chip-card-count">2 px</div>
+                  <div class="chip-gauge" title="GREEN 156, BLUE 89, YELLOW 9 of 256 cells" aria-label="GREEN 156, BLUE 89, YELLOW 9 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:60.9375%" title="GREEN: 156 / 256"></span><span class="gauge-seg blue" style="width:34.7656%" title="BLUE: 89 / 256"></span><span class="gauge-seg yellow" style="width:3.5156%" title="YELLOW: 9 / 256"></span></div><div class="chip-gauge-label"><span>G 156</span><span>B 89</span><span>Y 9</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">72</span><span class="pos-badge">98</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -234,6 +244,7 @@
                     <strong>88</strong>
                   </div>
                   <div class="chip-card-count">2 px</div>
+                  <div class="chip-gauge" title="GREEN 174, BLUE 71, YELLOW 9 of 256 cells" aria-label="GREEN 174, BLUE 71, YELLOW 9 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:67.9688%" title="GREEN: 174 / 256"></span><span class="gauge-seg blue" style="width:27.7344%" title="BLUE: 71 / 256"></span><span class="gauge-seg yellow" style="width:3.5156%" title="YELLOW: 9 / 256"></span></div><div class="chip-gauge-label"><span>G 174</span><span>B 71</span><span>Y 9</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">221</span><span class="pos-badge">225</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -245,6 +256,7 @@
                     <strong>89</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 172, BLUE 77, YELLOW 6 of 256 cells" aria-label="GREEN 172, BLUE 77, YELLOW 6 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:67.1875%" title="GREEN: 172 / 256"></span><span class="gauge-seg blue" style="width:30.0781%" title="BLUE: 77 / 256"></span><span class="gauge-seg yellow" style="width:2.3438%" title="YELLOW: 6 / 256"></span></div><div class="chip-gauge-label"><span>G 172</span><span>B 77</span><span>Y 6</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">128</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -256,6 +268,7 @@
                     <strong>95</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 204, BLUE 34, YELLOW 18 of 256 cells" aria-label="GREEN 204, BLUE 34, YELLOW 18 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:79.6875%" title="GREEN: 204 / 256"></span><span class="gauge-seg blue" style="width:13.2812%" title="BLUE: 34 / 256"></span><span class="gauge-seg yellow" style="width:7.0312%" title="YELLOW: 18 / 256"></span></div><div class="chip-gauge-label"><span>G 204</span><span>B 34</span><span>Y 18</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -267,6 +280,7 @@
                     <strong>96</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 229, BLUE 9, YELLOW 18 of 256 cells" aria-label="GREEN 229, BLUE 9, YELLOW 18 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:89.4531%" title="GREEN: 229 / 256"></span><span class="gauge-seg blue" style="width:3.5156%" title="BLUE: 9 / 256"></span><span class="gauge-seg yellow" style="width:7.0312%" title="YELLOW: 18 / 256"></span></div><div class="chip-gauge-label"><span>G 229</span><span>B 9</span><span>Y 18</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -278,6 +292,7 @@
                     <strong>97</strong>
                   </div>
                   <div class="chip-card-count">2 px</div>
+                  <div class="chip-gauge" title="GREEN 228, BLUE 10, YELLOW 16 of 256 cells" aria-label="GREEN 228, BLUE 10, YELLOW 16 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:89.0625%" title="GREEN: 228 / 256"></span><span class="gauge-seg blue" style="width:3.9062%" title="BLUE: 10 / 256"></span><span class="gauge-seg yellow" style="width:6.2500%" title="YELLOW: 16 / 256"></span></div><div class="chip-gauge-label"><span>G 228</span><span>B 10</span><span>Y 16</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">56</span><span class="pos-badge">230</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -289,6 +304,7 @@
                     <strong>99</strong>
                   </div>
                   <div class="chip-card-count">2 px</div>
+                  <div class="chip-gauge" title="GREEN 146, BLUE 94, YELLOW 14 of 256 cells" aria-label="GREEN 146, BLUE 94, YELLOW 14 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:57.0312%" title="GREEN: 146 / 256"></span><span class="gauge-seg blue" style="width:36.7188%" title="BLUE: 94 / 256"></span><span class="gauge-seg yellow" style="width:5.4688%" title="YELLOW: 14 / 256"></span></div><div class="chip-gauge-label"><span>G 146</span><span>B 94</span><span>Y 14</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">17</span><span class="pos-badge">113</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -300,6 +316,7 @@
                     <strong>100</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 198, BLUE 46, YELLOW 12 of 256 cells" aria-label="GREEN 198, BLUE 46, YELLOW 12 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:77.3438%" title="GREEN: 198 / 256"></span><span class="gauge-seg blue" style="width:17.9688%" title="BLUE: 46 / 256"></span><span class="gauge-seg yellow" style="width:4.6875%" title="YELLOW: 12 / 256"></span></div><div class="chip-gauge-label"><span>G 198</span><span>B 46</span><span>Y 12</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -311,6 +328,7 @@
                     <strong>102</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 171, BLUE 74, YELLOW 11 of 256 cells" aria-label="GREEN 171, BLUE 74, YELLOW 11 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:66.7969%" title="GREEN: 171 / 256"></span><span class="gauge-seg blue" style="width:28.9062%" title="BLUE: 74 / 256"></span><span class="gauge-seg yellow" style="width:4.2969%" title="YELLOW: 11 / 256"></span></div><div class="chip-gauge-label"><span>G 171</span><span>B 74</span><span>Y 11</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article></div>
               </div>
@@ -336,6 +354,7 @@
                     <strong>44</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 231, BLUE 21, YELLOW 4 of 256 cells" aria-label="GREEN 231, BLUE 21, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:90.2344%" title="GREEN: 231 / 256"></span><span class="gauge-seg blue" style="width:8.2031%" title="BLUE: 21 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 231</span><span>B 21</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -347,6 +366,7 @@
                     <strong>45</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 128, BLUE 124, YELLOW 4 of 256 cells" aria-label="GREEN 128, BLUE 124, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:50.0000%" title="GREEN: 128 / 256"></span><span class="gauge-seg blue" style="width:48.4375%" title="BLUE: 124 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 128</span><span>B 124</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -358,6 +378,7 @@
                     <strong>52</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 152, BLUE 98, YELLOW 5 of 256 cells" aria-label="GREEN 152, BLUE 98, YELLOW 5 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:59.3750%" title="GREEN: 152 / 256"></span><span class="gauge-seg blue" style="width:38.2812%" title="BLUE: 98 / 256"></span><span class="gauge-seg yellow" style="width:1.9531%" title="YELLOW: 5 / 256"></span></div><div class="chip-gauge-label"><span>G 152</span><span>B 98</span><span>Y 5</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">156</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -369,6 +390,7 @@
                     <strong>53</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 199, BLUE 38, YELLOW 19 of 256 cells" aria-label="GREEN 199, BLUE 38, YELLOW 19 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:77.7344%" title="GREEN: 199 / 256"></span><span class="gauge-seg blue" style="width:14.8438%" title="BLUE: 38 / 256"></span><span class="gauge-seg yellow" style="width:7.4219%" title="YELLOW: 19 / 256"></span></div><div class="chip-gauge-label"><span>G 199</span><span>B 38</span><span>Y 19</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -380,6 +402,7 @@
                     <strong>54</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 157, BLUE 79, YELLOW 20 of 256 cells" aria-label="GREEN 157, BLUE 79, YELLOW 20 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:61.3281%" title="GREEN: 157 / 256"></span><span class="gauge-seg blue" style="width:30.8594%" title="BLUE: 79 / 256"></span><span class="gauge-seg yellow" style="width:7.8125%" title="YELLOW: 20 / 256"></span></div><div class="chip-gauge-label"><span>G 157</span><span>B 79</span><span>Y 20</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -391,6 +414,7 @@
                     <strong>55</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 193, BLUE 56, YELLOW 7 of 256 cells" aria-label="GREEN 193, BLUE 56, YELLOW 7 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:75.3906%" title="GREEN: 193 / 256"></span><span class="gauge-seg blue" style="width:21.8750%" title="BLUE: 56 / 256"></span><span class="gauge-seg yellow" style="width:2.7344%" title="YELLOW: 7 / 256"></span></div><div class="chip-gauge-label"><span>G 193</span><span>B 56</span><span>Y 7</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -402,6 +426,7 @@
                     <strong>59</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 217, BLUE 37, YELLOW 2 of 256 cells" aria-label="GREEN 217, BLUE 37, YELLOW 2 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:84.7656%" title="GREEN: 217 / 256"></span><span class="gauge-seg blue" style="width:14.4531%" title="BLUE: 37 / 256"></span><span class="gauge-seg yellow" style="width:0.7812%" title="YELLOW: 2 / 256"></span></div><div class="chip-gauge-label"><span>G 217</span><span>B 37</span><span>Y 2</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -413,6 +438,7 @@
                     <strong>60</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 149, BLUE 102, YELLOW 5 of 256 cells" aria-label="GREEN 149, BLUE 102, YELLOW 5 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:58.2031%" title="GREEN: 149 / 256"></span><span class="gauge-seg blue" style="width:39.8438%" title="BLUE: 102 / 256"></span><span class="gauge-seg yellow" style="width:1.9531%" title="YELLOW: 5 / 256"></span></div><div class="chip-gauge-label"><span>G 149</span><span>B 102</span><span>Y 5</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -424,6 +450,7 @@
                     <strong>61</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 151, BLUE 100, YELLOW 5 of 256 cells" aria-label="GREEN 151, BLUE 100, YELLOW 5 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:58.9844%" title="GREEN: 151 / 256"></span><span class="gauge-seg blue" style="width:39.0625%" title="BLUE: 100 / 256"></span><span class="gauge-seg yellow" style="width:1.9531%" title="YELLOW: 5 / 256"></span></div><div class="chip-gauge-label"><span>G 151</span><span>B 100</span><span>Y 5</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article></div>
               </div>
@@ -442,6 +469,7 @@
                     <strong>62</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 164, BLUE 87, YELLOW 4 of 256 cells" aria-label="GREEN 164, BLUE 87, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:64.0625%" title="GREEN: 164 / 256"></span><span class="gauge-seg blue" style="width:33.9844%" title="BLUE: 87 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 164</span><span>B 87</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">254</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -453,6 +481,7 @@
                     <strong>63</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 134, BLUE 99, YELLOW 22 of 256 cells" aria-label="GREEN 134, BLUE 99, YELLOW 22 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:52.3438%" title="GREEN: 134 / 256"></span><span class="gauge-seg blue" style="width:38.6719%" title="BLUE: 99 / 256"></span><span class="gauge-seg yellow" style="width:8.5938%" title="YELLOW: 22 / 256"></span></div><div class="chip-gauge-label"><span>G 134</span><span>B 99</span><span>Y 22</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">189</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -464,6 +493,7 @@
                     <strong>64</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 147, BLUE 92, YELLOW 17 of 256 cells" aria-label="GREEN 147, BLUE 92, YELLOW 17 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:57.4219%" title="GREEN: 147 / 256"></span><span class="gauge-seg blue" style="width:35.9375%" title="BLUE: 92 / 256"></span><span class="gauge-seg yellow" style="width:6.6406%" title="YELLOW: 17 / 256"></span></div><div class="chip-gauge-label"><span>G 147</span><span>B 92</span><span>Y 17</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -475,6 +505,7 @@
                     <strong>65</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 178, BLUE 72, YELLOW 6 of 256 cells" aria-label="GREEN 178, BLUE 72, YELLOW 6 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:69.5312%" title="GREEN: 178 / 256"></span><span class="gauge-seg blue" style="width:28.1250%" title="BLUE: 72 / 256"></span><span class="gauge-seg yellow" style="width:2.3438%" title="YELLOW: 6 / 256"></span></div><div class="chip-gauge-label"><span>G 178</span><span>B 72</span><span>Y 6</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -486,6 +517,7 @@
                     <strong>66</strong>
                   </div>
                   <div class="chip-card-count">3 px</div>
+                  <div class="chip-gauge" title="GREEN 198, BLUE 39, YELLOW 16 of 256 cells" aria-label="GREEN 198, BLUE 39, YELLOW 16 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:77.3438%" title="GREEN: 198 / 256"></span><span class="gauge-seg blue" style="width:15.2344%" title="BLUE: 39 / 256"></span><span class="gauge-seg yellow" style="width:6.2500%" title="YELLOW: 16 / 256"></span></div><div class="chip-gauge-label"><span>G 198</span><span>B 39</span><span>Y 16</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">77</span><span class="pos-badge">88</span><span class="pos-badge">135</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -497,6 +529,7 @@
                     <strong>67</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 198, BLUE 45, YELLOW 13 of 256 cells" aria-label="GREEN 198, BLUE 45, YELLOW 13 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:77.3438%" title="GREEN: 198 / 256"></span><span class="gauge-seg blue" style="width:17.5781%" title="BLUE: 45 / 256"></span><span class="gauge-seg yellow" style="width:5.0781%" title="YELLOW: 13 / 256"></span></div><div class="chip-gauge-label"><span>G 198</span><span>B 45</span><span>Y 13</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -508,6 +541,7 @@
                     <strong>70</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 137, BLUE 115, YELLOW 4 of 256 cells" aria-label="GREEN 137, BLUE 115, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:53.5156%" title="GREEN: 137 / 256"></span><span class="gauge-seg blue" style="width:44.9219%" title="BLUE: 115 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 137</span><span>B 115</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -519,6 +553,7 @@
                     <strong>79</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 156, BLUE 89, YELLOW 11 of 256 cells" aria-label="GREEN 156, BLUE 89, YELLOW 11 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:60.9375%" title="GREEN: 156 / 256"></span><span class="gauge-seg blue" style="width:34.7656%" title="BLUE: 89 / 256"></span><span class="gauge-seg yellow" style="width:4.2969%" title="YELLOW: 11 / 256"></span></div><div class="chip-gauge-label"><span>G 156</span><span>B 89</span><span>Y 11</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -530,6 +565,7 @@
                     <strong>81</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 156, BLUE 89, YELLOW 11 of 256 cells" aria-label="GREEN 156, BLUE 89, YELLOW 11 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:60.9375%" title="GREEN: 156 / 256"></span><span class="gauge-seg blue" style="width:34.7656%" title="BLUE: 89 / 256"></span><span class="gauge-seg yellow" style="width:4.2969%" title="YELLOW: 11 / 256"></span></div><div class="chip-gauge-label"><span>G 156</span><span>B 89</span><span>Y 11</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article></div>
               </div>
@@ -548,6 +584,7 @@
                     <strong>25</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 150, BLUE 97, YELLOW 9 of 256 cells" aria-label="GREEN 150, BLUE 97, YELLOW 9 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:58.5938%" title="GREEN: 150 / 256"></span><span class="gauge-seg blue" style="width:37.8906%" title="BLUE: 97 / 256"></span><span class="gauge-seg yellow" style="width:3.5156%" title="YELLOW: 9 / 256"></span></div><div class="chip-gauge-label"><span>G 150</span><span>B 97</span><span>Y 9</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -559,6 +596,7 @@
                     <strong>26</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 148, BLUE 100, YELLOW 8 of 256 cells" aria-label="GREEN 148, BLUE 100, YELLOW 8 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:57.8125%" title="GREEN: 148 / 256"></span><span class="gauge-seg blue" style="width:39.0625%" title="BLUE: 100 / 256"></span><span class="gauge-seg yellow" style="width:3.1250%" title="YELLOW: 8 / 256"></span></div><div class="chip-gauge-label"><span>G 148</span><span>B 100</span><span>Y 8</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -570,6 +608,7 @@
                     <strong>27</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 147, BLUE 101, YELLOW 8 of 256 cells" aria-label="GREEN 147, BLUE 101, YELLOW 8 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:57.4219%" title="GREEN: 147 / 256"></span><span class="gauge-seg blue" style="width:39.4531%" title="BLUE: 101 / 256"></span><span class="gauge-seg yellow" style="width:3.1250%" title="YELLOW: 8 / 256"></span></div><div class="chip-gauge-label"><span>G 147</span><span>B 101</span><span>Y 8</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -581,6 +620,7 @@
                     <strong>28</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 135, BLUE 109, YELLOW 12 of 256 cells" aria-label="GREEN 135, BLUE 109, YELLOW 12 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:52.7344%" title="GREEN: 135 / 256"></span><span class="gauge-seg blue" style="width:42.5781%" title="BLUE: 109 / 256"></span><span class="gauge-seg yellow" style="width:4.6875%" title="YELLOW: 12 / 256"></span></div><div class="chip-gauge-label"><span>G 135</span><span>B 109</span><span>Y 12</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -592,6 +632,7 @@
                     <strong>33</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 208, BLUE 42, YELLOW 6 of 256 cells" aria-label="GREEN 208, BLUE 42, YELLOW 6 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:81.2500%" title="GREEN: 208 / 256"></span><span class="gauge-seg blue" style="width:16.4062%" title="BLUE: 42 / 256"></span><span class="gauge-seg yellow" style="width:2.3438%" title="YELLOW: 6 / 256"></span></div><div class="chip-gauge-label"><span>G 208</span><span>B 42</span><span>Y 6</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -603,6 +644,7 @@
                     <strong>34</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 165, BLUE 85, YELLOW 6 of 256 cells" aria-label="GREEN 165, BLUE 85, YELLOW 6 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:64.4531%" title="GREEN: 165 / 256"></span><span class="gauge-seg blue" style="width:33.2031%" title="BLUE: 85 / 256"></span><span class="gauge-seg yellow" style="width:2.3438%" title="YELLOW: 6 / 256"></span></div><div class="chip-gauge-label"><span>G 165</span><span>B 85</span><span>Y 6</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -614,6 +656,7 @@
                     <strong>36</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 178, BLUE 74, YELLOW 4 of 256 cells" aria-label="GREEN 178, BLUE 74, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:69.5312%" title="GREEN: 178 / 256"></span><span class="gauge-seg blue" style="width:28.9062%" title="BLUE: 74 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 178</span><span>B 74</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -625,6 +668,7 @@
                     <strong>37</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 139, BLUE 108, YELLOW 9 of 256 cells" aria-label="GREEN 139, BLUE 108, YELLOW 9 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:54.2969%" title="GREEN: 139 / 256"></span><span class="gauge-seg blue" style="width:42.1875%" title="BLUE: 108 / 256"></span><span class="gauge-seg yellow" style="width:3.5156%" title="YELLOW: 9 / 256"></span></div><div class="chip-gauge-label"><span>G 139</span><span>B 108</span><span>Y 9</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -636,6 +680,7 @@
                     <strong>40</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 224, BLUE 25, YELLOW 7 of 256 cells" aria-label="GREEN 224, BLUE 25, YELLOW 7 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:87.5000%" title="GREEN: 224 / 256"></span><span class="gauge-seg blue" style="width:9.7656%" title="BLUE: 25 / 256"></span><span class="gauge-seg yellow" style="width:2.7344%" title="YELLOW: 7 / 256"></span></div><div class="chip-gauge-label"><span>G 224</span><span>B 25</span><span>Y 7</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article></div>
               </div>
@@ -654,6 +699,7 @@
                     <strong>72</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 163, BLUE 87, YELLOW 5 of 256 cells" aria-label="GREEN 163, BLUE 87, YELLOW 5 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:63.6719%" title="GREEN: 163 / 256"></span><span class="gauge-seg blue" style="width:33.9844%" title="BLUE: 87 / 256"></span><span class="gauge-seg yellow" style="width:1.9531%" title="YELLOW: 5 / 256"></span></div><div class="chip-gauge-label"><span>G 163</span><span>B 87</span><span>Y 5</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">20</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -665,6 +711,7 @@
                     <strong>75</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 229, BLUE 10, YELLOW 17 of 256 cells" aria-label="GREEN 229, BLUE 10, YELLOW 17 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:89.4531%" title="GREEN: 229 / 256"></span><span class="gauge-seg blue" style="width:3.9062%" title="BLUE: 10 / 256"></span><span class="gauge-seg yellow" style="width:6.6406%" title="YELLOW: 17 / 256"></span></div><div class="chip-gauge-label"><span>G 229</span><span>B 10</span><span>Y 17</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -676,6 +723,7 @@
                     <strong>76</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 192, BLUE 59, YELLOW 5 of 256 cells" aria-label="GREEN 192, BLUE 59, YELLOW 5 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:75.0000%" title="GREEN: 192 / 256"></span><span class="gauge-seg blue" style="width:23.0469%" title="BLUE: 59 / 256"></span><span class="gauge-seg yellow" style="width:1.9531%" title="YELLOW: 5 / 256"></span></div><div class="chip-gauge-label"><span>G 192</span><span>B 59</span><span>Y 5</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -687,6 +735,7 @@
                     <strong>77</strong>
                   </div>
                   <div class="chip-card-count">2 px</div>
+                  <div class="chip-gauge" title="GREEN 171, BLUE 76, YELLOW 7 of 256 cells" aria-label="GREEN 171, BLUE 76, YELLOW 7 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:66.7969%" title="GREEN: 171 / 256"></span><span class="gauge-seg blue" style="width:29.6875%" title="BLUE: 76 / 256"></span><span class="gauge-seg yellow" style="width:2.7344%" title="YELLOW: 7 / 256"></span></div><div class="chip-gauge-label"><span>G 171</span><span>B 76</span><span>Y 7</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">171</span><span class="pos-badge">206</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -698,6 +747,7 @@
                     <strong>78</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 203, BLUE 45, YELLOW 8 of 256 cells" aria-label="GREEN 203, BLUE 45, YELLOW 8 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:79.2969%" title="GREEN: 203 / 256"></span><span class="gauge-seg blue" style="width:17.5781%" title="BLUE: 45 / 256"></span><span class="gauge-seg yellow" style="width:3.1250%" title="YELLOW: 8 / 256"></span></div><div class="chip-gauge-label"><span>G 203</span><span>B 45</span><span>Y 8</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -709,6 +759,7 @@
                     <strong>84</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 192, BLUE 62, YELLOW 2 of 256 cells" aria-label="GREEN 192, BLUE 62, YELLOW 2 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:75.0000%" title="GREEN: 192 / 256"></span><span class="gauge-seg blue" style="width:24.2188%" title="BLUE: 62 / 256"></span><span class="gauge-seg yellow" style="width:0.7812%" title="YELLOW: 2 / 256"></span></div><div class="chip-gauge-label"><span>G 192</span><span>B 62</span><span>Y 2</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -720,6 +771,7 @@
                     <strong>86</strong>
                   </div>
                   <div class="chip-card-count">2 px</div>
+                  <div class="chip-gauge" title="GREEN 184, BLUE 66, YELLOW 4 of 256 cells" aria-label="GREEN 184, BLUE 66, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:71.8750%" title="GREEN: 184 / 256"></span><span class="gauge-seg blue" style="width:25.7812%" title="BLUE: 66 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 184</span><span>B 66</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">97</span><span class="pos-badge">109</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -731,6 +783,7 @@
                     <strong>88</strong>
                   </div>
                   <div class="chip-card-count">3 px</div>
+                  <div class="chip-gauge" title="GREEN 183, BLUE 53, YELLOW 17 of 256 cells" aria-label="GREEN 183, BLUE 53, YELLOW 17 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:71.4844%" title="GREEN: 183 / 256"></span><span class="gauge-seg blue" style="width:20.7031%" title="BLUE: 53 / 256"></span><span class="gauge-seg yellow" style="width:6.6406%" title="YELLOW: 17 / 256"></span></div><div class="chip-gauge-label"><span>G 183</span><span>B 53</span><span>Y 17</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">49</span><span class="pos-badge">185</span><span class="pos-badge">186</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -742,6 +795,7 @@
                     <strong>89</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 190, BLUE 53, YELLOW 12 of 256 cells" aria-label="GREEN 190, BLUE 53, YELLOW 12 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:74.2188%" title="GREEN: 190 / 256"></span><span class="gauge-seg blue" style="width:20.7031%" title="BLUE: 53 / 256"></span><span class="gauge-seg yellow" style="width:4.6875%" title="YELLOW: 12 / 256"></span></div><div class="chip-gauge-label"><span>G 190</span><span>B 53</span><span>Y 12</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">120</span></div>
                 </article></div>
               </div>
@@ -767,6 +821,7 @@
                     <strong>5</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 210, BLUE 41, YELLOW 5 of 256 cells" aria-label="GREEN 210, BLUE 41, YELLOW 5 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:82.0312%" title="GREEN: 210 / 256"></span><span class="gauge-seg blue" style="width:16.0156%" title="BLUE: 41 / 256"></span><span class="gauge-seg yellow" style="width:1.9531%" title="YELLOW: 5 / 256"></span></div><div class="chip-gauge-label"><span>G 210</span><span>B 41</span><span>Y 5</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -778,6 +833,7 @@
                     <strong>6</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 227, BLUE 9, YELLOW 20 of 256 cells" aria-label="GREEN 227, BLUE 9, YELLOW 20 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:88.6719%" title="GREEN: 227 / 256"></span><span class="gauge-seg blue" style="width:3.5156%" title="BLUE: 9 / 256"></span><span class="gauge-seg yellow" style="width:7.8125%" title="YELLOW: 20 / 256"></span></div><div class="chip-gauge-label"><span>G 227</span><span>B 9</span><span>Y 20</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -789,6 +845,7 @@
                     <strong>8</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 213, BLUE 28, YELLOW 15 of 256 cells" aria-label="GREEN 213, BLUE 28, YELLOW 15 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:83.2031%" title="GREEN: 213 / 256"></span><span class="gauge-seg blue" style="width:10.9375%" title="BLUE: 28 / 256"></span><span class="gauge-seg yellow" style="width:5.8594%" title="YELLOW: 15 / 256"></span></div><div class="chip-gauge-label"><span>G 213</span><span>B 28</span><span>Y 15</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -800,6 +857,7 @@
                     <strong>12</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 224, BLUE 26, YELLOW 6 of 256 cells" aria-label="GREEN 224, BLUE 26, YELLOW 6 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:87.5000%" title="GREEN: 224 / 256"></span><span class="gauge-seg blue" style="width:10.1562%" title="BLUE: 26 / 256"></span><span class="gauge-seg yellow" style="width:2.3438%" title="YELLOW: 6 / 256"></span></div><div class="chip-gauge-label"><span>G 224</span><span>B 26</span><span>Y 6</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -811,6 +869,7 @@
                     <strong>13</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 224, BLUE 25, YELLOW 7 of 256 cells" aria-label="GREEN 224, BLUE 25, YELLOW 7 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:87.5000%" title="GREEN: 224 / 256"></span><span class="gauge-seg blue" style="width:9.7656%" title="BLUE: 25 / 256"></span><span class="gauge-seg yellow" style="width:2.7344%" title="YELLOW: 7 / 256"></span></div><div class="chip-gauge-label"><span>G 224</span><span>B 25</span><span>Y 7</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -822,6 +881,7 @@
                     <strong>14</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 215, BLUE 36, YELLOW 5 of 256 cells" aria-label="GREEN 215, BLUE 36, YELLOW 5 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:83.9844%" title="GREEN: 215 / 256"></span><span class="gauge-seg blue" style="width:14.0625%" title="BLUE: 36 / 256"></span><span class="gauge-seg yellow" style="width:1.9531%" title="YELLOW: 5 / 256"></span></div><div class="chip-gauge-label"><span>G 215</span><span>B 36</span><span>Y 5</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -833,6 +893,7 @@
                     <strong>15</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 214, BLUE 31, YELLOW 11 of 256 cells" aria-label="GREEN 214, BLUE 31, YELLOW 11 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:83.5938%" title="GREEN: 214 / 256"></span><span class="gauge-seg blue" style="width:12.1094%" title="BLUE: 31 / 256"></span><span class="gauge-seg yellow" style="width:4.2969%" title="YELLOW: 11 / 256"></span></div><div class="chip-gauge-label"><span>G 214</span><span>B 31</span><span>Y 11</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -844,6 +905,7 @@
                     <strong>17</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 223, BLUE 23, YELLOW 10 of 256 cells" aria-label="GREEN 223, BLUE 23, YELLOW 10 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:87.1094%" title="GREEN: 223 / 256"></span><span class="gauge-seg blue" style="width:8.9844%" title="BLUE: 23 / 256"></span><span class="gauge-seg yellow" style="width:3.9062%" title="YELLOW: 10 / 256"></span></div><div class="chip-gauge-label"><span>G 223</span><span>B 23</span><span>Y 10</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -855,6 +917,7 @@
                     <strong>18</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 220, BLUE 15, YELLOW 21 of 256 cells" aria-label="GREEN 220, BLUE 15, YELLOW 21 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:85.9375%" title="GREEN: 220 / 256"></span><span class="gauge-seg blue" style="width:5.8594%" title="BLUE: 15 / 256"></span><span class="gauge-seg yellow" style="width:8.2031%" title="YELLOW: 21 / 256"></span></div><div class="chip-gauge-label"><span>G 220</span><span>B 15</span><span>Y 21</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article></div>
               </div>
@@ -873,6 +936,7 @@
                     <strong>20</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 233, BLUE 15, YELLOW 8 of 256 cells" aria-label="GREEN 233, BLUE 15, YELLOW 8 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:91.0156%" title="GREEN: 233 / 256"></span><span class="gauge-seg blue" style="width:5.8594%" title="BLUE: 15 / 256"></span><span class="gauge-seg yellow" style="width:3.1250%" title="YELLOW: 8 / 256"></span></div><div class="chip-gauge-label"><span>G 233</span><span>B 15</span><span>Y 8</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -884,6 +948,7 @@
                     <strong>21</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 201, BLUE 48, YELLOW 7 of 256 cells" aria-label="GREEN 201, BLUE 48, YELLOW 7 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:78.5156%" title="GREEN: 201 / 256"></span><span class="gauge-seg blue" style="width:18.7500%" title="BLUE: 48 / 256"></span><span class="gauge-seg yellow" style="width:2.7344%" title="YELLOW: 7 / 256"></span></div><div class="chip-gauge-label"><span>G 201</span><span>B 48</span><span>Y 7</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -895,6 +960,7 @@
                     <strong>27</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 215, BLUE 28, YELLOW 13 of 256 cells" aria-label="GREEN 215, BLUE 28, YELLOW 13 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:83.9844%" title="GREEN: 215 / 256"></span><span class="gauge-seg blue" style="width:10.9375%" title="BLUE: 28 / 256"></span><span class="gauge-seg yellow" style="width:5.0781%" title="YELLOW: 13 / 256"></span></div><div class="chip-gauge-label"><span>G 215</span><span>B 28</span><span>Y 13</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -906,6 +972,7 @@
                     <strong>28</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 216, BLUE 37, YELLOW 3 of 256 cells" aria-label="GREEN 216, BLUE 37, YELLOW 3 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:84.3750%" title="GREEN: 216 / 256"></span><span class="gauge-seg blue" style="width:14.4531%" title="BLUE: 37 / 256"></span><span class="gauge-seg yellow" style="width:1.1719%" title="YELLOW: 3 / 256"></span></div><div class="chip-gauge-label"><span>G 216</span><span>B 37</span><span>Y 3</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -917,6 +984,7 @@
                     <strong>29</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 208, BLUE 42, YELLOW 6 of 256 cells" aria-label="GREEN 208, BLUE 42, YELLOW 6 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:81.2500%" title="GREEN: 208 / 256"></span><span class="gauge-seg blue" style="width:16.4062%" title="BLUE: 42 / 256"></span><span class="gauge-seg yellow" style="width:2.3438%" title="YELLOW: 6 / 256"></span></div><div class="chip-gauge-label"><span>G 208</span><span>B 42</span><span>Y 6</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -928,6 +996,7 @@
                     <strong>32</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 236, BLUE 15, YELLOW 4 of 256 cells" aria-label="GREEN 236, BLUE 15, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:92.1875%" title="GREEN: 236 / 256"></span><span class="gauge-seg blue" style="width:5.8594%" title="BLUE: 15 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 236</span><span>B 15</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">50</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -939,6 +1008,7 @@
                     <strong>42</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 240, BLUE 13, YELLOW 3 of 256 cells" aria-label="GREEN 240, BLUE 13, YELLOW 3 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:93.7500%" title="GREEN: 240 / 256"></span><span class="gauge-seg blue" style="width:5.0781%" title="BLUE: 13 / 256"></span><span class="gauge-seg yellow" style="width:1.1719%" title="YELLOW: 3 / 256"></span></div><div class="chip-gauge-label"><span>G 240</span><span>B 13</span><span>Y 3</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -950,6 +1020,7 @@
                     <strong>56</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 245, BLUE 0, YELLOW 11 of 256 cells" aria-label="GREEN 245, BLUE 0, YELLOW 11 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:95.7031%" title="GREEN: 245 / 256"></span><span class="gauge-seg yellow" style="width:4.2969%" title="YELLOW: 11 / 256"></span></div><div class="chip-gauge-label"><span>G 245</span><span>B 0</span><span>Y 11</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -961,6 +1032,7 @@
                     <strong>64</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 192, BLUE 9, YELLOW 55 of 256 cells" aria-label="GREEN 192, BLUE 9, YELLOW 55 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:75.0000%" title="GREEN: 192 / 256"></span><span class="gauge-seg blue" style="width:3.5156%" title="BLUE: 9 / 256"></span><span class="gauge-seg yellow" style="width:21.4844%" title="YELLOW: 55 / 256"></span></div><div class="chip-gauge-label"><span>G 192</span><span>B 9</span><span>Y 55</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article></div>
               </div>
@@ -979,6 +1051,7 @@
                     <strong>69</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 156, BLUE 24, YELLOW 75 of 256 cells" aria-label="GREEN 156, BLUE 24, YELLOW 75 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:60.9375%" title="GREEN: 156 / 256"></span><span class="gauge-seg blue" style="width:9.3750%" title="BLUE: 24 / 256"></span><span class="gauge-seg yellow" style="width:29.2969%" title="YELLOW: 75 / 256"></span></div><div class="chip-gauge-label"><span>G 156</span><span>B 24</span><span>Y 75</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">117</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -990,6 +1063,7 @@
                     <strong>70</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 168, BLUE 63, YELLOW 24 of 256 cells" aria-label="GREEN 168, BLUE 63, YELLOW 24 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:65.6250%" title="GREEN: 168 / 256"></span><span class="gauge-seg blue" style="width:24.6094%" title="BLUE: 63 / 256"></span><span class="gauge-seg yellow" style="width:9.3750%" title="YELLOW: 24 / 256"></span></div><div class="chip-gauge-label"><span>G 168</span><span>B 63</span><span>Y 24</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">127</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -1001,6 +1075,7 @@
                     <strong>77</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 196, BLUE 43, YELLOW 17 of 256 cells" aria-label="GREEN 196, BLUE 43, YELLOW 17 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:76.5625%" title="GREEN: 196 / 256"></span><span class="gauge-seg blue" style="width:16.7969%" title="BLUE: 43 / 256"></span><span class="gauge-seg yellow" style="width:6.6406%" title="YELLOW: 17 / 256"></span></div><div class="chip-gauge-label"><span>G 196</span><span>B 43</span><span>Y 17</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -1012,6 +1087,7 @@
                     <strong>88</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 157, BLUE 83, YELLOW 16 of 256 cells" aria-label="GREEN 157, BLUE 83, YELLOW 16 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:61.3281%" title="GREEN: 157 / 256"></span><span class="gauge-seg blue" style="width:32.4219%" title="BLUE: 83 / 256"></span><span class="gauge-seg yellow" style="width:6.2500%" title="YELLOW: 16 / 256"></span></div><div class="chip-gauge-label"><span>G 157</span><span>B 83</span><span>Y 16</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -1023,6 +1099,7 @@
                     <strong>104</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 225, BLUE 30, YELLOW 1 of 256 cells" aria-label="GREEN 225, BLUE 30, YELLOW 1 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:87.8906%" title="GREEN: 225 / 256"></span><span class="gauge-seg blue" style="width:11.7188%" title="BLUE: 30 / 256"></span><span class="gauge-seg yellow" style="width:0.3906%" title="YELLOW: 1 / 256"></span></div><div class="chip-gauge-label"><span>G 225</span><span>B 30</span><span>Y 1</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -1034,6 +1111,7 @@
                     <strong>108</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 131, BLUE 125, YELLOW 0 of 256 cells" aria-label="GREEN 131, BLUE 125, YELLOW 0 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:51.1719%" title="GREEN: 131 / 256"></span><span class="gauge-seg blue" style="width:48.8281%" title="BLUE: 125 / 256"></span></div><div class="chip-gauge-label"><span>G 131</span><span>B 125</span><span>Y 0</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card reviewed" tabindex="0" role="button"
@@ -1045,6 +1123,7 @@
                     <strong>110</strong>
                   </div>
                   <div class="chip-card-count">0 px</div>
+                  <div class="chip-gauge" title="GREEN 169, BLUE 84, YELLOW 3 of 256 cells" aria-label="GREEN 169, BLUE 84, YELLOW 3 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:66.0156%" title="GREEN: 169 / 256"></span><span class="gauge-seg blue" style="width:32.8125%" title="BLUE: 84 / 256"></span><span class="gauge-seg yellow" style="width:1.1719%" title="YELLOW: 3 / 256"></span></div><div class="chip-gauge-label"><span>G 169</span><span>B 84</span><span>Y 3</span></div></div>
                   <div class="chip-card-positions"><span class="card-empty">reviewed non-no-ball</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -1056,6 +1135,7 @@
                     <strong>112</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 140, BLUE 111, YELLOW 4 of 256 cells" aria-label="GREEN 140, BLUE 111, YELLOW 4 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:54.6875%" title="GREEN: 140 / 256"></span><span class="gauge-seg blue" style="width:43.3594%" title="BLUE: 111 / 256"></span><span class="gauge-seg yellow" style="width:1.5625%" title="YELLOW: 4 / 256"></span></div><div class="chip-gauge-label"><span>G 140</span><span>B 111</span><span>Y 4</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">156</span></div>
                 </article>
                 <article class="chip-card no-ball" tabindex="0" role="button"
@@ -1067,6 +1147,7 @@
                     <strong>115</strong>
                   </div>
                   <div class="chip-card-count">1 px</div>
+                  <div class="chip-gauge" title="GREEN 180, BLUE 39, YELLOW 36 of 256 cells" aria-label="GREEN 180, BLUE 39, YELLOW 36 of 256 cells"><div class="chip-gauge-track"><span class="gauge-seg green" style="width:70.3125%" title="GREEN: 180 / 256"></span><span class="gauge-seg blue" style="width:15.2344%" title="BLUE: 39 / 256"></span><span class="gauge-seg yellow" style="width:14.0625%" title="YELLOW: 36 / 256"></span></div><div class="chip-gauge-label"><span>G 180</span><span>B 39</span><span>Y 36</span></div></div>
                   <div class="chip-card-positions"><span class="pos-badge">203</span></div>
                 </article></div>
               </div>
@@ -2493,7 +2574,7 @@
     </script>
 
     <footer>
-      Generated: 2026-06-26 08:08:21 · Dataset: final visual no-ball chip table · Manual conflict review applied
+      Generated: 2026-06-26 10:56:51 · Dataset: final visual no-ball chip table · Manual conflict review applied
     </footer>
   </main>
 </body>
