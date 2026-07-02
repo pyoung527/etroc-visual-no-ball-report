@@ -1,0 +1,216 @@
+{
+  "3-100": {
+    "chip": "100",
+    "crops": [],
+    "full": "assets/xray/3-100.jpg",
+    "notes": [],
+    "prefix": "3"
+  },
+  "3-102": {
+    "chip": "102",
+    "crops": [
+      "assets/xray/3-102.jpg-1.jpg"
+    ],
+    "full": "assets/xray/3-102.jpg",
+    "notes": [],
+    "prefix": "3"
+  },
+  "3-87": {
+    "chip": "87",
+    "crops": [
+      "assets/xray/3-87.HIGH.jpg",
+      "assets/xray/3-87.HIGH.jpg-1.jpg"
+    ],
+    "full": "assets/xray/3-87.jpg",
+    "notes": [
+      "detail crop available"
+    ],
+    "prefix": "3"
+  },
+  "3-88": {
+    "chip": "88",
+    "crops": [],
+    "full": "assets/xray/3-88.jpg",
+    "notes": [],
+    "prefix": "3"
+  },
+  "3-89": {
+    "chip": "89",
+    "crops": [],
+    "full": "assets/xray/3-89.jpg",
+    "notes": [],
+    "prefix": "3"
+  },
+  "3-95": {
+    "chip": "95",
+    "crops": [
+      "assets/xray/3-95_HIGH_CENTER.jpg",
+      "assets/xray/3-95_mid.jpg"
+    ],
+    "full": "assets/xray/3-95.jpg",
+    "notes": [
+      "detail crop available"
+    ],
+    "prefix": "3"
+  },
+  "3-96": {
+    "chip": "96",
+    "crops": [],
+    "full": "assets/xray/3-96.jpg",
+    "notes": [],
+    "prefix": "3"
+  },
+  "3-97": {
+    "chip": "97",
+    "crops": [],
+    "full": "assets/xray/3-97.jpg",
+    "notes": [],
+    "prefix": "3"
+  },
+  "3-99": {
+    "chip": "99",
+    "crops": [],
+    "full": "assets/xray/3-99.jpg",
+    "notes": [],
+    "prefix": "3"
+  },
+  "4-62": {
+    "chip": "62",
+    "crops": [],
+    "full": "assets/xray/4-62.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-63": {
+    "chip": "63",
+    "crops": [],
+    "full": "assets/xray/4-63.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-64": {
+    "chip": "64",
+    "crops": [],
+    "full": "assets/xray/4-64.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-65": {
+    "chip": "65",
+    "crops": [],
+    "full": "assets/xray/4-65.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-66": {
+    "chip": "66",
+    "crops": [],
+    "full": "assets/xray/4-66.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-67": {
+    "chip": "67",
+    "crops": [],
+    "full": "assets/xray/4-67.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-70": {
+    "chip": "70",
+    "crops": [],
+    "full": "assets/xray/4-70.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-72": {
+    "chip": "72",
+    "crops": [],
+    "full": "assets/xray/4-72.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-75": {
+    "chip": "75",
+    "crops": [],
+    "full": "assets/xray/4-75.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-76": {
+    "chip": "76",
+    "crops": [],
+    "full": "assets/xray/4-76.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-77": {
+    "chip": "77",
+    "crops": [],
+    "full": "assets/xray/4-77.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-78": {
+    "chip": "78",
+    "crops": [],
+    "full": "assets/xray/4-78.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-79": {
+    "chip": "79",
+    "crops": [
+      "assets/xray/4-79_FBK_LEFT_TOP.jpg",
+      "assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg"
+    ],
+    "full": "assets/xray/4-79.jpg",
+    "notes": [
+      "NO SOLDER crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-81": {
+    "chip": "81",
+    "crops": [
+      "assets/xray/4-81_CENTER_NO_SOLDER.jpg"
+    ],
+    "full": "assets/xray/4-81.jpg",
+    "notes": [
+      "NO SOLDER crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-84": {
+    "chip": "84",
+    "crops": [],
+    "full": "assets/xray/4-84.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-86": {
+    "chip": "86",
+    "crops": [],
+    "full": "assets/xray/4-86.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-88": {
+    "chip": "88",
+    "crops": [
+      "assets/xray/4-88_NO_SOLDER_PART.jpg"
+    ],
+    "full": "assets/xray/4-88.jpg",
+    "notes": [
+      "NO SOLDER crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-89": {
+    "chip": "89",
+    "crops": [],
+    "full": "assets/xray/4-89.jpg",
+    "notes": [],
+    "prefix": "4"
+  }
+}
