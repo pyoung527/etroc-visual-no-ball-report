@@ -1,0 +1,17 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: etl-hybrid-bbqc
+  labels:
+    app: etl-hybrid-bbqc
+spec:
+  source:
+    type: Binary
+  strategy:
+    type: Docker
+    dockerStrategy:
+      dockerfilePath: hybrid-bbqc/Containerfile
+  output:
+    to:
+      kind: ImageStreamTag
+      name: etl-hybrid-bbqc:latest

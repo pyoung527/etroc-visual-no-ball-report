@@ -1,0 +1,4 @@
+FROM nginxinc/nginx-unprivileged:stable-alpine
+COPY hybrid-bbqc /usr/share/nginx/html
+COPY assets /usr/share/nginx/html/assets
+EXPOSE 8080

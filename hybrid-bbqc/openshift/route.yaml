@@ -1,0 +1,18 @@
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: etl-hybrid-bbqc
+  labels:
+    app: etl-hybrid-bbqc
+  annotations:
+    haproxy.router.openshift.io/ip_whitelist: "0.0.0.0/0 ::/0"
+spec:
+  host: etl-hybrid-bbqc.app.cern.ch
+  to:
+    kind: Service
+    name: etl-hybrid-bbqc
+  port:
+    targetPort: http
+  tls:
+    termination: edge
+    insecureEdgeTerminationPolicy: Redirect
