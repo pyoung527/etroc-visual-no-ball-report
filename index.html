@@ -186,6 +186,10 @@
     .modal-body { max-height: calc(94vh - 56px); overflow: auto; padding: 12px; background: #f4f1e7; }
     .modal-body img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 22px rgba(0,0,0,.16); }
     footer { color: var(--muted); font-size: 12px; margin-top: 28px; }
+
+    .filter-sort-panel{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin:12px 0 18px;padding:12px 14px;background:#fffdf8;border:1px solid #e6e0d2;border-radius:16px;box-shadow:0 6px 22px rgba(16,75,58,.05)}
+    .filter-sort-panel label{display:flex;flex-direction:column;gap:4px;color:#6d756f;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:760}.filter-sort-panel select,.filter-sort-panel input{min-width:150px;border:1px solid #d8d0bf;border-radius:10px;background:#fff;color:#18201d;padding:8px 10px;font:inherit;font-size:13px;text-transform:none;letter-spacing:0}.filter-sort-panel .filter-result{margin-left:auto;color:#6d756f;font-size:12px;font-weight:700}.filter-hidden{display:none!important}.sorted-flat{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:14px}.sorted-flat .board-batch,.sorted-flat .wafer-band,.sorted-flat .wafer,.sorted-flat .batch-rail{display:none!important}@media(max-width:1000px){.filter-sort-panel{align-items:stretch}.filter-sort-panel label,.filter-sort-panel select,.filter-sort-panel input{width:100%}.filter-sort-panel .filter-result{margin-left:0}.sorted-flat{grid-template-columns:1fr}}
+
     @media (max-width: 1000px) {
       main, header { padding-left: 20px; padding-right: 20px; }
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
@@ -215,7 +219,7 @@
     </div>
 
     <div class="wafer-grid">
-      
+
           <article class="wafer-card">
             <div class="wafer-title">W03F7</div>
             <div class="wafer-metrics">
@@ -255,6 +259,31 @@
       <section>
         <h2>Native card board</h2>
         <p class="note">Interactive HTML version of the card visual after manual conflict review. Red cards are final visual no-ball chips; green cards are reviewed non-no-ball chips. Unresolved conflicts are zero. Click any chip card to open a large evidence page with optical, X-ray, and NW scan images.</p>
+        <div class="filter-sort-panel" data-filter-panel>
+  <label>Filter
+    <select data-filter-kind>
+      <option value="all">All cards</option>
+      <option value="nw">NW scan available only</option>
+      <option value="xray">X-ray available only</option>
+      <option value="yellow">Yellow &gt; 0 only</option>
+      <option value="noball">Optical no-ball only</option>
+      <option value="missing">Missing evidence only</option>
+    </select>
+  </label>
+  <label>Sort
+    <select data-sort-kind>
+      <option value="default">Default wafer/batch grouping</option>
+      <option value="yellow-desc">Yellow count high → low</option>
+      <option value="yellow-asc">Yellow count low → high</option>
+      <option value="noball-desc">Optical no-ball count high → low</option>
+      <option value="chip-asc">ETROC chip low → high</option>
+    </select>
+  </label>
+  <label>Search
+    <input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" />
+  </label>
+  <span class="filter-result" data-filter-result></span>
+</div>
         <div class="board-shell">
           <div class="board-intro">
             <div class="legend" aria-label="Card legend">
@@ -263,13 +292,13 @@
             </div>
             <div class="note" style="margin:0">Dataset: W03F7 / W04F2 / W07D3 · Final reviewed labels</div>
           </div>
-          
+
           <section class="board-wafer" id="wafer-W03F7">
             <div class="wafer-band">
               <h2>W03F7</h2>
               <span>9 chips · 5 no-ball chips · 9 no-ball positions</span>
             </div>
-            
+
               <div class="board-batch">
                 <div class="batch-rail">
                   <div class="batch-name">DATA1</div>
@@ -436,7 +465,7 @@
               <h2>W04F2</h2>
               <span>36 chips · 10 no-ball chips · 16 no-ball positions</span>
             </div>
-            
+
               <div class="board-batch">
                 <div class="batch-rail">
                   <div class="batch-name">data</div>
@@ -1083,7 +1112,7 @@
               <h2>W07D3</h2>
               <span>27 chips · 5 no-ball chips · 5 no-ball positions</span>
             </div>
-            
+
               <div class="board-batch">
                 <div class="batch-rail">
                   <div class="batch-name">DATA1</div>
@@ -1573,6 +1602,31 @@
     <section>
       <h2>No-ball chips only</h2>
       <p class="note">Condensed list of chips that contain at least one final visual no-ball position. Click any chip row to open a large evidence page.</p>
+      <div class="filter-sort-panel" data-filter-panel>
+  <label>Filter
+    <select data-filter-kind>
+      <option value="all">All cards</option>
+      <option value="nw">NW scan available only</option>
+      <option value="xray">X-ray available only</option>
+      <option value="yellow">Yellow &gt; 0 only</option>
+      <option value="noball">Optical no-ball only</option>
+      <option value="missing">Missing evidence only</option>
+    </select>
+  </label>
+  <label>Sort
+    <select data-sort-kind>
+      <option value="default">Default wafer/batch grouping</option>
+      <option value="yellow-desc">Yellow count high → low</option>
+      <option value="yellow-asc">Yellow count low → high</option>
+      <option value="noball-desc">Optical no-ball count high → low</option>
+      <option value="chip-asc">ETROC chip low → high</option>
+    </select>
+  </label>
+  <label>Search
+    <input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" />
+  </label>
+  <span class="filter-result" data-filter-result></span>
+</div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Wafer</th><th>Batch</th><th>Chip</th><th>Hybrid pair</th><th>No-ball count</th><th>Positions</th><th>GREEN</th><th>BLUE</th><th>YELLOW</th><th>RED</th></tr></thead>
@@ -3025,6 +3079,31 @@
       <section>
         <h2>Bump-bonding analysis</h2>
         <p class="note">Chip-level cross-check between optical inspection montage, post bump-bonding X-ray images, and NW scan results. NW scan is an electrical attention screen: ETROC2 threshold calibration expects NW &lt; 10, but NW anomalies are not by themselves direct proof of bump failure.</p>
+        <div class="filter-sort-panel" data-filter-panel>
+  <label>Filter
+    <select data-filter-kind>
+      <option value="all">All cards</option>
+      <option value="nw">NW scan available only</option>
+      <option value="xray">X-ray available only</option>
+      <option value="yellow">Yellow &gt; 0 only</option>
+      <option value="noball">Optical no-ball only</option>
+      <option value="missing">Missing evidence only</option>
+    </select>
+  </label>
+  <label>Sort
+    <select data-sort-kind>
+      <option value="default">Default wafer/batch grouping</option>
+      <option value="yellow-desc">Yellow count high → low</option>
+      <option value="yellow-asc">Yellow count low → high</option>
+      <option value="noball-desc">Optical no-ball count high → low</option>
+      <option value="chip-asc">ETROC chip low → high</option>
+    </select>
+  </label>
+  <label>Search
+    <input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" />
+  </label>
+  <span class="filter-result" data-filter-result></span>
+</div>
         <div class="board-shell">
           <div class="board-intro">
             <div class="legend" aria-label="Bump-bonding analysis legend">
@@ -3037,7 +3116,7 @@
             </div>
             <div class="note" style="margin:0">Phase 1: chip-level side-by-side viewer · Pixel grid overlay deferred</div>
           </div>
-          
+
           <section class="xray-wafer-section">
             <div class="wafer-band"><h2>W03F7</h2><span>9 chips · X-ray matched by display chip label</span></div>
             <div class="xray-card-grid">
@@ -4154,5 +4233,82 @@
       Generated: 2026-07-03 09:48:30 · Dataset: final visual no-ball chip table · Manual conflict review applied
     </footer>
   </main>
+
+<script>
+(() => {
+  function parseNumber(text) { const m = String(text || '').match(/-?\d+/); return m ? Number(m[0]) : 0; }
+  function hasNW(el) {
+    if ((el.dataset && el.dataset.nwScans && el.dataset.nwScans !== '[]') || (el.dataset && el.dataset.nwPrimary)) return true;
+    return /NW scan/i.test(el.textContent || '') && !/No NW/i.test(el.textContent || '');
+  }
+  function hasXray(el) {
+    if (el.dataset && (el.dataset.xrayFull || (el.dataset.xrayCrops && el.dataset.xrayCrops !== '[]'))) return true;
+    return /X-ray/i.test(el.textContent || '') && !/No X-ray/i.test(el.textContent || '');
+  }
+  function yellowCount(el) {
+    const title = el.querySelector('.chip-gauge')?.getAttribute('title') || '';
+    const ym = title.match(/YELLOW\s+(\d+)/i); if (ym) return Number(ym[1]);
+    const txt = el.textContent || '';
+    const m1 = txt.match(/(\d+)\s*yellow/i); if (m1) return Number(m1[1]);
+    const m2 = txt.match(/Y\s*(\d+)/i); if (m2) return Number(m2[1]);
+    return 0;
+  }
+  function noBallCount(el) {
+    const countEl = el.querySelector('.chip-card-count'); if (countEl) return parseNumber(countEl.textContent);
+    const txt = el.textContent || '';
+    const m = txt.match(/(\d+)\s*(?:optical\s*)?no-ball/i); if (m) return Number(m[1]);
+    return 0;
+  }
+  function chipNum(el) {
+    const et = el.dataset?.etroc || el.querySelector('.head strong')?.textContent || el.textContent || '';
+    const nums = String(et).match(/(\d+)(?!.*\d)/); return nums ? Number(nums[1]) : 0;
+  }
+  function isMissing(el) { return /Missing evidence|No NW|No X-ray|LGAD not mapped/i.test(el.textContent || ''); }
+  function cardText(el) { return (el.dataset?.hybrid || '') + ' ' + (el.dataset?.etroc || '') + ' ' + (el.textContent || ''); }
+  function setupPanel(panel) {
+    const scope = panel.parentElement;
+    const cards = Array.from(scope.querySelectorAll('a.chip-card,a.xray-card,a.card,a.opt'));
+    if (!cards.length) return;
+    const originals = cards.map((el, idx) => ({el, idx, parent: el.parentElement, next: el.nextSibling}));
+    let flat = document.createElement('div'); flat.className = 'sorted-flat filter-hidden'; panel.after(flat);
+    const filter = panel.querySelector('[data-filter-kind]'); const sort = panel.querySelector('[data-sort-kind]'); const search = panel.querySelector('[data-search-text]'); const result = panel.querySelector('[data-filter-result]');
+    function restore() { originals.forEach(o => { if (o.parent && o.el.parentElement !== o.parent) o.parent.insertBefore(o.el, o.next); }); flat.classList.add('filter-hidden'); }
+    function pass(el) {
+      const f = filter.value; const q = (search.value || '').trim().toLowerCase();
+      let ok = true;
+      if (f === 'nw') ok = hasNW(el); else if (f === 'xray') ok = hasXray(el); else if (f === 'yellow') ok = yellowCount(el) > 0; else if (f === 'noball') ok = noBallCount(el) > 0 || el.classList.contains('no-ball'); else if (f === 'missing') ok = isMissing(el);
+      if (ok && q) ok = cardText(el).toLowerCase().includes(q);
+      return ok;
+    }
+    function apply() {
+      restore();
+      const selected = originals.map(o => o.el).filter(pass);
+      originals.forEach(o => o.el.classList.toggle('filter-hidden', !selected.includes(o.el)));
+      let visible = selected.slice();
+      if (sort.value !== 'default') {
+        visible.sort((a,b) => {
+          if (sort.value === 'yellow-desc') return yellowCount(b)-yellowCount(a) || chipNum(a)-chipNum(b);
+          if (sort.value === 'yellow-asc') return yellowCount(a)-yellowCount(b) || chipNum(a)-chipNum(b);
+          if (sort.value === 'noball-desc') return noBallCount(b)-noBallCount(a) || yellowCount(b)-yellowCount(a);
+          if (sort.value === 'chip-asc') return chipNum(a)-chipNum(b);
+          return 0;
+        });
+        flat.classList.remove('filter-hidden'); visible.forEach(el => flat.appendChild(el));
+      }
+      // hide empty wafer/batch sections in default grouped mode
+      scope.querySelectorAll('.board-batch,.xray-wafer-section,section').forEach(sec => {
+        if (sec.contains(panel) || sec === flat) return;
+        const secCards = Array.from(sec.querySelectorAll('a.chip-card,a.xray-card,a.card,a.opt'));
+        if (secCards.length) sec.classList.toggle('filter-hidden', !secCards.some(c => !c.classList.contains('filter-hidden')) || sort.value !== 'default');
+      });
+      if (result) result.textContent = `${visible.length} / ${cards.length} shown`;
+    }
+    [filter, sort, search].forEach(x => x && x.addEventListener('input', apply));
+    apply();
+  }
+  document.querySelectorAll('[data-filter-panel]').forEach(setupPanel);
+})();
+</script>
+
 </body>
 </html>
