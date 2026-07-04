@@ -1,4 +1,9 @@
-FROM nginxinc/nginx-unprivileged:stable-alpine
-COPY hybrid-bbqc /usr/share/nginx/html
-COPY assets /usr/share/nginx/html/assets
+FROM python:3.12-alpine
+ENV STATIC_ROOT=/app/static     COMMENTS_DB=/data/comments.sqlite3     PORT=8080
+WORKDIR /app
+COPY hybrid-bbqc /app/static
+COPY assets /app/static/assets
+RUN addgroup -S app && adduser -S app -G app && mkdir -p /data && chown -R app:app /app /data
+USER app
 EXPOSE 8080
+CMD ["python", "/app/static/server.py"]
