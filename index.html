@@ -186,10 +186,7 @@
     .modal-body { max-height: calc(94vh - 56px); overflow: auto; padding: 12px; background: #f4f1e7; }
     .modal-body img { display: block; max-width: 100%; height: auto; margin: 0 auto; border-radius: 10px; box-shadow: 0 4px 22px rgba(0,0,0,.16); }
     footer { color: var(--muted); font-size: 12px; margin-top: 28px; }
-
-    .filter-sort-panel{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin:12px 0 18px;padding:12px 14px;background:#fffdf8;border:1px solid #e6e0d2;border-radius:16px;box-shadow:0 6px 22px rgba(16,75,58,.05)}
-    .filter-sort-panel label{display:flex;flex-direction:column;gap:4px;color:#6d756f;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:760}.filter-sort-panel select,.filter-sort-panel input{min-width:150px;border:1px solid #d8d0bf;border-radius:10px;background:#fff;color:#18201d;padding:8px 10px;font:inherit;font-size:13px;text-transform:none;letter-spacing:0}.filter-sort-panel .filter-result{margin-left:auto;color:#6d756f;font-size:12px;font-weight:700}.filter-hidden{display:none!important}.sorted-flat{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:14px}.sorted-flat .board-batch,.sorted-flat .wafer-band,.sorted-flat .wafer,.sorted-flat .batch-rail{display:none!important}@media(max-width:1000px){.filter-sort-panel{align-items:stretch}.filter-sort-panel label,.filter-sort-panel select,.filter-sort-panel input{width:100%}.filter-sort-panel .filter-result{margin-left:0}.sorted-flat{grid-template-columns:1fr}}
-
+    .filter-sort-panel{display:flex;flex-wrap:wrap;align-items:flex-end;gap:12px;margin:12px 0 18px;padding:12px 14px;background:#fffdf8;border:1px solid #e6e0d2;border-radius:16px;box-shadow:0 6px 22px rgba(16,75,58,.05)}.filter-sort-panel label{display:flex;flex-direction:column;gap:4px;color:#6d756f;font-size:11px;text-transform:uppercase;letter-spacing:.08em;font-weight:760}.filter-sort-panel select,.filter-sort-panel input{min-width:150px;border:1px solid #d8d0bf;border-radius:10px;background:#fff;color:#18201d;padding:8px 10px;font:inherit;font-size:13px;text-transform:none;letter-spacing:0}.filter-sort-panel .filter-result{margin-left:auto;color:#6d756f;font-size:12px;font-weight:700}.filter-hidden{display:none!important}.sorted-flat{display:grid!important;grid-template-columns:repeat(auto-fill,minmax(460px,1fr));gap:14px}.sorted-flat .board-batch,.sorted-flat .wafer-band,.sorted-flat .wafer,.sorted-flat .batch-rail{display:none!important}
     @media (max-width: 1000px) {
       main, header { padding-left: 20px; padding-right: 20px; }
       .summary-grid { grid-template-columns: repeat(2, 1fr); }
@@ -259,31 +256,7 @@
       <section>
         <h2>Native card board</h2>
         <p class="note">Interactive HTML version of the card visual after manual conflict review. Red cards are final visual no-ball chips; green cards are reviewed non-no-ball chips. Unresolved conflicts are zero. Click any chip card to open a large evidence page with optical, X-ray, and NW scan images.</p>
-        <div class="filter-sort-panel" data-filter-panel>
-  <label>Filter
-    <select data-filter-kind>
-      <option value="all">All cards</option>
-      <option value="nw">NW scan available only</option>
-      <option value="xray">X-ray available only</option>
-      <option value="yellow">Yellow &gt; 0 only</option>
-      <option value="noball">Optical no-ball only</option>
-      <option value="missing">Missing evidence only</option>
-    </select>
-  </label>
-  <label>Sort
-    <select data-sort-kind>
-      <option value="default">Default wafer/batch grouping</option>
-      <option value="yellow-desc">Yellow count high → low</option>
-      <option value="yellow-asc">Yellow count low → high</option>
-      <option value="noball-desc">Optical no-ball count high → low</option>
-      <option value="chip-asc">ETROC chip low → high</option>
-    </select>
-  </label>
-  <label>Search
-    <input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" />
-  </label>
-  <span class="filter-result" data-filter-result></span>
-</div>
+        <div class="filter-sort-panel" data-filter-panel><label>Filter<select data-filter-kind><option value="all">All cards</option><option value="nw">NW scan available only</option><option value="xray">X-ray available only</option><option value="yellow">Yellow &gt; 0 only</option><option value="noball">Optical no-ball only</option><option value="missing">Missing evidence only</option></select></label><label>Sort<select data-sort-kind><option value="default">Default wafer/batch grouping</option><option value="yellow-desc">Yellow count high → low</option><option value="yellow-asc">Yellow count low → high</option><option value="noball-desc">Optical no-ball count high → low</option><option value="chip-asc">ETROC chip low → high</option></select></label><label>Search<input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" /></label><span class="filter-result" data-filter-result></span></div>
         <div class="board-shell">
           <div class="board-intro">
             <div class="legend" aria-label="Card legend">
@@ -310,7 +283,7 @@
                   data-title="W03F7 DATA1 chip 87 montage"
                   data-page="chips/W03F7-DATA1-chip-87.html"
                   data-xray-key="3-87" data-xray-full="assets/xray/3-87.jpg" data-xray-crops="[&quot;assets/xray/3-87.HIGH.jpg&quot;, &quot;assets/xray/3-87.HIGH.jpg-1.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-87" data-nw-source="W03_87" data-nw-primary="2026-07-03_18-30-06" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-30-06&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_2D_map_2026-07-03_18-30-06.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_1D_hist_2026-07-03_18-30-06.png&quot;}]"
                   data-etroc="W03F7-87" data-lgad="HPK-W2_1" data-hybrid="W03F7-87 + HPK-W2_1"
                   aria-label="Open W03F7 DATA1 chip 87 montage">
                   <div class="chip-card-top">
@@ -327,7 +300,7 @@
                   data-title="W03F7 DATA1 chip 88 montage"
                   data-page="chips/W03F7-DATA1-chip-88.html"
                   data-xray-key="3-88" data-xray-full="assets/xray/3-88.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-88" data-nw-source="W03_88" data-nw-primary="2026-07-03_18-23-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-23-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_2D_map_2026-07-03_18-23-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_1D_hist_2026-07-03_18-23-02.png&quot;}]"
                   data-etroc="W03F7-88" data-lgad="HPK-W2_2" data-hybrid="W03F7-88 + HPK-W2_2"
                   aria-label="Open W03F7 DATA1 chip 88 montage">
                   <div class="chip-card-top">
@@ -344,7 +317,7 @@
                   data-title="W03F7 DATA1 chip 89 montage"
                   data-page="chips/W03F7-DATA1-chip-89.html"
                   data-xray-key="3-89" data-xray-full="assets/xray/3-89.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-89" data-nw-source="W03_89" data-nw-primary="2026-07-03_18-14-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-14-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_2D_map_2026-07-03_18-14-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_1D_hist_2026-07-03_18-14-02.png&quot;}]"
                   data-etroc="W03F7-89" data-lgad="HPK-W2_3" data-hybrid="W03F7-89 + HPK-W2_3"
                   aria-label="Open W03F7 DATA1 chip 89 montage">
                   <div class="chip-card-top">
@@ -361,7 +334,7 @@
                   data-title="W03F7 DATA1 chip 95 montage"
                   data-page="chips/W03F7-DATA1-chip-95.html"
                   data-xray-key="3-95" data-xray-full="assets/xray/3-95.jpg" data-xray-crops="[&quot;assets/xray/3-95_HIGH_CENTER.jpg&quot;, &quot;assets/xray/3-95_mid.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-95" data-nw-source="W03_95" data-nw-primary="2026-07-03_19-41-00" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-41-00&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-95/W03_95_BL_NW_2D_map_2026-07-03_19-41-00.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-95/W03_95_BL_NW_1D_hist_2026-07-03_19-41-00.png&quot;}]"
                   data-etroc="W03F7-95" data-lgad="HPK-W2_4" data-hybrid="W03F7-95 + HPK-W2_4"
                   aria-label="Open W03F7 DATA1 chip 95 montage">
                   <div class="chip-card-top">
@@ -378,7 +351,7 @@
                   data-title="W03F7 DATA1 chip 96 montage"
                   data-page="chips/W03F7-DATA1-chip-96.html"
                   data-xray-key="3-96" data-xray-full="assets/xray/3-96.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-96" data-nw-source="W03_96" data-nw-primary="2026-07-03_19-34-41" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-34-41&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-96/W03_96_BL_NW_2D_map_2026-07-03_19-34-41.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-96/W03_96_BL_NW_1D_hist_2026-07-03_19-34-41.png&quot;}]"
                   data-etroc="W03F7-96" data-lgad="HPK-W2_5" data-hybrid="W03F7-96 + HPK-W2_5"
                   aria-label="Open W03F7 DATA1 chip 96 montage">
                   <div class="chip-card-top">
@@ -395,7 +368,7 @@
                   data-title="W03F7 DATA1 chip 97 montage"
                   data-page="chips/W03F7-DATA1-chip-97.html"
                   data-xray-key="3-97" data-xray-full="assets/xray/3-97.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-97" data-nw-source="W03_97" data-nw-primary="2026-07-03_19-27-22" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-27-22&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_2D_map_2026-07-03_19-27-22.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_1D_hist_2026-07-03_19-27-22.png&quot;}]"
                   data-etroc="W03F7-97" data-lgad="HPK-W2_6" data-hybrid="W03F7-97 + HPK-W2_6"
                   aria-label="Open W03F7 DATA1 chip 97 montage">
                   <div class="chip-card-top">
@@ -412,7 +385,7 @@
                   data-title="W03F7 DATA1 chip 99 montage"
                   data-page="chips/W03F7-DATA1-chip-99.html"
                   data-xray-key="3-99" data-xray-full="assets/xray/3-99.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-99" data-nw-source="W03_99" data-nw-primary="2026-07-03_20-01-29" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_20-01-29&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_2D_map_2026-07-03_20-01-29.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_1D_hist_2026-07-03_20-01-29.png&quot;}]"
                   data-etroc="W03F7-99" data-lgad="HPK-W2_7" data-hybrid="W03F7-99 + HPK-W2_7"
                   aria-label="Open W03F7 DATA1 chip 99 montage">
                   <div class="chip-card-top">
@@ -429,7 +402,7 @@
                   data-title="W03F7 DATA1 chip 100 montage"
                   data-page="chips/W03F7-DATA1-chip-100.html"
                   data-xray-key="3-100" data-xray-full="assets/xray/3-100.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-100" data-nw-source="W03_100" data-nw-primary="2026-07-03_19-55-00" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-55-00&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-100/W03_100_BL_NW_2D_map_2026-07-03_19-55-00.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-100/W03_100_BL_NW_1D_hist_2026-07-03_19-55-00.png&quot;}]"
                   data-etroc="W03F7-100" data-lgad="HPK-W2_8" data-hybrid="W03F7-100 + HPK-W2_8"
                   aria-label="Open W03F7 DATA1 chip 100 montage">
                   <div class="chip-card-top">
@@ -446,7 +419,7 @@
                   data-title="W03F7 DATA1 chip 102 montage"
                   data-page="chips/W03F7-DATA1-chip-102.html"
                   data-xray-key="3-102" data-xray-full="assets/xray/3-102.jpg" data-xray-crops="[&quot;assets/xray/3-102.jpg-1.jpg&quot;]" data-xray-notes="[]"
-                  data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W03F7-102" data-nw-source="W03_102" data-nw-primary="2026-07-03_19-48-30" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-48-30&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-102/W03_102_BL_NW_2D_map_2026-07-03_19-48-30.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-102/W03_102_BL_NW_1D_hist_2026-07-03_19-48-30.png&quot;}]"
                   data-etroc="W03F7-102" data-lgad="HPK-W2_9" data-hybrid="W03F7-102 + HPK-W2_9"
                   aria-label="Open W03F7 DATA1 chip 102 montage">
                   <div class="chip-card-top">
@@ -637,7 +610,7 @@
                   data-title="W04F2 data2 chip 62 montage"
                   data-page="chips/W04F2-data2-chip-62.html"
                   data-xray-key="4-62" data-xray-full="assets/xray/4-62.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="W04F2-62" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-62" data-nw-source="W04_62" data-nw-primary="2026-07-03_17-28-58" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-28-58&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-62/W04_62_BL_NW_2D_map_2026-07-03_17-28-58.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-62/W04_62_BL_NW_1D_hist_2026-07-03_17-28-58.png&quot;}]"
                   data-etroc="W04F2-62" data-lgad="FBK_LF-W14_29" data-hybrid="W04F2-62 + FBK_LF-W14_29"
                   aria-label="Open W04F2 data2 chip 62 montage">
                   <div class="chip-card-top">
@@ -654,7 +627,7 @@
                   data-title="W04F2 data2 chip 63 montage"
                   data-page="chips/W04F2-data2-chip-63.html"
                   data-xray-key="4-63" data-xray-full="assets/xray/4-63.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="W04F2-63" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-63" data-nw-source="W04_63" data-nw-primary="2026-07-03_17-41-28" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-41-28&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-41-28.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-41-28.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_17-39-32&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-39-32.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-39-32.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_17-37-59&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-37-59.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-37-59.png&quot;}]"
                   data-etroc="W04F2-63" data-lgad="FBK_LF-W14_28" data-hybrid="W04F2-63 + FBK_LF-W14_28"
                   aria-label="Open W04F2 data2 chip 63 montage">
                   <div class="chip-card-top">
@@ -671,7 +644,7 @@
                   data-title="W04F2 data2 chip 64 montage"
                   data-page="chips/W04F2-data2-chip-64.html"
                   data-xray-key="4-64" data-xray-full="assets/xray/4-64.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="W04F2-64" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-64" data-nw-source="W04_64" data-nw-primary="2026-07-03_17-48-41" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-48-41&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-64/W04_64_BL_NW_2D_map_2026-07-03_17-48-41.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-64/W04_64_BL_NW_1D_hist_2026-07-03_17-48-41.png&quot;}]"
                   data-etroc="W04F2-64" data-lgad="FBK_LF-W14_40" data-hybrid="W04F2-64 + FBK_LF-W14_40"
                   aria-label="Open W04F2 data2 chip 64 montage">
                   <div class="chip-card-top">
@@ -688,7 +661,7 @@
                   data-title="W04F2 data2 chip 65 montage"
                   data-page="chips/W04F2-data2-chip-65.html"
                   data-xray-key="4-65" data-xray-full="assets/xray/4-65.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="W04F2-65" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-65" data-nw-source="W04_65" data-nw-primary="2026-07-03_17-00-49" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-00-49&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-65/W04_65_BL_NW_2D_map_2026-07-03_17-00-49.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-65/W04_65_BL_NW_1D_hist_2026-07-03_17-00-49.png&quot;}]"
                   data-etroc="W04F2-65" data-lgad="FBK_LF-W14_39" data-hybrid="W04F2-65 + FBK_LF-W14_39"
                   aria-label="Open W04F2 data2 chip 65 montage">
                   <div class="chip-card-top">
@@ -705,7 +678,7 @@
                   data-title="W04F2 data2 chip 66 montage"
                   data-page="chips/W04F2-data2-chip-66.html"
                   data-xray-key="4-66" data-xray-full="assets/xray/4-66.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="W04F2-66" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-66" data-nw-source="W04_66" data-nw-primary="2026-07-03_17-09-48" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-09-48&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_2D_map_2026-07-03_17-09-48.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_1D_hist_2026-07-03_17-09-48.png&quot;}]"
                   data-etroc="W04F2-66" data-lgad="FBK_LF-W14_38" data-hybrid="W04F2-66 + FBK_LF-W14_38"
                   aria-label="Open W04F2 data2 chip 66 montage">
                   <div class="chip-card-top">
@@ -722,7 +695,7 @@
                   data-title="W04F2 data2 chip 67 montage"
                   data-page="chips/W04F2-data2-chip-67.html"
                   data-xray-key="4-67" data-xray-full="assets/xray/4-67.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="W04F2-67" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-67" data-nw-source="W04_67" data-nw-primary="2026-07-03_17-19-39" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-19-39&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_2D_map_2026-07-03_17-19-39.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_1D_hist_2026-07-03_17-19-39.png&quot;}]"
                   data-etroc="W04F2-67" data-lgad="FBK_LF-W14_37" data-hybrid="W04F2-67 + FBK_LF-W14_37"
                   aria-label="Open W04F2 data2 chip 67 montage">
                   <div class="chip-card-top">
@@ -739,7 +712,7 @@
                   data-title="W04F2 data2 chip 70 montage"
                   data-page="chips/W04F2-data2-chip-70.html"
                   data-xray-key="4-70" data-xray-full="assets/xray/4-70.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                  data-nw-key="W04F2-70" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-70" data-nw-source="W04_70" data-nw-primary="2026-07-03_16-26-45" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-26-45&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_2D_map_2026-07-03_16-26-45.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_1D_hist_2026-07-03_16-26-45.png&quot;}]"
                   data-etroc="W04F2-70" data-lgad="FBK_LF-W14_36" data-hybrid="W04F2-70 + FBK_LF-W14_36"
                   aria-label="Open W04F2 data2 chip 70 montage">
                   <div class="chip-card-top">
@@ -756,7 +729,7 @@
                   data-title="W04F2 data2 chip 79 montage"
                   data-page="chips/W04F2-data2-chip-79.html"
                   data-xray-key="4-79" data-xray-full="assets/xray/4-79.jpg" data-xray-crops="[&quot;assets/xray/4-79_FBK_LEFT_TOP.jpg&quot;, &quot;assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]"
-                  data-nw-key="W04F2-79" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-79" data-nw-source="W04_79" data-nw-primary="2026-07-03_16-52-18" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-52-18&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-52-18.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-52-18.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_16-49-49&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-49-49.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-49-49.png&quot;}]"
                   data-etroc="W04F2-79" data-lgad="FBK_LF-W14_43" data-hybrid="W04F2-79 + FBK_LF-W14_43"
                   aria-label="Open W04F2 data2 chip 79 montage">
                   <div class="chip-card-top">
@@ -773,7 +746,7 @@
                   data-title="W04F2 data2 chip 81 montage"
                   data-page="chips/W04F2-data2-chip-81.html"
                   data-xray-key="4-81" data-xray-full="assets/xray/4-81.jpg" data-xray-crops="[&quot;assets/xray/4-81_CENTER_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]"
-                  data-nw-key="W04F2-81" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                  data-nw-key="W04F2-81" data-nw-source="W04_81" data-nw-primary="2026-07-03_16-40-19" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-40-19&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-81/W04_81_BL_NW_2D_map_2026-07-03_16-40-19.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-81/W04_81_BL_NW_1D_hist_2026-07-03_16-40-19.png&quot;}]"
                   data-etroc="W04F2-81" data-lgad="FBK_LF-W14_34" data-hybrid="W04F2-81 + FBK_LF-W14_34"
                   aria-label="Open W04F2 data2 chip 81 montage">
                   <div class="chip-card-top">
@@ -1602,36 +1575,12 @@
     <section>
       <h2>No-ball chips only</h2>
       <p class="note">Condensed list of chips that contain at least one final visual no-ball position. Click any chip row to open a large evidence page.</p>
-      <div class="filter-sort-panel" data-filter-panel>
-  <label>Filter
-    <select data-filter-kind>
-      <option value="all">All cards</option>
-      <option value="nw">NW scan available only</option>
-      <option value="xray">X-ray available only</option>
-      <option value="yellow">Yellow &gt; 0 only</option>
-      <option value="noball">Optical no-ball only</option>
-      <option value="missing">Missing evidence only</option>
-    </select>
-  </label>
-  <label>Sort
-    <select data-sort-kind>
-      <option value="default">Default wafer/batch grouping</option>
-      <option value="yellow-desc">Yellow count high → low</option>
-      <option value="yellow-asc">Yellow count low → high</option>
-      <option value="noball-desc">Optical no-ball count high → low</option>
-      <option value="chip-asc">ETROC chip low → high</option>
-    </select>
-  </label>
-  <label>Search
-    <input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" />
-  </label>
-  <span class="filter-result" data-filter-result></span>
-</div>
+      <div class="filter-sort-panel" data-filter-panel><label>Filter<select data-filter-kind><option value="all">All cards</option><option value="nw">NW scan available only</option><option value="xray">X-ray available only</option><option value="yellow">Yellow &gt; 0 only</option><option value="noball">Optical no-ball only</option><option value="missing">Missing evidence only</option></select></label><label>Sort<select data-sort-kind><option value="default">Default wafer/batch grouping</option><option value="yellow-desc">Yellow count high → low</option><option value="yellow-asc">Yellow count low → high</option><option value="noball-desc">Optical no-ball count high → low</option><option value="chip-asc">ETROC chip low → high</option></select></label><label>Search<input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" /></label><span class="filter-result" data-filter-result></span></div>
       <div class="table-wrap">
         <table>
           <thead><tr><th>Wafer</th><th>Batch</th><th>Chip</th><th>Hybrid pair</th><th>No-ball count</th><th>Positions</th><th>GREEN</th><th>BLUE</th><th>YELLOW</th><th>RED</th></tr></thead>
           <tbody>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_87.jpg" data-title="W03F7 DATA1 chip 87 montage" data-page="chips/W03F7-DATA1-chip-87.html" data-xray-key="3-87" data-xray-full="assets/xray/3-87.jpg" data-xray-crops="[&quot;assets/xray/3-87.HIGH.jpg&quot;, &quot;assets/xray/3-87.HIGH.jpg-1.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-87" data-lgad="HPK-W2_1" data-hybrid="W03F7-87 + HPK-W2_1" aria-label="Open W03F7 DATA1 chip 87 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_87.jpg" data-title="W03F7 DATA1 chip 87 montage" data-page="chips/W03F7-DATA1-chip-87.html" data-xray-key="3-87" data-xray-full="assets/xray/3-87.jpg" data-xray-crops="[&quot;assets/xray/3-87.HIGH.jpg&quot;, &quot;assets/xray/3-87.HIGH.jpg-1.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]" data-nw-key="W03F7-87" data-nw-source="W03_87" data-nw-primary="2026-07-03_18-30-06" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-30-06&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_2D_map_2026-07-03_18-30-06.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_1D_hist_2026-07-03_18-30-06.png&quot;}]" data-etroc="W03F7-87" data-lgad="HPK-W2_1" data-hybrid="W03F7-87 + HPK-W2_1" aria-label="Open W03F7 DATA1 chip 87 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">87</td>
@@ -1643,7 +1592,7 @@
             <td class="num yellow-text">9</td>
             <td class="num red-text">2</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_88.jpg" data-title="W03F7 DATA1 chip 88 montage" data-page="chips/W03F7-DATA1-chip-88.html" data-xray-key="3-88" data-xray-full="assets/xray/3-88.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-88" data-lgad="HPK-W2_2" data-hybrid="W03F7-88 + HPK-W2_2" aria-label="Open W03F7 DATA1 chip 88 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_88.jpg" data-title="W03F7 DATA1 chip 88 montage" data-page="chips/W03F7-DATA1-chip-88.html" data-xray-key="3-88" data-xray-full="assets/xray/3-88.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-88" data-nw-source="W03_88" data-nw-primary="2026-07-03_18-23-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-23-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_2D_map_2026-07-03_18-23-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_1D_hist_2026-07-03_18-23-02.png&quot;}]" data-etroc="W03F7-88" data-lgad="HPK-W2_2" data-hybrid="W03F7-88 + HPK-W2_2" aria-label="Open W03F7 DATA1 chip 88 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">88</td>
@@ -1655,7 +1604,7 @@
             <td class="num yellow-text">9</td>
             <td class="num red-text">2</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_89.jpg" data-title="W03F7 DATA1 chip 89 montage" data-page="chips/W03F7-DATA1-chip-89.html" data-xray-key="3-89" data-xray-full="assets/xray/3-89.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-89" data-lgad="HPK-W2_3" data-hybrid="W03F7-89 + HPK-W2_3" aria-label="Open W03F7 DATA1 chip 89 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_89.jpg" data-title="W03F7 DATA1 chip 89 montage" data-page="chips/W03F7-DATA1-chip-89.html" data-xray-key="3-89" data-xray-full="assets/xray/3-89.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-89" data-nw-source="W03_89" data-nw-primary="2026-07-03_18-14-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-14-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_2D_map_2026-07-03_18-14-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_1D_hist_2026-07-03_18-14-02.png&quot;}]" data-etroc="W03F7-89" data-lgad="HPK-W2_3" data-hybrid="W03F7-89 + HPK-W2_3" aria-label="Open W03F7 DATA1 chip 89 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">89</td>
@@ -1667,7 +1616,7 @@
             <td class="num yellow-text">6</td>
             <td class="num red-text">1</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_97.jpg" data-title="W03F7 DATA1 chip 97 montage" data-page="chips/W03F7-DATA1-chip-97.html" data-xray-key="3-97" data-xray-full="assets/xray/3-97.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-97" data-lgad="HPK-W2_6" data-hybrid="W03F7-97 + HPK-W2_6" aria-label="Open W03F7 DATA1 chip 97 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_97.jpg" data-title="W03F7 DATA1 chip 97 montage" data-page="chips/W03F7-DATA1-chip-97.html" data-xray-key="3-97" data-xray-full="assets/xray/3-97.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-97" data-nw-source="W03_97" data-nw-primary="2026-07-03_19-27-22" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-27-22&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_2D_map_2026-07-03_19-27-22.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_1D_hist_2026-07-03_19-27-22.png&quot;}]" data-etroc="W03F7-97" data-lgad="HPK-W2_6" data-hybrid="W03F7-97 + HPK-W2_6" aria-label="Open W03F7 DATA1 chip 97 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">97</td>
@@ -1679,7 +1628,7 @@
             <td class="num yellow-text">16</td>
             <td class="num red-text">2</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_99.jpg" data-title="W03F7 DATA1 chip 99 montage" data-page="chips/W03F7-DATA1-chip-99.html" data-xray-key="3-99" data-xray-full="assets/xray/3-99.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-99" data-lgad="HPK-W2_7" data-hybrid="W03F7-99 + HPK-W2_7" aria-label="Open W03F7 DATA1 chip 99 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_99.jpg" data-title="W03F7 DATA1 chip 99 montage" data-page="chips/W03F7-DATA1-chip-99.html" data-xray-key="3-99" data-xray-full="assets/xray/3-99.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-99" data-nw-source="W03_99" data-nw-primary="2026-07-03_20-01-29" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_20-01-29&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_2D_map_2026-07-03_20-01-29.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_1D_hist_2026-07-03_20-01-29.png&quot;}]" data-etroc="W03F7-99" data-lgad="HPK-W2_7" data-hybrid="W03F7-99 + HPK-W2_7" aria-label="Open W03F7 DATA1 chip 99 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">99</td>
@@ -1703,7 +1652,7 @@
             <td class="num yellow-text">5</td>
             <td class="num red-text">1</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_66.jpg" data-title="W04F2 data2 chip 66 montage" data-page="chips/W04F2-data2-chip-66.html" data-xray-key="4-66" data-xray-full="assets/xray/4-66.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-66" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-66" data-lgad="FBK_LF-W14_38" data-hybrid="W04F2-66 + FBK_LF-W14_38" aria-label="Open W04F2 data2 chip 66 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_66.jpg" data-title="W04F2 data2 chip 66 montage" data-page="chips/W04F2-data2-chip-66.html" data-xray-key="4-66" data-xray-full="assets/xray/4-66.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-66" data-nw-source="W04_66" data-nw-primary="2026-07-03_17-09-48" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-09-48&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_2D_map_2026-07-03_17-09-48.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_1D_hist_2026-07-03_17-09-48.png&quot;}]" data-etroc="W04F2-66" data-lgad="FBK_LF-W14_38" data-hybrid="W04F2-66 + FBK_LF-W14_38" aria-label="Open W04F2 data2 chip 66 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">66</td>
@@ -1715,7 +1664,7 @@
             <td class="num yellow-text">16</td>
             <td class="num red-text">3</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_65.jpg" data-title="W04F2 data2 chip 67 montage" data-page="chips/W04F2-data2-chip-67.html" data-xray-key="4-67" data-xray-full="assets/xray/4-67.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-67" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-67" data-lgad="FBK_LF-W14_37" data-hybrid="W04F2-67 + FBK_LF-W14_37" aria-label="Open W04F2 data2 chip 67 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_65.jpg" data-title="W04F2 data2 chip 67 montage" data-page="chips/W04F2-data2-chip-67.html" data-xray-key="4-67" data-xray-full="assets/xray/4-67.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-67" data-nw-source="W04_67" data-nw-primary="2026-07-03_17-19-39" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-19-39&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_2D_map_2026-07-03_17-19-39.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_1D_hist_2026-07-03_17-19-39.png&quot;}]" data-etroc="W04F2-67" data-lgad="FBK_LF-W14_37" data-hybrid="W04F2-67 + FBK_LF-W14_37" aria-label="Open W04F2 data2 chip 67 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">67</td>
@@ -1727,7 +1676,7 @@
             <td class="num yellow-text">5</td>
             <td class="num red-text">1</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_63.jpg" data-title="W04F2 data2 chip 70 montage" data-page="chips/W04F2-data2-chip-70.html" data-xray-key="4-70" data-xray-full="assets/xray/4-70.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-70" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-70" data-lgad="FBK_LF-W14_36" data-hybrid="W04F2-70 + FBK_LF-W14_36" aria-label="Open W04F2 data2 chip 70 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_63.jpg" data-title="W04F2 data2 chip 70 montage" data-page="chips/W04F2-data2-chip-70.html" data-xray-key="4-70" data-xray-full="assets/xray/4-70.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-70" data-nw-source="W04_70" data-nw-primary="2026-07-03_16-26-45" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-26-45&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_2D_map_2026-07-03_16-26-45.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_1D_hist_2026-07-03_16-26-45.png&quot;}]" data-etroc="W04F2-70" data-lgad="FBK_LF-W14_36" data-hybrid="W04F2-70 + FBK_LF-W14_36" aria-label="Open W04F2 data2 chip 70 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">70</td>
@@ -1739,7 +1688,7 @@
             <td class="num yellow-text">22</td>
             <td class="num red-text">1</td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_62.jpg" data-title="W04F2 data2 chip 79 montage" data-page="chips/W04F2-data2-chip-79.html" data-xray-key="4-79" data-xray-full="assets/xray/4-79.jpg" data-xray-crops="[&quot;assets/xray/4-79_FBK_LEFT_TOP.jpg&quot;, &quot;assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]" data-nw-key="W04F2-79" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-79" data-lgad="FBK_LF-W14_43" data-hybrid="W04F2-79 + FBK_LF-W14_43" aria-label="Open W04F2 data2 chip 79 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_62.jpg" data-title="W04F2 data2 chip 79 montage" data-page="chips/W04F2-data2-chip-79.html" data-xray-key="4-79" data-xray-full="assets/xray/4-79.jpg" data-xray-crops="[&quot;assets/xray/4-79_FBK_LEFT_TOP.jpg&quot;, &quot;assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]" data-nw-key="W04F2-79" data-nw-source="W04_79" data-nw-primary="2026-07-03_16-52-18" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-52-18&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-52-18.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-52-18.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_16-49-49&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-49-49.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-49-49.png&quot;}]" data-etroc="W04F2-79" data-lgad="FBK_LF-W14_43" data-hybrid="W04F2-79 + FBK_LF-W14_43" aria-label="Open W04F2 data2 chip 79 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">79</td>
@@ -1882,7 +1831,7 @@
         <table>
           <thead><tr><th>Wafer</th><th>Batch</th><th>Chip</th><th>Hybrid pair</th><th>Visual no-ball</th><th>No-ball count</th><th>Positions</th><th>GREEN</th><th>BLUE</th><th>YELLOW</th><th>RED</th><th>NEED</th><th>Category mix</th></tr></thead>
           <tbody>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_87.jpg" data-title="W03F7 DATA1 chip 87 montage" data-page="chips/W03F7-DATA1-chip-87.html" data-xray-key="3-87" data-xray-full="assets/xray/3-87.jpg" data-xray-crops="[&quot;assets/xray/3-87.HIGH.jpg&quot;, &quot;assets/xray/3-87.HIGH.jpg-1.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-87" data-lgad="HPK-W2_1" data-hybrid="W03F7-87 + HPK-W2_1" aria-label="Open W03F7 DATA1 chip 87 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_87.jpg" data-title="W03F7 DATA1 chip 87 montage" data-page="chips/W03F7-DATA1-chip-87.html" data-xray-key="3-87" data-xray-full="assets/xray/3-87.jpg" data-xray-crops="[&quot;assets/xray/3-87.HIGH.jpg&quot;, &quot;assets/xray/3-87.HIGH.jpg-1.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]" data-nw-key="W03F7-87" data-nw-source="W03_87" data-nw-primary="2026-07-03_18-30-06" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-30-06&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_2D_map_2026-07-03_18-30-06.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_1D_hist_2026-07-03_18-30-06.png&quot;}]" data-etroc="W03F7-87" data-lgad="HPK-W2_1" data-hybrid="W03F7-87 + HPK-W2_1" aria-label="Open W03F7 DATA1 chip 87 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">87</td>
@@ -1897,7 +1846,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:60.9375%" title="GREEN: 156"></span><span class="seg blue" style="width:34.7656%" title="BLUE: 89"></span><span class="seg yellow" style="width:3.5156%" title="YELLOW: 9"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_88.jpg" data-title="W03F7 DATA1 chip 88 montage" data-page="chips/W03F7-DATA1-chip-88.html" data-xray-key="3-88" data-xray-full="assets/xray/3-88.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-88" data-lgad="HPK-W2_2" data-hybrid="W03F7-88 + HPK-W2_2" aria-label="Open W03F7 DATA1 chip 88 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_88.jpg" data-title="W03F7 DATA1 chip 88 montage" data-page="chips/W03F7-DATA1-chip-88.html" data-xray-key="3-88" data-xray-full="assets/xray/3-88.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-88" data-nw-source="W03_88" data-nw-primary="2026-07-03_18-23-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-23-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_2D_map_2026-07-03_18-23-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_1D_hist_2026-07-03_18-23-02.png&quot;}]" data-etroc="W03F7-88" data-lgad="HPK-W2_2" data-hybrid="W03F7-88 + HPK-W2_2" aria-label="Open W03F7 DATA1 chip 88 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">88</td>
@@ -1912,7 +1861,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:67.9688%" title="GREEN: 174"></span><span class="seg blue" style="width:27.7344%" title="BLUE: 71"></span><span class="seg yellow" style="width:3.5156%" title="YELLOW: 9"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_89.jpg" data-title="W03F7 DATA1 chip 89 montage" data-page="chips/W03F7-DATA1-chip-89.html" data-xray-key="3-89" data-xray-full="assets/xray/3-89.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-89" data-lgad="HPK-W2_3" data-hybrid="W03F7-89 + HPK-W2_3" aria-label="Open W03F7 DATA1 chip 89 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_89.jpg" data-title="W03F7 DATA1 chip 89 montage" data-page="chips/W03F7-DATA1-chip-89.html" data-xray-key="3-89" data-xray-full="assets/xray/3-89.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-89" data-nw-source="W03_89" data-nw-primary="2026-07-03_18-14-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-14-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_2D_map_2026-07-03_18-14-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_1D_hist_2026-07-03_18-14-02.png&quot;}]" data-etroc="W03F7-89" data-lgad="HPK-W2_3" data-hybrid="W03F7-89 + HPK-W2_3" aria-label="Open W03F7 DATA1 chip 89 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">89</td>
@@ -1927,7 +1876,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:67.1875%" title="GREEN: 172"></span><span class="seg blue" style="width:30.0781%" title="BLUE: 77"></span><span class="seg yellow" style="width:2.3438%" title="YELLOW: 6"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_95.jpg" data-title="W03F7 DATA1 chip 95 montage" data-page="chips/W03F7-DATA1-chip-95.html" data-xray-key="3-95" data-xray-full="assets/xray/3-95.jpg" data-xray-crops="[&quot;assets/xray/3-95_HIGH_CENTER.jpg&quot;, &quot;assets/xray/3-95_mid.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-95" data-lgad="HPK-W2_4" data-hybrid="W03F7-95 + HPK-W2_4" aria-label="Open W03F7 DATA1 chip 95 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_95.jpg" data-title="W03F7 DATA1 chip 95 montage" data-page="chips/W03F7-DATA1-chip-95.html" data-xray-key="3-95" data-xray-full="assets/xray/3-95.jpg" data-xray-crops="[&quot;assets/xray/3-95_HIGH_CENTER.jpg&quot;, &quot;assets/xray/3-95_mid.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]" data-nw-key="W03F7-95" data-nw-source="W03_95" data-nw-primary="2026-07-03_19-41-00" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-41-00&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-95/W03_95_BL_NW_2D_map_2026-07-03_19-41-00.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-95/W03_95_BL_NW_1D_hist_2026-07-03_19-41-00.png&quot;}]" data-etroc="W03F7-95" data-lgad="HPK-W2_4" data-hybrid="W03F7-95 + HPK-W2_4" aria-label="Open W03F7 DATA1 chip 95 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">95</td>
@@ -1942,7 +1891,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:79.6875%" title="GREEN: 204"></span><span class="seg blue" style="width:13.2812%" title="BLUE: 34"></span><span class="seg yellow" style="width:7.0312%" title="YELLOW: 18"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_96.jpg" data-title="W03F7 DATA1 chip 96 montage" data-page="chips/W03F7-DATA1-chip-96.html" data-xray-key="3-96" data-xray-full="assets/xray/3-96.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-96" data-lgad="HPK-W2_5" data-hybrid="W03F7-96 + HPK-W2_5" aria-label="Open W03F7 DATA1 chip 96 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_96.jpg" data-title="W03F7 DATA1 chip 96 montage" data-page="chips/W03F7-DATA1-chip-96.html" data-xray-key="3-96" data-xray-full="assets/xray/3-96.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-96" data-nw-source="W03_96" data-nw-primary="2026-07-03_19-34-41" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-34-41&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-96/W03_96_BL_NW_2D_map_2026-07-03_19-34-41.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-96/W03_96_BL_NW_1D_hist_2026-07-03_19-34-41.png&quot;}]" data-etroc="W03F7-96" data-lgad="HPK-W2_5" data-hybrid="W03F7-96 + HPK-W2_5" aria-label="Open W03F7 DATA1 chip 96 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">96</td>
@@ -1957,7 +1906,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:89.4531%" title="GREEN: 229"></span><span class="seg blue" style="width:3.5156%" title="BLUE: 9"></span><span class="seg yellow" style="width:7.0312%" title="YELLOW: 18"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_97.jpg" data-title="W03F7 DATA1 chip 97 montage" data-page="chips/W03F7-DATA1-chip-97.html" data-xray-key="3-97" data-xray-full="assets/xray/3-97.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-97" data-lgad="HPK-W2_6" data-hybrid="W03F7-97 + HPK-W2_6" aria-label="Open W03F7 DATA1 chip 97 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_97.jpg" data-title="W03F7 DATA1 chip 97 montage" data-page="chips/W03F7-DATA1-chip-97.html" data-xray-key="3-97" data-xray-full="assets/xray/3-97.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-97" data-nw-source="W03_97" data-nw-primary="2026-07-03_19-27-22" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-27-22&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_2D_map_2026-07-03_19-27-22.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_1D_hist_2026-07-03_19-27-22.png&quot;}]" data-etroc="W03F7-97" data-lgad="HPK-W2_6" data-hybrid="W03F7-97 + HPK-W2_6" aria-label="Open W03F7 DATA1 chip 97 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">97</td>
@@ -1972,7 +1921,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:89.0625%" title="GREEN: 228"></span><span class="seg blue" style="width:3.9062%" title="BLUE: 10"></span><span class="seg yellow" style="width:6.2500%" title="YELLOW: 16"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_99.jpg" data-title="W03F7 DATA1 chip 99 montage" data-page="chips/W03F7-DATA1-chip-99.html" data-xray-key="3-99" data-xray-full="assets/xray/3-99.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-99" data-lgad="HPK-W2_7" data-hybrid="W03F7-99 + HPK-W2_7" aria-label="Open W03F7 DATA1 chip 99 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_99.jpg" data-title="W03F7 DATA1 chip 99 montage" data-page="chips/W03F7-DATA1-chip-99.html" data-xray-key="3-99" data-xray-full="assets/xray/3-99.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-99" data-nw-source="W03_99" data-nw-primary="2026-07-03_20-01-29" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_20-01-29&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_2D_map_2026-07-03_20-01-29.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_1D_hist_2026-07-03_20-01-29.png&quot;}]" data-etroc="W03F7-99" data-lgad="HPK-W2_7" data-hybrid="W03F7-99 + HPK-W2_7" aria-label="Open W03F7 DATA1 chip 99 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">99</td>
@@ -1987,7 +1936,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:57.0312%" title="GREEN: 146"></span><span class="seg blue" style="width:36.7188%" title="BLUE: 94"></span><span class="seg yellow" style="width:5.4688%" title="YELLOW: 14"></span><span class="seg red" style="width:0.7812%" title="RED: 2"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_100.jpg" data-title="W03F7 DATA1 chip 100 montage" data-page="chips/W03F7-DATA1-chip-100.html" data-xray-key="3-100" data-xray-full="assets/xray/3-100.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-100" data-lgad="HPK-W2_8" data-hybrid="W03F7-100 + HPK-W2_8" aria-label="Open W03F7 DATA1 chip 100 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_100.jpg" data-title="W03F7 DATA1 chip 100 montage" data-page="chips/W03F7-DATA1-chip-100.html" data-xray-key="3-100" data-xray-full="assets/xray/3-100.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W03F7-100" data-nw-source="W03_100" data-nw-primary="2026-07-03_19-55-00" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-55-00&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-100/W03_100_BL_NW_2D_map_2026-07-03_19-55-00.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-100/W03_100_BL_NW_1D_hist_2026-07-03_19-55-00.png&quot;}]" data-etroc="W03F7-100" data-lgad="HPK-W2_8" data-hybrid="W03F7-100 + HPK-W2_8" aria-label="Open W03F7 DATA1 chip 100 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">100</td>
@@ -2002,7 +1951,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:77.3438%" title="GREEN: 198"></span><span class="seg blue" style="width:17.9688%" title="BLUE: 46"></span><span class="seg yellow" style="width:4.6875%" title="YELLOW: 12"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_102.jpg" data-title="W03F7 DATA1 chip 102 montage" data-page="chips/W03F7-DATA1-chip-102.html" data-xray-key="3-102" data-xray-full="assets/xray/3-102.jpg" data-xray-crops="[&quot;assets/xray/3-102.jpg-1.jpg&quot;]" data-xray-notes="[]" data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W03F7-102" data-lgad="HPK-W2_9" data-hybrid="W03F7-102 + HPK-W2_9" aria-label="Open W03F7 DATA1 chip 102 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W03F7_DATA1_chip_102.jpg" data-title="W03F7 DATA1 chip 102 montage" data-page="chips/W03F7-DATA1-chip-102.html" data-xray-key="3-102" data-xray-full="assets/xray/3-102.jpg" data-xray-crops="[&quot;assets/xray/3-102.jpg-1.jpg&quot;]" data-xray-notes="[]" data-nw-key="W03F7-102" data-nw-source="W03_102" data-nw-primary="2026-07-03_19-48-30" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-48-30&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-102/W03_102_BL_NW_2D_map_2026-07-03_19-48-30.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-102/W03_102_BL_NW_1D_hist_2026-07-03_19-48-30.png&quot;}]" data-etroc="W03F7-102" data-lgad="HPK-W2_9" data-hybrid="W03F7-102 + HPK-W2_9" aria-label="Open W03F7 DATA1 chip 102 montage">
             <td>W03F7</td>
             <td>DATA1</td>
             <td class="num chip">102</td>
@@ -2152,7 +2101,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:58.9844%" title="GREEN: 151"></span><span class="seg blue" style="width:39.0625%" title="BLUE: 100"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_79.jpg" data-title="W04F2 data2 chip 62 montage" data-page="chips/W04F2-data2-chip-62.html" data-xray-key="4-62" data-xray-full="assets/xray/4-62.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-62" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-62" data-lgad="FBK_LF-W14_29" data-hybrid="W04F2-62 + FBK_LF-W14_29" aria-label="Open W04F2 data2 chip 62 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_79.jpg" data-title="W04F2 data2 chip 62 montage" data-page="chips/W04F2-data2-chip-62.html" data-xray-key="4-62" data-xray-full="assets/xray/4-62.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-62" data-nw-source="W04_62" data-nw-primary="2026-07-03_17-28-58" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-28-58&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-62/W04_62_BL_NW_2D_map_2026-07-03_17-28-58.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-62/W04_62_BL_NW_1D_hist_2026-07-03_17-28-58.png&quot;}]" data-etroc="W04F2-62" data-lgad="FBK_LF-W14_29" data-hybrid="W04F2-62 + FBK_LF-W14_29" aria-label="Open W04F2 data2 chip 62 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">62</td>
@@ -2167,7 +2116,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:60.9375%" title="GREEN: 156"></span><span class="seg blue" style="width:34.7656%" title="BLUE: 89"></span><span class="seg yellow" style="width:4.2969%" title="YELLOW: 11"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_70.jpg" data-title="W04F2 data2 chip 63 montage" data-page="chips/W04F2-data2-chip-63.html" data-xray-key="4-63" data-xray-full="assets/xray/4-63.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-63" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-63" data-lgad="FBK_LF-W14_28" data-hybrid="W04F2-63 + FBK_LF-W14_28" aria-label="Open W04F2 data2 chip 63 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_70.jpg" data-title="W04F2 data2 chip 63 montage" data-page="chips/W04F2-data2-chip-63.html" data-xray-key="4-63" data-xray-full="assets/xray/4-63.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-63" data-nw-source="W04_63" data-nw-primary="2026-07-03_17-41-28" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-41-28&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-41-28.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-41-28.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_17-39-32&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-39-32.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-39-32.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_17-37-59&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-37-59.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-37-59.png&quot;}]" data-etroc="W04F2-63" data-lgad="FBK_LF-W14_28" data-hybrid="W04F2-63 + FBK_LF-W14_28" aria-label="Open W04F2 data2 chip 63 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">63</td>
@@ -2182,7 +2131,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:53.5156%" title="GREEN: 137"></span><span class="seg blue" style="width:44.9219%" title="BLUE: 115"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_81.jpg" data-title="W04F2 data2 chip 64 montage" data-page="chips/W04F2-data2-chip-64.html" data-xray-key="4-64" data-xray-full="assets/xray/4-64.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-64" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-64" data-lgad="FBK_LF-W14_40" data-hybrid="W04F2-64 + FBK_LF-W14_40" aria-label="Open W04F2 data2 chip 64 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_81.jpg" data-title="W04F2 data2 chip 64 montage" data-page="chips/W04F2-data2-chip-64.html" data-xray-key="4-64" data-xray-full="assets/xray/4-64.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-64" data-nw-source="W04_64" data-nw-primary="2026-07-03_17-48-41" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-48-41&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-64/W04_64_BL_NW_2D_map_2026-07-03_17-48-41.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-64/W04_64_BL_NW_1D_hist_2026-07-03_17-48-41.png&quot;}]" data-etroc="W04F2-64" data-lgad="FBK_LF-W14_40" data-hybrid="W04F2-64 + FBK_LF-W14_40" aria-label="Open W04F2 data2 chip 64 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">64</td>
@@ -2197,7 +2146,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:60.9375%" title="GREEN: 156"></span><span class="seg blue" style="width:34.7656%" title="BLUE: 89"></span><span class="seg yellow" style="width:4.2969%" title="YELLOW: 11"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_67.jpg" data-title="W04F2 data2 chip 65 montage" data-page="chips/W04F2-data2-chip-65.html" data-xray-key="4-65" data-xray-full="assets/xray/4-65.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-65" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-65" data-lgad="FBK_LF-W14_39" data-hybrid="W04F2-65 + FBK_LF-W14_39" aria-label="Open W04F2 data2 chip 65 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_67.jpg" data-title="W04F2 data2 chip 65 montage" data-page="chips/W04F2-data2-chip-65.html" data-xray-key="4-65" data-xray-full="assets/xray/4-65.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-65" data-nw-source="W04_65" data-nw-primary="2026-07-03_17-00-49" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-00-49&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-65/W04_65_BL_NW_2D_map_2026-07-03_17-00-49.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-65/W04_65_BL_NW_1D_hist_2026-07-03_17-00-49.png&quot;}]" data-etroc="W04F2-65" data-lgad="FBK_LF-W14_39" data-hybrid="W04F2-65 + FBK_LF-W14_39" aria-label="Open W04F2 data2 chip 65 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">65</td>
@@ -2212,7 +2161,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:77.3438%" title="GREEN: 198"></span><span class="seg blue" style="width:17.5781%" title="BLUE: 45"></span><span class="seg yellow" style="width:5.0781%" title="YELLOW: 13"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_66.jpg" data-title="W04F2 data2 chip 66 montage" data-page="chips/W04F2-data2-chip-66.html" data-xray-key="4-66" data-xray-full="assets/xray/4-66.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-66" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-66" data-lgad="FBK_LF-W14_38" data-hybrid="W04F2-66 + FBK_LF-W14_38" aria-label="Open W04F2 data2 chip 66 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_66.jpg" data-title="W04F2 data2 chip 66 montage" data-page="chips/W04F2-data2-chip-66.html" data-xray-key="4-66" data-xray-full="assets/xray/4-66.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-66" data-nw-source="W04_66" data-nw-primary="2026-07-03_17-09-48" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-09-48&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_2D_map_2026-07-03_17-09-48.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_1D_hist_2026-07-03_17-09-48.png&quot;}]" data-etroc="W04F2-66" data-lgad="FBK_LF-W14_38" data-hybrid="W04F2-66 + FBK_LF-W14_38" aria-label="Open W04F2 data2 chip 66 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">66</td>
@@ -2227,7 +2176,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:77.3438%" title="GREEN: 198"></span><span class="seg blue" style="width:15.2344%" title="BLUE: 39"></span><span class="seg yellow" style="width:6.2500%" title="YELLOW: 16"></span><span class="seg red" style="width:1.1719%" title="RED: 3"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_65.jpg" data-title="W04F2 data2 chip 67 montage" data-page="chips/W04F2-data2-chip-67.html" data-xray-key="4-67" data-xray-full="assets/xray/4-67.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-67" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-67" data-lgad="FBK_LF-W14_37" data-hybrid="W04F2-67 + FBK_LF-W14_37" aria-label="Open W04F2 data2 chip 67 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_65.jpg" data-title="W04F2 data2 chip 67 montage" data-page="chips/W04F2-data2-chip-67.html" data-xray-key="4-67" data-xray-full="assets/xray/4-67.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-67" data-nw-source="W04_67" data-nw-primary="2026-07-03_17-19-39" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-19-39&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_2D_map_2026-07-03_17-19-39.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_1D_hist_2026-07-03_17-19-39.png&quot;}]" data-etroc="W04F2-67" data-lgad="FBK_LF-W14_37" data-hybrid="W04F2-67 + FBK_LF-W14_37" aria-label="Open W04F2 data2 chip 67 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">67</td>
@@ -2242,7 +2191,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:69.5312%" title="GREEN: 178"></span><span class="seg blue" style="width:28.1250%" title="BLUE: 72"></span><span class="seg yellow" style="width:1.9531%" title="YELLOW: 5"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_63.jpg" data-title="W04F2 data2 chip 70 montage" data-page="chips/W04F2-data2-chip-70.html" data-xray-key="4-70" data-xray-full="assets/xray/4-70.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-70" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-70" data-lgad="FBK_LF-W14_36" data-hybrid="W04F2-70 + FBK_LF-W14_36" aria-label="Open W04F2 data2 chip 70 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_63.jpg" data-title="W04F2 data2 chip 70 montage" data-page="chips/W04F2-data2-chip-70.html" data-xray-key="4-70" data-xray-full="assets/xray/4-70.jpg" data-xray-crops="[]" data-xray-notes="[]" data-nw-key="W04F2-70" data-nw-source="W04_70" data-nw-primary="2026-07-03_16-26-45" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-26-45&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_2D_map_2026-07-03_16-26-45.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_1D_hist_2026-07-03_16-26-45.png&quot;}]" data-etroc="W04F2-70" data-lgad="FBK_LF-W14_36" data-hybrid="W04F2-70 + FBK_LF-W14_36" aria-label="Open W04F2 data2 chip 70 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">70</td>
@@ -2257,7 +2206,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:52.3438%" title="GREEN: 134"></span><span class="seg blue" style="width:38.6719%" title="BLUE: 99"></span><span class="seg yellow" style="width:8.5938%" title="YELLOW: 22"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
           </tr>
-          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_62.jpg" data-title="W04F2 data2 chip 79 montage" data-page="chips/W04F2-data2-chip-79.html" data-xray-key="4-79" data-xray-full="assets/xray/4-79.jpg" data-xray-crops="[&quot;assets/xray/4-79_FBK_LEFT_TOP.jpg&quot;, &quot;assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]" data-nw-key="W04F2-79" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-79" data-lgad="FBK_LF-W14_43" data-hybrid="W04F2-79 + FBK_LF-W14_43" aria-label="Open W04F2 data2 chip 79 montage">
+          <tr class="chip-row no-ball-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_62.jpg" data-title="W04F2 data2 chip 79 montage" data-page="chips/W04F2-data2-chip-79.html" data-xray-key="4-79" data-xray-full="assets/xray/4-79.jpg" data-xray-crops="[&quot;assets/xray/4-79_FBK_LEFT_TOP.jpg&quot;, &quot;assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]" data-nw-key="W04F2-79" data-nw-source="W04_79" data-nw-primary="2026-07-03_16-52-18" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-52-18&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-52-18.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-52-18.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_16-49-49&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-49-49.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-49-49.png&quot;}]" data-etroc="W04F2-79" data-lgad="FBK_LF-W14_43" data-hybrid="W04F2-79 + FBK_LF-W14_43" aria-label="Open W04F2 data2 chip 79 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">79</td>
@@ -2272,7 +2221,7 @@
             <td class="num muted-text">0</td>
             <td><div class="bar"><span class="seg green" style="width:64.0625%" title="GREEN: 164"></span><span class="seg blue" style="width:33.9844%" title="BLUE: 87"></span><span class="seg yellow" style="width:1.5625%" title="YELLOW: 4"></span><span class="seg red" style="width:0.3906%" title="RED: 1"></span></div></td>
           </tr>
-          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_64.jpg" data-title="W04F2 data2 chip 81 montage" data-page="chips/W04F2-data2-chip-81.html" data-xray-key="4-81" data-xray-full="assets/xray/4-81.jpg" data-xray-crops="[&quot;assets/xray/4-81_CENTER_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]" data-nw-key="W04F2-81" data-nw-source="" data-nw-primary="" data-nw-scans="[]" data-etroc="W04F2-81" data-lgad="FBK_LF-W14_34" data-hybrid="W04F2-81 + FBK_LF-W14_34" aria-label="Open W04F2 data2 chip 81 montage">
+          <tr class="chip-row" tabindex="0" role="button" onclick="if(!event.target.closest('a,button')) window.location.href=this.dataset.page" data-montage="assets/montages/W04F2_data2_chip_64.jpg" data-title="W04F2 data2 chip 81 montage" data-page="chips/W04F2-data2-chip-81.html" data-xray-key="4-81" data-xray-full="assets/xray/4-81.jpg" data-xray-crops="[&quot;assets/xray/4-81_CENTER_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]" data-nw-key="W04F2-81" data-nw-source="W04_81" data-nw-primary="2026-07-03_16-40-19" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-40-19&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-81/W04_81_BL_NW_2D_map_2026-07-03_16-40-19.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-81/W04_81_BL_NW_1D_hist_2026-07-03_16-40-19.png&quot;}]" data-etroc="W04F2-81" data-lgad="FBK_LF-W14_34" data-hybrid="W04F2-81 + FBK_LF-W14_34" aria-label="Open W04F2 data2 chip 81 montage">
             <td>W04F2</td>
             <td>data2</td>
             <td class="num chip">81</td>
@@ -3079,31 +3028,7 @@
       <section>
         <h2>Bump-bonding analysis</h2>
         <p class="note">Chip-level cross-check between optical inspection montage, post bump-bonding X-ray images, and NW scan results. NW scan is an electrical attention screen: ETROC2 threshold calibration expects NW &lt; 10, but NW anomalies are not by themselves direct proof of bump failure.</p>
-        <div class="filter-sort-panel" data-filter-panel>
-  <label>Filter
-    <select data-filter-kind>
-      <option value="all">All cards</option>
-      <option value="nw">NW scan available only</option>
-      <option value="xray">X-ray available only</option>
-      <option value="yellow">Yellow &gt; 0 only</option>
-      <option value="noball">Optical no-ball only</option>
-      <option value="missing">Missing evidence only</option>
-    </select>
-  </label>
-  <label>Sort
-    <select data-sort-kind>
-      <option value="default">Default wafer/batch grouping</option>
-      <option value="yellow-desc">Yellow count high → low</option>
-      <option value="yellow-asc">Yellow count low → high</option>
-      <option value="noball-desc">Optical no-ball count high → low</option>
-      <option value="chip-asc">ETROC chip low → high</option>
-    </select>
-  </label>
-  <label>Search
-    <input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" />
-  </label>
-  <span class="filter-result" data-filter-result></span>
-</div>
+        <div class="filter-sort-panel" data-filter-panel><label>Filter<select data-filter-kind><option value="all">All cards</option><option value="nw">NW scan available only</option><option value="xray">X-ray available only</option><option value="yellow">Yellow &gt; 0 only</option><option value="noball">Optical no-ball only</option><option value="missing">Missing evidence only</option></select></label><label>Sort<select data-sort-kind><option value="default">Default wafer/batch grouping</option><option value="yellow-desc">Yellow count high → low</option><option value="yellow-asc">Yellow count low → high</option><option value="noball-desc">Optical no-ball count high → low</option><option value="chip-asc">ETROC chip low → high</option></select></label><label>Search<input data-search-text type="search" placeholder="ETROC, LGAD, wafer, chip" /></label><span class="filter-result" data-filter-result></span></div>
         <div class="board-shell">
           <div class="board-intro">
             <div class="legend" aria-label="Bump-bonding analysis legend">
@@ -3125,17 +3050,24 @@
                 data-title="W03F7 DATA1 chip 87 cross-check"
                 data-page="chips/W03F7-DATA1-chip-87.html"
                 data-xray-key="3-87" data-xray-full="assets/xray/3-87.jpg" data-xray-crops="[&quot;assets/xray/3-87.HIGH.jpg&quot;, &quot;assets/xray/3-87.HIGH.jpg-1.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-87" data-nw-source="W03_87" data-nw-primary="2026-07-03_18-30-06" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-30-06&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_2D_map_2026-07-03_18-30-06.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-87/W03_87_BL_NW_1D_hist_2026-07-03_18-30-06.png&quot;}]"
                 data-etroc="W03F7-87" data-lgad="HPK-W2_1" data-hybrid="W03F7-87 + HPK-W2_1"
                 aria-label="Open W03F7 DATA1 chip 87 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 87</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-87</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_1</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">2 crop</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">2 crop</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>2</b> optical no-ball px · <b>9</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_87.jpg" alt="W03F7 DATA1 chip 87 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-87.jpg" alt="X-ray full-chip image for 3-87" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_18-30-06</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-87/W03_87_BL_NW_2D_map_2026-07-03_18-30-06.png" alt="W03F7-87 BL/NW 2D map 2026-07-03_18-30-06" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-87/W03_87_BL_NW_1D_hist_2026-07-03_18-30-06.png" alt="W03F7-87 BL/NW 1D histogram 2026-07-03_18-30-06" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">detail crop available</div>
               </a>
@@ -3144,17 +3076,24 @@
                 data-title="W03F7 DATA1 chip 88 cross-check"
                 data-page="chips/W03F7-DATA1-chip-88.html"
                 data-xray-key="3-88" data-xray-full="assets/xray/3-88.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-88" data-nw-source="W03_88" data-nw-primary="2026-07-03_18-23-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-23-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_2D_map_2026-07-03_18-23-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-88/W03_88_BL_NW_1D_hist_2026-07-03_18-23-02.png&quot;}]"
                 data-etroc="W03F7-88" data-lgad="HPK-W2_2" data-hybrid="W03F7-88 + HPK-W2_2"
                 aria-label="Open W03F7 DATA1 chip 88 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 88</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-88</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_2</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>2</b> optical no-ball px · <b>9</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_88.jpg" alt="W03F7 DATA1 chip 88 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-88.jpg" alt="X-ray full-chip image for 3-88" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_18-23-02</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-88/W03_88_BL_NW_2D_map_2026-07-03_18-23-02.png" alt="W03F7-88 BL/NW 2D map 2026-07-03_18-23-02" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-88/W03_88_BL_NW_1D_hist_2026-07-03_18-23-02.png" alt="W03F7-88 BL/NW 1D histogram 2026-07-03_18-23-02" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3163,17 +3102,24 @@
                 data-title="W03F7 DATA1 chip 89 cross-check"
                 data-page="chips/W03F7-DATA1-chip-89.html"
                 data-xray-key="3-89" data-xray-full="assets/xray/3-89.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-89" data-nw-source="W03_89" data-nw-primary="2026-07-03_18-14-02" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_18-14-02&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_2D_map_2026-07-03_18-14-02.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-89/W03_89_BL_NW_1D_hist_2026-07-03_18-14-02.png&quot;}]"
                 data-etroc="W03F7-89" data-lgad="HPK-W2_3" data-hybrid="W03F7-89 + HPK-W2_3"
                 aria-label="Open W03F7 DATA1 chip 89 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 89</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-89</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_3</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>1</b> optical no-ball px · <b>6</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_89.jpg" alt="W03F7 DATA1 chip 89 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-89.jpg" alt="X-ray full-chip image for 3-89" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_18-14-02</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-89/W03_89_BL_NW_2D_map_2026-07-03_18-14-02.png" alt="W03F7-89 BL/NW 2D map 2026-07-03_18-14-02" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-89/W03_89_BL_NW_1D_hist_2026-07-03_18-14-02.png" alt="W03F7-89 BL/NW 1D histogram 2026-07-03_18-14-02" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3182,17 +3128,24 @@
                 data-title="W03F7 DATA1 chip 95 cross-check"
                 data-page="chips/W03F7-DATA1-chip-95.html"
                 data-xray-key="3-95" data-xray-full="assets/xray/3-95.jpg" data-xray-crops="[&quot;assets/xray/3-95_HIGH_CENTER.jpg&quot;, &quot;assets/xray/3-95_mid.jpg&quot;]" data-xray-notes="[&quot;detail crop available&quot;]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-95" data-nw-source="W03_95" data-nw-primary="2026-07-03_19-41-00" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-41-00&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-95/W03_95_BL_NW_2D_map_2026-07-03_19-41-00.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-95/W03_95_BL_NW_1D_hist_2026-07-03_19-41-00.png&quot;}]"
                 data-etroc="W03F7-95" data-lgad="HPK-W2_4" data-hybrid="W03F7-95 + HPK-W2_4"
                 aria-label="Open W03F7 DATA1 chip 95 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 95</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-95</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_4</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">2 crop</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">2 crop</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>18</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_95.jpg" alt="W03F7 DATA1 chip 95 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-95.jpg" alt="X-ray full-chip image for 3-95" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_19-41-00</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-95/W03_95_BL_NW_2D_map_2026-07-03_19-41-00.png" alt="W03F7-95 BL/NW 2D map 2026-07-03_19-41-00" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-95/W03_95_BL_NW_1D_hist_2026-07-03_19-41-00.png" alt="W03F7-95 BL/NW 1D histogram 2026-07-03_19-41-00" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">detail crop available</div>
               </a>
@@ -3201,17 +3154,24 @@
                 data-title="W03F7 DATA1 chip 96 cross-check"
                 data-page="chips/W03F7-DATA1-chip-96.html"
                 data-xray-key="3-96" data-xray-full="assets/xray/3-96.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-96" data-nw-source="W03_96" data-nw-primary="2026-07-03_19-34-41" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-34-41&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-96/W03_96_BL_NW_2D_map_2026-07-03_19-34-41.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-96/W03_96_BL_NW_1D_hist_2026-07-03_19-34-41.png&quot;}]"
                 data-etroc="W03F7-96" data-lgad="HPK-W2_5" data-hybrid="W03F7-96 + HPK-W2_5"
                 aria-label="Open W03F7 DATA1 chip 96 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 96</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-96</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_5</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>18</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_96.jpg" alt="W03F7 DATA1 chip 96 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-96.jpg" alt="X-ray full-chip image for 3-96" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_19-34-41</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-96/W03_96_BL_NW_2D_map_2026-07-03_19-34-41.png" alt="W03F7-96 BL/NW 2D map 2026-07-03_19-34-41" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-96/W03_96_BL_NW_1D_hist_2026-07-03_19-34-41.png" alt="W03F7-96 BL/NW 1D histogram 2026-07-03_19-34-41" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3220,17 +3180,24 @@
                 data-title="W03F7 DATA1 chip 97 cross-check"
                 data-page="chips/W03F7-DATA1-chip-97.html"
                 data-xray-key="3-97" data-xray-full="assets/xray/3-97.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-97" data-nw-source="W03_97" data-nw-primary="2026-07-03_19-27-22" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-27-22&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_2D_map_2026-07-03_19-27-22.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-97/W03_97_BL_NW_1D_hist_2026-07-03_19-27-22.png&quot;}]"
                 data-etroc="W03F7-97" data-lgad="HPK-W2_6" data-hybrid="W03F7-97 + HPK-W2_6"
                 aria-label="Open W03F7 DATA1 chip 97 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 97</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-97</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_6</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>2</b> optical no-ball px · <b>16</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_97.jpg" alt="W03F7 DATA1 chip 97 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-97.jpg" alt="X-ray full-chip image for 3-97" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_19-27-22</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-97/W03_97_BL_NW_2D_map_2026-07-03_19-27-22.png" alt="W03F7-97 BL/NW 2D map 2026-07-03_19-27-22" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-97/W03_97_BL_NW_1D_hist_2026-07-03_19-27-22.png" alt="W03F7-97 BL/NW 1D histogram 2026-07-03_19-27-22" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3239,17 +3206,24 @@
                 data-title="W03F7 DATA1 chip 99 cross-check"
                 data-page="chips/W03F7-DATA1-chip-99.html"
                 data-xray-key="3-99" data-xray-full="assets/xray/3-99.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-99" data-nw-source="W03_99" data-nw-primary="2026-07-03_20-01-29" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_20-01-29&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_2D_map_2026-07-03_20-01-29.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-99/W03_99_BL_NW_1D_hist_2026-07-03_20-01-29.png&quot;}]"
                 data-etroc="W03F7-99" data-lgad="HPK-W2_7" data-hybrid="W03F7-99 + HPK-W2_7"
                 aria-label="Open W03F7 DATA1 chip 99 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 99</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-99</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_7</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>2</b> optical no-ball px · <b>14</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_99.jpg" alt="W03F7 DATA1 chip 99 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-99.jpg" alt="X-ray full-chip image for 3-99" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_20-01-29</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-99/W03_99_BL_NW_2D_map_2026-07-03_20-01-29.png" alt="W03F7-99 BL/NW 2D map 2026-07-03_20-01-29" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-99/W03_99_BL_NW_1D_hist_2026-07-03_20-01-29.png" alt="W03F7-99 BL/NW 1D histogram 2026-07-03_20-01-29" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3258,17 +3232,24 @@
                 data-title="W03F7 DATA1 chip 100 cross-check"
                 data-page="chips/W03F7-DATA1-chip-100.html"
                 data-xray-key="3-100" data-xray-full="assets/xray/3-100.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-100" data-nw-source="W03_100" data-nw-primary="2026-07-03_19-55-00" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-55-00&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-100/W03_100_BL_NW_2D_map_2026-07-03_19-55-00.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-100/W03_100_BL_NW_1D_hist_2026-07-03_19-55-00.png&quot;}]"
                 data-etroc="W03F7-100" data-lgad="HPK-W2_8" data-hybrid="W03F7-100 + HPK-W2_8"
                 aria-label="Open W03F7 DATA1 chip 100 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 100</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-100</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_8</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>12</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_100.jpg" alt="W03F7 DATA1 chip 100 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-100.jpg" alt="X-ray full-chip image for 3-100" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_19-55-00</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-100/W03_100_BL_NW_2D_map_2026-07-03_19-55-00.png" alt="W03F7-100 BL/NW 2D map 2026-07-03_19-55-00" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-100/W03_100_BL_NW_1D_hist_2026-07-03_19-55-00.png" alt="W03F7-100 BL/NW 1D histogram 2026-07-03_19-55-00" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3277,17 +3258,24 @@
                 data-title="W03F7 DATA1 chip 102 cross-check"
                 data-page="chips/W03F7-DATA1-chip-102.html"
                 data-xray-key="3-102" data-xray-full="assets/xray/3-102.jpg" data-xray-crops="[&quot;assets/xray/3-102.jpg-1.jpg&quot;]" data-xray-notes="[]"
-                data-nw-key="" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W03F7-102" data-nw-source="W03_102" data-nw-primary="2026-07-03_19-48-30" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_19-48-30&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W03F7-102/W03_102_BL_NW_2D_map_2026-07-03_19-48-30.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W03F7-102/W03_102_BL_NW_1D_hist_2026-07-03_19-48-30.png&quot;}]"
                 data-etroc="W03F7-102" data-lgad="HPK-W2_9" data-hybrid="W03F7-102 + HPK-W2_9"
                 aria-label="Open W03F7 DATA1 chip 102 cross-check">
                 <div class="xray-card-top"><span>DATA1</span><strong>chip 102</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W03F7-102</span><span class="hybrid-badge sensor"><b>LGAD</b> HPK-W2_9</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">1 crop</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">1 crop</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>11</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W03F7_DATA1_chip_102.jpg" alt="W03F7 DATA1 chip 102 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/3-102.jpg" alt="X-ray full-chip image for 3-102" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_19-48-30</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W03F7-102/W03_102_BL_NW_2D_map_2026-07-03_19-48-30.png" alt="W03F7-102 BL/NW 2D map 2026-07-03_19-48-30" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W03F7-102/W03_102_BL_NW_1D_hist_2026-07-03_19-48-30.png" alt="W03F7-102 BL/NW 1D histogram 2026-07-03_19-48-30" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a></div>
@@ -3471,17 +3459,24 @@
                 data-title="W04F2 data2 chip 62 cross-check"
                 data-page="chips/W04F2-data2-chip-62.html"
                 data-xray-key="4-62" data-xray-full="assets/xray/4-62.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="W04F2-62" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-62" data-nw-source="W04_62" data-nw-primary="2026-07-03_17-28-58" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-28-58&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-62/W04_62_BL_NW_2D_map_2026-07-03_17-28-58.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-62/W04_62_BL_NW_1D_hist_2026-07-03_17-28-58.png&quot;}]"
                 data-etroc="W04F2-62" data-lgad="FBK_LF-W14_29" data-hybrid="W04F2-62 + FBK_LF-W14_29"
                 aria-label="Open W04F2 data2 chip 62 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 62</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-62</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_29</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>11</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_79.jpg" alt="W04F2 data2 chip 62 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-62.jpg" alt="X-ray full-chip image for 4-62" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_17-28-58</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-62/W04_62_BL_NW_2D_map_2026-07-03_17-28-58.png" alt="W04F2-62 BL/NW 2D map 2026-07-03_17-28-58" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-62/W04_62_BL_NW_1D_hist_2026-07-03_17-28-58.png" alt="W04F2-62 BL/NW 1D histogram 2026-07-03_17-28-58" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3490,17 +3485,38 @@
                 data-title="W04F2 data2 chip 63 cross-check"
                 data-page="chips/W04F2-data2-chip-63.html"
                 data-xray-key="4-63" data-xray-full="assets/xray/4-63.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="W04F2-63" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-63" data-nw-source="W04_63" data-nw-primary="2026-07-03_17-41-28" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-41-28&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-41-28.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-41-28.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_17-39-32&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-39-32.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-39-32.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_17-37-59&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-37-59.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-37-59.png&quot;}]"
                 data-etroc="W04F2-63" data-lgad="FBK_LF-W14_28" data-hybrid="W04F2-63 + FBK_LF-W14_28"
                 aria-label="Open W04F2 data2 chip 63 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 63</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-63</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_28</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge multi">3 scans</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>4</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_70.jpg" alt="W04F2 data2 chip 63 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-63.jpg" alt="X-ray full-chip image for 4-63" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_17-41-28</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-41-28.png" alt="W04F2-63 BL/NW 2D map 2026-07-03_17-41-28" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-41-28.png" alt="W04F2-63 BL/NW 1D histogram 2026-07-03_17-41-28" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div>
+          <div class="nw-scan-block secondary">
+            <div class="nw-scan-label">Previous scan: 2026-07-03_17-39-32</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-39-32.png" alt="W04F2-63 BL/NW 2D map 2026-07-03_17-39-32" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-39-32.png" alt="W04F2-63 BL/NW 1D histogram 2026-07-03_17-39-32" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div>
+          <div class="nw-scan-block secondary">
+            <div class="nw-scan-label">Previous scan: 2026-07-03_17-37-59</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-63/W04_63_BL_NW_2D_map_2026-07-03_17-37-59.png" alt="W04F2-63 BL/NW 2D map 2026-07-03_17-37-59" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-63/W04_63_BL_NW_1D_hist_2026-07-03_17-37-59.png" alt="W04F2-63 BL/NW 1D histogram 2026-07-03_17-37-59" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3509,17 +3525,24 @@
                 data-title="W04F2 data2 chip 64 cross-check"
                 data-page="chips/W04F2-data2-chip-64.html"
                 data-xray-key="4-64" data-xray-full="assets/xray/4-64.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="W04F2-64" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-64" data-nw-source="W04_64" data-nw-primary="2026-07-03_17-48-41" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-48-41&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-64/W04_64_BL_NW_2D_map_2026-07-03_17-48-41.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-64/W04_64_BL_NW_1D_hist_2026-07-03_17-48-41.png&quot;}]"
                 data-etroc="W04F2-64" data-lgad="FBK_LF-W14_40" data-hybrid="W04F2-64 + FBK_LF-W14_40"
                 aria-label="Open W04F2 data2 chip 64 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 64</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-64</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_40</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>11</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_81.jpg" alt="W04F2 data2 chip 64 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-64.jpg" alt="X-ray full-chip image for 4-64" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_17-48-41</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-64/W04_64_BL_NW_2D_map_2026-07-03_17-48-41.png" alt="W04F2-64 BL/NW 2D map 2026-07-03_17-48-41" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-64/W04_64_BL_NW_1D_hist_2026-07-03_17-48-41.png" alt="W04F2-64 BL/NW 1D histogram 2026-07-03_17-48-41" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3528,17 +3551,24 @@
                 data-title="W04F2 data2 chip 65 cross-check"
                 data-page="chips/W04F2-data2-chip-65.html"
                 data-xray-key="4-65" data-xray-full="assets/xray/4-65.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="W04F2-65" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-65" data-nw-source="W04_65" data-nw-primary="2026-07-03_17-00-49" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-00-49&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-65/W04_65_BL_NW_2D_map_2026-07-03_17-00-49.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-65/W04_65_BL_NW_1D_hist_2026-07-03_17-00-49.png&quot;}]"
                 data-etroc="W04F2-65" data-lgad="FBK_LF-W14_39" data-hybrid="W04F2-65 + FBK_LF-W14_39"
                 aria-label="Open W04F2 data2 chip 65 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 65</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-65</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_39</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>13</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_67.jpg" alt="W04F2 data2 chip 65 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-65.jpg" alt="X-ray full-chip image for 4-65" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_17-00-49</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-65/W04_65_BL_NW_2D_map_2026-07-03_17-00-49.png" alt="W04F2-65 BL/NW 2D map 2026-07-03_17-00-49" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-65/W04_65_BL_NW_1D_hist_2026-07-03_17-00-49.png" alt="W04F2-65 BL/NW 1D histogram 2026-07-03_17-00-49" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3547,17 +3577,24 @@
                 data-title="W04F2 data2 chip 66 cross-check"
                 data-page="chips/W04F2-data2-chip-66.html"
                 data-xray-key="4-66" data-xray-full="assets/xray/4-66.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="W04F2-66" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-66" data-nw-source="W04_66" data-nw-primary="2026-07-03_17-09-48" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-09-48&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_2D_map_2026-07-03_17-09-48.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-66/W04_66_BL_NW_1D_hist_2026-07-03_17-09-48.png&quot;}]"
                 data-etroc="W04F2-66" data-lgad="FBK_LF-W14_38" data-hybrid="W04F2-66 + FBK_LF-W14_38"
                 aria-label="Open W04F2 data2 chip 66 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 66</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-66</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_38</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>3</b> optical no-ball px · <b>16</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_66.jpg" alt="W04F2 data2 chip 66 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-66.jpg" alt="X-ray full-chip image for 4-66" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_17-09-48</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-66/W04_66_BL_NW_2D_map_2026-07-03_17-09-48.png" alt="W04F2-66 BL/NW 2D map 2026-07-03_17-09-48" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-66/W04_66_BL_NW_1D_hist_2026-07-03_17-09-48.png" alt="W04F2-66 BL/NW 1D histogram 2026-07-03_17-09-48" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3566,17 +3603,24 @@
                 data-title="W04F2 data2 chip 67 cross-check"
                 data-page="chips/W04F2-data2-chip-67.html"
                 data-xray-key="4-67" data-xray-full="assets/xray/4-67.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="W04F2-67" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-67" data-nw-source="W04_67" data-nw-primary="2026-07-03_17-19-39" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_17-19-39&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_2D_map_2026-07-03_17-19-39.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-67/W04_67_BL_NW_1D_hist_2026-07-03_17-19-39.png&quot;}]"
                 data-etroc="W04F2-67" data-lgad="FBK_LF-W14_37" data-hybrid="W04F2-67 + FBK_LF-W14_37"
                 aria-label="Open W04F2 data2 chip 67 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 67</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-67</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_37</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>1</b> optical no-ball px · <b>5</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_65.jpg" alt="W04F2 data2 chip 67 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-67.jpg" alt="X-ray full-chip image for 4-67" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_17-19-39</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-67/W04_67_BL_NW_2D_map_2026-07-03_17-19-39.png" alt="W04F2-67 BL/NW 2D map 2026-07-03_17-19-39" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-67/W04_67_BL_NW_1D_hist_2026-07-03_17-19-39.png" alt="W04F2-67 BL/NW 1D histogram 2026-07-03_17-19-39" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3585,17 +3629,24 @@
                 data-title="W04F2 data2 chip 70 cross-check"
                 data-page="chips/W04F2-data2-chip-70.html"
                 data-xray-key="4-70" data-xray-full="assets/xray/4-70.jpg" data-xray-crops="[]" data-xray-notes="[]"
-                data-nw-key="W04F2-70" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-70" data-nw-source="W04_70" data-nw-primary="2026-07-03_16-26-45" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-26-45&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_2D_map_2026-07-03_16-26-45.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-70/W04_70_BL_NW_1D_hist_2026-07-03_16-26-45.png&quot;}]"
                 data-etroc="W04F2-70" data-lgad="FBK_LF-W14_36" data-hybrid="W04F2-70 + FBK_LF-W14_36"
                 aria-label="Open W04F2 data2 chip 70 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 70</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-70</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_36</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>1</b> optical no-ball px · <b>22</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_63.jpg" alt="W04F2 data2 chip 70 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-70.jpg" alt="X-ray full-chip image for 4-70" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_16-26-45</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-70/W04_70_BL_NW_2D_map_2026-07-03_16-26-45.png" alt="W04F2-70 BL/NW 2D map 2026-07-03_16-26-45" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-70/W04_70_BL_NW_1D_hist_2026-07-03_16-26-45.png" alt="W04F2-70 BL/NW 1D histogram 2026-07-03_16-26-45" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">—</div>
               </a>
@@ -3604,17 +3655,31 @@
                 data-title="W04F2 data2 chip 79 cross-check"
                 data-page="chips/W04F2-data2-chip-79.html"
                 data-xray-key="4-79" data-xray-full="assets/xray/4-79.jpg" data-xray-crops="[&quot;assets/xray/4-79_FBK_LEFT_TOP.jpg&quot;, &quot;assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]"
-                data-nw-key="W04F2-79" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-79" data-nw-source="W04_79" data-nw-primary="2026-07-03_16-52-18" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-52-18&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-52-18.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-52-18.png&quot;}, {&quot;scan_id&quot;: &quot;2026-07-03_16-49-49&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-49-49.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-49-49.png&quot;}]"
                 data-etroc="W04F2-79" data-lgad="FBK_LF-W14_43" data-hybrid="W04F2-79 + FBK_LF-W14_43"
                 aria-label="Open W04F2 data2 chip 79 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 79</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-79</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_43</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">2 crop</span><span class="xray-badge no-solder">NO SOLDER NOTE</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">2 crop</span><span class="xray-badge no-solder">NO SOLDER NOTE</span><span class="nw-badge ok">NW scan</span><span class="nw-badge multi">2 scans</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>1</b> optical no-ball px · <b>4</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_62.jpg" alt="W04F2 data2 chip 79 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-79.jpg" alt="X-ray full-chip image for 4-79" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_16-52-18</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-52-18.png" alt="W04F2-79 BL/NW 2D map 2026-07-03_16-52-18" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-52-18.png" alt="W04F2-79 BL/NW 1D histogram 2026-07-03_16-52-18" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div>
+          <div class="nw-scan-block secondary">
+            <div class="nw-scan-label">Previous scan: 2026-07-03_16-49-49</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-79/W04_79_BL_NW_2D_map_2026-07-03_16-49-49.png" alt="W04F2-79 BL/NW 2D map 2026-07-03_16-49-49" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-79/W04_79_BL_NW_1D_hist_2026-07-03_16-49-49.png" alt="W04F2-79 BL/NW 1D histogram 2026-07-03_16-49-49" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">NO SOLDER crop available</div>
               </a>
@@ -3623,17 +3688,24 @@
                 data-title="W04F2 data2 chip 81 cross-check"
                 data-page="chips/W04F2-data2-chip-81.html"
                 data-xray-key="4-81" data-xray-full="assets/xray/4-81.jpg" data-xray-crops="[&quot;assets/xray/4-81_CENTER_NO_SOLDER.jpg&quot;]" data-xray-notes="[&quot;NO SOLDER crop available&quot;]"
-                data-nw-key="W04F2-81" data-nw-source="" data-nw-primary="" data-nw-scans="[]"
+                data-nw-key="W04F2-81" data-nw-source="W04_81" data-nw-primary="2026-07-03_16-40-19" data-nw-scans="[{&quot;scan_id&quot;: &quot;2026-07-03_16-40-19&quot;, &quot;map_2d&quot;: &quot;assets/nw_scans/W04F2-81/W04_81_BL_NW_2D_map_2026-07-03_16-40-19.png&quot;, &quot;hist_1d&quot;: &quot;assets/nw_scans/W04F2-81/W04_81_BL_NW_1D_hist_2026-07-03_16-40-19.png&quot;}]"
                 data-etroc="W04F2-81" data-lgad="FBK_LF-W14_34" data-hybrid="W04F2-81 + FBK_LF-W14_34"
                 aria-label="Open W04F2 data2 chip 81 cross-check">
                 <div class="xray-card-top"><span>data2</span><strong>chip 81</strong></div>
                 <div class="xray-card-hybrid"><span class="hybrid-badge"><b>ETROC</b> W04F2-81</span><span class="hybrid-badge sensor"><b>LGAD</b> FBK_LF-W14_34</span></div>
-                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">1 crop</span><span class="xray-badge no-solder">NO SOLDER NOTE</span><span class="nw-badge missing">No NW scan</span></div>
+                <div class="xray-card-badges"><span class="xray-badge ok">X-ray</span><span class="xray-badge crop">1 crop</span><span class="xray-badge no-solder">NO SOLDER NOTE</span><span class="nw-badge ok">NW scan</span><span class="nw-badge rule">NW &lt; 10 expected</span></div>
                 <div class="xray-card-meta"><b>0</b> optical no-ball px · <b>17</b> yellow</div>
                 <div class="evidence-grid">
                   <div class="evidence-panel"><h3>Optical inspection montage</h3><img src="assets/montages/W04F2_data2_chip_64.jpg" alt="W04F2 data2 chip 81 cross-check optical montage" loading="lazy" /></div>
                   <div class="evidence-panel"><h3>X-ray image</h3><img src="assets/xray/4-81.jpg" alt="X-ray full-chip image for 4-81" loading="lazy" /></div>
-                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3><div class="nw-placeholder">No NW scan mapped for this chip yet.</div></div>
+                  <div class="evidence-panel nw-evidence"><h3>NW scan result</h3>
+          <div class="nw-scan-block primary">
+            <div class="nw-scan-label">Primary scan: 2026-07-03_16-40-19</div>
+            <div class="nw-scan-images">
+              <figure><img src="assets/nw_scans/W04F2-81/W04_81_BL_NW_2D_map_2026-07-03_16-40-19.png" alt="W04F2-81 BL/NW 2D map 2026-07-03_16-40-19" loading="lazy" /><figcaption>BL/NW 2D map</figcaption></figure>
+              <figure><img src="assets/nw_scans/W04F2-81/W04_81_BL_NW_1D_hist_2026-07-03_16-40-19.png" alt="W04F2-81 BL/NW 1D histogram 2026-07-03_16-40-19" loading="lazy" /><figcaption>BL/NW 1D histogram</figcaption></figure>
+            </div>
+          </div></div>
                 </div>
                 <div class="xray-card-note">NO SOLDER crop available</div>
               </a>
@@ -4230,85 +4302,9 @@
     </script>
 
     <footer>
-      Generated: 2026-07-03 09:48:30 · Dataset: final visual no-ball chip table · Manual conflict review applied
+      Generated: 2026-07-04 23:19:50 · Dataset: final visual no-ball chip table · Manual conflict review applied
     </footer>
   </main>
-
-<script>
-(() => {
-  function parseNumber(text) { const m = String(text || '').match(/-?\d+/); return m ? Number(m[0]) : 0; }
-  function hasNW(el) {
-    if ((el.dataset && el.dataset.nwScans && el.dataset.nwScans !== '[]') || (el.dataset && el.dataset.nwPrimary)) return true;
-    return /NW scan/i.test(el.textContent || '') && !/No NW/i.test(el.textContent || '');
-  }
-  function hasXray(el) {
-    if (el.dataset && (el.dataset.xrayFull || (el.dataset.xrayCrops && el.dataset.xrayCrops !== '[]'))) return true;
-    return /X-ray/i.test(el.textContent || '') && !/No X-ray/i.test(el.textContent || '');
-  }
-  function yellowCount(el) {
-    const title = el.querySelector('.chip-gauge')?.getAttribute('title') || '';
-    const ym = title.match(/YELLOW\s+(\d+)/i); if (ym) return Number(ym[1]);
-    const txt = el.textContent || '';
-    const m1 = txt.match(/(\d+)\s*yellow/i); if (m1) return Number(m1[1]);
-    const m2 = txt.match(/Y\s*(\d+)/i); if (m2) return Number(m2[1]);
-    return 0;
-  }
-  function noBallCount(el) {
-    const countEl = el.querySelector('.chip-card-count'); if (countEl) return parseNumber(countEl.textContent);
-    const txt = el.textContent || '';
-    const m = txt.match(/(\d+)\s*(?:optical\s*)?no-ball/i); if (m) return Number(m[1]);
-    return 0;
-  }
-  function chipNum(el) {
-    const et = el.dataset?.etroc || el.querySelector('.head strong')?.textContent || el.textContent || '';
-    const nums = String(et).match(/(\d+)(?!.*\d)/); return nums ? Number(nums[1]) : 0;
-  }
-  function isMissing(el) { return /Missing evidence|No NW|No X-ray|LGAD not mapped/i.test(el.textContent || ''); }
-  function cardText(el) { return (el.dataset?.hybrid || '') + ' ' + (el.dataset?.etroc || '') + ' ' + (el.textContent || ''); }
-  function setupPanel(panel) {
-    const scope = panel.parentElement;
-    const cards = Array.from(scope.querySelectorAll('a.chip-card,a.xray-card,a.card,a.opt'));
-    if (!cards.length) return;
-    const originals = cards.map((el, idx) => ({el, idx, parent: el.parentElement, next: el.nextSibling}));
-    let flat = document.createElement('div'); flat.className = 'sorted-flat filter-hidden'; panel.after(flat);
-    const filter = panel.querySelector('[data-filter-kind]'); const sort = panel.querySelector('[data-sort-kind]'); const search = panel.querySelector('[data-search-text]'); const result = panel.querySelector('[data-filter-result]');
-    function restore() { originals.forEach(o => { if (o.parent && o.el.parentElement !== o.parent) o.parent.insertBefore(o.el, o.next); }); flat.classList.add('filter-hidden'); }
-    function pass(el) {
-      const f = filter.value; const q = (search.value || '').trim().toLowerCase();
-      let ok = true;
-      if (f === 'nw') ok = hasNW(el); else if (f === 'xray') ok = hasXray(el); else if (f === 'yellow') ok = yellowCount(el) > 0; else if (f === 'noball') ok = noBallCount(el) > 0 || el.classList.contains('no-ball'); else if (f === 'missing') ok = isMissing(el);
-      if (ok && q) ok = cardText(el).toLowerCase().includes(q);
-      return ok;
-    }
-    function apply() {
-      restore();
-      const selected = originals.map(o => o.el).filter(pass);
-      originals.forEach(o => o.el.classList.toggle('filter-hidden', !selected.includes(o.el)));
-      let visible = selected.slice();
-      if (sort.value !== 'default') {
-        visible.sort((a,b) => {
-          if (sort.value === 'yellow-desc') return yellowCount(b)-yellowCount(a) || chipNum(a)-chipNum(b);
-          if (sort.value === 'yellow-asc') return yellowCount(a)-yellowCount(b) || chipNum(a)-chipNum(b);
-          if (sort.value === 'noball-desc') return noBallCount(b)-noBallCount(a) || yellowCount(b)-yellowCount(a);
-          if (sort.value === 'chip-asc') return chipNum(a)-chipNum(b);
-          return 0;
-        });
-        flat.classList.remove('filter-hidden'); visible.forEach(el => flat.appendChild(el));
-      }
-      // hide empty wafer/batch sections in default grouped mode
-      scope.querySelectorAll('.board-batch,.xray-wafer-section,section').forEach(sec => {
-        if (sec.contains(panel) || sec === flat) return;
-        const secCards = Array.from(sec.querySelectorAll('a.chip-card,a.xray-card,a.card,a.opt'));
-        if (secCards.length) sec.classList.toggle('filter-hidden', !secCards.some(c => !c.classList.contains('filter-hidden')) || sort.value !== 'default');
-      });
-      if (result) result.textContent = `${visible.length} / ${cards.length} shown`;
-    }
-    [filter, sort, search].forEach(x => x && x.addEventListener('input', apply));
-    apply();
-  }
-  document.querySelectorAll('[data-filter-panel]').forEach(setupPanel);
-})();
-</script>
-
+<script>(()=>{function n(t){const m=String(t||'').match(/-?\d+/);return m?Number(m[0]):0}function nw(e){return e.dataset&&e.dataset.nwScans&&e.dataset.nwScans!=='[]'||e.dataset&&e.dataset.nwPrimary||/NW scan/i.test(e.textContent||'')&&!/No NW/i.test(e.textContent||'')}function xr(e){return e.dataset&&(e.dataset.xrayFull||e.dataset.xrayCrops&&e.dataset.xrayCrops!=='[]')||/X-ray/i.test(e.textContent||'')&&!/No X-ray/i.test(e.textContent||'')}function y(e){const title=e.querySelector('.chip-gauge')?.getAttribute('title')||'';const ym=title.match(/YELLOW\s+(\d+)/i);if(ym)return Number(ym[1]);const t=e.textContent||'';let m=t.match(/(\d+)\s*yellow/i);if(m)return Number(m[1]);m=t.match(/Y\s*(\d+)/i);return m?Number(m[1]):0}function nb(e){const c=e.querySelector('.chip-card-count');if(c)return n(c.textContent);const m=(e.textContent||'').match(/(\d+)\s*(?:optical\s*)?no-ball/i);return m?Number(m[1]):0}function chip(e){const s=e.dataset?.etroc||e.querySelector('.head strong')?.textContent||e.textContent||'';const m=String(s).match(/(\d+)(?!.*\d)/);return m?Number(m[1]):0}function miss(e){return /Missing evidence|No NW|No X-ray|LGAD not mapped/i.test(e.textContent||'')}function setup(p){const scope=p.parentElement,cards=[...scope.querySelectorAll('a.chip-card,a.xray-card,a.card,a.opt')];if(!cards.length)return;const orig=cards.map(e=>({e,parent:e.parentElement,next:e.nextSibling}));const flat=document.createElement('div');flat.className='sorted-flat filter-hidden';p.after(flat);const f=p.querySelector('[data-filter-kind]'),s=p.querySelector('[data-sort-kind]'),q=p.querySelector('[data-search-text]'),r=p.querySelector('[data-filter-result]');function restore(){orig.forEach(o=>{if(o.parent&&o.e.parentElement!==o.parent)o.parent.insertBefore(o.e,o.next)});flat.classList.add('filter-hidden')}function pass(e){let ok=true;if(f.value==='nw')ok=nw(e);else if(f.value==='xray')ok=xr(e);else if(f.value==='yellow')ok=y(e)>0;else if(f.value==='noball')ok=nb(e)>0||e.classList.contains('no-ball');else if(f.value==='missing')ok=miss(e);const text=((e.dataset?.hybrid||'')+' '+(e.dataset?.etroc||'')+' '+(e.textContent||'')).toLowerCase();return ok&&(!(q.value||'').trim()||text.includes(q.value.trim().toLowerCase()))}function apply(){restore();let vis=orig.map(o=>o.e).filter(pass);orig.forEach(o=>o.e.classList.toggle('filter-hidden',!vis.includes(o.e)));if(s.value!=='default'){vis.sort((a,b)=>s.value==='yellow-desc'?y(b)-y(a)||chip(a)-chip(b):s.value==='yellow-asc'?y(a)-y(b)||chip(a)-chip(b):s.value==='noball-desc'?nb(b)-nb(a)||y(b)-y(a):s.value==='chip-asc'?chip(a)-chip(b):0);flat.classList.remove('filter-hidden');vis.forEach(e=>flat.appendChild(e))}if(r)r.textContent=`${vis.length} / ${cards.length} shown`} [f,s,q].forEach(x=>x&&x.addEventListener('input',apply));apply()}document.querySelectorAll('[data-filter-panel]').forEach(setup)})();</script>
 </body>
 </html>
