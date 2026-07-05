@@ -159,13 +159,20 @@ class Handler(SimpleHTTPRequestHandler):
                 target = normalize_target(qs.get("target", [""])[0])
             except ValueError as e:
                 return json_response(self, 400, {"error": str(e)})
+            user = identity(self.headers)
             with sqlite3.connect(DB_PATH) as db:
                 db.row_factory = sqlite3.Row
                 rows = db.execute(
-                    "SELECT id,target,body,status,author_display,created_at,updated_at FROM comments WHERE target=? AND deleted=0 ORDER BY created_at DESC LIMIT 100",
+                    "SELECT id,target,body,status,author,author_display,created_at,updated_at FROM comments WHERE target=? AND deleted=0 ORDER BY created_at DESC LIMIT 100",
                     (target,),
                 ).fetchall()
-            return json_response(self, 200, [dict(r) for r in rows])
+            payload = []
+            for row in rows:
+                item = dict(row)
+                item["can_edit"] = bool(user and (item.get("author") == user["user"] or user.get("is_admin")))
+                item.pop("author", None)
+                payload.append(item)
+            return json_response(self, 200, payload)
         return super().do_GET()
 
     def do_POST(self):
@@ -195,6 +202,44 @@ class Handler(SimpleHTTPRequestHandler):
             cid = cur.lastrowid
             db.commit()
         return json_response(self, 201, {"id": cid, "target": target, "body": body, "status": status, "author_display": user["display"], "created_at": now, "updated_at": now})
+
+    def do_PATCH(self):
+        parsed = urllib.parse.urlparse(self.path)
+        if not parsed.path.startswith("/api/comments/"):
+            return json_response(self, 404, {"error": "not found"})
+        user = identity(self.headers)
+        if not user:
+            return json_response(self, 401, {"error": "CERN SSO login required"})
+        try:
+            cid = int(parsed.path.rsplit("/", 1)[-1])
+            data = read_json(self)
+            body = str(data.get("body", "")).strip()
+            status = normalize_status(data.get("status", "review"))
+            if not body:
+                raise ValueError("empty comment")
+            if len(body) > MAX_BODY:
+                raise ValueError(f"comment too long; max {MAX_BODY} chars")
+        except (ValueError, json.JSONDecodeError) as e:
+            return json_response(self, 400, {"error": str(e)})
+        now = int(time.time())
+        with sqlite3.connect(DB_PATH) as db:
+            db.row_factory = sqlite3.Row
+            row = db.execute("SELECT id,target,author,author_display,created_at FROM comments WHERE id=? AND deleted=0", (cid,)).fetchone()
+            if not row:
+                return json_response(self, 404, {"error": "not found"})
+            if row["author"] != user["user"] and not user["is_admin"]:
+                return json_response(self, 403, {"error": "not allowed"})
+            db.execute("UPDATE comments SET body=?, status=?, updated_at=? WHERE id=?", (body, status, now, cid))
+            db.commit()
+            item = dict(row)
+        return json_response(self, 200, {
+            "id": cid, "target": item["target"], "body": body, "status": status,
+            "author_display": item["author_display"], "created_at": item["created_at"],
+            "updated_at": now, "can_edit": True,
+        })
+
+    def do_PUT(self):
+        return self.do_PATCH()
 
     def do_DELETE(self):
         parsed = urllib.parse.urlparse(self.path)
