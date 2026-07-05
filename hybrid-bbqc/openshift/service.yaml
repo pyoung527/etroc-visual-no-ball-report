@@ -8,6 +8,6 @@ spec:
   selector:
     app: etl-hybrid-bbqc
   ports:
-    - name: http
+    - name: oauth
       port: 8080
-      targetPort: 8080
+      targetPort: oauth

@@ -19,7 +19,7 @@ spec:
           image: image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc:latest
           imagePullPolicy: Always
           ports:
-            - name: http
+            - name: web
               containerPort: 8080
           env:
             - name: STATIC_ROOT
@@ -50,6 +50,65 @@ spec:
             limits:
               cpu: 300m
               memory: 384Mi
+        - name: oauth2-proxy
+          image: image-registry.openshift-image-registry.svc:5000/openshift/oauth2-proxy:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: oauth
+              containerPort: 4180
+          env:
+            - name: OAUTH2_PROXY_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: oidc-client-secret
+                  key: clientID
+            - name: OAUTH2_PROXY_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oidc-client-secret
+                  key: clientSecret
+            - name: OAUTH2_PROXY_OIDC_ISSUER_URL
+              valueFrom:
+                secretKeyRef:
+                  name: oidc-client-secret
+                  key: issuerURL
+            - name: OAUTH2_PROXY_COOKIE_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oidc-client-secret
+                  key: suggestedCookieSecret
+          args:
+            - --provider=oidc
+            - --http-address=0.0.0.0:4180
+            - --upstream=http://127.0.0.1:8080
+            - --redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback
+            - --email-domain=*
+            - --reverse-proxy=true
+            - --pass-host-header=true
+            - --pass-user-headers=true
+            - --set-xauthrequest=true
+            - --skip-provider-button=true
+            - --cookie-secure=true
+            - --cookie-samesite=lax
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: 4180
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: 4180
+            initialDelaySeconds: 15
+            periodSeconds: 20
+          resources:
+            requests:
+              cpu: 20m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 256Mi
       volumes:
         - name: comments-data
           persistentVolumeClaim:
