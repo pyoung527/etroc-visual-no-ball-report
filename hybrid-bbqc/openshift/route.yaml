@@ -12,7 +12,7 @@ spec:
     kind: Service
     name: etl-hybrid-bbqc
   port:
-    targetPort: http
+    targetPort: oauth
   tls:
     termination: edge
     insecureEdgeTerminationPolicy: Redirect
