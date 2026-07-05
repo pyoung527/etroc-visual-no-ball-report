@@ -114,6 +114,45 @@ class Handler(SimpleHTTPRequestHandler):
         if parsed.path == "/api/me":
             user = identity(self.headers)
             return json_response(self, 200, {"authenticated": bool(user), "user": user})
+        if parsed.path == "/api/comments/summary":
+            qs = urllib.parse.parse_qs(parsed.query)
+            raw_targets = qs.get("target", [])
+            if not raw_targets and qs.get("targets"):
+                raw_targets = ",".join(qs.get("targets", [])).split(",")
+            try:
+                targets = [normalize_target(x) for x in raw_targets if str(x).strip()]
+            except ValueError as e:
+                return json_response(self, 400, {"error": str(e)})
+            targets = list(dict.fromkeys(targets))[:200]
+            if not targets:
+                return json_response(self, 200, {})
+            placeholders = ",".join("?" for _ in targets)
+            summary = {target: {"count": 0, "latest": None} for target in targets}
+            with sqlite3.connect(DB_PATH) as db:
+                db.row_factory = sqlite3.Row
+                counts = db.execute(
+                    f"SELECT target,COUNT(*) AS count FROM comments WHERE deleted=0 AND target IN ({placeholders}) GROUP BY target",
+                    targets,
+                ).fetchall()
+                latest = db.execute(
+                    f"""
+                    SELECT id,target,body,status,author_display,created_at,updated_at
+                    FROM comments
+                    WHERE deleted=0 AND target IN ({placeholders})
+                    ORDER BY target, created_at DESC, id DESC
+                    """,
+                    targets,
+                ).fetchall()
+            for row in counts:
+                summary[row["target"]]["count"] = row["count"]
+            seen = set()
+            for row in latest:
+                target = row["target"]
+                if target in seen:
+                    continue
+                seen.add(target)
+                summary[target]["latest"] = dict(row)
+            return json_response(self, 200, summary)
         if parsed.path == "/api/comments":
             qs = urllib.parse.parse_qs(parsed.query)
             try:
