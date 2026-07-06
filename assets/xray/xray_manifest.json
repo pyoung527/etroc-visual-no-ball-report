@@ -76,16 +76,25 @@
   },
   "4-62": {
     "chip": "62",
-    "crops": [],
+    "crops": [
+      "assets/xray/4-62_FBK_LEFT_TOP.jpg",
+      "assets/xray/4-62_RIGHT_BOTTOM_NO_SOLDER.jpg"
+    ],
     "full": "assets/xray/4-62.jpg",
-    "notes": [],
+    "notes": [
+      "NO SOLDER crop available"
+    ],
     "prefix": "4"
   },
   "4-63": {
     "chip": "63",
-    "crops": [],
+    "crops": [
+      "assets/xray/4-63_CENTER_NO_SOLDER.jpg"
+    ],
     "full": "assets/xray/4-63.jpg",
-    "notes": [],
+    "notes": [
+      "NO SOLDER crop available"
+    ],
     "prefix": "4"
   },
   "4-64": {
@@ -160,25 +169,16 @@
   },
   "4-79": {
     "chip": "79",
-    "crops": [
-      "assets/xray/4-79_FBK_LEFT_TOP.jpg",
-      "assets/xray/4-79_RIGHT_BOTTOM_NO_SOLDER.jpg"
-    ],
+    "crops": [],
     "full": "assets/xray/4-79.jpg",
-    "notes": [
-      "NO SOLDER crop available"
-    ],
+    "notes": [],
     "prefix": "4"
   },
   "4-81": {
     "chip": "81",
-    "crops": [
-      "assets/xray/4-81_CENTER_NO_SOLDER.jpg"
-    ],
+    "crops": [],
     "full": "assets/xray/4-81.jpg",
-    "notes": [
-      "NO SOLDER crop available"
-    ],
+    "notes": [],
     "prefix": "4"
   },
   "4-84": {
