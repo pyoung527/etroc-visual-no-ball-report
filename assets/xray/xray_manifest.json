@@ -74,6 +74,151 @@
     "notes": [],
     "prefix": "3"
   },
+  "4-25": {
+    "chip": "25",
+    "crops": [],
+    "full": "assets/xray/4-25.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-26": {
+    "chip": "26",
+    "crops": [],
+    "full": "assets/xray/4-26.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-27": {
+    "chip": "27",
+    "crops": [],
+    "full": "assets/xray/4-27.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-28": {
+    "chip": "28",
+    "crops": [
+      "assets/xray/4-28_top_area_defect.jpg"
+    ],
+    "full": "assets/xray/4-28.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-33": {
+    "chip": "33",
+    "crops": [
+      "assets/xray/4-33_center.jpg"
+    ],
+    "full": "assets/xray/4-33.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-34": {
+    "chip": "34",
+    "crops": [],
+    "full": "assets/xray/4-34.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-36": {
+    "chip": "36",
+    "crops": [],
+    "full": "assets/xray/4-36.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-37": {
+    "chip": "37",
+    "crops": [
+      "assets/xray/4-37_right_code_2.jpg",
+      "assets/xray/4-37_right_code.jpg"
+    ],
+    "full": "assets/xray/4-37.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-40": {
+    "chip": "40",
+    "crops": [
+      "assets/xray/4-40_right_top_for_LGaD_2.jpg",
+      "assets/xray/4-40_right_top_for_LGaD.jpg"
+    ],
+    "full": "assets/xray/4-40.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-45": {
+    "chip": "45",
+    "crops": [],
+    "full": "assets/xray/4-45.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-52": {
+    "chip": "52",
+    "crops": [
+      "assets/xray/4-52_no_ball.jpg"
+    ],
+    "full": "assets/xray/4-52.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "4"
+  },
+  "4-53": {
+    "chip": "53",
+    "crops": [],
+    "full": "assets/xray/4-53.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-54": {
+    "chip": "54",
+    "crops": [],
+    "full": "assets/xray/4-54.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-55": {
+    "chip": "55",
+    "crops": [],
+    "full": "assets/xray/4-55.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-59": {
+    "chip": "59",
+    "crops": [],
+    "full": "assets/xray/4-59.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-60": {
+    "chip": "60",
+    "crops": [],
+    "full": "assets/xray/4-60.jpg",
+    "notes": [],
+    "prefix": "4"
+  },
+  "4-61": {
+    "chip": "61",
+    "crops": [
+      "assets/xray/4-61_high.jpg"
+    ],
+    "full": "assets/xray/4-61.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "4"
+  },
   "4-62": {
     "chip": "62",
     "crops": [
@@ -212,5 +357,252 @@
     "full": "assets/xray/4-89.jpg",
     "notes": [],
     "prefix": "4"
+  },
+  "7-104": {
+    "chip": "104",
+    "crops": [],
+    "full": "assets/xray/7-104.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-108": {
+    "chip": "108",
+    "crops": [],
+    "full": "assets/xray/7-108.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-110": {
+    "chip": "110",
+    "crops": [],
+    "full": "assets/xray/7-110.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-112": {
+    "chip": "112",
+    "crops": [
+      "assets/xray/7-112_no_ball_fail_area_2.jpg",
+      "assets/xray/7-112_no_ball_fail_area.jpg"
+    ],
+    "full": "assets/xray/7-112.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-115": {
+    "chip": "115",
+    "crops": [
+      "assets/xray/7-115_no_ball_area_fail_area-2.jpg",
+      "assets/xray/7-115_no_ball_area_fail_area-3.jpg",
+      "assets/xray/7-115_no_ball_area_fail_area.jpg",
+      "assets/xray/7-115_no_ball_area_GND.jpg",
+      "assets/xray/7-115_small.jpg"
+    ],
+    "full": "assets/xray/7-115.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-12": {
+    "chip": "12",
+    "crops": [],
+    "full": "assets/xray/7-12.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-13": {
+    "chip": "13",
+    "crops": [],
+    "full": "assets/xray/7-13.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-14": {
+    "chip": "14",
+    "crops": [],
+    "full": "assets/xray/7-14.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-15": {
+    "chip": "15",
+    "crops": [],
+    "full": "assets/xray/7-15.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-17": {
+    "chip": "17",
+    "crops": [],
+    "full": "assets/xray/7-17.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-18": {
+    "chip": "18",
+    "crops": [],
+    "full": "assets/xray/7-18.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-20": {
+    "chip": "20",
+    "crops": [
+      "assets/xray/7-20_high.jpg"
+    ],
+    "full": "assets/xray/7-20.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-21": {
+    "chip": "21",
+    "crops": [],
+    "full": "assets/xray/7-21.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-27": {
+    "chip": "27",
+    "crops": [],
+    "full": "assets/xray/7-27.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-28": {
+    "chip": "28",
+    "crops": [],
+    "full": "assets/xray/7-28.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-29": {
+    "chip": "29",
+    "crops": [],
+    "full": "assets/xray/7-29.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-32": {
+    "chip": "32",
+    "crops": [
+      "assets/xray/7-32_no_ball.jpg"
+    ],
+    "full": "assets/xray/7-32.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-42": {
+    "chip": "42",
+    "crops": [
+      "assets/xray/7-42_high_mag.jpg"
+    ],
+    "full": "assets/xray/7-42.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-5": {
+    "chip": "5",
+    "crops": [],
+    "full": "assets/xray/7-05.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-56": {
+    "chip": "56",
+    "crops": [],
+    "full": "assets/xray/7-56.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-6": {
+    "chip": "6",
+    "crops": [],
+    "full": "assets/xray/7-6.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-64": {
+    "chip": "64",
+    "crops": [
+      "assets/xray/7-64-left_top_for_FBK.jpg",
+      "assets/xray/7-64-R_top_for_FBK_2.jpg",
+      "assets/xray/7-64_ball_size_fail_2.jpg",
+      "assets/xray/7-64_ball_size_fail.jpg"
+    ],
+    "full": "assets/xray/7-64.jpg",
+    "notes": [
+      "X-ray detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-69": {
+    "chip": "69",
+    "crops": [
+      "assets/xray/7-69_ball_size_fail-2.jpg",
+      "assets/xray/7-69_ball_size_fail-3.jpg",
+      "assets/xray/7-69_ball_size_fail-4.jpg",
+      "assets/xray/7-69_no_ball_and_ball_size_fail_2.jpg",
+      "assets/xray/7-69_no_ball_and_ball_size_fail_3.jpg",
+      "assets/xray/7-69_no_ball_and_ball_size_fail.jpg"
+    ],
+    "full": "assets/xray/7-69.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-70": {
+    "chip": "70",
+    "crops": [
+      "assets/xray/7-70_ball_size_fail_2.jpg",
+      "assets/xray/7-70_ball_size_fail-2.jpg",
+      "assets/xray/7-70_no_ball_and_ball_size_fail.jpg"
+    ],
+    "full": "assets/xray/7-70.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-77": {
+    "chip": "77",
+    "crops": [
+      "assets/xray/7-77_GND_no_ball_ball_size_fail.jpg"
+    ],
+    "full": "assets/xray/7-77.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "7"
+  },
+  "7-8": {
+    "chip": "8",
+    "crops": [],
+    "full": "assets/xray/7-8.jpg",
+    "notes": [],
+    "prefix": "7"
+  },
+  "7-88": {
+    "chip": "88",
+    "crops": [
+      "assets/xray/7-88_255_no_ball_and_fail_ball_sizenum_2.jpg",
+      "assets/xray/7-88_255_no_ball_and_fail_ball_sizenum_3.jpg",
+      "assets/xray/7-88_255_no_ball_and_fail_ball_sizenum.jpg",
+      "assets/xray/7-88_left_side.jpg"
+    ],
+    "full": "assets/xray/7-88.jpg",
+    "notes": [
+      "X-ray no-ball / no-solder detail crop available"
+    ],
+    "prefix": "7"
   }
 }
