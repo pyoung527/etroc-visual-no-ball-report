@@ -10,6 +10,7 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
+# HANDWRITING_CORRECTION_W04F2_44_TO_41: Master corrected the apparent W04F2-44 mapping to W04F2-41; use 4-41.jpg for HPK-W3_6.
 ZIP_PATH = Path('/home/young-park/Documents/QAQC/260702_2nd batch_5 gel pack.zip')
 MAP_PATH = Path('/home/young-park/.hermes/profiles/homer/cache/documents/doc_cfb44cfd07bc_Hybrid-ETROC_LGAD_mapping .csv')
 XDIR = ROOT / 'assets' / 'xray'
