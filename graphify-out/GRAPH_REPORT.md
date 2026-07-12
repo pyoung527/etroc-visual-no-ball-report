@@ -1,4 +1,4 @@
-# Graph Report - etroc-visual-no-ball-report-plan  (2026-07-10)
+# Graph Report - etroc-visual-no-ball-report-plan  (2026-07-12)
 
 ## Corpus Check
 - 3 files · ~24,776,782 words
@@ -67,18 +67,18 @@ Nodes (2): Handler, SimpleHTTPRequestHandler
 
 ### Community 6 - "Community 6"
 Cohesion: 0.67
-Nodes (1): read_json()
+Nodes (1): normalize_status()
 
 ### Community 7 - "Community 7"
 Cohesion: 0.67
-Nodes (1): normalize_status()
+Nodes (1): read_json()
 
 ## Knowledge Gaps
 - **Thin community `Community 5`** (4 nodes): `Handler`, `.log_message()`, `.translate_path()`, `SimpleHTTPRequestHandler`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 6`** (3 nodes): `.do_PATCH()`, `.do_PUT()`, `read_json()`
+- **Thin community `Community 6`** (3 nodes): `.do_PATCH()`, `.do_PUT()`, `normalize_status()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 7`** (3 nodes): `server.py`, `init_db()`, `normalize_status()`
+- **Thin community `Community 7`** (3 nodes): `server.py`, `init_db()`, `read_json()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions

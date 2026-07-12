@@ -252,7 +252,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L68",
       "id": "server_read_json",
-      "community": 6,
+      "community": 7,
       "norm_label": "read_json()"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L86",
       "id": "server_normalize_status",
-      "community": 7,
+      "community": 6,
       "norm_label": "normalize_status()"
     },
     {
