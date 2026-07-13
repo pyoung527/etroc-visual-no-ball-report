@@ -22,11 +22,15 @@ document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.quer
    const text=(e.dataset.text||e.textContent||'').toLowerCase();
    return !needle || text.includes(needle);
  }
+ window.bbqcUpdateVisibleCount=()=>{
+   if(!result)return;
+   const visible=rows.filter(r=>!r.classList.contains('filter-hidden')&&!r.classList.contains('column-filter-hidden')).length;
+   result.textContent=`${visible} / ${rows.length} data shown`;
+ };
  function apply(){
-   const vc=cards.filter(match), vr=rows.filter(match);
-   cards.forEach(e=>e.classList.toggle('filter-hidden',!vc.includes(e)));
-   rows.forEach(e=>e.classList.toggle('filter-hidden',!vr.includes(e)));
-   if(result) result.textContent=`${vc.length} / ${cards.length} shown`;
+   cards.forEach(e=>e.classList.toggle('filter-hidden',!match(e)));
+   rows.forEach(e=>e.classList.toggle('filter-hidden',!match(e)));
+   window.bbqcUpdateVisibleCount();
  }
  q?.addEventListener('input',apply);
  apply();
@@ -49,7 +53,8 @@ document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>{document.quer
  [...head.cells].forEach((th,i)=>th.onclick=()=>{sortI=i; sortDir*=-1; sortRows();});
  function ok(r){return [...filterRow.cells].every((c,i)=>{const ctl=c.firstElementChild, val=(r.cells[i]?.textContent||'').trim(); if(!ctl||!ctl.value)return true; if(types[i]==='number'){const n=Number(val)||0; return ctl.value==='gt0'?n>0:n===0;} if(types[i]==='badge')return val===ctl.value; return val.toLowerCase().includes(ctl.value.toLowerCase());});}
  function sortRows(){if(sortI<0)return; const type=types[sortI]; rows.sort((a,b)=>{let av=(a.cells[sortI]?.textContent||'').trim(), bv=(b.cells[sortI]?.textContent||'').trim(); return sortDir*(type==='number'?(Number(av)-Number(bv)):av.localeCompare(bv));}).forEach(r=>tbody.append(r));}
- function apply(){rows.forEach(r=>r.classList.toggle('column-filter-hidden',!ok(r))); sortRows();}
+ function apply(){rows.forEach(r=>r.classList.toggle('column-filter-hidden',!ok(r))); sortRows(); window.bbqcUpdateVisibleCount?.();}
+ apply();
 })();
 
 
