@@ -1,11 +1,11 @@
 # Graph Report - etroc-visual-no-ball-report-plan  (2026-07-13)
 
 ## Corpus Check
-- 6 files · ~24,945,464 words
+- 5 files · ~24,945,151 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 50 nodes · 93 edges · 9 communities detected
+- 49 nodes · 93 edges · 9 communities detected
 - Extraction: 100% EXTRACTED · 0% INFERRED · 0% AMBIGUOUS
 - Token cost: 0 input · 0 output
 
@@ -33,12 +33,12 @@
 10. `main()` - 4 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `update_detail_page()` --calls--> `esc()`  [EXTRACTED]
-  update_second_batch_xray_mapping.py → update_second_batch_xray_mapping.py  _Bridges community 5 → community 4_
+- `update_chip_page()` --calls--> `esc()`  [EXTRACTED]
+  update_second_batch_xray_mapping.py → update_second_batch_xray_mapping.py  _Bridges community 2 → community 4_
 - `update_index_segment()` --calls--> `esc()`  [EXTRACTED]
-  update_second_batch_xray_mapping.py → update_second_batch_xray_mapping.py  _Bridges community 5 → community 3_
-- `main()` --calls--> `etroc_for_zip_name()`  [EXTRACTED]
-  update_second_batch_xray_mapping.py → update_second_batch_xray_mapping.py  _Bridges community 3 → community 4_
+  update_second_batch_xray_mapping.py → update_second_batch_xray_mapping.py  _Bridges community 2 → community 5_
+- `main()` --calls--> `update_index()`  [EXTRACTED]
+  update_second_batch_xray_mapping.py → update_second_batch_xray_mapping.py  _Bridges community 5 → community 4_
 
 ## Communities
 
@@ -51,20 +51,20 @@ Cohesion: 0.43
 Nodes (6): api(), esc(), fmt(), loadComments(), loadMe(), renderComment()
 
 ### Community 2 - "Community 2"
+Cohesion: 0.47
+Nodes (6): esc(), note_for_crops(), update_detail_page(), update_evidence_section(), xray_crop_article(), xray_full_article()
+
+### Community 3 - "Community 3"
 Cohesion: 0.53
 Nodes (3): identity(), json_response(), normalize_target()
 
-### Community 3 - "Community 3"
-Cohesion: 0.6
-Nodes (4): etroc_for_zip_name(), reason_after_mapping(), update_index(), update_index_segment()
-
 ### Community 4 - "Community 4"
-Cohesion: 0.6
-Nodes (5): key_for_etroc(), main(), slug_name(), update_chip_page(), update_detail_page()
+Cohesion: 0.5
+Nodes (5): etroc_for_zip_name(), key_for_etroc(), main(), slug_name(), update_chip_page()
 
 ### Community 5 - "Community 5"
-Cohesion: 0.5
-Nodes (5): esc(), note_for_crops(), update_evidence_section(), xray_crop_article(), xray_full_article()
+Cohesion: 0.83
+Nodes (3): reason_after_mapping(), update_index(), update_index_segment()
 
 ### Community 6 - "Community 6"
 Cohesion: 0.5
@@ -81,17 +81,17 @@ Nodes (1): normalize_status()
 ## Knowledge Gaps
 - **Thin community `Community 6`** (4 nodes): `Handler`, `.log_message()`, `.translate_path()`, `SimpleHTTPRequestHandler`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 7`** (3 nodes): `server.py`, `init_db()`, `read_json()`
+- **Thin community `Community 7`** (3 nodes): `.do_PATCH()`, `.do_PUT()`, `read_json()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 8`** (3 nodes): `.do_PATCH()`, `.do_PUT()`, `normalize_status()`
+- **Thin community `Community 8`** (3 nodes): `server.py`, `init_db()`, `normalize_status()`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `Handler` connect `Community 6` to `Community 8`, `Community 2`, `Community 7`?**
-  _High betweenness centrality (0.043) - this node is a cross-community bridge._
-- **Why does `main()` connect `Community 4` to `Community 3`, `Community 5`?**
+- **Why does `Handler` connect `Community 6` to `Community 8`, `Community 3`, `Community 7`?**
+  _High betweenness centrality (0.045) - this node is a cross-community bridge._
+- **Why does `main()` connect `Community 4` to `Community 2`, `Community 5`?**
   _High betweenness centrality (0.008) - this node is a cross-community bridge._
-- **Why does `identity()` connect `Community 2` to `Community 8`, `Community 7`?**
+- **Why does `identity()` connect `Community 3` to `Community 8`, `Community 7`?**
   _High betweenness centrality (0.005) - this node is a cross-community bridge._
