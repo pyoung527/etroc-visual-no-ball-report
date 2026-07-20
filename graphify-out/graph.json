@@ -9,8 +9,188 @@
       "source_file": "make_candidate_contact_sheet.py",
       "source_location": "L1",
       "id": "make_candidate_contact_sheet_py",
-      "community": 9,
+      "community": 6,
       "norm_label": "make_candidate_contact_sheet.py"
+    },
+    {
+      "label": "import_new_nw_scans.py",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L1",
+      "id": "import_new_nw_scans_py",
+      "community": 2,
+      "norm_label": "import_new_nw_scans.py"
+    },
+    {
+      "label": "DashboardRow",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L24",
+      "id": "import_new_nw_scans_dashboardrow",
+      "community": 2,
+      "norm_label": "dashboardrow"
+    },
+    {
+      "label": "HybridTableParser",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L37",
+      "id": "import_new_nw_scans_hybridtableparser",
+      "community": 5,
+      "norm_label": "hybridtableparser"
+    },
+    {
+      "label": "HTMLParser",
+      "file_type": "code",
+      "source_file": "",
+      "source_location": "",
+      "id": "htmlparser",
+      "community": 5,
+      "norm_label": "htmlparser"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L38",
+      "id": "import_new_nw_scans_hybridtableparser_init",
+      "community": 5,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": ".handle_starttag()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L47",
+      "id": "import_new_nw_scans_hybridtableparser_handle_starttag",
+      "community": 5,
+      "norm_label": ".handle_starttag()"
+    },
+    {
+      "label": ".handle_data()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L58",
+      "id": "import_new_nw_scans_hybridtableparser_handle_data",
+      "community": 5,
+      "norm_label": ".handle_data()"
+    },
+    {
+      "label": ".handle_endtag()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L62",
+      "id": "import_new_nw_scans_hybridtableparser_handle_endtag",
+      "community": 5,
+      "norm_label": ".handle_endtag()"
+    },
+    {
+      "label": "canonical_etroc()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L81",
+      "id": "import_new_nw_scans_canonical_etroc",
+      "community": 2,
+      "norm_label": "canonical_etroc()"
+    },
+    {
+      "label": "sha256()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L91",
+      "id": "import_new_nw_scans_sha256",
+      "community": 2,
+      "norm_label": "sha256()"
+    },
+    {
+      "label": "collect_scans()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L99",
+      "id": "import_new_nw_scans_collect_scans",
+      "community": 2,
+      "norm_label": "collect_scans()"
+    },
+    {
+      "label": "parse_dashboard_rows()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L130",
+      "id": "import_new_nw_scans_parse_dashboard_rows",
+      "community": 2,
+      "norm_label": "parse_dashboard_rows()"
+    },
+    {
+      "label": "clean_reason()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L151",
+      "id": "import_new_nw_scans_clean_reason",
+      "community": 2,
+      "norm_label": "clean_reason()"
+    },
+    {
+      "label": "scan_block()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L159",
+      "id": "import_new_nw_scans_scan_block",
+      "community": 2,
+      "norm_label": "scan_block()"
+    },
+    {
+      "label": "update_detail_page()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L179",
+      "id": "import_new_nw_scans_update_detail_page",
+      "community": 2,
+      "norm_label": "update_detail_page()"
+    },
+    {
+      "label": "replace_attr()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L222",
+      "id": "import_new_nw_scans_replace_attr",
+      "community": 2,
+      "norm_label": "replace_attr()"
+    },
+    {
+      "label": "update_card()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L229",
+      "id": "import_new_nw_scans_update_card",
+      "community": 2,
+      "norm_label": "update_card()"
+    },
+    {
+      "label": "update_table_row()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L251",
+      "id": "import_new_nw_scans_update_table_row",
+      "community": 2,
+      "norm_label": "update_table_row()"
+    },
+    {
+      "label": "update_index()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L274",
+      "id": "import_new_nw_scans_update_index",
+      "community": 2,
+      "norm_label": "update_index()"
+    },
+    {
+      "label": "main()",
+      "file_type": "code",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L308",
+      "id": "import_new_nw_scans_main",
+      "community": 2,
+      "norm_label": "main()"
     },
     {
       "label": "analyze_xray_optical_missing.py",
@@ -18,7 +198,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L1",
       "id": "analyze_xray_optical_missing_py",
-      "community": 0,
+      "community": 3,
       "norm_label": "analyze_xray_optical_missing.py"
     },
     {
@@ -27,7 +207,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L18",
       "id": "analyze_xray_optical_missing_read_manifest",
-      "community": 0,
+      "community": 3,
       "norm_label": "read_manifest()"
     },
     {
@@ -36,7 +216,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L37",
       "id": "analyze_xray_optical_missing_peaks",
-      "community": 0,
+      "community": 3,
       "norm_label": "_peaks()"
     },
     {
@@ -45,7 +225,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L50",
       "id": "analyze_xray_optical_missing_grid_centers",
-      "community": 0,
+      "community": 3,
       "norm_label": "grid_centers()"
     },
     {
@@ -54,7 +234,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L57",
       "id": "analyze_xray_optical_missing_grid_scores",
-      "community": 0,
+      "community": 3,
       "norm_label": "grid_scores()"
     },
     {
@@ -63,7 +243,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L86",
       "id": "analyze_xray_optical_missing_optical_labels",
-      "community": 0,
+      "community": 3,
       "norm_label": "optical_labels()"
     },
     {
@@ -72,7 +252,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L110",
       "id": "analyze_xray_optical_missing_analyze_one",
-      "community": 0,
+      "community": 3,
       "norm_label": "analyze_one()"
     },
     {
@@ -81,7 +261,7 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L133",
       "id": "analyze_xray_optical_missing_overlay",
-      "community": 0,
+      "community": 3,
       "norm_label": "overlay()"
     },
     {
@@ -90,17 +270,8 @@
       "source_file": "analyze_xray_optical_missing.py",
       "source_location": "L148",
       "id": "analyze_xray_optical_missing_main",
-      "community": 0,
+      "community": 3,
       "norm_label": "main()"
-    },
-    {
-      "label": "patch_bbqc_ui.py",
-      "file_type": "code",
-      "source_file": "patch_bbqc_ui.py",
-      "source_location": "L1",
-      "id": "patch_bbqc_ui_py",
-      "community": 10,
-      "norm_label": "patch_bbqc_ui.py"
     },
     {
       "label": "update_second_batch_xray_mapping.py",
@@ -108,7 +279,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L1",
       "id": "update_second_batch_xray_mapping_py",
-      "community": 3,
+      "community": 1,
       "norm_label": "update_second_batch_xray_mapping.py"
     },
     {
@@ -117,7 +288,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L21",
       "id": "update_second_batch_xray_mapping_esc",
-      "community": 5,
+      "community": 1,
       "norm_label": "esc()"
     },
     {
@@ -126,7 +297,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L25",
       "id": "update_second_batch_xray_mapping_slug_name",
-      "community": 4,
+      "community": 1,
       "norm_label": "slug_name()"
     },
     {
@@ -135,7 +306,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L34",
       "id": "update_second_batch_xray_mapping_key_for_etroc",
-      "community": 4,
+      "community": 1,
       "norm_label": "key_for_etroc()"
     },
     {
@@ -144,7 +315,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L40",
       "id": "update_second_batch_xray_mapping_etroc_for_zip_name",
-      "community": 3,
+      "community": 1,
       "norm_label": "etroc_for_zip_name()"
     },
     {
@@ -153,7 +324,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L49",
       "id": "update_second_batch_xray_mapping_reason_after_mapping",
-      "community": 3,
+      "community": 1,
       "norm_label": "reason_after_mapping()"
     },
     {
@@ -162,7 +333,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L64",
       "id": "update_second_batch_xray_mapping_note_for_crops",
-      "community": 5,
+      "community": 1,
       "norm_label": "note_for_crops()"
     },
     {
@@ -171,7 +342,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L75",
       "id": "update_second_batch_xray_mapping_xray_full_article",
-      "community": 5,
+      "community": 1,
       "norm_label": "xray_full_article()"
     },
     {
@@ -180,7 +351,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L81",
       "id": "update_second_batch_xray_mapping_xray_crop_article",
-      "community": 5,
+      "community": 1,
       "norm_label": "xray_crop_article()"
     },
     {
@@ -189,7 +360,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L92",
       "id": "update_second_batch_xray_mapping_update_evidence_section",
-      "community": 5,
+      "community": 1,
       "norm_label": "update_evidence_section()"
     },
     {
@@ -198,7 +369,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L100",
       "id": "update_second_batch_xray_mapping_update_detail_page",
-      "community": 4,
+      "community": 1,
       "norm_label": "update_detail_page()"
     },
     {
@@ -207,7 +378,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L122",
       "id": "update_second_batch_xray_mapping_update_chip_page",
-      "community": 4,
+      "community": 1,
       "norm_label": "update_chip_page()"
     },
     {
@@ -216,7 +387,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L133",
       "id": "update_second_batch_xray_mapping_update_index_segment",
-      "community": 3,
+      "community": 1,
       "norm_label": "update_index_segment()"
     },
     {
@@ -225,7 +396,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L158",
       "id": "update_second_batch_xray_mapping_update_index",
-      "community": 3,
+      "community": 1,
       "norm_label": "update_index()"
     },
     {
@@ -234,7 +405,7 @@
       "source_file": "update_second_batch_xray_mapping.py",
       "source_location": "L172",
       "id": "update_second_batch_xray_mapping_main",
-      "community": 4,
+      "community": 1,
       "norm_label": "main()"
     },
     {
@@ -243,7 +414,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L1",
       "id": "hybrid_bbqc_comments_js",
-      "community": 1,
+      "community": 4,
       "norm_label": "comments.js"
     },
     {
@@ -252,7 +423,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L19",
       "id": "comments_fmt",
-      "community": 1,
+      "community": 4,
       "norm_label": "fmt()"
     },
     {
@@ -261,7 +432,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L20",
       "id": "comments_esc",
-      "community": 1,
+      "community": 4,
       "norm_label": "esc()"
     },
     {
@@ -270,7 +441,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L21",
       "id": "comments_api",
-      "community": 1,
+      "community": 4,
       "norm_label": "api()"
     },
     {
@@ -279,7 +450,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L26",
       "id": "comments_resetedit",
-      "community": 1,
+      "community": 4,
       "norm_label": "resetedit()"
     },
     {
@@ -288,7 +459,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L32",
       "id": "comments_loadme",
-      "community": 1,
+      "community": 4,
       "norm_label": "loadme()"
     },
     {
@@ -297,7 +468,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L47",
       "id": "comments_rendercomment",
-      "community": 1,
+      "community": 4,
       "norm_label": "rendercomment()"
     },
     {
@@ -306,7 +477,7 @@
       "source_file": "hybrid-bbqc/comments.js",
       "source_location": "L52",
       "id": "comments_loadcomments",
-      "community": 1,
+      "community": 4,
       "norm_label": "loadcomments()"
     },
     {
@@ -315,7 +486,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_server_py",
-      "community": 7,
+      "community": 0,
       "norm_label": "server.py"
     },
     {
@@ -324,7 +495,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L25",
       "id": "server_init_db",
-      "community": 7,
+      "community": 0,
       "norm_label": "init_db()"
     },
     {
@@ -333,7 +504,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L44",
       "id": "server_identity",
-      "community": 2,
+      "community": 0,
       "norm_label": "identity()"
     },
     {
@@ -342,7 +513,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L58",
       "id": "server_json_response",
-      "community": 2,
+      "community": 0,
       "norm_label": "json_response()"
     },
     {
@@ -351,7 +522,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L68",
       "id": "server_read_json",
-      "community": 7,
+      "community": 0,
       "norm_label": "read_json()"
     },
     {
@@ -360,7 +531,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L76",
       "id": "server_normalize_target",
-      "community": 2,
+      "community": 0,
       "norm_label": "normalize_target()"
     },
     {
@@ -369,7 +540,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L86",
       "id": "server_normalize_status",
-      "community": 8,
+      "community": 0,
       "norm_label": "normalize_status()"
     },
     {
@@ -378,7 +549,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L94",
       "id": "server_handler",
-      "community": 6,
+      "community": 0,
       "norm_label": "handler"
     },
     {
@@ -387,7 +558,7 @@
       "source_file": "",
       "source_location": "",
       "id": "simplehttprequesthandler",
-      "community": 6,
+      "community": 0,
       "norm_label": "simplehttprequesthandler"
     },
     {
@@ -396,7 +567,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L97",
       "id": "server_handler_translate_path",
-      "community": 6,
+      "community": 0,
       "norm_label": ".translate_path()"
     },
     {
@@ -405,7 +576,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L107",
       "id": "server_handler_log_message",
-      "community": 6,
+      "community": 0,
       "norm_label": ".log_message()"
     },
     {
@@ -414,7 +585,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L110",
       "id": "server_handler_do_get",
-      "community": 2,
+      "community": 0,
       "norm_label": ".do_get()"
     },
     {
@@ -423,7 +594,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L178",
       "id": "server_handler_do_post",
-      "community": 2,
+      "community": 0,
       "norm_label": ".do_post()"
     },
     {
@@ -432,7 +603,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L206",
       "id": "server_handler_do_patch",
-      "community": 8,
+      "community": 0,
       "norm_label": ".do_patch()"
     },
     {
@@ -441,7 +612,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L241",
       "id": "server_handler_do_put",
-      "community": 8,
+      "community": 0,
       "norm_label": ".do_put()"
     },
     {
@@ -450,11 +621,443 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L244",
       "id": "server_handler_do_delete",
-      "community": 2,
+      "community": 0,
       "norm_label": ".do_delete()"
     }
   ],
   "links": [
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L24",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_dashboardrow",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_dashboardrow",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_hybridtableparser",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_hybridtableparser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L81",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_canonical_etroc",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_canonical_etroc",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_sha256",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_sha256",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L99",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_collect_scans",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_collect_scans",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L130",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_parse_dashboard_rows",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_parse_dashboard_rows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L151",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_clean_reason",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_clean_reason",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L159",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_scan_block",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_scan_block",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L179",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_update_detail_page",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_update_detail_page",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L222",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_replace_attr",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_replace_attr",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L229",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_update_card",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_update_card",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L251",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_update_table_row",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_update_table_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L274",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_update_index",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_update_index",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L308",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_py",
+      "_tgt": "import_new_nw_scans_main",
+      "source": "import_new_nw_scans_py",
+      "target": "import_new_nw_scans_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L135",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_parse_dashboard_rows",
+      "_tgt": "import_new_nw_scans_dashboardrow",
+      "source": "import_new_nw_scans_dashboardrow",
+      "target": "import_new_nw_scans_parse_dashboard_rows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L37",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_hybridtableparser",
+      "_tgt": "htmlparser",
+      "source": "import_new_nw_scans_hybridtableparser",
+      "target": "htmlparser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L38",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_hybridtableparser",
+      "_tgt": "import_new_nw_scans_hybridtableparser_init",
+      "source": "import_new_nw_scans_hybridtableparser",
+      "target": "import_new_nw_scans_hybridtableparser_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L47",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_hybridtableparser",
+      "_tgt": "import_new_nw_scans_hybridtableparser_handle_starttag",
+      "source": "import_new_nw_scans_hybridtableparser",
+      "target": "import_new_nw_scans_hybridtableparser_handle_starttag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L58",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_hybridtableparser",
+      "_tgt": "import_new_nw_scans_hybridtableparser_handle_data",
+      "source": "import_new_nw_scans_hybridtableparser",
+      "target": "import_new_nw_scans_hybridtableparser_handle_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_hybridtableparser",
+      "_tgt": "import_new_nw_scans_hybridtableparser_handle_endtag",
+      "source": "import_new_nw_scans_hybridtableparser",
+      "target": "import_new_nw_scans_hybridtableparser_handle_endtag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L131",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_parse_dashboard_rows",
+      "_tgt": "import_new_nw_scans_hybridtableparser",
+      "source": "import_new_nw_scans_hybridtableparser",
+      "target": "import_new_nw_scans_parse_dashboard_rows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L105",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_collect_scans",
+      "_tgt": "import_new_nw_scans_canonical_etroc",
+      "source": "import_new_nw_scans_canonical_etroc",
+      "target": "import_new_nw_scans_collect_scans",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L354",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_main",
+      "_tgt": "import_new_nw_scans_sha256",
+      "source": "import_new_nw_scans_sha256",
+      "target": "import_new_nw_scans_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L320",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_main",
+      "_tgt": "import_new_nw_scans_collect_scans",
+      "source": "import_new_nw_scans_collect_scans",
+      "target": "import_new_nw_scans_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L298",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_index",
+      "_tgt": "import_new_nw_scans_parse_dashboard_rows",
+      "source": "import_new_nw_scans_parse_dashboard_rows",
+      "target": "import_new_nw_scans_update_index",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L319",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_main",
+      "_tgt": "import_new_nw_scans_parse_dashboard_rows",
+      "source": "import_new_nw_scans_parse_dashboard_rows",
+      "target": "import_new_nw_scans_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L193",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_detail_page",
+      "_tgt": "import_new_nw_scans_clean_reason",
+      "source": "import_new_nw_scans_clean_reason",
+      "target": "import_new_nw_scans_update_detail_page",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L231",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_card",
+      "_tgt": "import_new_nw_scans_clean_reason",
+      "source": "import_new_nw_scans_clean_reason",
+      "target": "import_new_nw_scans_update_card",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L254",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_table_row",
+      "_tgt": "import_new_nw_scans_clean_reason",
+      "source": "import_new_nw_scans_clean_reason",
+      "target": "import_new_nw_scans_update_table_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L212",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_detail_page",
+      "_tgt": "import_new_nw_scans_scan_block",
+      "source": "import_new_nw_scans_scan_block",
+      "target": "import_new_nw_scans_update_detail_page",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L375",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_main",
+      "_tgt": "import_new_nw_scans_update_detail_page",
+      "source": "import_new_nw_scans_update_detail_page",
+      "target": "import_new_nw_scans_main",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L234",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_card",
+      "_tgt": "import_new_nw_scans_replace_attr",
+      "source": "import_new_nw_scans_replace_attr",
+      "target": "import_new_nw_scans_update_card",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L255",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_table_row",
+      "_tgt": "import_new_nw_scans_replace_attr",
+      "source": "import_new_nw_scans_replace_attr",
+      "target": "import_new_nw_scans_update_table_row",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L289",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_index",
+      "_tgt": "import_new_nw_scans_update_card",
+      "source": "import_new_nw_scans_update_card",
+      "target": "import_new_nw_scans_update_index",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L295",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_update_index",
+      "_tgt": "import_new_nw_scans_update_table_row",
+      "source": "import_new_nw_scans_update_table_row",
+      "target": "import_new_nw_scans_update_index",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "import_new_nw_scans.py",
+      "source_location": "L386",
+      "weight": 1.0,
+      "_src": "import_new_nw_scans_main",
+      "_tgt": "import_new_nw_scans_update_index",
+      "source": "import_new_nw_scans_update_index",
+      "target": "import_new_nw_scans_main",
+      "confidence_score": 1.0
+    },
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
