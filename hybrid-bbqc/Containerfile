@@ -3,7 +3,13 @@ ENV STATIC_ROOT=/app/static     COMMENTS_DB=/data/comments.sqlite3     PORT=8080
 WORKDIR /app
 COPY hybrid-bbqc /app/static
 COPY assets /app/static/assets
-RUN addgroup -S app && adduser -S app -G app && mkdir -p /data && chown -R app:app /app /data
+RUN addgroup -S app \
+    && adduser -S app -G app \
+    && mkdir -p /data \
+    && chown -R root:root /app \
+    && chown app:0 /data \
+    && chmod -R u=rwX,go=rX /app \
+    && chmod g=u /data
 USER app
 EXPOSE 8080
 CMD ["python", "/app/static/server.py"]

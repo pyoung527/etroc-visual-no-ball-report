@@ -6,6 +6,8 @@ metadata:
     app: etl-hybrid-bbqc
 spec:
   replicas: 1
+  strategy:
+    type: Recreate
   selector:
     matchLabels:
       app: etl-hybrid-bbqc
@@ -28,19 +30,29 @@ spec:
               value: /data/comments.sqlite3
             - name: COMMENTS_ALLOW_ANON
               value: "false"
+            - name: COMMENTS_ADMIN_USERS
+              value: "ypark,ypark@cern.ch"
+            - name: HOST
+              value: "127.0.0.1"
+            - name: APP_ORIGIN
+              value: https://etl-hybrid-bbqc.app.cern.ch
           volumeMounts:
             - name: comments-data
               mountPath: /data
           readinessProbe:
-            httpGet:
-              path: /api/health
-              port: 8080
+            exec:
+              command:
+                - python
+                - -c
+                - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=2).read()"
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
-            httpGet:
-              path: /api/health
-              port: 8080
+            exec:
+              command:
+                - python
+                - -c
+                - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=2).read()"
             initialDelaySeconds: 15
             periodSeconds: 20
           resources:
@@ -51,7 +63,7 @@ spec:
               cpu: 300m
               memory: 384Mi
         - name: oauth2-proxy
-          image: image-registry.openshift-image-registry.svc:5000/openshift/oauth2-proxy:latest
+          image: quay.io/oauth2-proxy/oauth2-proxy@sha256:10a1165743a192e1940b4708fb9647027185ce11a681a1c5519b442ff7f1f561
           imagePullPolicy: IfNotPresent
           ports:
             - name: oauth
@@ -86,7 +98,7 @@ spec:
             - --reverse-proxy=true
             - --pass-host-header=true
             - --pass-user-headers=true
-            - --set-xauthrequest=true
+            - --skip-auth-strip-headers=true
             - --skip-provider-button=true
             - --cookie-secure=true
             - --cookie-samesite=lax
