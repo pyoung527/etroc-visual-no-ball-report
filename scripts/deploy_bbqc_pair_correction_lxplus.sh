@@ -73,8 +73,10 @@ IDENTITY="$($OC whoami)"
 SERVER="$($OC whoami --show-server)"
 [[ -n "$IDENTITY" && "$IDENTITY" != "system:anonymous" ]] || \
   fail "invalid OKD identity: ${IDENTITY:-empty}"
-[[ "$SERVER" == "https://api.paas.okd.cern.ch" ]] || \
-  fail "unexpected OKD server: ${SERVER}"
+case "$SERVER" in
+  https://api.paas.okd.cern.ch|https://api.paas.okd.cern.ch:443) ;;
+  *) fail "unexpected OKD server: ${SERVER}" ;;
+esac
 log "Authenticated identity=${IDENTITY} server=${SERVER}"
 
 "$OC" get project "$PROJECT" >/dev/null
