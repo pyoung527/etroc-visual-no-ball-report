@@ -149,7 +149,8 @@ cat > "$CONTEXT_DIR/hybrid-bbqc/Containerfile" <<EOF
 FROM ${BASE_IMAGE_ID}
 USER root
 COPY overlay/ /app/static/
-RUN chown -R app:app /app/static
+RUN chown -R app:app /app/static \
+    && chmod -R u=rwX,go=rX /app/static
 USER app
 EOF
 
