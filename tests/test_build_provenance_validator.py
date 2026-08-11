@@ -67,7 +67,10 @@ def completed_build(captured: dict, *, build_number: int = 31) -> dict:
         "spec": {
             "source": deepcopy(captured["spec"]["source"]),
             "strategy": deepcopy(captured["spec"]["strategy"]),
-            "output": deepcopy(captured["spec"]["output"]),
+            "output": {
+                **deepcopy(captured["spec"]["output"]),
+                "pushSecret": {"name": "builder-dockercfg-example"},
+            },
         },
         "status": {
             "phase": "Complete",
@@ -137,6 +140,7 @@ class BuildProvenanceValidatorTests(unittest.TestCase):
             (lambda _c, b: b["metadata"]["annotations"].__setitem__("openshift.io/build.number", "32"), "build number"),
             (lambda _c, b: b["spec"]["source"].__setitem__("type", "Git"), "Build source"),
             (lambda _c, b: b["spec"]["output"]["to"].__setitem__("name", "other:latest"), "Build output"),
+            (lambda _c, b: b["spec"]["output"].__setitem__("other", {}), "unexpected fields"),
         ):
             with self.subTest(message=message):
                 captured, current, build = self.valid_documents()

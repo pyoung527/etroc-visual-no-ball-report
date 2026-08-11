@@ -171,10 +171,23 @@ def validate(
     for key, label in (
         ("source", "Build source"),
         ("strategy", "Build strategy"),
-        ("output", "Build output"),
     ):
         if compact(build_spec.get(key)) != compact(captured_spec.get(key)):
             fail(f"{label} differs from captured BuildConfig")
+    captured_output = require_mapping(captured_spec.get("output"), "captured BuildConfig output")
+    build_output = require_mapping(build_spec.get("output"), "Build output")
+    unexpected_output_keys = set(build_output) - {"to", "pushSecret"}
+    if unexpected_output_keys:
+        fail(f"Build output has unexpected fields: {sorted(unexpected_output_keys)}")
+    if compact(build_output.get("to")) != compact(captured_output.get("to")):
+        fail("Build output.to differs from captured BuildConfig")
+    push_secret = build_output.get("pushSecret")
+    if push_secret is not None:
+        push_secret_mapping = require_mapping(push_secret, "Build output pushSecret")
+        if set(push_secret_mapping) != {"name"} or not isinstance(
+            push_secret_mapping.get("name"), str
+        ) or not push_secret_mapping["name"]:
+            fail("Build output pushSecret is invalid")
 
     build_status = require_mapping(build.get("status"), "Build status")
     if build_status.get("phase") != "Complete":
