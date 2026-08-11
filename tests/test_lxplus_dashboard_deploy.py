@@ -112,6 +112,8 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "/app/static/dashboard.js",
             "if runtime_schema_sha256 != os.environ['BACKUP_SCHEMA_SHA256']:",
             "if comments < int(os.environ['BEFORE_COMMENTS']):",
+            "BBQC_STARTUP_OK|Serving /app/static with comments API on :8080;",
+            "if grep -Eiq 'Traceback|unhandled exception|migration failed'",
             "SSO_PROXY_GATE PASS",
         ):
             self.assertIn(required, script)

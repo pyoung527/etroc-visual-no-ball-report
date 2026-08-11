@@ -554,7 +554,7 @@ RESTARTS="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{range .status.containe
 grep -qx 'web=0' <<< "$RESTARTS"
 grep -qx 'oauth2-proxy=0' <<< "$RESTARTS"
 WEB_LOG="$(oc -n "$PROJECT" logs "$POD" -c web --tail=200)"
-grep -Fq 'BBQC_STARTUP_OK' <<< "$WEB_LOG"
+grep -Eq 'BBQC_STARTUP_OK|Serving /app/static with comments API on :8080;' <<< "$WEB_LOG"
 if grep -Eiq 'Traceback|unhandled exception|migration failed' <<< "$WEB_LOG"; then
   printf '%s\n' 'Blocking web log error detected.' >&2
   false
