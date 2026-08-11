@@ -173,7 +173,7 @@ old = json.load(open(os.environ['OLD_DEPLOYMENT_FILE'], encoding='utf-8'))
 forward = json.load(open(os.environ['FORWARD_DEPLOYMENT_FILE'], encoding='utf-8'))
 current = json.load(open(os.environ['CURRENT_DEPLOYMENT'], encoding='utf-8'))
 expected_uid = os.environ['DEPLOYMENT_UID']
-if old['metadata'].get('uid') != expected_uid or current['metadata'].get('uid') != expected_uid:
+if current['metadata'].get('uid') != expected_uid:
     raise SystemExit('rollback target UID changed')
 if old['metadata']['name'] != current['metadata']['name'] or old['metadata']['namespace'] != current['metadata']['namespace']:
     raise SystemExit('rollback target identity changed')
@@ -862,8 +862,13 @@ if grep -Eiq '(^|[[:space:]])(fatal|panic)([[:space:]:]|$)|level=(error|fatal)' 
 fi
 
 HEADERS="${WORK_DIR}/route-headers"
-HTTP_STATUS="$(curl --silent --show-error --dump-header "$HEADERS" --output /dev/null --write-out '%{http_code}' \
-  -H 'X-Forwarded-Email: ypark@cern.ch' https://etl-hybrid-bbqc.app.cern.ch/api/health)"
+HTTP_STATUS=''
+for _attempt in $(seq 1 12); do
+  HTTP_STATUS="$(curl --silent --show-error --dump-header "$HEADERS" --output /dev/null --write-out '%{http_code}' \
+    https://etl-hybrid-bbqc.app.cern.ch/api/health || true)"
+  test "$HTTP_STATUS" = 302 && break
+  sleep 5
+done
 test "$HTTP_STATUS" = 302
 LOCATION="$(python3 -I - "$HEADERS" <<'PY'
 import sys

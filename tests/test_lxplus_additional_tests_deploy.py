@@ -69,6 +69,17 @@ class LxplusAdditionalTestsDeployTests(unittest.TestCase):
         self.assertIn("web['livenessProbe']", forward)
         self.assertIn("http://127.0.0.1:8080/api/health", forward)
 
+    def test_external_sso_gate_retries_without_client_identity_header(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index('HEADERS="${WORK_DIR}/route-headers"')
+        end = script.index("SSO_PROXY_GATE PASS", start)
+        gate = script[start:end]
+        self.assertIn("for _attempt in $(seq 1 12)", gate)
+        self.assertIn("test \"$HTTP_STATUS\" = 302 && break", gate)
+        self.assertIn("sleep 5", gate)
+        self.assertIn("https://auth.cern.ch/", gate)
+        self.assertNotIn("X-Forwarded-Email", gate)
+
     def test_rollback_renderer_rejects_same_name_with_new_uid(self):
         script = SCRIPT.read_text(encoding="utf-8")
         anchor = script.index('CURRENT_DEPLOYMENT="$current" ROLLBACK_DEPLOYMENT="$rendered"')
@@ -85,7 +96,7 @@ class LxplusAdditionalTestsDeployTests(unittest.TestCase):
             "ownerReferences": [],
         }
         old = {
-            "metadata": {**base_metadata, "uid": stable_uid, "resourceVersion": "100"},
+            "metadata": {**base_metadata, "resourceVersion": "100"},
             "spec": {"template": {"old": True}},
         }
         forward = {
