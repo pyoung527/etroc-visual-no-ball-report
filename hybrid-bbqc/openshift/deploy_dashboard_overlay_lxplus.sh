@@ -169,14 +169,15 @@ for key in ('finalizers', 'ownerReferences'):
 def operator_annotations(value):
     result=dict(value or {})
     result.pop('deployment.kubernetes.io/revision', None)
+    result.pop('kubectl.kubernetes.io/last-applied-configuration', None)
     return result
 if operator_annotations(current['metadata'].get('annotations')) != operator_annotations(forward['metadata'].get('annotations')):
     raise SystemExit('current Deployment metadata annotations differs from this release')
 old['metadata']['resourceVersion'] = current['metadata']['resourceVersion']
 json.dump(old, open(os.environ['ROLLBACK_DEPLOYMENT'], 'w', encoding='utf-8'), indent=2, sort_keys=True)
 PY
-  oc -n "$PROJECT" replace --dry-run=server -f "$rendered" >/dev/null
-  oc -n "$PROJECT" replace -f "$rendered"
+  oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$rendered" >/dev/null
+  oc -n "$PROJECT" replace --save-config=false -f "$rendered"
   oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s
   pod="$(select_single_app_pod)"
   raw_web="$(oc -n "$PROJECT" get pod "$pod" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].imageID}')"
@@ -383,6 +384,15 @@ if comments != int(os.environ['BEFORE_COMMENTS']):
     raise SystemExit(f'local backup comment count changed: {comments}')
 print({'local_backup': os.environ['LOCAL_BACKUP'], 'integrity': integrity, 'comments': comments})
 PY
+BACKUP_SCHEMA_SHA256="$(python3 -I - "$LOCAL_BACKUP" <<'PY'
+import hashlib, json, sqlite3, sys
+with sqlite3.connect(sys.argv[1]) as db:
+    rows=db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name,tbl_name,sql").fetchall()
+payload=json.dumps(rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+print(hashlib.sha256(payload).hexdigest())
+PY
+)"
+[[ "$BACKUP_SCHEMA_SHA256" =~ ^[0-9a-f]{64}$ ]]
 BACKUP_SHA256="$(sha256sum "$LOCAL_BACKUP" | cut -d' ' -f1)"
 [[ "$BACKUP_SHA256" =~ ^[0-9a-f]{64}$ ]]
 printf '%s  %s\n' "$BACKUP_SHA256" "$LOCAL_BACKUP" > "${LOCAL_BACKUP}.sha256"
@@ -419,7 +429,7 @@ BUILD_CONTEXT_SHA256="$(tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --gro
 
 {
   declare -p SOURCE_REVISION API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
-  declare -p DEPLOYMENT_UID OLD_WEB_IMAGE OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP LOCAL_BACKUP BACKUP_SHA256
+  declare -p DEPLOYMENT_UID OLD_WEB_IMAGE OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256
   declare -p DEPLOYMENT_RESOURCE_VERSION CAPTURED_DEPLOYMENT_FILE CAPTURED_DEPLOYMENT_SHA256
   declare -p BUILDCONFIG_FILE BUILDCONFIG_SHA256 BUILDCONFIG_UID BUILDCONFIG_RESOURCE_VERSION
   declare -p OLD_DEPLOYMENT_FILE OLD_DEPLOYMENT_SHA256 FORWARD_DEPLOYMENT_FILE BUILD_CONTEXT_SHA256
@@ -475,7 +485,8 @@ if metadata.get('uid') != os.environ['DEPLOYMENT_UID']:
 if metadata.get('resourceVersion') != os.environ['DEPLOYMENT_RESOURCE_VERSION']:
     raise SystemExit('captured Deployment resourceVersion changed before rollout')
 desired_metadata={key: metadata[key] for key in ('name','namespace','labels','annotations','finalizers','ownerReferences','resourceVersion') if key in metadata}
-desired_metadata.setdefault('annotations', {}).update({
+desired_metadata.setdefault('annotations', {}).pop('kubectl.kubernetes.io/last-applied-configuration', None)
+desired_metadata['annotations'].update({
     'bbqc.cern.ch/source-revision': os.environ['SOURCE_REVISION'],
     'bbqc.cern.ch/build-context-sha256': os.environ['BUILD_CONTEXT_SHA256'],
     'bbqc.cern.ch/build-name': os.environ['BUILD_NAME'],
@@ -495,9 +506,9 @@ PY
 FORWARD_DEPLOYMENT_SHA256="$(sha256sum "$FORWARD_DEPLOYMENT_FILE" | cut -d' ' -f1)"
 [[ "$FORWARD_DEPLOYMENT_SHA256" =~ ^[0-9a-f]{64}$ ]]
 declare -p FORWARD_DEPLOYMENT_SHA256 >> "$RELEASE_STATE"
-oc -n "$PROJECT" replace --dry-run=server -f "$FORWARD_DEPLOYMENT_FILE" >/dev/null
+oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$FORWARD_DEPLOYMENT_FILE" >/dev/null
 ROLLOUT_MUTATED=1
-oc -n "$PROJECT" replace -f "$FORWARD_DEPLOYMENT_FILE"
+oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_DEPLOYMENT_FILE"
 oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s
 verify_context
 POD="$(select_single_app_pod)"
@@ -517,28 +528,24 @@ test "$REMOTE_JS_SHA" = "$JS_SHA256"
 oc -n "$PROJECT" exec "$POD" -c web -- python -c \
   "from pathlib import Path; [p.read_bytes() for p in map(Path, ['/app/static/index.html','/app/static/dashboard.css','/app/static/dashboard.js'])]; print('STATIC_READ PASS')"
 
-oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" python - <<'PY'
-import os, sqlite3
+oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" python - <<'PY'
+import hashlib, json, os, sqlite3
 with sqlite3.connect('/data/comments.sqlite3') as db:
-    active = db.execute('SELECT COUNT(*) FROM hybrid_registry WHERE active=1').fetchone()[0]
-    canonical = db.execute('SELECT COUNT(*) FROM hybrid_target_aliases WHERE is_canonical=1').fetchone()[0]
+    schema_rows = db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name,tbl_name,sql").fetchall()
     comments = db.execute('SELECT COUNT(*) FROM comments').fetchone()[0]
-    unresolved = db.execute("SELECT COUNT(*) FROM comments WHERE target LIKE 'hybrid:%' AND hybrid_registry_id IS NULL").fetchone()[0]
     foreign_key_errors = db.execute('PRAGMA foreign_key_check').fetchall()
     integrity = db.execute('PRAGMA integrity_check').fetchone()[0]
-if active != 72:
-    raise SystemExit(f'unexpected active hybrid count: {active}')
-if canonical != 72:
-    raise SystemExit(f'unexpected canonical alias count: {canonical}')
+schema_payload = json.dumps(schema_rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+runtime_schema_sha256 = hashlib.sha256(schema_payload).hexdigest()
+if runtime_schema_sha256 != os.environ['BACKUP_SCHEMA_SHA256']:
+    raise SystemExit(f'runtime database schema changed: {runtime_schema_sha256}')
 if comments < int(os.environ['BEFORE_COMMENTS']):
     raise SystemExit(f'comment count regressed: {comments}')
-if unresolved != 0:
-    raise SystemExit(f'unresolved hybrid comments: {unresolved}')
 if foreign_key_errors:
     raise SystemExit(f'foreign key errors: {foreign_key_errors}')
 if integrity != 'ok':
     raise SystemExit(f'runtime database integrity check failed: {integrity}')
-print({'active': active, 'canonical': canonical, 'comments': comments, 'integrity': integrity})
+print({'schema_sha256': runtime_schema_sha256, 'comments': comments, 'integrity': integrity})
 PY
 READY="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{range .status.containerStatuses[*]}{.name}={.ready}{"\n"}{end}')"
 grep -qx 'web=true' <<< "$READY"

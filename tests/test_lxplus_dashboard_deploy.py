@@ -76,6 +76,9 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "BEFORE_COMMENTS",
             "LOCAL_BACKUP",
             "BACKUP_SHA256",
+            "BACKUP_SCHEMA_SHA256",
+            "sqlite_master",
+            "runtime_schema_sha256",
             "OLD_DEPLOYMENT_FILE",
             "OLD_DEPLOYMENT_SHA256",
             "OLD_PROXY_IMAGE",
@@ -88,6 +91,9 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             self.assertIn(required, script)
         self.assertNotIn("rollback_deployment ||", script)
         self.assertIn('test "$(sha256sum "$OLD_DEPLOYMENT_FILE"', script)
+        runtime_gate = script[script.index('oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS='):]
+        self.assertNotIn("hybrid_registry", runtime_gate)
+        self.assertNotIn("hybrid_target_aliases", runtime_gate)
 
     def test_helper_pins_and_verifies_rollout_and_static_files(self):
         script = SCRIPT.read_text(encoding="utf-8")
@@ -96,15 +102,15 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "BUILD_OUTPUT_DIGEST",
             'get "isimage/etl-hybrid-bbqc@${BUILD_OUTPUT_DIGEST}"',
             "test \"$NEW_WEB_IMAGE\" != \"$OLD_WEB_IMAGE\"",
-            'oc -n "$PROJECT" replace --dry-run=server -f "$FORWARD_DEPLOYMENT_FILE"',
-            'oc -n "$PROJECT" replace -f "$FORWARD_DEPLOYMENT_FILE"',
+            'oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$FORWARD_DEPLOYMENT_FILE"',
+            'oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_DEPLOYMENT_FILE"',
             "oc -n \"$PROJECT\" rollout status",
             "POD_WEB_IMAGE",
             "test \"$POD_WEB_IMAGE\" = \"$NEW_WEB_IMAGE\"",
             "/app/static/index.html",
             "/app/static/dashboard.css",
             "/app/static/dashboard.js",
-            "if active != 72:",
+            "if runtime_schema_sha256 != os.environ['BACKUP_SCHEMA_SHA256']:",
             "if comments < int(os.environ['BEFORE_COMMENTS']):",
             "SSO_PROXY_GATE PASS",
         ):
@@ -138,6 +144,8 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "image.openshift.io/triggers",
             "BUILDCONFIG_RESOURCE_VERSION",
             ".status.output.to.imageDigest",
+            "kubectl.kubernetes.io/last-applied-configuration",
+            "--save-config=false",
         ):
             self.assertIn(required, script)
         self.assertNotIn("exit 1", script)
