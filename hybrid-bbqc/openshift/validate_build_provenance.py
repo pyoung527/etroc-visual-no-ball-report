@@ -114,7 +114,7 @@ def validate(
     current_generation = require_int(
         current_metadata.get("generation"), "current BuildConfig generation", 1
     )
-    if current_generation != captured_generation + 1:
+    if current_generation != captured_generation:
         fail(
             "BuildConfig generation continuity failed: "
             f"captured={captured_generation} current={current_generation}"
