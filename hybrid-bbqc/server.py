@@ -211,28 +211,37 @@ def validate_additional_test_schema(db: sqlite3.Connection) -> None:
         if "check(activein(0,1))" not in normalized_sql:
             raise ValueError(f"incompatible {table} active constraint")
 
-    unique_columns: dict[str, set[tuple[str, ...]]] = {}
+    unique_indexes: dict[str, list[tuple[tuple[str, ...], str, int]]] = {}
     for table in expected_columns:
-        unique_sets: set[tuple[str, ...]] = set()
+        actual_indexes: list[tuple[tuple[str, ...], str, int]] = []
         for index in db.execute(f"PRAGMA index_list({table})"):
             if index[2] != 1:
                 continue
-            unique_sets.add(
-                tuple(
-                    row[2]
-                    for row in db.execute(
-                        f"PRAGMA index_info({index[1]})"
-                    )
-                )
+            columns = tuple(
+                row[2]
+                for row in db.execute(f"PRAGMA index_info({index[1]})")
             )
-        unique_columns[table] = unique_sets
-    if not {("test_key",), ("display_name",)}.issubset(unique_columns["additional_tests"]):
-        raise ValueError("incompatible additional_tests unique constraints")
-    if not {
-        ("additional_test_id", "hybrid_registry_id"),
-        ("additional_test_id", "source_hybrid_identifier"),
-    }.issubset(unique_columns["hybrid_additional_tests"]):
-        raise ValueError("incompatible hybrid_additional_tests unique constraints")
+            origin = str(index[3]) if len(index) > 3 else ""
+            partial = int(index[4]) if len(index) > 4 else 1
+            actual_indexes.append((columns, origin, partial))
+        unique_indexes[table] = actual_indexes
+    expected_additional_indexes = [
+        (("test_key",), "u", 0),
+        (("display_name",), "u", 0),
+    ]
+    if sorted(unique_indexes["additional_tests"]) != sorted(expected_additional_indexes):
+        raise ValueError(
+            f"incompatible additional_tests unique constraints: {unique_indexes['additional_tests']}"
+        )
+    expected_membership_indexes = [
+        (("additional_test_id", "hybrid_registry_id"), "pk", 0),
+        (("additional_test_id", "source_hybrid_identifier"), "u", 0),
+    ]
+    if sorted(unique_indexes["hybrid_additional_tests"]) != sorted(expected_membership_indexes):
+        raise ValueError(
+            "incompatible hybrid_additional_tests unique constraints: "
+            f"{unique_indexes['hybrid_additional_tests']}"
+        )
 
     foreign_keys = {
         (row[2], row[3], row[4], row[6].upper())
@@ -451,7 +460,17 @@ def init_db(
                 used_registry_ids[registry_id] = pair_key
             planned_registry_ids[pair_key] = registry_id
 
-        db.execute("UPDATE hybrid_registry SET active=0 WHERE active=1")
+        desired_registry_ids = [
+            registry_id for registry_id in planned_registry_ids.values() if registry_id is not None
+        ]
+        if desired_registry_ids:
+            placeholders = ",".join("?" for _ in desired_registry_ids)
+            db.execute(
+                f"UPDATE hybrid_registry SET active=0 WHERE active=1 AND id NOT IN ({placeholders})",
+                desired_registry_ids,
+            )
+        else:
+            db.execute("UPDATE hybrid_registry SET active=0 WHERE active=1")
         registry_ids: dict[str, int] = {}
         for pair_key in canonical_pairs:
             etroc_serial, lgad_serial = split_pair_key(pair_key)
@@ -461,7 +480,10 @@ def init_db(
                     """
                     UPDATE hybrid_registry
                     SET pair_key=?,etroc_serial=?,lgad_serial=?,bbqc_url=?,active=1,updated_at=?
-                    WHERE id=?
+                    WHERE id=? AND (
+                        pair_key IS NOT ? OR etroc_serial IS NOT ? OR lgad_serial IS NOT ?
+                        OR bbqc_url IS NOT ? OR active<>1
+                    )
                     """,
                     (
                         pair_key,
@@ -470,6 +492,10 @@ def init_db(
                         f"/hybrids/{pair_key}.html",
                         now,
                         registry_id,
+                        pair_key,
+                        etroc_serial,
+                        lgad_serial,
+                        f"/hybrids/{pair_key}.html",
                     ),
                 )
             else:

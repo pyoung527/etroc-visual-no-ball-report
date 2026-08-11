@@ -6,6 +6,7 @@ import sqlite3
 import tempfile
 import threading
 import unittest
+from unittest import mock
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -299,6 +300,50 @@ class HybridRegistryMigrationTests(unittest.TestCase):
         self.assertEqual(after, before)
         self.assertEqual(version, 0)
 
+    def test_schema_validator_rejects_partial_unique_identity_indexes(self):
+        with sqlite3.connect(":memory:") as db:
+            db.executescript(
+                """
+                PRAGMA foreign_keys=ON;
+                CREATE TABLE hybrid_registry(id INTEGER PRIMARY KEY);
+                CREATE TABLE additional_tests (
+                    id INTEGER PRIMARY KEY,
+                    test_key TEXT NOT NULL,
+                    display_name TEXT NOT NULL,
+                    source_revision TEXT NOT NULL,
+                    active INTEGER NOT NULL CHECK(active IN (0,1)),
+                    created_at INTEGER NOT NULL,
+                    updated_at INTEGER NOT NULL
+                );
+                CREATE UNIQUE INDEX partial_test_key
+                    ON additional_tests(test_key) WHERE active=1;
+                CREATE UNIQUE INDEX partial_display_name
+                    ON additional_tests(display_name) WHERE active=1;
+                CREATE TABLE hybrid_additional_tests (
+                    additional_test_id INTEGER NOT NULL,
+                    hybrid_registry_id INTEGER NOT NULL,
+                    source_hybrid_identifier TEXT NOT NULL,
+                    source_revision TEXT NOT NULL,
+                    active INTEGER NOT NULL CHECK(active IN (0,1)),
+                    created_at INTEGER NOT NULL,
+                    updated_at INTEGER NOT NULL,
+                    PRIMARY KEY(additional_test_id, hybrid_registry_id),
+                    FOREIGN KEY(additional_test_id) REFERENCES additional_tests(id)
+                        ON DELETE RESTRICT,
+                    FOREIGN KEY(hybrid_registry_id) REFERENCES hybrid_registry(id)
+                        ON DELETE RESTRICT
+                );
+                CREATE UNIQUE INDEX partial_source_identity
+                    ON hybrid_additional_tests(
+                        additional_test_id, source_hybrid_identifier
+                    ) WHERE active=1;
+                """
+            )
+            with self.assertRaisesRegex(
+                ValueError, "incompatible additional_tests unique constraints"
+            ):
+                self.server.validate_additional_test_schema(db)
+
     def test_unsupported_schema_version_fails_without_mutation(self):
         with sqlite3.connect(self.db_path) as db:
             db.execute("PRAGMA user_version=99")
@@ -396,9 +441,18 @@ class HybridRegistryMigrationTests(unittest.TestCase):
 
     def test_init_db_is_idempotent(self):
         self.server.init_db(db_path=self.db_path, static_root=self.static_root)
-        self.server.init_db(db_path=self.db_path, static_root=self.static_root)
+        with sqlite3.connect(self.db_path) as db:
+            before_registry = db.execute(
+                "SELECT id,pair_key,active,created_at,updated_at FROM hybrid_registry ORDER BY id"
+            ).fetchall()
+
+        with mock.patch.object(self.server.time, "time", return_value=2_000_000_000):
+            self.server.init_db(db_path=self.db_path, static_root=self.static_root)
 
         with sqlite3.connect(self.db_path) as db:
+            after_registry = db.execute(
+                "SELECT id,pair_key,active,created_at,updated_at FROM hybrid_registry ORDER BY id"
+            ).fetchall()
             registry_count = db.execute(
                 "SELECT COUNT(*) FROM hybrid_registry"
             ).fetchone()[0]
@@ -407,6 +461,7 @@ class HybridRegistryMigrationTests(unittest.TestCase):
             ).fetchone()[0]
             comment_count = db.execute("SELECT COUNT(*) FROM comments").fetchone()[0]
 
+        self.assertEqual(before_registry, after_registry)
         self.assertEqual(registry_count, 2)
         self.assertEqual(alias_count, 3)
         self.assertEqual(comment_count, 1)
