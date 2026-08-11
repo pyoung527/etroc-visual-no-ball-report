@@ -167,8 +167,10 @@
 .additional-test-badge.test-shear-force { border-color: #7894a8; border-left-color: #567c96; background: #f7fbfd; color: #294b61; }
 .card-additional-tests { grid-column: 1 / -1; margin-top: 8px; padding-top: 8px; border-top: 1px dashed #cfc7af; }
 .card-additional-tests-title { display: block; color: #5e655f; font-size: 10px; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; }
-#hybrid-table th[data-additional-tests-heading], #hybrid-table .additional-tests-cell { min-width: 160px; }
+#hybrid-table th[data-advanced-tests-heading], #hybrid-table .additional-tests-cell { min-width: 180px; }
 #hybrid-table td .additional-test-badges { justify-content: center; }
+#hybrid-table .additional-tests-empty { color: var(--analytics-muted); font-weight: 700; }
+#hybrid-table .additional-tests-unavailable { color: var(--analytics-candidate); font-weight: 800; }
 .analytics-sr-only { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; white-space: nowrap !important; border: 0 !important; }
 .analytics-empty { display: grid; place-items: center; min-height: 120px; color: var(--analytics-muted); font-size: 11px; text-align: center; }
 

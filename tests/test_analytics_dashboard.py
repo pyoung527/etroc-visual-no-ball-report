@@ -12,8 +12,8 @@ JS = ROOT / "hybrid-bbqc" / "dashboard.js"
 class AnalyticsDashboardTests(unittest.TestCase):
     def test_main_page_loads_local_dashboard_assets_and_places_dashboard_first(self):
         html = INDEX.read_text(encoding="utf-8")
-        self.assertIn('href="dashboard.css"', html)
-        self.assertIn('src="dashboard.js"', html)
+        self.assertIn('href="dashboard.css?v=5f9d7e3bab4a"', html)
+        self.assertIn('src="dashboard.js?v=317e358631a8"', html)
         dashboard_at = html.index('id="bbqc-analytics"')
         legacy_summary_at = html.index('class="summary-grid"')
         self.assertLess(dashboard_at, legacy_summary_at)
@@ -48,8 +48,8 @@ class AnalyticsDashboardTests(unittest.TestCase):
         self.assertIn("source.textContent = `Source identifier: ${test.source_hybrid_identifier}`", script)
         self.assertIn(".additional-test-badge", css)
         self.assertIn(".additional-tests-summary", css)
-        self.assertIn("data-additional-tests-heading", script)
-        self.assertIn("data-additional-tests-cell", script)
+        self.assertIn("data-advanced-tests-heading", script)
+        self.assertIn("data-advanced-tests-cell", script)
         self.assertIn("active memberships", script)
         self.assertIn("group.remove()", script)
         self.assertIn("data-additional-tests-card", script)
@@ -69,6 +69,53 @@ class AnalyticsDashboardTests(unittest.TestCase):
             )
         ]
         self.assertNotIn("innerHTML", additional_block)
+
+    def test_additional_test_failure_marks_table_cells_unavailable(self):
+        script = JS.read_text(encoding="utf-8")
+        failure_block = script.split("loadAdditionalTests().catch(() => {", 1)[1].split(
+            "async function loadReviewStatus", 1
+        )[0]
+        self.assertIn("[data-advanced-tests-cell]", failure_block)
+        self.assertIn("Advanced test data unavailable", failure_block)
+        self.assertIn("cell.replaceChildren(unavailable)", failure_block)
+
+    def test_table_filters_and_sorting_are_keyboard_and_screen_reader_accessible(self):
+        html = INDEX.read_text(encoding="utf-8")
+        self.assertIn("const columnName=th.textContent.trim()", html)
+        self.assertIn("setAttribute('aria-label',`Filter ${columnName}`)", html)
+        self.assertIn("th.tabIndex=0", html)
+        self.assertIn("th.setAttribute('aria-sort','none')", html)
+        self.assertIn("th.addEventListener('keydown'", html)
+        self.assertIn("e.key==='Enter'||e.key===' '", html)
+        self.assertIn("'aria-sort',sortDir===1?'ascending':'descending'", html)
+
+    def test_table_csv_export_contract(self):
+        html = INDEX.read_text(encoding="utf-8")
+        script = JS.read_text(encoding="utf-8")
+        self.assertIn('data-export-table-csv', html)
+        self.assertIn('Export visible rows as CSV', html)
+        self.assertIn("table.tBodies[0].rows", script)
+        self.assertIn("row.classList.contains('filter-hidden')", script)
+        self.assertIn("row.classList.contains('column-filter-hidden')", script)
+        self.assertIn("replaceAll('\"', '\"\"')", script)
+        self.assertIn("/^[=+\\-@]/", script)
+        self.assertIn("String.fromCharCode(0xFEFF)", script)
+        self.assertIn("text/csv;charset=utf-8", script)
+        self.assertIn("etl-hybrid-bbqc-table-", script)
+        self.assertIn("URL.revokeObjectURL", script)
+
+    def test_table_has_static_advanced_tests_column_for_every_hybrid(self):
+        html = INDEX.read_text(encoding="utf-8")
+        script = JS.read_text(encoding="utf-8")
+        self.assertIn(
+            '<th data-advanced-tests-heading>Advanced tests</th>',
+            html,
+        )
+        self.assertEqual(html.count("data-advanced-tests-cell"), 72)
+        self.assertEqual(html.count('class="additional-tests-empty">—</span>'), 72)
+        self.assertIn("[data-advanced-tests-cell]", script)
+        self.assertIn("No advanced test assignment", script)
+        self.assertNotIn("row.append(cell)", script)
 
     def test_dashboard_script_uses_existing_rows_and_live_comment_summary(self):
         script = JS.read_text(encoding="utf-8")

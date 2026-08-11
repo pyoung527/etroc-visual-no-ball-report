@@ -329,22 +329,13 @@
 
     const ensureAdditionalTestCell = (row) => {
       const table = row.closest('table');
-      const headerRow = table?.querySelector('thead tr');
-      if (headerRow && !headerRow.querySelector('[data-additional-tests-heading]')) {
-        const heading = document.createElement('th');
-        heading.scope = 'col';
-        heading.dataset.additionalTestsHeading = '';
-        heading.textContent = 'Additional test assignments';
-        headerRow.append(heading);
+      const heading = table?.querySelector('thead [data-advanced-tests-heading]');
+      if (!heading || heading.textContent.trim() !== 'Advanced tests') {
+        throw new Error('Advanced tests table heading missing');
       }
-      let cell = row.querySelector('[data-additional-tests-cell]');
-      if (!cell) {
-        cell = document.createElement('td');
-        cell.dataset.additionalTestsCell = '';
-        cell.className = 'additional-tests-cell';
-        row.append(cell);
-      }
-      cell.querySelectorAll('.additional-test-badges').forEach((group) => group.remove());
+      const cell = row.querySelector('[data-advanced-tests-cell]');
+      if (!cell) throw new Error('Advanced tests table cell missing');
+      cell.replaceChildren();
       return cell;
     };
 
@@ -383,6 +374,15 @@
         target?.append(makeBadgeGroup(tests, pairKey));
       });
     });
+    records.forEach((record) => {
+      const cell = record.row.querySelector('[data-advanced-tests-cell]');
+      if (!cell || cell.hasChildNodes()) return;
+      const empty = document.createElement('span');
+      empty.className = 'additional-tests-empty';
+      empty.textContent = '—';
+      empty.setAttribute('aria-label', 'No advanced test assignment');
+      cell.append(empty);
+    });
 
     const summaryBody = dashboard.querySelector('#additional-tests-chart [data-chart-body]');
     const summary = document.createElement('div');
@@ -414,6 +414,15 @@
       message.textContent = 'Additional test assignments unavailable.';
       body.replaceChildren(message);
     }
+    records.forEach((record) => {
+      const cell = record.row.querySelector('[data-advanced-tests-cell]');
+      if (!cell) return;
+      const unavailable = document.createElement('span');
+      unavailable.className = 'additional-tests-unavailable';
+      unavailable.textContent = 'Unavailable';
+      unavailable.setAttribute('aria-label', 'Advanced test data unavailable');
+      cell.replaceChildren(unavailable);
+    });
     liveSourceStatus.additionalTests = 'failed';
     updateLiveState();
   });
@@ -484,5 +493,39 @@
     if (reviewed) reviewed.textContent = '—';
     liveSourceStatus.reviewerStatus = 'failed';
     updateLiveState();
+  });
+})();
+
+(() => {
+  const button = document.querySelector('[data-export-table-csv]');
+  const table = document.querySelector('#hybrid-table');
+  if (!button || !table?.tHead || !table.tBodies[0]) return;
+
+  const normalizedText = (cell) => String(cell.innerText || cell.textContent || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  const safeSpreadsheetValue = (value) => /^[=+\-@]/.test(value) ? `'${value}` : value;
+  const csvCell = (value) => `"${safeSpreadsheetValue(String(value)).replaceAll('"', '""')}"`;
+
+  button.addEventListener('click', () => {
+    const headings = [...table.tHead.rows[0].cells].map(normalizedText);
+    const visibleRows = [...table.tBodies[0].rows].filter((row) => (
+      !row.classList.contains('filter-hidden')
+      && !row.classList.contains('column-filter-hidden')
+    ));
+    const records = visibleRows.map((row) => [...row.cells].map(normalizedText));
+    const csv = String.fromCharCode(0xFEFF) + [headings, ...records]
+      .map((record) => record.map(csvCell).join(','))
+      .join('\r\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `etl-hybrid-bbqc-table-${new Date().toISOString().slice(0, 10)}.csv`;
+    link.hidden = true;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
   });
 })();
