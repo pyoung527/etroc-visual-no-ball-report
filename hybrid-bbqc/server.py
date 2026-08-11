@@ -10,6 +10,7 @@ from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 ROOT = Path(os.environ.get("STATIC_ROOT", "/app/static")).resolve()
+PRODUCTION_STATIC_ROOT = ROOT
 DB_PATH = Path(os.environ.get("COMMENTS_DB", "/data/comments.sqlite3"))
 ALLOW_ANON = os.environ.get("COMMENTS_ALLOW_ANON", "false").lower() in {
     "1",
@@ -28,6 +29,11 @@ APP_ORIGIN = os.environ.get("APP_ORIGIN", "https://etl-hybrid-bbqc.app.cern.ch")
 )
 PAIR_PATH_RE = re.compile(r"hybrids/([A-Za-z0-9_.-]+__[A-Za-z0-9_.-]+)\.html")
 REDIRECT_RE = re.compile(r"url=([^\"' >;]+)\.html", re.IGNORECASE)
+TEST_KEY_RE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+SOURCE_REVISION_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$")
+SOURCE_HYBRID_RE = re.compile(
+    r"^HYBRID_[A-Za-z0-9.-]+_(?:HPK-[A-Za-z0-9_.-]+|FBK_[A-Za-z0-9_.-]+)$"
+)
 
 
 def split_pair_key(pair_key: str) -> tuple[str, str]:
@@ -76,15 +82,219 @@ def discover_redirect_aliases(
     return aliases
 
 
+def source_identifier_pair(source_hybrid_identifier: str) -> str:
+    if not SOURCE_HYBRID_RE.fullmatch(source_hybrid_identifier):
+        raise ValueError(f"invalid source hybrid identifier: {source_hybrid_identifier}")
+    body = source_hybrid_identifier.removeprefix("HYBRID_")
+    for marker in ("_HPK-", "_FBK_"):
+        if marker in body:
+            return body.replace(marker, f"__{marker[1:]}", 1)
+    raise ValueError(f"invalid source hybrid identifier: {source_hybrid_identifier}")
+
+
+def load_additional_tests_manifest(
+    path: Path, canonical_pairs: set[str]
+) -> dict | None:
+    path = Path(path)
+    if not path.is_file():
+        return None
+    try:
+        manifest = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, UnicodeError, json.JSONDecodeError) as exc:
+        raise ValueError("invalid additional test manifest") from exc
+    if not isinstance(manifest, dict) or manifest.get("schema_version") != 1:
+        raise ValueError("invalid additional test manifest schema")
+    source_revision = manifest.get("source_revision")
+    tests = manifest.get("tests")
+    if not isinstance(source_revision, str) or not SOURCE_REVISION_RE.fullmatch(source_revision):
+        raise ValueError("invalid additional test source revision")
+    if not isinstance(tests, list) or not tests:
+        raise ValueError("additional test manifest has no tests")
+    seen_test_keys: set[str] = set()
+    seen_display_names: set[str] = set()
+    seen_memberships: set[tuple[str, str]] = set()
+    raw_pair_map: dict[str, str] = {}
+    normalized_tests: list[dict] = []
+    for item in tests:
+        if not isinstance(item, dict):
+            raise ValueError("invalid additional test entry")
+        test_key = item.get("test_key")
+        display_name = item.get("display_name")
+        hybrids = item.get("hybrids")
+        if not isinstance(test_key, str) or not TEST_KEY_RE.fullmatch(test_key):
+            raise ValueError("invalid additional test key")
+        if (
+            not isinstance(display_name, str)
+            or not display_name.strip()
+            or len(display_name) > 100
+        ):
+            raise ValueError("invalid additional test display name")
+        if test_key in seen_test_keys or display_name in seen_display_names:
+            raise ValueError("duplicate additional test")
+        if not isinstance(hybrids, list) or not hybrids:
+            raise ValueError(f"additional test has no hybrids: {test_key}")
+        seen_test_keys.add(test_key)
+        seen_display_names.add(display_name)
+        normalized_members: list[dict] = []
+        seen_test_raw: set[str] = set()
+        for member in hybrids:
+            if not isinstance(member, dict):
+                raise ValueError("invalid additional test membership")
+            raw = member.get("source_hybrid_identifier")
+            pair_key = member.get("pair_key")
+            if not isinstance(raw, str):
+                raise ValueError("invalid source hybrid identifier")
+            if not isinstance(pair_key, str):
+                raise ValueError("invalid additional test pair key")
+            split_pair_key(pair_key)
+            source_identifier_pair(raw)
+            if raw in seen_test_raw:
+                raise ValueError(f"duplicate source hybrid identifier: {test_key}/{raw}")
+            seen_test_raw.add(raw)
+            if pair_key not in canonical_pairs:
+                raise ValueError(f"additional test hybrid is not canonical: {pair_key}")
+            membership = (test_key, pair_key)
+            if membership in seen_memberships:
+                raise ValueError(f"duplicate additional test membership: {test_key}/{pair_key}")
+            previous_pair = raw_pair_map.setdefault(raw, pair_key)
+            if previous_pair != pair_key:
+                raise ValueError(f"source hybrid identifier maps to multiple pairs: {raw}")
+            seen_memberships.add(membership)
+            normalized_members.append(
+                {"source_hybrid_identifier": raw, "pair_key": pair_key}
+            )
+        normalized_tests.append(
+            {
+                "test_key": test_key,
+                "display_name": display_name,
+                "hybrids": normalized_members,
+            }
+        )
+    return {
+        "source_revision": source_revision,
+        "tests": normalized_tests,
+    }
+
+
+def validate_additional_test_schema(db: sqlite3.Connection) -> None:
+    expected_columns = {
+        "additional_tests": [
+            ("id", "INTEGER", 0, 1),
+            ("test_key", "TEXT", 1, 0),
+            ("display_name", "TEXT", 1, 0),
+            ("source_revision", "TEXT", 1, 0),
+            ("active", "INTEGER", 1, 0),
+            ("created_at", "INTEGER", 1, 0),
+            ("updated_at", "INTEGER", 1, 0),
+        ],
+        "hybrid_additional_tests": [
+            ("additional_test_id", "INTEGER", 1, 1),
+            ("hybrid_registry_id", "INTEGER", 1, 2),
+            ("source_hybrid_identifier", "TEXT", 1, 0),
+            ("source_revision", "TEXT", 1, 0),
+            ("active", "INTEGER", 1, 0),
+            ("created_at", "INTEGER", 1, 0),
+            ("updated_at", "INTEGER", 1, 0),
+        ],
+    }
+    for table, expected in expected_columns.items():
+        actual = [
+            (row[1], row[2].upper(), row[3], row[5])
+            for row in db.execute(f"PRAGMA table_info({table})")
+        ]
+        if actual != expected:
+            raise ValueError(f"incompatible {table} columns: {actual}")
+        sql_row = db.execute(
+            "SELECT sql FROM sqlite_master WHERE type='table' AND name=?", (table,)
+        ).fetchone()
+        normalized_sql = re.sub(r"\s+", "", (sql_row[0] if sql_row else "").lower())
+        if "check(activein(0,1))" not in normalized_sql:
+            raise ValueError(f"incompatible {table} active constraint")
+
+    unique_columns: dict[str, set[tuple[str, ...]]] = {}
+    for table in expected_columns:
+        unique_sets: set[tuple[str, ...]] = set()
+        for index in db.execute(f"PRAGMA index_list({table})"):
+            if index[2] != 1:
+                continue
+            unique_sets.add(
+                tuple(
+                    row[2]
+                    for row in db.execute(
+                        f"PRAGMA index_info({index[1]})"
+                    )
+                )
+            )
+        unique_columns[table] = unique_sets
+    if not {("test_key",), ("display_name",)}.issubset(unique_columns["additional_tests"]):
+        raise ValueError("incompatible additional_tests unique constraints")
+    if not {
+        ("additional_test_id", "hybrid_registry_id"),
+        ("additional_test_id", "source_hybrid_identifier"),
+    }.issubset(unique_columns["hybrid_additional_tests"]):
+        raise ValueError("incompatible hybrid_additional_tests unique constraints")
+
+    foreign_keys = {
+        (row[2], row[3], row[4], row[6].upper())
+        for row in db.execute("PRAGMA foreign_key_list(hybrid_additional_tests)")
+    }
+    expected_foreign_keys = {
+        ("additional_tests", "additional_test_id", "id", "RESTRICT"),
+        ("hybrid_registry", "hybrid_registry_id", "id", "RESTRICT"),
+    }
+    if foreign_keys != expected_foreign_keys:
+        raise ValueError(f"incompatible hybrid_additional_tests foreign keys: {foreign_keys}")
+
+
 IDENTITY_HEADER = "X-Forwarded-Email"
 
 
-def init_db(db_path: Path = DB_PATH, static_root: Path = ROOT) -> None:
+def init_db(
+    db_path: Path = DB_PATH,
+    static_root: Path = ROOT,
+    *,
+    require_additional_tests: bool | None = None,
+) -> None:
     db_path = Path(db_path)
     static_root = Path(static_root)
+    canonical_pairs = discover_canonical_pairs(static_root)
+    if not canonical_pairs:
+        raise ValueError("no canonical hybrid pairs found in static dashboard")
+    canonical_pair_set = set(canonical_pairs)
+    additional_tests_manifest = load_additional_tests_manifest(
+        static_root / "additional-tests.json", canonical_pair_set
+    )
+    redirect_aliases = discover_redirect_aliases(static_root, canonical_pair_set)
+    if require_additional_tests is None:
+        require_additional_tests = static_root.resolve() == PRODUCTION_STATIC_ROOT.resolve()
+    if require_additional_tests and additional_tests_manifest is None:
+        raise ValueError("additional test manifest is required for production static root")
+    seen_etroc: set[str] = set()
+    seen_lgad: set[str] = set()
+    for pair_key in canonical_pairs:
+        etroc_serial, lgad_serial = split_pair_key(pair_key)
+        if etroc_serial in seen_etroc:
+            raise ValueError(f"duplicate active ETROC: {etroc_serial}")
+        if lgad_serial in seen_lgad:
+            raise ValueError(f"duplicate active LGAD: {lgad_serial}")
+        seen_etroc.add(etroc_serial)
+        seen_lgad.add(lgad_serial)
     db_path.parent.mkdir(parents=True, exist_ok=True)
-    with sqlite3.connect(db_path) as db:
+    with sqlite3.connect(db_path, isolation_level=None) as db:
         db.execute("PRAGMA foreign_keys=ON")
+        db.execute("BEGIN IMMEDIATE")
+        schema_version = db.execute("PRAGMA user_version").fetchone()[0]
+        if schema_version not in (0, 2):
+            raise ValueError(f"unsupported database schema version: {schema_version}")
+        if schema_version == 2:
+            existing_managed_tables = {
+                row[0]
+                for row in db.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table' AND name IN ('additional_tests','hybrid_additional_tests')"
+                )
+            }
+            if existing_managed_tables != {"additional_tests", "hybrid_additional_tests"}:
+                raise ValueError("database schema version 2 is missing managed tables")
         db.execute("""
         CREATE TABLE IF NOT EXISTS comments (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -127,6 +337,36 @@ def init_db(db_path: Path = DB_PATH, static_root: Path = ROOT) -> None:
             FOREIGN KEY (hybrid_registry_id) REFERENCES hybrid_registry(id)
         )
         """)
+        db.execute("""
+        CREATE TABLE IF NOT EXISTS additional_tests (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            test_key TEXT NOT NULL UNIQUE,
+            display_name TEXT NOT NULL UNIQUE,
+            source_revision TEXT NOT NULL,
+            active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0,1)),
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL
+        )
+        """)
+        db.execute("""
+        CREATE TABLE IF NOT EXISTS hybrid_additional_tests (
+            additional_test_id INTEGER NOT NULL,
+            hybrid_registry_id INTEGER NOT NULL,
+            source_hybrid_identifier TEXT NOT NULL,
+            source_revision TEXT NOT NULL,
+            active INTEGER NOT NULL DEFAULT 1 CHECK (active IN (0,1)),
+            created_at INTEGER NOT NULL,
+            updated_at INTEGER NOT NULL,
+            PRIMARY KEY (additional_test_id, hybrid_registry_id),
+            UNIQUE (additional_test_id, source_hybrid_identifier),
+            FOREIGN KEY (additional_test_id) REFERENCES additional_tests(id) ON DELETE RESTRICT,
+            FOREIGN KEY (hybrid_registry_id) REFERENCES hybrid_registry(id) ON DELETE RESTRICT
+        )
+        """)
+        db.execute(
+            "CREATE INDEX IF NOT EXISTS idx_hybrid_additional_tests_registry ON hybrid_additional_tests(hybrid_registry_id,active,additional_test_id)"
+        )
+        validate_additional_test_schema(db)
         comment_columns = {row[1] for row in db.execute("PRAGMA table_info(comments)")}
         if "hybrid_registry_id" not in comment_columns:
             db.execute(
@@ -137,21 +377,6 @@ def init_db(db_path: Path = DB_PATH, static_root: Path = ROOT) -> None:
         )
 
         now = int(time.time())
-        canonical_pairs = discover_canonical_pairs(static_root)
-        if not canonical_pairs:
-            raise ValueError("no canonical hybrid pairs found in static dashboard")
-        canonical_pair_set = set(canonical_pairs)
-        redirect_aliases = discover_redirect_aliases(static_root, canonical_pair_set)
-        seen_etroc: set[str] = set()
-        seen_lgad: set[str] = set()
-        for pair_key in canonical_pairs:
-            etroc_serial, lgad_serial = split_pair_key(pair_key)
-            if etroc_serial in seen_etroc:
-                raise ValueError(f"duplicate active ETROC: {etroc_serial}")
-            if lgad_serial in seen_lgad:
-                raise ValueError(f"duplicate active LGAD: {lgad_serial}")
-            seen_etroc.add(etroc_serial)
-            seen_lgad.add(lgad_serial)
 
         existing_rows = db.execute(
             "SELECT id,pair_key,etroc_serial,lgad_serial FROM hybrid_registry"
@@ -312,6 +537,101 @@ def init_db(db_path: Path = DB_PATH, static_root: Path = ROOT) -> None:
             ON hybrid_target_aliases(hybrid_registry_id) WHERE is_canonical=1
             """
         )
+        if additional_tests_manifest is not None:
+            source_revision = additional_tests_manifest["source_revision"]
+            desired_test_keys = {
+                test["test_key"] for test in additional_tests_manifest["tests"]
+            }
+            for test_id, test_key, active in db.execute(
+                "SELECT id,test_key,active FROM additional_tests"
+            ):
+                if active == 1 and test_key not in desired_test_keys:
+                    db.execute(
+                        "UPDATE additional_tests SET active=0,updated_at=? WHERE id=?",
+                        (now, test_id),
+                    )
+            test_ids: dict[str, int] = {}
+            for test in additional_tests_manifest["tests"]:
+                db.execute(
+                    """
+                    INSERT INTO additional_tests(
+                        test_key,display_name,source_revision,active,created_at,updated_at
+                    ) VALUES(?,?,?,?,?,?)
+                    ON CONFLICT(test_key) DO UPDATE SET
+                        updated_at=CASE
+                            WHEN additional_tests.display_name IS NOT excluded.display_name
+                              OR additional_tests.source_revision IS NOT excluded.source_revision
+                              OR additional_tests.active != 1
+                            THEN excluded.updated_at ELSE additional_tests.updated_at END,
+                        display_name=excluded.display_name,
+                        source_revision=excluded.source_revision,
+                        active=1
+                    """,
+                    (
+                        test["test_key"],
+                        test["display_name"],
+                        source_revision,
+                        1,
+                        now,
+                        now,
+                    ),
+                )
+                test_row = db.execute(
+                    "SELECT id FROM additional_tests WHERE test_key=?",
+                    (test["test_key"],),
+                ).fetchone()
+                if test_row is None:
+                    raise RuntimeError("failed to reconcile additional test")
+                test_ids[test["test_key"]] = test_row[0]
+
+            desired_memberships: set[tuple[int, int]] = set()
+            for test in additional_tests_manifest["tests"]:
+                test_id = test_ids[test["test_key"]]
+                for member in test["hybrids"]:
+                    desired_memberships.add((test_id, registry_ids[member["pair_key"]]))
+            for test_id, registry_id, active in db.execute(
+                "SELECT additional_test_id,hybrid_registry_id,active FROM hybrid_additional_tests"
+            ):
+                if active == 1 and (test_id, registry_id) not in desired_memberships:
+                    db.execute(
+                        """
+                        UPDATE hybrid_additional_tests
+                        SET active=0,updated_at=?
+                        WHERE additional_test_id=? AND hybrid_registry_id=?
+                        """,
+                        (now, test_id, registry_id),
+                    )
+            for test in additional_tests_manifest["tests"]:
+                test_id = test_ids[test["test_key"]]
+                for member in test["hybrids"]:
+                    registry_id = registry_ids[member["pair_key"]]
+                    db.execute(
+                        """
+                        INSERT INTO hybrid_additional_tests(
+                            additional_test_id,hybrid_registry_id,
+                            source_hybrid_identifier,source_revision,active,
+                            created_at,updated_at
+                        ) VALUES(?,?,?,?,?,?,?)
+                        ON CONFLICT(additional_test_id,hybrid_registry_id) DO UPDATE SET
+                            updated_at=CASE
+                                WHEN hybrid_additional_tests.source_hybrid_identifier IS NOT excluded.source_hybrid_identifier
+                                  OR hybrid_additional_tests.source_revision IS NOT excluded.source_revision
+                                  OR hybrid_additional_tests.active != 1
+                                THEN excluded.updated_at ELSE hybrid_additional_tests.updated_at END,
+                            source_hybrid_identifier=excluded.source_hybrid_identifier,
+                            source_revision=excluded.source_revision,
+                            active=1
+                        """,
+                        (
+                            test_id,
+                            registry_id,
+                            member["source_hybrid_identifier"],
+                            source_revision,
+                            1,
+                            now,
+                            now,
+                        ),
+                    )
         db.execute(
             """
             UPDATE comments
@@ -324,6 +644,13 @@ def init_db(db_path: Path = DB_PATH, static_root: Path = ROOT) -> None:
               AND target IN (SELECT target FROM hybrid_target_aliases)
             """
         )
+        foreign_key_errors = db.execute("PRAGMA foreign_key_check").fetchall()
+        if foreign_key_errors:
+            raise ValueError(f"database foreign key errors: {foreign_key_errors}")
+        integrity_rows = db.execute("PRAGMA integrity_check").fetchall()
+        if integrity_rows != [("ok",)]:
+            raise ValueError(f"database integrity check failed: {integrity_rows}")
+        db.execute("PRAGMA user_version=2")
         db.commit()
 
 
@@ -567,7 +894,38 @@ def list_hybrids(db_path: Path, pair_key: str | None = None) -> list[dict]:
                 """,
                 (pair_key,),
             ).fetchall()
-    return [dict(row) for row in rows]
+        records = [dict(row) for row in rows]
+        tests_by_registry: dict[int, list[dict]] = {
+            record["id"]: [] for record in records
+        }
+        if records:
+            placeholders = ",".join("?" for _record in records)
+            membership_rows = db.execute(
+                f"""
+                SELECT membership.hybrid_registry_id,test.test_key,
+                       test.display_name,membership.source_hybrid_identifier
+                FROM hybrid_additional_tests AS membership
+                JOIN additional_tests AS test
+                  ON test.id=membership.additional_test_id
+                WHERE membership.active=1 AND test.active=1
+                  AND membership.hybrid_registry_id IN ({placeholders})
+                ORDER BY membership.hybrid_registry_id,test.test_key
+                """,
+                tuple(record["id"] for record in records),
+            ).fetchall()
+            for membership in membership_rows:
+                tests_by_registry[membership["hybrid_registry_id"]].append(
+                    {
+                        "test_key": membership["test_key"],
+                        "display_name": membership["display_name"],
+                        "source_hybrid_identifier": membership[
+                            "source_hybrid_identifier"
+                        ],
+                    }
+                )
+    for record in records:
+        record["additional_tests"] = tests_by_registry[record["id"]]
+    return records
 
 
 class Handler(SimpleHTTPRequestHandler):

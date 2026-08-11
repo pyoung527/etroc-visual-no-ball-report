@@ -27,12 +27,48 @@ class AnalyticsDashboardTests(unittest.TestCase):
             "concordance-chart",
             "wafer-chart",
             "review-chart",
+            "additional-tests-chart",
         ):
             with self.subTest(chart_id=chart_id):
                 self.assertIn(f'id="{chart_id}"', html)
         self.assertIn('aria-labelledby="bbqc-analytics-title"', html)
         self.assertIn("screening candidate", html.lower())
         self.assertIn("not direct proof of bump failure", html.lower())
+        self.assertIn("test assignment only", html.lower())
+        self.assertIn("not test completion or result", html.lower())
+
+    def test_additional_tests_use_live_registry_api_and_safe_badges(self):
+        script = JS.read_text(encoding="utf-8")
+        css = CSS.read_text(encoding="utf-8")
+        self.assertIn("/api/hybrids", script)
+        self.assertIn("additional_tests", script)
+        self.assertIn("additional-test-badge", script)
+        self.assertIn("source_hybrid_identifier", script)
+        self.assertIn("label.textContent = `Assigned: ${test.display_name}`", script)
+        self.assertIn("source.textContent = `Source identifier: ${test.source_hybrid_identifier}`", script)
+        self.assertIn(".additional-test-badge", css)
+        self.assertIn(".additional-tests-summary", css)
+        self.assertIn("data-additional-tests-heading", script)
+        self.assertIn("data-additional-tests-cell", script)
+        self.assertIn("active memberships", script)
+        self.assertIn("group.remove()", script)
+        self.assertIn("data-additional-tests-card", script)
+        self.assertIn("Additional test assignments", script)
+        self.assertIn("liveSourceStatus.additionalTests = 'failed'", script)
+        self.assertIn("unavailable.join(' + ')", script)
+        self.assertNotIn("node.cells[3]", script)
+        self.assertNotIn(": node.querySelector('.card-consistency')", script)
+        html = INDEX.read_text(encoding="utf-8")
+        additional_card = html[
+            html.index('id="additional-tests-chart"') : html.index('id="review-chart"')
+        ]
+        self.assertIn('role="status" aria-live="polite"', additional_card)
+        additional_block = script[
+            script.index("async function loadAdditionalTests") : script.index(
+                "async function loadReviewStatus"
+            )
+        ]
+        self.assertNotIn("innerHTML", additional_block)
 
     def test_dashboard_script_uses_existing_rows_and_live_comment_summary(self):
         script = JS.read_text(encoding="utf-8")

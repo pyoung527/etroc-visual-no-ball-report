@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "source_revision": "operator-supplied-2026-08-11",
+  "tests": [
+    {
+      "test_key": "thermal-cycling",
+      "display_name": "Thermal cycling test",
+      "hybrids": [
+        {
+          "source_hybrid_identifier": "HYBRID_W03F7-87_HPK-W2_1",
+          "pair_key": "W03F7-87__HPK-W2_1"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W03F7-89_HPK-W2_3",
+          "pair_key": "W03F7-89__HPK-W2_3"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W03F7-99_HPK-W2_7",
+          "pair_key": "W03F7-99__HPK-W2_7"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W03F7-102_HPK-W2_9",
+          "pair_key": "W03F7-102__HPK-W2_9"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-89_HPK-W2_10",
+          "pair_key": "W04F2-89__HPK-W2_10"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-86_HPK-W2_13",
+          "pair_key": "W04F2-86__HPK-W2_13"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-76_HPK-W2_18",
+          "pair_key": "W04F2-76__HPK-W2_18"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-78_HPK-W2_20",
+          "pair_key": "W04F2-78__HPK-W2_20"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-79_FBK_LF-W14_43",
+          "pair_key": "W04F2-79__FBK_LF-W14_43"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-70_FBK_LF-W14_36",
+          "pair_key": "W04F2-70__FBK_LF-W14_36"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-64_FBK_LF-W14_40",
+          "pair_key": "W04F2-64__FBK_LF-W14_40"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-62_FBK_LF-W14_29",
+          "pair_key": "W04F2-62__FBK_LF-W14_29"
+        }
+      ]
+    },
+    {
+      "test_key": "shear-force",
+      "display_name": "Shear force test",
+      "hybrids": [
+        {
+          "source_hybrid_identifier": "HYBRID_W03F7-87_HPK-W2_1",
+          "pair_key": "W03F7-87__HPK-W2_1"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W03F7-88_HPK-W2_2",
+          "pair_key": "W03F7-88__HPK-W2_2"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-89_HPK-W2_10",
+          "pair_key": "W04F2-89__HPK-W2_10"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-88_HPK-W2_12",
+          "pair_key": "W04F2-88__HPK-W2_12"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-79_FBK_LF-W14_43",
+          "pair_key": "W04F2-79__FBK_LF-W14_43"
+        },
+        {
+          "source_hybrid_identifier": "HYBRID_W04F2-81_FBK_LF-W14_35",
+          "pair_key": "W04F2-81__FBK_LF-W14_35"
+        }
+      ]
+    }
+  ]
+}

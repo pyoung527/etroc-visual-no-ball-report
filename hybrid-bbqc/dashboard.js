@@ -3,6 +3,7 @@
   if (!dashboard) return;
 
   const rows = [...document.querySelectorAll('#hybrid-table tbody tr')];
+  const cards = [...document.querySelectorAll('#cards a.card')];
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const palette = {
     ready: '#3b8064', candidate: '#d7301f', complete: '#276b52', missing: '#b8b3a8',
@@ -23,7 +24,9 @@
     const etroc = row.cells[2]?.textContent.trim() || '';
     const target = row.querySelector('[data-comments-summary]')?.dataset.commentsTarget || '';
     return {
+      row,
       target,
+      pairKey: target.startsWith('hybrid:') ? target.slice(7) : '',
       wafer: etroc.split('-')[0] || 'Unknown',
       candidate: number(row.dataset.noball) > 0,
       xray: row.dataset.xray === '1',
@@ -48,6 +51,26 @@
     });
     return;
   }
+
+  const liveSourceStatus = {
+    additionalTests: 'loading',
+    reviewerStatus: 'loading'
+  };
+  const updateLiveState = () => {
+    const unavailable = [];
+    if (liveSourceStatus.additionalTests === 'failed') unavailable.push('additional test assignments');
+    if (liveSourceStatus.reviewerStatus === 'failed') unavailable.push('live reviewer status');
+    if (unavailable.length) {
+      setState(`Static evidence ready · unavailable: ${unavailable.join(' + ')}`, 'degraded');
+      return;
+    }
+    if (Object.values(liveSourceStatus).every((status) => status === 'ready')) {
+      setState('Static evidence + additional test assignments + live reviewer status', 'live');
+      return;
+    }
+    setState('Static evidence ready · loading live sources', '');
+  };
+  updateLiveState();
 
   const total = records.length;
   const candidate = records.filter((record) => record.candidate).length;
@@ -213,6 +236,188 @@
     observer.observe(dashboard);
   }
 
+  async function loadAdditionalTests() {
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 8000);
+    let payload;
+    try {
+      const response = await fetch('/api/hybrids', {
+        credentials: 'same-origin',
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error(`Hybrid registry ${response.status}`);
+      payload = await response.json();
+    } finally {
+      window.clearTimeout(timeout);
+    }
+    if (!payload || !Array.isArray(payload.records) || payload.count !== payload.records.length) {
+      throw new Error('Invalid hybrid registry');
+    }
+    const expectedPairs = new Set(records.map((record) => record.pairKey).filter(Boolean));
+    const registry = new Map();
+    payload.records.forEach((record) => {
+      if (
+        !record || typeof record.pair_key !== 'string'
+        || !expectedPairs.has(record.pair_key) || registry.has(record.pair_key)
+        || !Array.isArray(record.additional_tests)
+      ) {
+        throw new Error('Invalid hybrid registry record');
+      }
+      const seenTests = new Set();
+      record.additional_tests.forEach((test) => {
+        if (
+          !test || typeof test.test_key !== 'string'
+          || typeof test.display_name !== 'string'
+          || typeof test.source_hybrid_identifier !== 'string'
+          || seenTests.has(test.test_key)
+        ) {
+          throw new Error('Invalid additional test assignment');
+        }
+        seenTests.add(test.test_key);
+      });
+      registry.set(record.pair_key, record.additional_tests);
+    });
+    if (registry.size !== expectedPairs.size) throw new Error('Incomplete hybrid registry');
+
+    const counts = new Map();
+    registry.forEach((tests) => {
+      tests.forEach((test) => {
+        if (!test || typeof test.test_key !== 'string' || typeof test.display_name !== 'string') return;
+        const current = counts.get(test.test_key) || { displayName: test.display_name, count: 0 };
+        current.count += 1;
+        counts.set(test.test_key, current);
+      });
+    });
+    const nodesForPair = new Map();
+    records.forEach((record) => {
+      if (!record.pairKey) return;
+      nodesForPair.set(record.pairKey, [record.row]);
+    });
+    cards.forEach((card) => {
+      const href = card.getAttribute('href') || '';
+      const match = href.match(/hybrids\/([A-Za-z0-9_.-]+__[A-Za-z0-9_.-]+)\.html$/);
+      if (!match) return;
+      const nodes = nodesForPair.get(match[1]) || [];
+      nodes.push(card);
+      nodesForPair.set(match[1], nodes);
+    });
+
+    const makeBadgeGroup = (tests, pairKey) => {
+      const group = document.createElement('div');
+      group.className = 'additional-test-badges';
+      group.setAttribute('role', 'list');
+      group.setAttribute('aria-label', `Additional test assignments for ${pairKey}`);
+      tests.forEach((test) => {
+        if (
+          !test || typeof test.test_key !== 'string'
+          || typeof test.display_name !== 'string'
+          || typeof test.source_hybrid_identifier !== 'string'
+        ) return;
+        const badge = document.createElement('span');
+        badge.className = `additional-test-badge test-${test.test_key}`;
+        badge.setAttribute('role', 'listitem');
+        const label = document.createElement('span');
+        label.textContent = `Assigned: ${test.display_name}`;
+        const source = document.createElement('span');
+        source.className = 'analytics-sr-only';
+        source.textContent = `Source identifier: ${test.source_hybrid_identifier}`;
+        badge.append(label, source);
+        group.append(badge);
+      });
+      return group;
+    };
+
+    const ensureAdditionalTestCell = (row) => {
+      const table = row.closest('table');
+      const headerRow = table?.querySelector('thead tr');
+      if (headerRow && !headerRow.querySelector('[data-additional-tests-heading]')) {
+        const heading = document.createElement('th');
+        heading.scope = 'col';
+        heading.dataset.additionalTestsHeading = '';
+        heading.textContent = 'Additional test assignments';
+        headerRow.append(heading);
+      }
+      let cell = row.querySelector('[data-additional-tests-cell]');
+      if (!cell) {
+        cell = document.createElement('td');
+        cell.dataset.additionalTestsCell = '';
+        cell.className = 'additional-tests-cell';
+        row.append(cell);
+      }
+      cell.querySelectorAll('.additional-test-badges').forEach((group) => group.remove());
+      return cell;
+    };
+
+    const ensureCardAssignmentBlock = (card) => {
+      let block = card.querySelector('[data-additional-tests-card]');
+      if (!block) {
+        block = document.createElement('div');
+        block.dataset.additionalTestsCard = '';
+        block.className = 'card-additional-tests';
+        const heading = document.createElement('span');
+        heading.className = 'card-additional-tests-title';
+        heading.textContent = 'Additional test assignments';
+        const assignments = document.createElement('div');
+        assignments.dataset.additionalTestsAssignments = '';
+        block.append(heading, assignments);
+        card.append(block);
+      }
+      const assignments = block.querySelector('[data-additional-tests-assignments]');
+      assignments?.querySelectorAll('.additional-test-badges').forEach((group) => group.remove());
+      return assignments;
+    };
+
+    nodesForPair.forEach((nodes) => {
+      nodes.forEach((node) => {
+        if (node.matches('tr')) ensureAdditionalTestCell(node);
+        else ensureCardAssignmentBlock(node);
+      });
+    });
+    registry.forEach((tests, pairKey) => {
+      if (!tests.length) return;
+      const nodes = nodesForPair.get(pairKey) || [];
+      nodes.forEach((node) => {
+        const target = node.matches('tr')
+          ? ensureAdditionalTestCell(node)
+          : ensureCardAssignmentBlock(node);
+        target?.append(makeBadgeGroup(tests, pairKey));
+      });
+    });
+
+    const summaryBody = dashboard.querySelector('#additional-tests-chart [data-chart-body]');
+    const summary = document.createElement('div');
+    summary.className = 'additional-tests-summary';
+    [...counts.entries()].sort(([a], [b]) => a.localeCompare(b)).forEach(([_key, item]) => {
+      const summaryRow = document.createElement('div');
+      summaryRow.className = 'additional-tests-summary-row';
+      const name = document.createElement('span');
+      name.textContent = item.displayName;
+      const count = document.createElement('strong');
+      count.textContent = String(item.count);
+      const unit = document.createElement('small');
+      unit.textContent = 'active memberships';
+      summaryRow.append(name, count, unit);
+      summary.append(summaryRow);
+    });
+    summaryBody?.replaceChildren(summary);
+    liveSourceStatus.additionalTests = 'ready';
+    updateLiveState();
+  }
+
+  loadAdditionalTests().catch(() => {
+    const card = dashboard.querySelector('#additional-tests-chart');
+    card?.classList.add('is-error');
+    const body = card?.querySelector('[data-chart-body]');
+    if (body) {
+      const message = document.createElement('div');
+      message.className = 'analytics-empty';
+      message.textContent = 'Additional test assignments unavailable.';
+      body.replaceChildren(message);
+    }
+    liveSourceStatus.additionalTests = 'failed';
+    updateLiveState();
+  });
+
   async function loadReviewStatus() {
     const targets = [...new Set(records.map((record) => record.target).filter(Boolean))];
     if (!targets.length) throw new Error('No comment targets');
@@ -257,7 +462,8 @@
     );
     const meta = dashboard.querySelector('[data-review-meta]');
     if (meta) meta.textContent = `${comments} active comments · latest status per hybrid`;
-    setState('Static evidence + live reviewer status', 'live');
+    liveSourceStatus.reviewerStatus = 'ready';
+    updateLiveState();
     if (animated) {
       reviewBody.querySelectorAll('.donut-segment').forEach((circle) => {
         circle.style.strokeDasharray = reducedMotion ? circle.dataset.dash : '0 100';
@@ -276,6 +482,7 @@
     if (body) body.innerHTML = '<div class="analytics-empty">Live review status unavailable.<br>Static evidence charts remain valid.</div>';
     const reviewed = dashboard.querySelector('[data-kpi="reviewed"]');
     if (reviewed) reviewed.textContent = '—';
-    setState('Static evidence ready · live review unavailable', 'degraded');
+    liveSourceStatus.reviewerStatus = 'failed';
+    updateLiveState();
   });
 })();

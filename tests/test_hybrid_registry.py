@@ -1,3 +1,4 @@
+import hashlib
 import importlib.util
 import json
 import re
@@ -8,12 +9,161 @@ import unittest
 import urllib.error
 import urllib.parse
 import urllib.request
+from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 from typing import Any
 
 ROOT = Path(__file__).resolve().parents[1]
 SERVER_PATH = ROOT / "hybrid-bbqc" / "server.py"
+ADDITIONAL_TESTS_PATH = ROOT / "hybrid-bbqc" / "additional-tests.json"
+EXPECTED_ADDITIONAL_TEST_MEMBERSHIPS = (
+    ("thermal-cycling", "HYBRID_W03F7-87_HPK-W2_1", "W03F7-87__HPK-W2_1"),
+    ("thermal-cycling", "HYBRID_W03F7-89_HPK-W2_3", "W03F7-89__HPK-W2_3"),
+    ("thermal-cycling", "HYBRID_W03F7-99_HPK-W2_7", "W03F7-99__HPK-W2_7"),
+    ("thermal-cycling", "HYBRID_W03F7-102_HPK-W2_9", "W03F7-102__HPK-W2_9"),
+    ("thermal-cycling", "HYBRID_W04F2-89_HPK-W2_10", "W04F2-89__HPK-W2_10"),
+    ("thermal-cycling", "HYBRID_W04F2-86_HPK-W2_13", "W04F2-86__HPK-W2_13"),
+    ("thermal-cycling", "HYBRID_W04F2-76_HPK-W2_18", "W04F2-76__HPK-W2_18"),
+    ("thermal-cycling", "HYBRID_W04F2-78_HPK-W2_20", "W04F2-78__HPK-W2_20"),
+    ("thermal-cycling", "HYBRID_W04F2-79_FBK_LF-W14_43", "W04F2-79__FBK_LF-W14_43"),
+    ("thermal-cycling", "HYBRID_W04F2-70_FBK_LF-W14_36", "W04F2-70__FBK_LF-W14_36"),
+    ("thermal-cycling", "HYBRID_W04F2-64_FBK_LF-W14_40", "W04F2-64__FBK_LF-W14_40"),
+    ("thermal-cycling", "HYBRID_W04F2-62_FBK_LF-W14_29", "W04F2-62__FBK_LF-W14_29"),
+    ("shear-force", "HYBRID_W03F7-87_HPK-W2_1", "W03F7-87__HPK-W2_1"),
+    ("shear-force", "HYBRID_W03F7-88_HPK-W2_2", "W03F7-88__HPK-W2_2"),
+    ("shear-force", "HYBRID_W04F2-89_HPK-W2_10", "W04F2-89__HPK-W2_10"),
+    ("shear-force", "HYBRID_W04F2-88_HPK-W2_12", "W04F2-88__HPK-W2_12"),
+    ("shear-force", "HYBRID_W04F2-79_FBK_LF-W14_43", "W04F2-79__FBK_LF-W14_43"),
+    ("shear-force", "HYBRID_W04F2-81_FBK_LF-W14_35", "W04F2-81__FBK_LF-W14_35"),
+)
+
+
+class AdditionalTestManifestTests(unittest.TestCase):
+    def test_manifest_rejects_invalid_types_duplicates_revisions_and_crosswalks(self):
+        server = load_server_module()
+        canonical = {"ET-1__HPK-LG-1", "ET-2__HPK-LG-2"}
+        base = {
+            "schema_version": 1,
+            "source_revision": "fixture-1",
+            "tests": [
+                {
+                    "test_key": "test-one",
+                    "display_name": "Test one",
+                    "hybrids": [
+                        {
+                            "source_hybrid_identifier": "HYBRID_ET-1_HPK-LG-1",
+                            "pair_key": "ET-1__HPK-LG-1",
+                        }
+                    ],
+                }
+            ],
+        }
+        cases = []
+        item = deepcopy(base)
+        item["schema_version"] = 2
+        cases.append(("schema", item))
+        item = deepcopy(base)
+        item["source_revision"] = "bad revision"
+        cases.append(("revision", item))
+        item = deepcopy(base)
+        item["tests"] = "not-a-list"
+        cases.append(("tests", item))
+        item = deepcopy(base)
+        item["tests"].append(deepcopy(item["tests"][0]))
+        cases.append(("duplicate-test", item))
+        item = deepcopy(base)
+        duplicate_name = deepcopy(item["tests"][0])
+        duplicate_name["test_key"] = "test-two"
+        item["tests"].append(duplicate_name)
+        cases.append(("duplicate-name", item))
+        item = deepcopy(base)
+        item["tests"][0]["hybrids"].append(
+            deepcopy(item["tests"][0]["hybrids"][0])
+        )
+        cases.append(("duplicate-raw", item))
+        item = deepcopy(base)
+        second = deepcopy(item["tests"][0])
+        second["test_key"] = "test-two"
+        second["display_name"] = "Test two"
+        second["hybrids"][0]["pair_key"] = "ET-2__HPK-LG-2"
+        item["tests"].append(second)
+        cases.append(("conflicting-crosswalk", item))
+        item = deepcopy(base)
+        item["tests"][0]["hybrids"][0]["pair_key"] = "ET-404__HPK-LG-404"
+        cases.append(("unknown-pair", item))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "manifest.json"
+            path.write_text("{", encoding="utf-8")
+            with self.assertRaisesRegex(ValueError, "invalid additional test manifest"):
+                server.load_additional_tests_manifest(path, canonical)
+            for label, payload in cases:
+                with self.subTest(label=label):
+                    path.write_text(json.dumps(payload), encoding="utf-8")
+                    with self.assertRaises(ValueError):
+                        server.load_additional_tests_manifest(path, canonical)
+
+    def test_manifest_preserves_exact_memberships_and_canonical_crosswalks(self):
+        self.assertTrue(ADDITIONAL_TESTS_PATH.is_file(), "additional test manifest is missing")
+        manifest = json.loads(ADDITIONAL_TESTS_PATH.read_text(encoding="utf-8"))
+        self.assertEqual(manifest["schema_version"], 1)
+        tests = manifest["tests"]
+        self.assertEqual(
+            [(item["test_key"], item["display_name"]) for item in tests],
+            [
+                ("thermal-cycling", "Thermal cycling test"),
+                ("shear-force", "Shear force test"),
+            ],
+        )
+        memberships = [
+            (item["test_key"], member["source_hybrid_identifier"], member["pair_key"])
+            for item in tests
+            for member in item["hybrids"]
+        ]
+        by_test = {
+            item["test_key"]: [member["source_hybrid_identifier"] for member in item["hybrids"]]
+            for item in tests
+        }
+        self.assertEqual(tuple(memberships), EXPECTED_ADDITIONAL_TEST_MEMBERSHIPS)
+        self.assertEqual(
+            hashlib.sha256(ADDITIONAL_TESTS_PATH.read_bytes()).hexdigest(),
+            "90c8e9854c2dbdad9a5393ab4dd0e11314bad173c22048c7f3a637fe009619a5",
+        )
+        self.assertEqual(len(by_test["thermal-cycling"]), 12)
+        self.assertEqual(len(by_test["shear-force"]), 6)
+        self.assertEqual(len(memberships), 18)
+        raw_identifiers = {raw for _test_key, raw, _pair in memberships}
+        self.assertEqual(len(raw_identifiers), 15)
+        self.assertEqual(
+            set(by_test["thermal-cycling"]) & set(by_test["shear-force"]),
+            {
+                "HYBRID_W03F7-87_HPK-W2_1",
+                "HYBRID_W04F2-89_HPK-W2_10",
+                "HYBRID_W04F2-79_FBK_LF-W14_43",
+            },
+        )
+        canonical_pairs = self._canonical_pairs()
+        for _test_key, raw, pair_key in memberships:
+            with self.subTest(raw=raw):
+                self.assertRegex(raw, r"^HYBRID_[A-Za-z0-9.-]+_(?:HPK-|FBK_)[A-Za-z0-9_.-]+$")
+                self.assertIn(pair_key, canonical_pairs)
+        exact = {(test_key, raw): pair for test_key, raw, pair in memberships}
+        self.assertEqual(
+            exact[("thermal-cycling", "HYBRID_W03F7-87_HPK-W2_1")],
+            "W03F7-87__HPK-W2_1",
+        )
+        self.assertEqual(
+            exact[("shear-force", "HYBRID_W04F2-81_FBK_LF-W14_35")],
+            "W04F2-81__FBK_LF-W14_35",
+        )
+
+    @staticmethod
+    def _canonical_pairs() -> set[str]:
+        html = (ROOT / "hybrid-bbqc" / "index.html").read_text(encoding="utf-8")
+        return set(
+            re.findall(r"hybrids/([A-Za-z0-9_.-]+__[A-Za-z0-9_.-]+)\.html", html)
+        )
 
 
 def load_server_module() -> Any:
@@ -80,6 +230,30 @@ def create_static_site(root: Path) -> None:
     )
 
 
+def write_additional_test_manifest(
+    root: Path, pair_key: str, *, revision: str = "fixture-1"
+) -> None:
+    payload = {
+        "schema_version": 1,
+        "source_revision": revision,
+        "tests": [
+            {
+                "test_key": "correction-test",
+                "display_name": "Correction test",
+                "hybrids": [
+                    {
+                        "source_hybrid_identifier": "HYBRID_ET-1_HPK-LG-1",
+                        "pair_key": pair_key,
+                    }
+                ],
+            }
+        ],
+    }
+    (root / "additional-tests.json").write_text(
+        json.dumps(payload), encoding="utf-8"
+    )
+
+
 class HybridRegistryMigrationTests(unittest.TestCase):
     def setUp(self):
         self.tmp = tempfile.TemporaryDirectory()
@@ -90,6 +264,93 @@ class HybridRegistryMigrationTests(unittest.TestCase):
         create_legacy_comments_db(self.db_path)
         create_static_site(self.static_root)
         self.server = load_server_module()
+
+    def test_required_missing_manifest_fails_before_database_mutation(self):
+        with sqlite3.connect(self.db_path) as db:
+            before = db.execute(
+                "SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name,tbl_name"
+            ).fetchall()
+        with self.assertRaisesRegex(ValueError, "manifest is required"):
+            self.server.init_db(
+                db_path=self.db_path,
+                static_root=self.static_root,
+                require_additional_tests=True,
+            )
+        with sqlite3.connect(self.db_path) as db:
+            after = db.execute(
+                "SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name,tbl_name"
+            ).fetchall()
+        self.assertEqual(after, before)
+
+    def test_incompatible_partial_schema_rolls_back_all_migration_changes(self):
+        with sqlite3.connect(self.db_path) as db:
+            db.execute("CREATE TABLE additional_tests(id INTEGER PRIMARY KEY)")
+            db.commit()
+            before = db.execute(
+                "SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name,tbl_name"
+            ).fetchall()
+        with self.assertRaisesRegex(ValueError, "incompatible additional_tests columns"):
+            self.server.init_db(db_path=self.db_path, static_root=self.static_root)
+        with sqlite3.connect(self.db_path) as db:
+            after = db.execute(
+                "SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name,tbl_name"
+            ).fetchall()
+            version = db.execute("PRAGMA user_version").fetchone()[0]
+        self.assertEqual(after, before)
+        self.assertEqual(version, 0)
+
+    def test_unsupported_schema_version_fails_without_mutation(self):
+        with sqlite3.connect(self.db_path) as db:
+            db.execute("PRAGMA user_version=99")
+            before = db.execute(
+                "SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name,tbl_name"
+            ).fetchall()
+        with self.assertRaisesRegex(ValueError, "unsupported database schema version"):
+            self.server.init_db(db_path=self.db_path, static_root=self.static_root)
+        with sqlite3.connect(self.db_path) as db:
+            after = db.execute(
+                "SELECT type,name,tbl_name,sql FROM sqlite_master ORDER BY type,name,tbl_name"
+            ).fetchall()
+            version = db.execute("PRAGMA user_version").fetchone()[0]
+        self.assertEqual(after, before)
+        self.assertEqual(version, 99)
+
+    def test_invalid_additional_test_manifest_fails_before_database_mutation(self):
+        manifest = {
+            "schema_version": 1,
+            "source_revision": "invalid-fixture",
+            "tests": [
+                {
+                    "test_key": "unknown-test",
+                    "display_name": "Unknown test",
+                    "hybrids": [
+                        {
+                            "source_hybrid_identifier": "HYBRID_ET-404_HPK-LG-404",
+                            "pair_key": "ET-404__HPK-LG-404",
+                        }
+                    ],
+                }
+            ],
+        }
+        (self.static_root / "additional-tests.json").write_text(
+            json.dumps(manifest), encoding="utf-8"
+        )
+        with sqlite3.connect(self.db_path) as db:
+            before_schema = db.execute(
+                "SELECT type,name,sql FROM sqlite_master ORDER BY type,name"
+            ).fetchall()
+            before_comments = db.execute("SELECT * FROM comments ORDER BY id").fetchall()
+
+        with self.assertRaisesRegex(ValueError, "not canonical"):
+            self.server.init_db(db_path=self.db_path, static_root=self.static_root)
+
+        with sqlite3.connect(self.db_path) as db:
+            after_schema = db.execute(
+                "SELECT type,name,sql FROM sqlite_master ORDER BY type,name"
+            ).fetchall()
+            after_comments = db.execute("SELECT * FROM comments ORDER BY id").fetchall()
+        self.assertEqual(after_schema, before_schema)
+        self.assertEqual(after_comments, before_comments)
 
     def test_init_db_seeds_registry_aliases_and_backfills_legacy_comments(self):
         self.server.init_db(db_path=self.db_path, static_root=self.static_root)
@@ -182,6 +443,7 @@ class HybridRegistryMigrationTests(unittest.TestCase):
         self.assertEqual(active_count, 2)
 
     def test_pair_correction_preserves_registry_id_etl_binding_and_comments(self):
+        write_additional_test_manifest(self.static_root, "ET-1__LG-1")
         self.server.init_db(db_path=self.db_path, static_root=self.static_root)
         bound = self.server.bind_hybrid(
             self.db_path,
@@ -192,6 +454,13 @@ class HybridRegistryMigrationTests(unittest.TestCase):
             source_revision="before-correction",
         )
         stable_id = bound["id"]
+        with sqlite3.connect(self.db_path) as db:
+            membership_before = db.execute(
+                """
+                SELECT additional_test_id,hybrid_registry_id,source_hybrid_identifier,created_at
+                FROM hybrid_additional_tests
+                """
+            ).fetchone()
 
         (self.static_root / "index.html").write_text(
             """
@@ -206,6 +475,9 @@ class HybridRegistryMigrationTests(unittest.TestCase):
         )
         (self.static_root / "hybrids" / "ET-1__LG-9.html").write_text(
             "canonical corrected", encoding="utf-8"
+        )
+        write_additional_test_manifest(
+            self.static_root, "ET-1__LG-9", revision="fixture-lgad-correction"
         )
 
         self.server.init_db(db_path=self.db_path, static_root=self.static_root)
@@ -227,6 +499,13 @@ class HybridRegistryMigrationTests(unittest.TestCase):
             active_count = db.execute(
                 "SELECT COUNT(*) FROM hybrid_registry WHERE active=1"
             ).fetchone()[0]
+            memberships_after = db.execute(
+                """
+                SELECT additional_test_id,hybrid_registry_id,source_hybrid_identifier,
+                       created_at,active
+                FROM hybrid_additional_tests ORDER BY additional_test_id,hybrid_registry_id
+                """
+            ).fetchall()
 
         self.assertEqual(corrected["id"], stable_id)
         self.assertEqual(corrected["etl_hybrid_id"], 12345)
@@ -238,8 +517,13 @@ class HybridRegistryMigrationTests(unittest.TestCase):
         self.assertEqual(aliases["hybrid:ET-1__LG-9"]["is_canonical"], 1)
         self.assertEqual(comment["target"], "hybrid:ET-OLD__LG-OLD")
         self.assertEqual(comment["hybrid_registry_id"], stable_id)
+        self.assertEqual(len(memberships_after), 1)
+        self.assertEqual(memberships_after[0][:4], membership_before)
+        self.assertEqual(memberships_after[0][2], "HYBRID_ET-1_HPK-LG-1")
+        self.assertEqual(memberships_after[0][4], 1)
 
     def test_etroc_side_pair_correction_preserves_stable_identity(self):
+        write_additional_test_manifest(self.static_root, "ET-1__LG-1")
         self.server.init_db(db_path=self.db_path, static_root=self.static_root)
         bound = self.server.bind_hybrid(
             self.db_path,
@@ -248,6 +532,10 @@ class HybridRegistryMigrationTests(unittest.TestCase):
             etl_hybrid_serial="ETL-STABLE-1",
             sync_status="matched",
         )
+        with sqlite3.connect(self.db_path) as db:
+            membership_before = db.execute(
+                "SELECT additional_test_id,hybrid_registry_id,source_hybrid_identifier,created_at FROM hybrid_additional_tests"
+            ).fetchone()
 
         (self.static_root / "index.html").write_text(
             """
@@ -263,6 +551,9 @@ class HybridRegistryMigrationTests(unittest.TestCase):
         (self.static_root / "hybrids" / "ET-9__LG-1.html").write_text(
             "canonical corrected", encoding="utf-8"
         )
+        write_additional_test_manifest(
+            self.static_root, "ET-9__LG-1", revision="fixture-etroc-correction"
+        )
 
         self.server.init_db(db_path=self.db_path, static_root=self.static_root)
 
@@ -274,12 +565,18 @@ class HybridRegistryMigrationTests(unittest.TestCase):
             old_alias = db.execute(
                 "SELECT hybrid_registry_id,is_canonical FROM hybrid_target_aliases WHERE target='hybrid:ET-1__LG-1'"
             ).fetchone()
+            memberships_after = db.execute(
+                "SELECT additional_test_id,hybrid_registry_id,source_hybrid_identifier,created_at,active FROM hybrid_additional_tests"
+            ).fetchall()
 
         self.assertEqual(corrected["id"], bound["id"])
         self.assertEqual(corrected["etl_hybrid_id"], 12345)
         self.assertEqual(corrected["etl_hybrid_serial"], "ETL-STABLE-1")
         self.assertEqual(old_alias["hybrid_registry_id"], bound["id"])
         self.assertEqual(old_alias["is_canonical"], 0)
+        self.assertEqual(len(memberships_after), 1)
+        self.assertEqual(memberships_after[0][:4], membership_before)
+        self.assertEqual(memberships_after[0][4], 1)
 
     def test_pair_correction_rejects_exact_vs_redirect_identity_conflict(self):
         self.server.init_db(db_path=self.db_path, static_root=self.static_root)
@@ -833,6 +1130,300 @@ class HybridRegistryHttpTests(unittest.TestCase):
 
 
 class HybridRegistryRealStaticTests(unittest.TestCase):
+    def test_removed_membership_is_retained_inactive(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            db_path = base / "comments.sqlite3"
+            static_root = base / "static"
+            static_root.mkdir()
+            (static_root / "index.html").write_text(
+                (ROOT / "hybrid-bbqc" / "index.html").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            manifest = json.loads(ADDITIONAL_TESTS_PATH.read_text(encoding="utf-8"))
+            manifest_path = static_root / "additional-tests.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            server = load_server_module()
+            server.init_db(db_path=db_path, static_root=static_root)
+            removed = manifest["tests"][0]["hybrids"].pop(0)
+            with sqlite3.connect(db_path) as db:
+                original = db.execute(
+                    """
+                    SELECT membership.additional_test_id,membership.hybrid_registry_id,
+                           membership.created_at
+                    FROM hybrid_additional_tests AS membership
+                    JOIN additional_tests AS test ON test.id=membership.additional_test_id
+                    JOIN hybrid_registry AS registry ON registry.id=membership.hybrid_registry_id
+                    WHERE test.test_key='thermal-cycling' AND registry.pair_key=?
+                    """,
+                    (removed["pair_key"],),
+                ).fetchone()
+            manifest["source_revision"] = "operator-supplied-2026-08-11-reduced-fixture"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            server.init_db(db_path=db_path, static_root=static_root)
+            with sqlite3.connect(db_path) as db:
+                retained = db.execute(
+                    """
+                    SELECT membership.additional_test_id,membership.hybrid_registry_id,
+                           membership.created_at,membership.active
+                    FROM hybrid_additional_tests AS membership
+                    JOIN additional_tests AS test ON test.id=membership.additional_test_id
+                    JOIN hybrid_registry AS registry ON registry.id=membership.hybrid_registry_id
+                    WHERE test.test_key='thermal-cycling' AND registry.pair_key=?
+                    """,
+                    (removed["pair_key"],),
+                ).fetchone()
+                active_memberships = db.execute(
+                    "SELECT COUNT(*) FROM hybrid_additional_tests WHERE active=1"
+                ).fetchone()[0]
+            manifest["tests"][0]["hybrids"].insert(0, removed)
+            manifest["source_revision"] = "operator-supplied-2026-08-11-reactivated-fixture"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            server.init_db(db_path=db_path, static_root=static_root)
+            with sqlite3.connect(db_path) as db:
+                reactivated = db.execute(
+                    """
+                    SELECT membership.additional_test_id,membership.hybrid_registry_id,
+                           membership.created_at,membership.active,membership.source_revision
+                    FROM hybrid_additional_tests AS membership
+                    JOIN additional_tests AS test ON test.id=membership.additional_test_id
+                    JOIN hybrid_registry AS registry ON registry.id=membership.hybrid_registry_id
+                    WHERE test.test_key='thermal-cycling' AND registry.pair_key=?
+                    """,
+                    (removed["pair_key"],),
+                ).fetchone()
+
+        self.assertIsNotNone(original)
+        self.assertEqual(retained[:3], original)
+        self.assertEqual(retained[3], 0)
+        self.assertEqual(active_memberships, 17)
+        self.assertEqual(reactivated[:3], original)
+        self.assertEqual(reactivated[3], 1)
+        self.assertEqual(
+            reactivated[4], "operator-supplied-2026-08-11-reactivated-fixture"
+        )
+
+    def test_removed_test_and_memberships_are_retained_then_reactivated(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            db_path = base / "comments.sqlite3"
+            static_root = base / "static"
+            static_root.mkdir()
+            (static_root / "index.html").write_text(
+                (ROOT / "hybrid-bbqc" / "index.html").read_text(encoding="utf-8"),
+                encoding="utf-8",
+            )
+            manifest = json.loads(ADDITIONAL_TESTS_PATH.read_text(encoding="utf-8"))
+            manifest_path = static_root / "additional-tests.json"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            server = load_server_module()
+            server.init_db(db_path=db_path, static_root=static_root)
+            removed_test = next(
+                test for test in manifest["tests"] if test["test_key"] == "shear-force"
+            )
+            with sqlite3.connect(db_path) as db:
+                test_before = db.execute(
+                    "SELECT id,created_at FROM additional_tests WHERE test_key='shear-force'"
+                ).fetchone()
+                memberships_before = db.execute(
+                    "SELECT additional_test_id,hybrid_registry_id,created_at FROM hybrid_additional_tests WHERE additional_test_id=? ORDER BY hybrid_registry_id",
+                    (test_before[0],),
+                ).fetchall()
+            manifest["tests"] = [
+                test for test in manifest["tests"] if test["test_key"] != "shear-force"
+            ]
+            manifest["source_revision"] = "fixture-test-removed"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            server.init_db(db_path=db_path, static_root=static_root)
+            with sqlite3.connect(db_path) as db:
+                inactive_test = db.execute(
+                    "SELECT id,created_at,active FROM additional_tests WHERE test_key='shear-force'"
+                ).fetchone()
+                inactive_memberships = db.execute(
+                    "SELECT COUNT(*) FROM hybrid_additional_tests WHERE additional_test_id=? AND active=0",
+                    (test_before[0],),
+                ).fetchone()[0]
+            manifest["tests"].append(removed_test)
+            manifest["source_revision"] = "fixture-test-reactivated"
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            server.init_db(db_path=db_path, static_root=static_root)
+            with sqlite3.connect(db_path) as db:
+                test_after = db.execute(
+                    "SELECT id,created_at,active,source_revision FROM additional_tests WHERE test_key='shear-force'"
+                ).fetchone()
+                memberships_after = db.execute(
+                    "SELECT additional_test_id,hybrid_registry_id,created_at,active FROM hybrid_additional_tests WHERE additional_test_id=? ORDER BY hybrid_registry_id",
+                    (test_before[0],),
+                ).fetchall()
+
+        self.assertEqual(inactive_test[:2], test_before)
+        self.assertEqual(inactive_test[2], 0)
+        self.assertEqual(inactive_memberships, 6)
+        self.assertEqual(test_after[:2], test_before)
+        self.assertEqual(test_after[2:], (1, "fixture-test-reactivated"))
+        self.assertEqual(
+            [row[:3] for row in memberships_after], memberships_before
+        )
+        self.assertTrue(all(row[3] == 1 for row in memberships_after))
+
+    def test_list_hybrids_requires_active_registry_test_and_membership(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "comments.sqlite3"
+            server = load_server_module()
+            server.init_db(db_path=db_path, static_root=ROOT / "hybrid-bbqc")
+            all_records = server.list_hybrids(db_path)
+            self.assertEqual(len(all_records), 72)
+            self.assertTrue(all("additional_tests" in record for record in all_records))
+            pair_key = "W03F7-87__HPK-W2_1"
+            with sqlite3.connect(db_path) as db:
+                db.execute(
+                    """
+                    UPDATE hybrid_additional_tests SET active=0
+                    WHERE additional_test_id=(SELECT id FROM additional_tests WHERE test_key='shear-force')
+                      AND hybrid_registry_id=(SELECT id FROM hybrid_registry WHERE pair_key=?)
+                    """,
+                    (pair_key,),
+                )
+                db.commit()
+            record = server.list_hybrids(db_path, pair_key=pair_key)[0]
+            self.assertEqual(
+                [item["test_key"] for item in record["additional_tests"]],
+                ["thermal-cycling"],
+            )
+            with sqlite3.connect(db_path) as db:
+                db.execute("UPDATE hybrid_additional_tests SET active=1")
+                db.execute("UPDATE additional_tests SET active=0 WHERE test_key='thermal-cycling'")
+                db.commit()
+            record = server.list_hybrids(db_path, pair_key=pair_key)[0]
+            self.assertEqual(
+                [item["test_key"] for item in record["additional_tests"]],
+                ["shear-force"],
+            )
+            with sqlite3.connect(db_path) as db:
+                db.execute("UPDATE hybrid_registry SET active=0 WHERE pair_key=?", (pair_key,))
+                db.commit()
+            self.assertEqual(server.list_hybrids(db_path, pair_key=pair_key), [])
+
+    def test_list_hybrids_exposes_deterministic_additional_tests(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "comments.sqlite3"
+            server = load_server_module()
+            server.init_db(db_path=db_path, static_root=ROOT / "hybrid-bbqc")
+            dual = server.list_hybrids(db_path, pair_key="W03F7-87__HPK-W2_1")
+            unassigned = server.list_hybrids(db_path, pair_key="W03F7-100__HPK-W2_8")
+
+        self.assertEqual(len(dual), 1)
+        self.assertEqual(
+            dual[0]["additional_tests"],
+            [
+                {
+                    "test_key": "shear-force",
+                    "display_name": "Shear force test",
+                    "source_hybrid_identifier": "HYBRID_W03F7-87_HPK-W2_1",
+                },
+                {
+                    "test_key": "thermal-cycling",
+                    "display_name": "Thermal cycling test",
+                    "source_hybrid_identifier": "HYBRID_W03F7-87_HPK-W2_1",
+                },
+            ],
+        )
+        self.assertEqual(len(unassigned), 1)
+        self.assertEqual(unassigned[0]["additional_tests"], [])
+
+    def test_real_dashboard_migrates_exact_additional_test_memberships_idempotently(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            db_path = Path(tmp) / "comments.sqlite3"
+            server = load_server_module()
+            static_root = ROOT / "hybrid-bbqc"
+            server.init_db(db_path=db_path, static_root=static_root)
+            with sqlite3.connect(db_path) as db:
+                db.execute("UPDATE additional_tests SET created_at=101,updated_at=102")
+                db.execute("UPDATE hybrid_additional_tests SET created_at=201,updated_at=202")
+                db.commit()
+                first_tests = db.execute(
+                    "SELECT id,test_key,display_name,created_at,updated_at FROM additional_tests WHERE active=1 ORDER BY test_key"
+                ).fetchall()
+                first_memberships = db.execute(
+                    """
+                    SELECT membership.additional_test_id,membership.hybrid_registry_id,
+                           membership.source_hybrid_identifier,membership.created_at,
+                           membership.updated_at
+                    FROM hybrid_additional_tests AS membership
+                    WHERE membership.active=1
+                    ORDER BY membership.additional_test_id,membership.hybrid_registry_id
+                    """
+                ).fetchall()
+            server.init_db(db_path=db_path, static_root=static_root)
+            with sqlite3.connect(db_path) as db:
+                tests = db.execute(
+                    "SELECT id,test_key,display_name,created_at,updated_at FROM additional_tests WHERE active=1 ORDER BY test_key"
+                ).fetchall()
+                memberships = db.execute(
+                    """
+                    SELECT membership.additional_test_id,membership.hybrid_registry_id,
+                           membership.source_hybrid_identifier,membership.created_at,
+                           membership.updated_at
+                    FROM hybrid_additional_tests AS membership
+                    WHERE membership.active=1
+                    ORDER BY membership.additional_test_id,membership.hybrid_registry_id
+                    """
+                ).fetchall()
+                by_test = dict(
+                    db.execute(
+                        """
+                        SELECT test.test_key,COUNT(*)
+                        FROM hybrid_additional_tests AS membership
+                        JOIN additional_tests AS test ON test.id=membership.additional_test_id
+                        WHERE test.active=1 AND membership.active=1
+                        GROUP BY test.test_key
+                        """
+                    ).fetchall()
+                )
+                unique_hybrids = db.execute(
+                    "SELECT COUNT(DISTINCT hybrid_registry_id) FROM hybrid_additional_tests WHERE active=1"
+                ).fetchone()[0]
+                dual_hybrids = db.execute(
+                    """
+                    SELECT COUNT(*) FROM (
+                        SELECT hybrid_registry_id
+                        FROM hybrid_additional_tests WHERE active=1
+                        GROUP BY hybrid_registry_id HAVING COUNT(*)=2
+                    )
+                    """
+                ).fetchone()[0]
+                raw_identifiers = {
+                    row[0]
+                    for row in db.execute(
+                        "SELECT source_hybrid_identifier FROM hybrid_additional_tests WHERE active=1"
+                    ).fetchall()
+                }
+                foreign_key_errors = db.execute("PRAGMA foreign_key_check").fetchall()
+                integrity = db.execute("PRAGMA integrity_check").fetchone()[0]
+
+        manifest = json.loads(ADDITIONAL_TESTS_PATH.read_text(encoding="utf-8"))
+        expected_raw = {
+            member["source_hybrid_identifier"]
+            for item in manifest["tests"]
+            for member in item["hybrids"]
+        }
+        self.assertEqual(first_tests, tests)
+        self.assertEqual(first_memberships, memberships)
+        self.assertEqual(
+            [(row[1], row[2]) for row in tests],
+            [
+                ("shear-force", "Shear force test"),
+                ("thermal-cycling", "Thermal cycling test"),
+            ],
+        )
+        self.assertEqual(by_test, {"shear-force": 6, "thermal-cycling": 12})
+        self.assertEqual(len(memberships), 18)
+        self.assertEqual(unique_hybrids, 15)
+        self.assertEqual(dual_hybrids, 3)
+        self.assertEqual(raw_identifiers, expected_raw)
+        self.assertEqual(foreign_key_errors, [])
+        self.assertEqual(integrity, "ok")
+
     def test_real_dashboard_seeds_exact_unique_72_pair_registry(self):
         with tempfile.TemporaryDirectory() as tmp:
             db_path = Path(tmp) / "comments.sqlite3"
