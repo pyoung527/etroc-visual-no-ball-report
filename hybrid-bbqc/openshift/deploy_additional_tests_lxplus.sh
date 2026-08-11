@@ -3,12 +3,12 @@ set -Eeuo pipefail
 umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 
-SOURCE_REVISION='4d14f2ef754845507c5596acb3aed05f9d829f30'
+SOURCE_REVISION='7ac0e1ef0f347cfbc5f68e699a658d5985b81a92'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
 INDEX_SHA256='8dd35e1823f2dfe9f2b9ae40a1bf520b4de714c3a4565cc30d45f5bc1646b96b'
 CSS_SHA256='647ca7183b61070d3d7bacaa87ad99da08f89a7ed8d623d6e68a2ff45354cab0'
 JS_SHA256='3929347a3914c46cf5e2b54488270d7f9af9433a48eb6785d40eeb9407178391'
-SERVER_SHA256='6bbeae1c9134b82ab9cf512ef77666f5900b0ecad13e415747b211cd3c3c060d'
+SERVER_SHA256='c64411985e07456bc0dfd1902030467a44be7468f1f89cb6b208a71e42739801'
 MANIFEST_SHA256='90c8e9854c2dbdad9a5393ab4dd0e11314bad173c22048c7f3a637fe009619a5'
 VALIDATOR_SHA256='ebde1f2c8088058ca6cd89e6a0b4aab3c856f46d6da630775d4f13a35559d23d'
 SELECTOR_SHA256='54e53acf4853fab3d804101568cfd4276272c45e15cc59e8bb5bb3befb91cc86'
@@ -46,8 +46,17 @@ BUILDCONFIG_UID=''
 BUILDCONFIG_RESOURCE_VERSION=''
 BUILD_OUTPUT_DIGEST=''
 NEW_WEB_IMAGE=''
+COMPAT_POD=''
+CANDIDATE_SERVER_PID=''
 
 cleanup() {
+  if test -n "${CANDIDATE_SERVER_PID:-}"; then
+    kill "$CANDIDATE_SERVER_PID" >/dev/null 2>&1 || true
+    wait "$CANDIDATE_SERVER_PID" >/dev/null 2>&1 || true
+  fi
+  if test -n "${COMPAT_POD:-}" && command -v oc >/dev/null 2>&1; then
+    oc -n "$PROJECT" delete pod/"$COMPAT_POD" --ignore-not-found --wait=true >/dev/null 2>&1 || true
+  fi
   rm -rf "$WORK_DIR"
 }
 
@@ -250,6 +259,9 @@ verify_context
 test "$(oc auth can-i create builds/build.openshift.io -n "$PROJECT")" = yes
 test "$(oc auth can-i update deployments.apps -n "$PROJECT")" = yes
 test "$(oc auth can-i get pods -n "$PROJECT")" = yes
+test "$(oc auth can-i create pods -n "$PROJECT")" = yes
+test "$(oc auth can-i delete pods -n "$PROJECT")" = yes
+test "$(oc auth can-i create pods/exec -n "$PROJECT")" = yes
 test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.spec.strategy.type}')" = Recreate
 test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.spec.replicas}')" = 1
 test "$(oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o jsonpath='{.spec.source.type}')" = Binary
@@ -471,6 +483,117 @@ print(hashlib.sha256(payload).hexdigest())
 PY
 )"
 [[ "$EXPECTED_SCHEMA_SHA256" =~ ^[0-9a-f]{64}$ ]]
+
+# Executable rollback compatibility: candidate write -> exact old image write -> re-upgrade.
+COMPAT_DB="${WORK_DIR}/rollback-compat.sqlite3"
+cp "$EXPECTED_DB" "$COMPAT_DB"
+COMPAT_TARGET="hybrid:$(python3 -I - "${BUILD_CONTEXT}/overlay/additional-tests.json" <<'PY'
+import json, sys
+manifest=json.load(open(sys.argv[1], encoding='utf-8'))
+print(manifest['tests'][0]['hybrids'][0]['pair_key'])
+PY
+)"
+CANDIDATE_ORIGIN='http://127.0.0.1:18081'
+env STATIC_ROOT="${BUILD_CONTEXT}/overlay" COMMENTS_DB="$COMPAT_DB" COMMENTS_ALLOW_ANON=true \
+  APP_ORIGIN="$CANDIDATE_ORIGIN" HOST=127.0.0.1 PORT=18081 \
+  python3 -I "${BUILD_CONTEXT}/overlay/server.py" >"${WORK_DIR}/candidate-compat.log" 2>&1 &
+CANDIDATE_SERVER_PID=$!
+for _attempt in $(seq 1 30); do
+  if curl --fail --silent "${CANDIDATE_ORIGIN}/api/health" >/dev/null; then break; fi
+  sleep 1
+done
+curl --fail --silent "${CANDIDATE_ORIGIN}/api/health" >/dev/null
+python3 -I - "$CANDIDATE_ORIGIN" "$COMPAT_TARGET" <<'PY'
+import json, sys, urllib.request
+origin,target=sys.argv[1:]
+body=json.dumps({'target':target,'body':'rollback-compat-new-image','status':'note'}).encode()
+request=urllib.request.Request(
+    origin+'/api/comments', data=body, method='POST',
+    headers={'Content-Type':'application/json','Origin':origin},
+)
+with urllib.request.urlopen(request, timeout=10) as response:
+    if response.status != 201:
+        raise SystemExit(f'candidate compatibility write returned {response.status}')
+print('CANDIDATE_COMPAT_WRITE PASS')
+PY
+kill "$CANDIDATE_SERVER_PID"
+wait "$CANDIDATE_SERVER_PID" || true
+CANDIDATE_SERVER_PID=''
+
+COMPAT_POD="bbqc-rollback-compat-${STAMP,,}"
+COMPAT_POD="${COMPAT_POD//[^a-z0-9-]/-}"
+COMPAT_POD="${COMPAT_POD:0:63}"
+COMPAT_POD_FILE="${WORK_DIR}/rollback-compat-pod.json"
+COMPAT_POD="$COMPAT_POD" OLD_WEB_IMAGE="$OLD_WEB_IMAGE" python3 -I - <<'PY' > "$COMPAT_POD_FILE"
+import json, os, sys
+pod={
+  'apiVersion':'v1','kind':'Pod',
+  'metadata':{'name':os.environ['COMPAT_POD'],'namespace':'etroc-solder-inspection',
+              'labels':{'bbqc.cern.ch/purpose':'rollback-compatibility'}},
+  'spec':{'restartPolicy':'Never','containers':[{
+    'name':'web','image':os.environ['OLD_WEB_IMAGE'],'imagePullPolicy':'IfNotPresent',
+    'command':['/bin/sh','-c','set -eu; while [ ! -f /data/start ]; do sleep 1; done; exec python /app/static/server.py'],
+    'env':[
+      {'name':'STATIC_ROOT','value':'/app/static'},
+      {'name':'COMMENTS_DB','value':'/data/compat.sqlite3'},
+      {'name':'COMMENTS_ALLOW_ANON','value':'true'},
+      {'name':'APP_ORIGIN','value':'http://127.0.0.1:18080'},
+      {'name':'HOST','value':'127.0.0.1'}, {'name':'PORT','value':'18080'}],
+    'volumeMounts':[{'name':'compat-data','mountPath':'/data'}]
+  }], 'volumes':[{'name':'compat-data','emptyDir':{}}]}
+}
+json.dump(pod, sys.stdout, separators=(',', ':'))
+PY
+oc -n "$PROJECT" create --dry-run=server -f "$COMPAT_POD_FILE" >/dev/null
+oc -n "$PROJECT" create -f "$COMPAT_POD_FILE" >/dev/null
+oc -n "$PROJECT" wait --for=condition=Ready pod/"$COMPAT_POD" --timeout=120s >/dev/null
+oc -n "$PROJECT" exec -i "$COMPAT_POD" -c web -- sh -c 'umask 077; cat > /data/compat.sqlite3; touch /data/start' < "$COMPAT_DB"
+for _attempt in $(seq 1 60); do
+  if oc -n "$PROJECT" exec "$COMPAT_POD" -c web -- python -c \
+      "import urllib.request; urllib.request.urlopen('http://127.0.0.1:18080/api/health', timeout=3).read()" >/dev/null 2>&1; then break; fi
+  sleep 1
+done
+oc -n "$PROJECT" exec "$COMPAT_POD" -c web -- python -c \
+  "import urllib.request; urllib.request.urlopen('http://127.0.0.1:18080/api/health', timeout=3).read(); print('OLD_IMAGE_HEALTH PASS')"
+oc -n "$PROJECT" exec -i "$COMPAT_POD" -c web -- env COMPAT_TARGET="$COMPAT_TARGET" python - <<'PY'
+import json, os, urllib.request
+origin='http://127.0.0.1:18080'
+body=json.dumps({'target':os.environ['COMPAT_TARGET'],'body':'rollback-compat-old-image','status':'note'}).encode()
+request=urllib.request.Request(origin+'/api/comments', data=body, method='POST', headers={'Content-Type':'application/json','Origin':origin})
+with urllib.request.urlopen(request, timeout=10) as response:
+    if response.status != 201:
+        raise SystemExit(f'old-image compatibility write returned {response.status}')
+print('OLD_IMAGE_COMPAT_WRITE PASS')
+PY
+oc -n "$PROJECT" exec "$COMPAT_POD" -c web -- python -c \
+  "import sqlite3; source=sqlite3.connect('/data/compat.sqlite3'); target=sqlite3.connect('/data/compat-export.sqlite3'); source.backup(target); target.close(); source.close()"
+COMPAT_RETURNED_DB="${WORK_DIR}/rollback-compat-returned.sqlite3"
+oc -n "$PROJECT" exec "$COMPAT_POD" -c web -- cat /data/compat-export.sqlite3 > "$COMPAT_RETURNED_DB"
+oc -n "$PROJECT" delete pod/"$COMPAT_POD" --wait=true >/dev/null
+COMPAT_POD=''
+python3 -I - "${BUILD_CONTEXT}/overlay/server.py" "$COMPAT_RETURNED_DB" "${BUILD_CONTEXT}/overlay" <<'PY'
+import importlib.util, sqlite3, sys
+from pathlib import Path
+server_path,db_path,static_root=sys.argv[1:]
+spec=importlib.util.spec_from_file_location('candidate_reupgrade', server_path)
+module=importlib.util.module_from_spec(spec)
+spec.loader.exec_module(module)
+module.init_db(Path(db_path), Path(static_root), require_additional_tests=True)
+with sqlite3.connect(db_path) as db:
+    checks={
+      'tests':db.execute('SELECT COUNT(*) FROM additional_tests WHERE active=1').fetchone()[0],
+      'memberships':db.execute('SELECT COUNT(*) FROM hybrid_additional_tests WHERE active=1').fetchone()[0],
+      'unique_members':db.execute('SELECT COUNT(DISTINCT hybrid_registry_id) FROM hybrid_additional_tests WHERE active=1').fetchone()[0],
+      'dual_members':db.execute('SELECT COUNT(*) FROM (SELECT hybrid_registry_id FROM hybrid_additional_tests WHERE active=1 GROUP BY hybrid_registry_id HAVING COUNT(*)=2)').fetchone()[0],
+      'compat_writes':db.execute("SELECT COUNT(*) FROM comments WHERE body IN ('rollback-compat-new-image','rollback-compat-old-image') AND deleted=0").fetchone()[0],
+      'foreign_keys':db.execute('PRAGMA foreign_key_check').fetchall(),
+      'integrity':db.execute('PRAGMA integrity_check').fetchall(),
+    }
+expected={'tests':2,'memberships':18,'unique_members':15,'dual_members':3,'compat_writes':2,'foreign_keys':[],'integrity':[('ok',)]}
+if checks != expected:
+    raise SystemExit(f'rollback compatibility re-upgrade failed: {checks!r}')
+print({'ROLLBACK_COMPATIBILITY':'PASS', **checks})
+PY
 
 {
   declare -p SOURCE_REVISION API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
