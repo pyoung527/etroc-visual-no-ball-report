@@ -439,7 +439,22 @@ test "$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.metadata.ownerReferenc
 test "$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.spec.output.to.kind}')" = ImageStreamTag
 test "$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.spec.output.to.name}')" = etl-hybrid-bbqc:latest
 test "$(oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o jsonpath='{.metadata.uid}')" = "$BUILDCONFIG_UID"
-test "$(oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o jsonpath='{.metadata.resourceVersion}')" = "$BUILDCONFIG_RESOURCE_VERSION"
+CURRENT_BUILDCONFIG_FILE="${WORK_DIR}/buildconfig-current.json"
+oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o json > "$CURRENT_BUILDCONFIG_FILE"
+python3 -I - "$BUILDCONFIG_FILE" "$CURRENT_BUILDCONFIG_FILE" <<'PY'
+import json, sys
+captured=json.load(open(sys.argv[1], encoding='utf-8'))
+current=json.load(open(sys.argv[2], encoding='utf-8'))
+captured_metadata=captured.get('metadata', {})
+current_metadata=current.get('metadata', {})
+if current_metadata.get('uid') != captured_metadata.get('uid'):
+    raise SystemExit('captured BuildConfig UID changed after build')
+if current.get('spec') != captured.get('spec'):
+    raise SystemExit('captured BuildConfig spec changed after build')
+protected_metadata=('name','namespace','labels','annotations','finalizers','ownerReferences')
+if any(current_metadata.get(key) != captured_metadata.get(key) for key in protected_metadata):
+    raise SystemExit('captured BuildConfig metadata changed after build')
+PY
 test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$DEPLOYMENT_RESOURCE_VERSION"
 BUILD_OUTPUT_DIGEST="$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.status.output.to.imageDigest}')"
 [[ "$BUILD_OUTPUT_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]

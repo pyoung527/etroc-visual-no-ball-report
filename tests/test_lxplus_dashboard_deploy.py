@@ -142,6 +142,24 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             self.assertIn(required, script)
         self.assertNotIn("exit 1", script)
 
+    def test_helper_allows_build_controller_status_updates_but_rejects_config_drift(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        start_build = script.index('BUILD_NAME="$(oc -n "$PROJECT" start-build')
+        digest_read = script.index('BUILD_OUTPUT_DIGEST="$(oc -n "$PROJECT" get "$BUILD_NAME"')
+        post_build = script[start_build:digest_read]
+        self.assertNotIn(
+            "buildconfig/\"$BUILDCONFIG\" -o jsonpath='{.metadata.resourceVersion}'",
+            post_build,
+        )
+        for required in (
+            "CURRENT_BUILDCONFIG_FILE",
+            "captured BuildConfig UID changed after build",
+            "captured BuildConfig spec changed after build",
+            "captured BuildConfig metadata changed after build",
+        ):
+            self.assertIn(required, post_build)
+        self.assertNotIn("captured BuildConfig generation changed after build", post_build)
+
 
 if __name__ == "__main__":
     unittest.main()
