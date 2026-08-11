@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 from pathlib import Path
-from typing import Any, Never
+from typing import Any, NoReturn
 
 
 DIGEST_RE = re.compile(r"^sha256:[0-9a-f]{64}$")
@@ -21,7 +21,7 @@ PROTECTED_METADATA = (
 )
 
 
-def fail(message: str) -> Never:
+def fail(message: str) -> NoReturn:
     raise SystemExit(message)
 
 
