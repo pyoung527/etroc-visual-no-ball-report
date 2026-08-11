@@ -166,12 +166,15 @@ rollback_deployment() {
   current="${WORK_DIR}/deployment-current.json"
   rendered="${WORK_DIR}/deployment-rollback.json"
   oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$current"
-  OLD_DEPLOYMENT_FILE="$OLD_DEPLOYMENT_FILE" FORWARD_DEPLOYMENT_FILE="$FORWARD_DEPLOYMENT_FILE" \
+  DEPLOYMENT_UID="$DEPLOYMENT_UID" OLD_DEPLOYMENT_FILE="$OLD_DEPLOYMENT_FILE" FORWARD_DEPLOYMENT_FILE="$FORWARD_DEPLOYMENT_FILE" \
     CURRENT_DEPLOYMENT="$current" ROLLBACK_DEPLOYMENT="$rendered" python3 -I - <<'PY'
 import json, os
 old = json.load(open(os.environ['OLD_DEPLOYMENT_FILE'], encoding='utf-8'))
 forward = json.load(open(os.environ['FORWARD_DEPLOYMENT_FILE'], encoding='utf-8'))
 current = json.load(open(os.environ['CURRENT_DEPLOYMENT'], encoding='utf-8'))
+expected_uid = os.environ['DEPLOYMENT_UID']
+if old['metadata'].get('uid') != expected_uid or current['metadata'].get('uid') != expected_uid:
+    raise SystemExit('rollback target UID changed')
 if old['metadata']['name'] != current['metadata']['name'] or old['metadata']['namespace'] != current['metadata']['namespace']:
     raise SystemExit('rollback target identity changed')
 if current['spec'] != forward['spec']:

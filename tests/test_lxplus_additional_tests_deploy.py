@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
+import os
 import re
 import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -64,6 +68,73 @@ class LxplusAdditionalTestsDeployTests(unittest.TestCase):
         self.assertIn("web['readinessProbe']", forward)
         self.assertIn("web['livenessProbe']", forward)
         self.assertIn("http://127.0.0.1:8080/api/health", forward)
+
+    def test_rollback_renderer_rejects_same_name_with_new_uid(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        anchor = script.index('CURRENT_DEPLOYMENT="$current" ROLLBACK_DEPLOYMENT="$rendered"')
+        code_start = script.index("import json, os", anchor)
+        code_end = script.index("\nPY\n", code_start)
+        renderer = script[code_start:code_end]
+        stable_uid = "stable-deployment-uid"
+        base_metadata = {
+            "name": "etl-hybrid-bbqc",
+            "namespace": "etroc-solder-inspection",
+            "labels": {"app": "etl-hybrid-bbqc"},
+            "annotations": {},
+            "finalizers": [],
+            "ownerReferences": [],
+        }
+        old = {
+            "metadata": {**base_metadata, "uid": stable_uid, "resourceVersion": "100"},
+            "spec": {"template": {"old": True}},
+        }
+        forward = {
+            "metadata": {**base_metadata, "resourceVersion": "101"},
+            "spec": {"template": {"candidate": True}},
+        }
+        current = {
+            "metadata": {
+                **base_metadata,
+                "uid": "recreated-deployment-uid",
+                "resourceVersion": "999",
+            },
+            "spec": forward["spec"],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            paths = {
+                "OLD_DEPLOYMENT_FILE": Path(directory) / "old.json",
+                "FORWARD_DEPLOYMENT_FILE": Path(directory) / "forward.json",
+                "CURRENT_DEPLOYMENT": Path(directory) / "current.json",
+                "ROLLBACK_DEPLOYMENT": Path(directory) / "rendered.json",
+            }
+            for key, payload in (
+                ("OLD_DEPLOYMENT_FILE", old),
+                ("FORWARD_DEPLOYMENT_FILE", forward),
+                ("CURRENT_DEPLOYMENT", current),
+            ):
+                paths[key].write_text(json.dumps(payload), encoding="utf-8")
+            environment = os.environ.copy()
+            environment.update({key: str(value) for key, value in paths.items()})
+            environment["DEPLOYMENT_UID"] = stable_uid
+            result = subprocess.run(
+                [sys.executable, "-I", "-c", renderer],
+                check=False,
+                capture_output=True,
+                text=True,
+                env=environment,
+            )
+            current["metadata"]["uid"] = stable_uid
+            paths["CURRENT_DEPLOYMENT"].write_text(json.dumps(current), encoding="utf-8")
+            accepted = subprocess.run(
+                [sys.executable, "-I", "-c", renderer],
+                check=False,
+                capture_output=True,
+                text=True,
+                env=environment,
+            )
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("rollback target UID changed", result.stderr)
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
 
 
 if __name__ == "__main__":
