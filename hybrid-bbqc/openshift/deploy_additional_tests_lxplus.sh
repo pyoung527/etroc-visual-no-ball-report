@@ -10,6 +10,8 @@ CSS_SHA256='647ca7183b61070d3d7bacaa87ad99da08f89a7ed8d623d6e68a2ff45354cab0'
 JS_SHA256='3929347a3914c46cf5e2b54488270d7f9af9433a48eb6785d40eeb9407178391'
 SERVER_SHA256='c64411985e07456bc0dfd1902030467a44be7468f1f89cb6b208a71e42739801'
 MANIFEST_SHA256='90c8e9854c2dbdad9a5393ab4dd0e11314bad173c22048c7f3a637fe009619a5'
+PROBE_BASE_DB='/afs/cern.ch/user/y/ypark/bbqc-backups/comments.sqlite3.before-additional-tests-20260811T061248Z.bak'
+PROBE_BASE_SHA256='0cea66f32c947e076cee9c0d74c7e6b812210af54628c9b4ed4756bd1674832e'
 VALIDATOR_SHA256='ecec82614fdc8c6524c722fd5809886d8fbe1e7799d6b04a0da2f50cfdd1f9f8'
 SELECTOR_SHA256='54e53acf4853fab3d804101568cfd4276272c45e15cc59e8bb5bb3befb91cc86'
 SSO_SOURCE_REVISION='d049ae2182f795c4f5dec15dfb8dbef8971518da'
@@ -632,6 +634,87 @@ case "$NEW_WEB_IMAGE" in *@"$BUILD_OUTPUT_DIGEST") ;; *) printf '%s\n' 'Build-sp
 test "$NEW_WEB_IMAGE" != "$OLD_WEB_IMAGE"
 declare -p BUILD_NAME BUILD_OUTPUT_DIGEST NEW_WEB_IMAGE >> "$RELEASE_STATE"
 
+# Exercise the exact built image against the immutable pre-migration production backup
+# with the same localhost bind and probe timing that the forward Deployment will use.
+test -f "$PROBE_BASE_DB"
+test "$(sha256sum "$PROBE_BASE_DB" | cut -d' ' -f1)" = "$PROBE_BASE_SHA256"
+COMPAT_POD="bbqc-candidate-probe-${STAMP,,}"
+COMPAT_POD="${COMPAT_POD//[^a-z0-9-]/-}"
+COMPAT_POD="${COMPAT_POD:0:63}"
+CANDIDATE_PROBE_FILE="${WORK_DIR}/candidate-probe-pod.json"
+COMPAT_POD="$COMPAT_POD" NEW_WEB_IMAGE="$NEW_WEB_IMAGE" PROJECT="$PROJECT" python3 -I - <<'PY' > "$CANDIDATE_PROBE_FILE"
+import json, os, sys
+command=[
+  'python','-c',
+  "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=2).read()",
+]
+probe={'exec':{'command':command},'timeoutSeconds':3,'successThreshold':1}
+pod={
+  'apiVersion':'v1','kind':'Pod',
+  'metadata':{'name':os.environ['COMPAT_POD'],'namespace':os.environ['PROJECT'],
+              'labels':{'bbqc.cern.ch/purpose':'candidate-startup-probe'}},
+  'spec':{'restartPolicy':'Never','containers':[{
+    'name':'web','image':os.environ['NEW_WEB_IMAGE'],'imagePullPolicy':'IfNotPresent',
+    'command':['/bin/sh','-c','set -eu; while [ ! -f /data/start ]; do sleep 1; done; exec python /app/static/server.py'],
+    'env':[
+      {'name':'STATIC_ROOT','value':'/app/static'},
+      {'name':'COMMENTS_DB','value':'/data/comments.sqlite3'},
+      {'name':'COMMENTS_ALLOW_ANON','value':'true'},
+      {'name':'APP_ORIGIN','value':'http://127.0.0.1:8080'},
+      {'name':'HOST','value':'127.0.0.1'}, {'name':'PORT','value':'8080'}],
+    'startupProbe':{**probe,'periodSeconds':5,'failureThreshold':60},
+    'readinessProbe':{**probe,'initialDelaySeconds':5,'periodSeconds':10,'failureThreshold':3},
+    'livenessProbe':{**probe,'initialDelaySeconds':15,'periodSeconds':20,'failureThreshold':3},
+    'resources':{'requests':{'cpu':'30m','memory':'96Mi'},'limits':{'cpu':'300m','memory':'384Mi'}},
+    'volumeMounts':[{'name':'probe-data','mountPath':'/data'}]
+  }], 'volumes':[{'name':'probe-data','emptyDir':{}}]}
+}
+json.dump(pod, sys.stdout, separators=(',', ':'))
+PY
+oc -n "$PROJECT" create --dry-run=server -f "$CANDIDATE_PROBE_FILE" >/dev/null
+oc -n "$PROJECT" create -f "$CANDIDATE_PROBE_FILE" >/dev/null
+for _attempt in $(seq 1 60); do
+  test "$(oc -n "$PROJECT" get pod/"$COMPAT_POD" -o jsonpath='{.status.phase}')" = Running && break
+  sleep 1
+done
+test "$(oc -n "$PROJECT" get pod/"$COMPAT_POD" -o jsonpath='{.status.phase}')" = Running
+PROBE_STARTED_AT="$(date +%s)"
+oc -n "$PROJECT" exec -i "$COMPAT_POD" -c web -- sh -c 'umask 077; cat > /data/comments.sqlite3; touch /data/start' < "$PROBE_BASE_DB"
+oc -n "$PROJECT" wait --for=condition=Ready pod/"$COMPAT_POD" --timeout=300s >/dev/null
+PROBE_READY_SECONDS="$(( $(date +%s) - PROBE_STARTED_AT ))"
+test "$PROBE_READY_SECONDS" -le 300
+test "$(oc -n "$PROJECT" get pod/"$COMPAT_POD" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].restartCount}')" = 0
+oc -n "$PROJECT" logs "$COMPAT_POD" -c web | python3 -c "import sys; data=sys.stdin.read(); raise SystemExit(0 if 'BBQC_STARTUP_OK' in data and 'host=127.0.0.1' in data else 'candidate startup marker missing')"
+oc -n "$PROJECT" exec -i "$COMPAT_POD" -c web -- python - <<'PY'
+import json, sqlite3, urllib.request
+with urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=3) as response:
+    if response.status != 200:
+        raise SystemExit(f'candidate probe health returned {response.status}')
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    checks={
+      'comments':db.execute('SELECT COUNT(*) FROM comments').fetchone()[0],
+      'hybrids':db.execute('SELECT COUNT(*) FROM hybrid_registry WHERE active=1').fetchone()[0],
+      'tests':db.execute('SELECT COUNT(*) FROM additional_tests WHERE active=1').fetchone()[0],
+      'memberships':db.execute('SELECT COUNT(*) FROM hybrid_additional_tests WHERE active=1').fetchone()[0],
+      'unique_members':db.execute('SELECT COUNT(DISTINCT hybrid_registry_id) FROM hybrid_additional_tests WHERE active=1').fetchone()[0],
+      'dual_members':db.execute('SELECT COUNT(*) FROM (SELECT hybrid_registry_id FROM hybrid_additional_tests WHERE active=1 GROUP BY hybrid_registry_id HAVING COUNT(*)=2)').fetchone()[0],
+      'version':db.execute('PRAGMA user_version').fetchone()[0],
+      'foreign_keys':db.execute('PRAGMA foreign_key_check').fetchall(),
+      'integrity':db.execute('PRAGMA integrity_check').fetchall(),
+    }
+expected={'comments':74,'hybrids':72,'tests':2,'memberships':18,'unique_members':15,'dual_members':3,'version':2,'foreign_keys':[],'integrity':[('ok',)]}
+if checks != expected:
+    raise SystemExit(f'exact candidate startup gate failed: {checks!r}')
+with urllib.request.urlopen('http://127.0.0.1:8080/api/hybrids', timeout=5) as response:
+    payload=json.load(response)
+if payload.get('count') != 72 or len(payload.get('records',[])) != 72:
+    raise SystemExit('exact candidate API registry gate failed')
+print({'EXACT_CANDIDATE_STARTUP':'PASS', **checks})
+PY
+oc -n "$PROJECT" delete pod/"$COMPAT_POD" --wait=true >/dev/null
+COMPAT_POD=''
+declare -p PROBE_BASE_DB PROBE_BASE_SHA256 PROBE_READY_SECONDS >> "$RELEASE_STATE"
+
 verify_context
 oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o json > "$CURRENT_BUILDCONFIG_FILE"
 oc -n "$PROJECT" get "$BUILD_NAME" -o json > "$BUILD_FILE"
@@ -665,6 +748,20 @@ for container in desired['spec']['template']['spec']['containers']:
         found.add(container['name'])
 if found != set(images):
     raise SystemExit(f'forward containers do not match expected set: {sorted(found)}')
+web=next(container for container in desired['spec']['template']['spec']['containers'] if container['name']=='web')
+env=web.setdefault('env', [])
+host_entries=[entry for entry in env if entry.get('name')=='HOST']
+if len(host_entries)>1:
+    raise SystemExit('duplicate HOST environment entries')
+if host_entries:
+    host_entries[0].clear()
+    host_entries[0].update({'name':'HOST','value':'127.0.0.1'})
+else:
+    env.append({'name':'HOST','value':'127.0.0.1'})
+probe_command=['python','-c',"import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=2).read()"]
+web['startupProbe']={'exec':{'command':probe_command},'periodSeconds':5,'timeoutSeconds':3,'failureThreshold':60,'successThreshold':1}
+web['readinessProbe']={'exec':{'command':probe_command},'initialDelaySeconds':5,'periodSeconds':10,'timeoutSeconds':3,'failureThreshold':3,'successThreshold':1}
+web['livenessProbe']={'exec':{'command':probe_command},'initialDelaySeconds':15,'periodSeconds':20,'timeoutSeconds':3,'failureThreshold':3,'successThreshold':1}
 json.dump(desired, sys.stdout, indent=2, sort_keys=True)
 PY
 FORWARD_DEPLOYMENT_SHA256="$(sha256sum "$FORWARD_DEPLOYMENT_FILE" | cut -d' ' -f1)"

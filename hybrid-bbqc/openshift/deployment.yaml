@@ -39,6 +39,15 @@ spec:
           volumeMounts:
             - name: comments-data
               mountPath: /data
+          startupProbe:
+            exec:
+              command:
+                - python
+                - -c
+                - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/api/health', timeout=2).read()"
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 60
           readinessProbe:
             exec:
               command:
