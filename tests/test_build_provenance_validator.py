@@ -108,7 +108,7 @@ class BuildProvenanceValidatorTests(unittest.TestCase):
 
     def valid_documents(self) -> tuple[dict, dict, dict]:
         captured = buildconfig()
-        current = buildconfig(generation=7, last_version=31)
+        current = buildconfig(generation=8, last_version=31)
         current["metadata"]["resourceVersion"] = "120"
         return captured, current, completed_build(captured)
 
