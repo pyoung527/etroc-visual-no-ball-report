@@ -15,6 +15,16 @@ SCRIPT = ROOT / "hybrid-bbqc" / "openshift" / "deploy_additional_tests_lxplus.sh
 
 
 class LxplusAdditionalTestsDeployTests(unittest.TestCase):
+    def test_helper_pins_advanced_table_csv_release(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        for value in (
+            "SOURCE_REVISION='0a38251c00c098b9d9a8d4c75a8c90a581330455'",
+            "INDEX_SHA256='242f76d818d3b8211a2ebe5456b346588661e64ed7fa17d951f9c716315ba38d'",
+            "CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'",
+            "JS_SHA256='317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644'",
+        ):
+            self.assertIn(value, script)
+
     def test_helper_has_valid_bash_syntax(self):
         result = subprocess.run(
             ["bash", "-n", str(SCRIPT)],
