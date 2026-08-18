@@ -1,0 +1,2 @@
+# Reproducible encoder environment for tools/build_etroc_optical_pool.py
+Pillow==12.2.0

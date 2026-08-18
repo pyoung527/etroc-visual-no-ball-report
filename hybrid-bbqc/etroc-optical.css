@@ -1,0 +1,193 @@
+.etroc-pool-intro {
+  margin: 18px 0 24px;
+  padding: 18px;
+  border: 1px solid #d9c56f;
+  border-radius: 16px;
+  background: linear-gradient(135deg, #fffaf0, #f2f7f1);
+}
+
+.etroc-pool-intro h3 {
+  margin: 0 0 6px;
+  color: #104b3a;
+}
+
+.etroc-pool-state {
+  display: inline-flex;
+  margin-top: 10px;
+  border-radius: 999px;
+  padding: 5px 10px;
+  background: #fff3cd;
+  color: #6f5200;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.etroc-pool-state.loaded {
+  background: #e6f3ee;
+  color: #104b3a;
+}
+
+.etroc-pool-state.failed,
+.etroc-pool-error {
+  background: #ffe0d8;
+  color: #b1281d;
+}
+
+.etroc-pool-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.etroc-pool-metric {
+  padding: 12px 14px;
+  border: 1px solid #e6e0d2;
+  border-radius: 14px;
+  background: #fffdf8;
+}
+
+.etroc-pool-metric span,
+.etroc-pool-metric strong {
+  display: block;
+}
+
+.etroc-pool-metric span {
+  color: #6d756f;
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.etroc-pool-metric strong {
+  margin-top: 3px;
+  color: #104b3a;
+  font-size: 22px;
+}
+
+.etroc-pool-group {
+  margin: 22px 0 30px;
+}
+
+.etroc-pool-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.etroc-pool-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid #e6e0d2;
+  border-radius: 16px;
+  background: #fffdf8;
+  box-shadow: 0 6px 22px rgba(16, 75, 58, .06);
+  color: #18201d;
+  text-decoration: none;
+  transition: transform .15s ease, border-color .15s ease, box-shadow .15s ease;
+}
+
+.etroc-pool-card:hover,
+.etroc-pool-card:focus-visible {
+  border-color: #b89c32;
+  box-shadow: 0 10px 28px rgba(16, 75, 58, .13);
+  transform: translateY(-2px);
+}
+
+.etroc-pool-card:focus-visible {
+  outline: 3px solid #d9c56f;
+  outline-offset: 3px;
+}
+
+.etroc-pool-card img {
+  width: 100%;
+  aspect-ratio: 2400 / 2176;
+  border-bottom: 1px solid #e6e0d2;
+  background: #eee8d8;
+  object-fit: cover;
+}
+
+.etroc-pool-card-body {
+  display: grid;
+  gap: 5px;
+  padding: 13px 14px 15px;
+}
+
+.etroc-pool-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.etroc-pool-card-heading strong {
+  color: #104b3a;
+  font-size: 17px;
+}
+
+.etroc-pool-badge {
+  border-radius: 999px;
+  padding: 3px 8px;
+  background: #fff3cd;
+  color: #6f5200;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.etroc-pool-card-body span,
+.etroc-pool-card-body em,
+.etroc-pool-card-body small {
+  color: #4c5650;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.etroc-pool-card-body small {
+  margin-top: 3px;
+  color: #7a5b00;
+  font-weight: 700;
+}
+
+.etroc-pool-error {
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 800;
+}
+
+.etroc-legacy-boundary {
+  margin: 34px 0 12px;
+  padding-top: 24px;
+  border-top: 2px solid #e6e0d2;
+}
+
+@media (max-width: 800px) {
+  .etroc-pool-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .etroc-pool-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 430px) {
+  .etroc-pool-summary {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .etroc-pool-card {
+    transition: none;
+  }
+
+  .etroc-pool-card:hover,
+  .etroc-pool-card:focus-visible {
+    transform: none;
+  }
+}
