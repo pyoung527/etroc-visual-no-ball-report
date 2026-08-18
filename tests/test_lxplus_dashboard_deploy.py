@@ -1,7 +1,11 @@
 from __future__ import annotations
 
+import json
+import os
 import re
 import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -173,24 +177,101 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             self.assertIn(required, script)
         self.assertNotIn("exit 1", script)
 
-    def test_helper_allows_build_controller_status_updates_but_rejects_config_drift(self):
+    def test_rollback_renderer_rejects_same_name_with_new_uid(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        anchor = script.index('CURRENT_DEPLOYMENT="$current" ROLLBACK_DEPLOYMENT="$rendered"')
+        code_start = script.index("import json, os", anchor)
+        code_end = script.index("\nPY\n", code_start)
+        renderer = script[code_start:code_end]
+        stable_uid = "stable-deployment-uid"
+        base_metadata = {
+            "name": "etl-hybrid-bbqc",
+            "namespace": "etroc-solder-inspection",
+            "labels": {"app": "etl-hybrid-bbqc"},
+            "annotations": {},
+            "finalizers": [],
+            "ownerReferences": [],
+        }
+        old = {
+            "metadata": {**base_metadata, "resourceVersion": "100"},
+            "spec": {"template": {"old": True}},
+        }
+        forward = {
+            "metadata": {**base_metadata, "resourceVersion": "101"},
+            "spec": {"template": {"candidate": True}},
+        }
+        current = {
+            "metadata": {
+                **base_metadata,
+                "uid": "recreated-deployment-uid",
+                "resourceVersion": "999",
+            },
+            "spec": forward["spec"],
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            paths = {
+                "OLD_DEPLOYMENT_FILE": Path(directory) / "old.json",
+                "FORWARD_DEPLOYMENT_FILE": Path(directory) / "forward.json",
+                "CURRENT_DEPLOYMENT": Path(directory) / "current.json",
+                "ROLLBACK_DEPLOYMENT": Path(directory) / "rendered.json",
+            }
+            for key, payload in (
+                ("OLD_DEPLOYMENT_FILE", old),
+                ("FORWARD_DEPLOYMENT_FILE", forward),
+                ("CURRENT_DEPLOYMENT", current),
+            ):
+                paths[key].write_text(json.dumps(payload), encoding="utf-8")
+            environment = os.environ.copy()
+            environment.update({key: str(value) for key, value in paths.items()})
+            environment["DEPLOYMENT_UID"] = stable_uid
+            rejected = subprocess.run(
+                [sys.executable, "-I", "-c", renderer], check=False,
+                capture_output=True, text=True, env=environment,
+            )
+            current["metadata"]["uid"] = stable_uid
+            paths["CURRENT_DEPLOYMENT"].write_text(json.dumps(current), encoding="utf-8")
+            accepted = subprocess.run(
+                [sys.executable, "-I", "-c", renderer], check=False,
+                capture_output=True, text=True, env=environment,
+            )
+        self.assertNotEqual(rejected.returncode, 0)
+        self.assertIn("rollback target UID changed", rejected.stderr)
+        self.assertEqual(accepted.returncode, 0, accepted.stderr)
+
+    def test_helper_runs_pinned_executable_build_provenance_validator(self):
         script = SCRIPT.read_text(encoding="utf-8")
         start_build = script.index('BUILD_NAME="$(oc -n "$PROJECT" start-build')
         digest_read = script.index('BUILD_OUTPUT_DIGEST="$(oc -n "$PROJECT" get "$BUILD_NAME"')
         post_build = script[start_build:digest_read]
-        self.assertNotIn(
-            "buildconfig/\"$BUILDCONFIG\" -o jsonpath='{.metadata.resourceVersion}'",
-            post_build,
-        )
         for required in (
+            "VALIDATOR_SHA256='ecec82614fdc8c6524c722fd5809886d8fbe1e7799d6b04a0da2f50cfdd1f9f8'",
+            '"${RAW_ROOT}/hybrid-bbqc/openshift/validate_build_provenance.py"',
+            'printf \'%s  %s\\n\' "$VALIDATOR_SHA256" "$VALIDATOR" | sha256sum -c -',
             "CURRENT_BUILDCONFIG_FILE",
-            "captured BuildConfig UID changed after build",
-            "captured BuildConfig spec changed after build",
-            "captured BuildConfig metadata changed after build",
+            "BUILD_FILE",
+            'python3 -I "$VALIDATOR"',
+            '--captured "$BUILDCONFIG_FILE" --current "$CURRENT_BUILDCONFIG_FILE"',
+            '--build "$BUILD_FILE" --name "$BUILDCONFIG" --namespace "$PROJECT"',
         ):
-            self.assertIn(required, post_build)
-        self.assertNotIn("captured BuildConfig generation changed after build", post_build)
+            self.assertIn(required, script if required.startswith(("VALIDATOR_", '"${RAW_ROOT}', "printf")) else post_build)
 
+    def test_helper_exercises_etroc_assets_through_runtime_http(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        for required in (
+            "RUNTIME_HTTP_ASSETS PASS",
+            "http://127.0.0.1:8080/",
+            "etroc-optical.js",
+            "etroc-optical.css",
+            "data/etroc-optical/ETROC_OI_2608/chips.json",
+            "data/etroc-optical/ETROC_OI_2608/previews/W02G4-44.jpg",
+            "data/etroc-optical/ETROC_OI_2608/montages/W02G4-44.jpg",
+        ):
+            self.assertIn(required, script)
+        mutation = script.index('oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_DEPLOYMENT_FILE"')
+        http_gate = script.index("RUNTIME_HTTP_ASSETS PASS")
+        release_pass = script.index("DEPLOYMENT PASS")
+        self.assertLess(mutation, http_gate)
+        self.assertLess(http_gate, release_pass)
 
 if __name__ == "__main__":
     unittest.main()

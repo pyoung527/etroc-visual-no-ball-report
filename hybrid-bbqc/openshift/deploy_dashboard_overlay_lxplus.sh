@@ -13,6 +13,7 @@ ETROC_JS_SHA256='64a372a7f1b3214d78e3724abe67f50e939c423e05ba4f355f01901f9a3ed4f
 ETROC_MANIFEST_SHA256='96de00c344aabb3152a0d44323cc52c26e1e930dad63f25ae1d59fb4be5d3f9e'
 ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'
 SELECTOR_SHA256='54e53acf4853fab3d804101568cfd4276272c45e15cc59e8bb5bb3befb91cc86'
+VALIDATOR_SHA256='ecec82614fdc8c6524c722fd5809886d8fbe1e7799d6b04a0da2f50cfdd1f9f8'
 SSO_SOURCE_REVISION='d049ae2182f795c4f5dec15dfb8dbef8971518da'
 SSO_SOURCE_SHA256='67b6eebc40f8b36e44124bfcec3fc526e29f93830fa203d0c8feeedfd99e9ca3'
 SSO_PATCHED_SHA256='179d62436395bd82aa67a1cc4a902ec6e17a12e07d53c1a71f1298079a4b041c'
@@ -29,6 +30,7 @@ CURRENT_RELEASE_STATE="${BACKUP_DIR}/current-release.env"
 WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/bbqc-dashboard-release.XXXXXXXX")"
 BUILD_CONTEXT="${WORK_DIR}/context"
 SELECTOR="${WORK_DIR}/select_single_app_pod.py"
+VALIDATOR="${WORK_DIR}/validate_build_provenance.py"
 ROLLOUT_MUTATED=0
 RELEASE_STATE=''
 OLD_DEPLOYMENT_FILE=''
@@ -155,12 +157,15 @@ rollback_deployment() {
   current="${WORK_DIR}/deployment-current.json"
   rendered="${WORK_DIR}/deployment-rollback.json"
   oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$current"
-  OLD_DEPLOYMENT_FILE="$OLD_DEPLOYMENT_FILE" FORWARD_DEPLOYMENT_FILE="$FORWARD_DEPLOYMENT_FILE" \
+  DEPLOYMENT_UID="$DEPLOYMENT_UID" OLD_DEPLOYMENT_FILE="$OLD_DEPLOYMENT_FILE" FORWARD_DEPLOYMENT_FILE="$FORWARD_DEPLOYMENT_FILE" \
     CURRENT_DEPLOYMENT="$current" ROLLBACK_DEPLOYMENT="$rendered" python3 -I - <<'PY'
 import json, os
 old = json.load(open(os.environ['OLD_DEPLOYMENT_FILE'], encoding='utf-8'))
 forward = json.load(open(os.environ['FORWARD_DEPLOYMENT_FILE'], encoding='utf-8'))
 current = json.load(open(os.environ['CURRENT_DEPLOYMENT'], encoding='utf-8'))
+expected_uid = os.environ['DEPLOYMENT_UID']
+if current['metadata'].get('uid') != expected_uid:
+    raise SystemExit('rollback target UID changed')
 if old['metadata']['name'] != current['metadata']['name'] or old['metadata']['namespace'] != current['metadata']['namespace']:
     raise SystemExit('rollback target identity changed')
 if current['spec'] != forward['spec']:
@@ -262,6 +267,9 @@ verify_context
 curl --fail --silent --show-error --location \
   "${RAW_ROOT}/hybrid-bbqc/openshift/select_single_app_pod.py" --output "$SELECTOR"
 printf '%s  %s\n' "$SELECTOR_SHA256" "$SELECTOR" | sha256sum -c -
+curl --fail --silent --show-error --location \
+  "${RAW_ROOT}/hybrid-bbqc/openshift/validate_build_provenance.py" --output "$VALIDATOR"
+printf '%s  %s\n' "$VALIDATOR_SHA256" "$VALIDATOR" | sha256sum -c -
 POD="$(select_single_app_pod)"
 RAW_OLD_WEB_IMAGE="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].imageID}')"
 OLD_WEB_IMAGE="${RAW_OLD_WEB_IMAGE#docker-pullable://}"
@@ -486,21 +494,12 @@ test "$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.spec.output.to.kind}')
 test "$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.spec.output.to.name}')" = etl-hybrid-bbqc:latest
 test "$(oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o jsonpath='{.metadata.uid}')" = "$BUILDCONFIG_UID"
 CURRENT_BUILDCONFIG_FILE="${WORK_DIR}/buildconfig-current.json"
+BUILD_FILE="${WORK_DIR}/build-current.json"
 oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o json > "$CURRENT_BUILDCONFIG_FILE"
-python3 -I - "$BUILDCONFIG_FILE" "$CURRENT_BUILDCONFIG_FILE" <<'PY'
-import json, sys
-captured=json.load(open(sys.argv[1], encoding='utf-8'))
-current=json.load(open(sys.argv[2], encoding='utf-8'))
-captured_metadata=captured.get('metadata', {})
-current_metadata=current.get('metadata', {})
-if current_metadata.get('uid') != captured_metadata.get('uid'):
-    raise SystemExit('captured BuildConfig UID changed after build')
-if current.get('spec') != captured.get('spec'):
-    raise SystemExit('captured BuildConfig spec changed after build')
-protected_metadata=('name','namespace','labels','annotations','finalizers','ownerReferences')
-if any(current_metadata.get(key) != captured_metadata.get(key) for key in protected_metadata):
-    raise SystemExit('captured BuildConfig metadata changed after build')
-PY
+oc -n "$PROJECT" get "$BUILD_NAME" -o json > "$BUILD_FILE"
+python3 -I "$VALIDATOR" \
+  --captured "$BUILDCONFIG_FILE" --current "$CURRENT_BUILDCONFIG_FILE" \
+  --build "$BUILD_FILE" --name "$BUILDCONFIG" --namespace "$PROJECT"
 test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$DEPLOYMENT_RESOURCE_VERSION"
 BUILD_OUTPUT_DIGEST="$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.status.output.to.imageDigest}')"
 [[ "$BUILD_OUTPUT_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]
@@ -586,6 +585,48 @@ assets=[root / row[key] for row in records for key in ('montage_uri','preview_ur
 if len(set(assets)) != 72 or any(not path.is_file() or path.stat().st_size == 0 for path in assets):
     raise SystemExit('runtime ETROC asset inventory mismatch')
 print({'dataset_id': payload['dataset_id'], 'records': len(records), 'assets': len(assets), 'positions': payload['position_record_count']})
+PY
+
+oc -n "$PROJECT" exec -i "$POD" -c web -- env \
+  INDEX_SHA256="$INDEX_SHA256" ETROC_CSS_SHA256="$ETROC_CSS_SHA256" \
+  ETROC_JS_SHA256="$ETROC_JS_SHA256" python - <<'PY'
+import hashlib, json, os
+import urllib.request
+
+base = 'http://127.0.0.1:8080/'
+
+def fetch(path):
+    with urllib.request.urlopen(base + path, timeout=10) as response:
+        if response.status != 200:
+            raise SystemExit(f'runtime HTTP asset returned {response.status}: {path}')
+        data = response.read()
+    if not data:
+        raise SystemExit(f'runtime HTTP asset is empty: {path}')
+    return data
+
+for path, expected_sha256 in (
+    ('', os.environ['INDEX_SHA256']),
+    ('etroc-optical.js', os.environ['ETROC_JS_SHA256']),
+    ('etroc-optical.css', os.environ['ETROC_CSS_SHA256']),
+):
+    actual = hashlib.sha256(fetch(path)).hexdigest()
+    if actual != expected_sha256:
+        raise SystemExit(f'runtime HTTP asset checksum mismatch: {path} {actual}')
+
+chips_path = 'data/etroc-optical/ETROC_OI_2608/chips.json'
+payload = json.loads(fetch(chips_path))
+if payload.get('dataset_id') != 'ETROC_OI_2608' or len(payload.get('records', [])) != 36:
+    raise SystemExit('runtime HTTP ETROC payload identity/cardinality mismatch')
+
+for path in (
+    'data/etroc-optical/ETROC_OI_2608/previews/W02G4-44.jpg',
+    'data/etroc-optical/ETROC_OI_2608/montages/W02G4-44.jpg',
+):
+    image = fetch(path)
+    if not image.startswith(b'\xff\xd8') or not image.endswith(b'\xff\xd9'):
+        raise SystemExit(f'runtime HTTP JPEG contract failed: {path}')
+
+print(f"RUNTIME_HTTP_ASSETS PASS dataset_id={payload['dataset_id']} records={len(payload['records'])}")
 PY
 
 oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" python - <<'PY'
