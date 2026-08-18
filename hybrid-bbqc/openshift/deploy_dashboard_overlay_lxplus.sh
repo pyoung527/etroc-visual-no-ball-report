@@ -501,7 +501,15 @@ python3 -I "$VALIDATOR" \
   --captured "$BUILDCONFIG_FILE" --current "$CURRENT_BUILDCONFIG_FILE" \
   --build "$BUILD_FILE" --name "$BUILDCONFIG" --namespace "$PROJECT"
 test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$DEPLOYMENT_RESOURCE_VERSION"
-BUILD_OUTPUT_DIGEST="$(oc -n "$PROJECT" get "$BUILD_NAME" -o jsonpath='{.status.output.to.imageDigest}')"
+BUILD_OUTPUT_DIGEST="$(python3 -I - "$BUILD_FILE" <<'PY'
+import json, re, sys
+build=json.load(open(sys.argv[1], encoding='utf-8'))
+digest=build.get('status', {}).get('output', {}).get('to', {}).get('imageDigest')
+if not isinstance(digest, str) or re.fullmatch(r'sha256:[0-9a-f]{64}', digest) is None:
+    raise SystemExit('validated Build output image digest is invalid')
+print(digest)
+PY
+)"
 [[ "$BUILD_OUTPUT_DIGEST" =~ ^sha256:[0-9a-f]{64}$ ]]
 NEW_WEB_IMAGE="$(oc -n "$PROJECT" get "isimage/etl-hybrid-bbqc@${BUILD_OUTPUT_DIGEST}" -o jsonpath='{.image.dockerImageReference}')"
 case "$NEW_WEB_IMAGE" in *@"$BUILD_OUTPUT_DIGEST") ;; *) printf '%s\n' 'Build-specific output image is not immutable.' >&2; false;; esac

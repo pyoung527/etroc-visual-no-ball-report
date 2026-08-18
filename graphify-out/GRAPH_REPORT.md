@@ -1,7 +1,7 @@
 # Graph Report - bbqc-etroc-oi-2608  (2026-08-18)
 
 ## Corpus Check
-- 21 files · ~31,173,140 words
+- 21 files · ~31,173,158 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary

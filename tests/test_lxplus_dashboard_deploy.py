@@ -170,7 +170,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "ownerReferences",
             "image.openshift.io/triggers",
             "BUILDCONFIG_RESOURCE_VERSION",
-            ".status.output.to.imageDigest",
+            "validated Build output image digest is invalid",
             "kubectl.kubernetes.io/last-applied-configuration",
             "--save-config=false",
         ):
@@ -241,8 +241,9 @@ class LxplusDashboardDeployTests(unittest.TestCase):
     def test_helper_runs_pinned_executable_build_provenance_validator(self):
         script = SCRIPT.read_text(encoding="utf-8")
         start_build = script.index('BUILD_NAME="$(oc -n "$PROJECT" start-build')
-        digest_read = script.index('BUILD_OUTPUT_DIGEST="$(oc -n "$PROJECT" get "$BUILD_NAME"')
-        post_build = script[start_build:digest_read]
+        validator_run = script.index('python3 -I "$VALIDATOR"', start_build)
+        image_lookup = script.index('NEW_WEB_IMAGE="$(oc -n "$PROJECT" get "isimage/', validator_run)
+        post_validation = script[validator_run:image_lookup]
         for required in (
             "VALIDATOR_SHA256='ecec82614fdc8c6524c722fd5809886d8fbe1e7799d6b04a0da2f50cfdd1f9f8'",
             '"${RAW_ROOT}/hybrid-bbqc/openshift/validate_build_provenance.py"',
@@ -253,7 +254,9 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             '--captured "$BUILDCONFIG_FILE" --current "$CURRENT_BUILDCONFIG_FILE"',
             '--build "$BUILD_FILE" --name "$BUILDCONFIG" --namespace "$PROJECT"',
         ):
-            self.assertIn(required, script if required.startswith(("VALIDATOR_", '"${RAW_ROOT}', "printf")) else post_build)
+            self.assertIn(required, script)
+        self.assertIn('BUILD_OUTPUT_DIGEST="$(python3 -I - "$BUILD_FILE"', post_validation)
+        self.assertNotIn('oc -n "$PROJECT" get "$BUILD_NAME"', post_validation)
 
     def test_helper_exercises_etroc_assets_through_runtime_http(self):
         script = SCRIPT.read_text(encoding="utf-8")
