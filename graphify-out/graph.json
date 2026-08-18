@@ -9,7 +9,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/make_candidate_contact_sheet.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_make_candidate_contact_sheet_py",
-      "community": 19,
+      "community": 18,
       "norm_label": "make_candidate_contact_sheet.py"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_update_second_batch_xray_mapping_py",
-      "community": 9,
+      "community": 10,
       "norm_label": "update_second_batch_xray_mapping.py"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L21",
       "id": "update_second_batch_xray_mapping_esc",
-      "community": 9,
+      "community": 10,
       "norm_label": "esc()"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L25",
       "id": "update_second_batch_xray_mapping_slug_name",
-      "community": 9,
+      "community": 10,
       "norm_label": "slug_name()"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L34",
       "id": "update_second_batch_xray_mapping_key_for_etroc",
-      "community": 9,
+      "community": 10,
       "norm_label": "key_for_etroc()"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L40",
       "id": "update_second_batch_xray_mapping_etroc_for_zip_name",
-      "community": 9,
+      "community": 10,
       "norm_label": "etroc_for_zip_name()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L49",
       "id": "update_second_batch_xray_mapping_reason_after_mapping",
-      "community": 9,
+      "community": 10,
       "norm_label": "reason_after_mapping()"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L64",
       "id": "update_second_batch_xray_mapping_note_for_crops",
-      "community": 9,
+      "community": 10,
       "norm_label": "note_for_crops()"
     },
     {
@@ -468,7 +468,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L75",
       "id": "update_second_batch_xray_mapping_xray_full_article",
-      "community": 9,
+      "community": 10,
       "norm_label": "xray_full_article()"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L81",
       "id": "update_second_batch_xray_mapping_xray_crop_article",
-      "community": 9,
+      "community": 10,
       "norm_label": "xray_crop_article()"
     },
     {
@@ -486,7 +486,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L92",
       "id": "update_second_batch_xray_mapping_update_evidence_section",
-      "community": 9,
+      "community": 10,
       "norm_label": "update_evidence_section()"
     },
     {
@@ -495,7 +495,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L100",
       "id": "update_second_batch_xray_mapping_update_detail_page",
-      "community": 9,
+      "community": 10,
       "norm_label": "update_detail_page()"
     },
     {
@@ -504,7 +504,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L122",
       "id": "update_second_batch_xray_mapping_update_chip_page",
-      "community": 9,
+      "community": 10,
       "norm_label": "update_chip_page()"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L133",
       "id": "update_second_batch_xray_mapping_update_index_segment",
-      "community": 9,
+      "community": 10,
       "norm_label": "update_index_segment()"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L158",
       "id": "update_second_batch_xray_mapping_update_index",
-      "community": 9,
+      "community": 10,
       "norm_label": "update_index()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L172",
       "id": "update_second_batch_xray_mapping_main",
-      "community": 9,
+      "community": 10,
       "norm_label": "main()"
     },
     {
@@ -1206,7 +1206,7 @@
       "source_file": "hybrid-bbqc/etroc-optical.js",
       "source_location": "L59",
       "id": "etroc_optical_validate",
-      "community": 8,
+      "community": 7,
       "norm_label": "validate()"
     },
     {
@@ -1377,7 +1377,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_validate_build_provenance_py",
-      "community": 13,
+      "community": 8,
       "norm_label": "validate_build_provenance.py"
     },
     {
@@ -1386,7 +1386,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L24",
       "id": "validate_build_provenance_fail",
-      "community": 13,
+      "community": 8,
       "norm_label": "fail()"
     },
     {
@@ -1395,7 +1395,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L28",
       "id": "validate_build_provenance_load_object",
-      "community": 13,
+      "community": 8,
       "norm_label": "load_object()"
     },
     {
@@ -1404,7 +1404,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L38",
       "id": "validate_build_provenance_require_mapping",
-      "community": 13,
+      "community": 8,
       "norm_label": "require_mapping()"
     },
     {
@@ -1413,7 +1413,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L44",
       "id": "validate_build_provenance_require_int",
-      "community": 13,
+      "community": 8,
       "norm_label": "require_int()"
     },
     {
@@ -1422,7 +1422,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L50",
       "id": "validate_build_provenance_compact",
-      "community": 13,
+      "community": 8,
       "norm_label": "compact()"
     },
     {
@@ -1431,7 +1431,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L60",
       "id": "validate_build_provenance_validate",
-      "community": 13,
+      "community": 8,
       "norm_label": "validate()"
     },
     {
@@ -1440,7 +1440,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L204",
       "id": "validate_build_provenance_parse_args",
-      "community": 13,
+      "community": 8,
       "norm_label": "parse_args()"
     },
     {
@@ -1449,7 +1449,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L214",
       "id": "validate_build_provenance_main",
-      "community": 13,
+      "community": 8,
       "norm_label": "main()"
     },
     {
@@ -1457,7 +1457,7 @@
       "file_type": "rationale",
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L51",
-      "community": 13,
+      "community": 8,
       "norm_label": "normalize api-defaulted empty containers without hiding non-empty drift.",
       "id": "validate_build_provenance_rationale_51"
     },
@@ -1467,7 +1467,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_select_single_app_pod_py",
-      "community": 7,
+      "community": 12,
       "norm_label": "select_single_app_pod.py"
     },
     {
@@ -1476,7 +1476,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L9",
       "id": "select_single_app_pod_owner_matches",
-      "community": 7,
+      "community": 12,
       "norm_label": "owner_matches()"
     },
     {
@@ -1485,7 +1485,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L21",
       "id": "select_single_app_pod_exact_owned_replica_sets",
-      "community": 7,
+      "community": 12,
       "norm_label": "exact_owned_replica_sets()"
     },
     {
@@ -1494,7 +1494,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L37",
       "id": "select_single_app_pod_pod_uses_pvc",
-      "community": 7,
+      "community": 12,
       "norm_label": "pod_uses_pvc()"
     },
     {
@@ -1503,7 +1503,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L44",
       "id": "select_single_app_pod_pod_owned_by_replica_set",
-      "community": 7,
+      "community": 12,
       "norm_label": "pod_owned_by_replica_set()"
     },
     {
@@ -1512,7 +1512,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L52",
       "id": "select_single_app_pod_validate_all_pvc_pods",
-      "community": 7,
+      "community": 12,
       "norm_label": "validate_all_pvc_pods()"
     },
     {
@@ -1521,7 +1521,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L66",
       "id": "select_single_app_pod_select_single_app_pod",
-      "community": 7,
+      "community": 12,
       "norm_label": "select_single_app_pod()"
     },
     {
@@ -1530,7 +1530,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L136",
       "id": "select_single_app_pod_main",
-      "community": 7,
+      "community": 12,
       "norm_label": "main()"
     },
     {
@@ -1539,7 +1539,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_validate_pvc_controllers_py",
-      "community": 7,
+      "community": 8,
       "norm_label": "validate_pvc_controllers.py"
     },
     {
@@ -1548,7 +1548,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L9",
       "id": "validate_pvc_controllers_owner_matches",
-      "community": 7,
+      "community": 8,
       "norm_label": "owner_matches()"
     },
     {
@@ -1557,7 +1557,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L21",
       "id": "validate_pvc_controllers_pod_template_spec",
-      "community": 7,
+      "community": 8,
       "norm_label": "pod_template_spec()"
     },
     {
@@ -1566,7 +1566,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L30",
       "id": "validate_pvc_controllers_uses_pvc",
-      "community": 7,
+      "community": 8,
       "norm_label": "uses_pvc()"
     },
     {
@@ -1575,7 +1575,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L37",
       "id": "validate_pvc_controllers_validate_pvc_controllers",
-      "community": 7,
+      "community": 8,
       "norm_label": "validate_pvc_controllers()"
     },
     {
@@ -1584,7 +1584,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L107",
       "id": "validate_pvc_controllers_main",
-      "community": 7,
+      "community": 8,
       "norm_label": "main()"
     },
     {
@@ -1593,7 +1593,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L1",
       "id": "tests_test_tab_local_dashboards_py",
-      "community": 8,
+      "community": 7,
       "norm_label": "test_tab_local_dashboards.py"
     },
     {
@@ -1602,7 +1602,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L20",
       "id": "test_tab_local_dashboards_dashboardstructureparser",
-      "community": 8,
+      "community": 7,
       "norm_label": "dashboardstructureparser"
     },
     {
@@ -1611,7 +1611,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L21",
       "id": "test_tab_local_dashboards_dashboardstructureparser_init",
-      "community": 8,
+      "community": 7,
       "norm_label": ".__init__()"
     },
     {
@@ -1620,7 +1620,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L31",
       "id": "test_tab_local_dashboards_classes",
-      "community": 8,
+      "community": 7,
       "norm_label": "_classes()"
     },
     {
@@ -1629,7 +1629,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L34",
       "id": "test_tab_local_dashboards_dashboardstructureparser_current_tab",
-      "community": 8,
+      "community": 7,
       "norm_label": "._current_tab()"
     },
     {
@@ -1638,7 +1638,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L40",
       "id": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
-      "community": 8,
+      "community": 7,
       "norm_label": "._current_lgad_group()"
     },
     {
@@ -1647,7 +1647,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L46",
       "id": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
-      "community": 8,
+      "community": 7,
       "norm_label": ".handle_starttag()"
     },
     {
@@ -1656,7 +1656,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L70",
       "id": "test_tab_local_dashboards_dashboardstructureparser_handle_data",
-      "community": 8,
+      "community": 7,
       "norm_label": ".handle_data()"
     },
     {
@@ -1665,7 +1665,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L74",
       "id": "test_tab_local_dashboards_dashboardstructureparser_handle_endtag",
-      "community": 8,
+      "community": 7,
       "norm_label": ".handle_endtag()"
     },
     {
@@ -1674,7 +1674,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L88",
       "id": "test_tab_local_dashboards_tablocaldashboardtests",
-      "community": 8,
+      "community": 7,
       "norm_label": "tablocaldashboardtests"
     },
     {
@@ -1683,7 +1683,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L89",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_parse",
-      "community": 8,
+      "community": 7,
       "norm_label": ".parse()"
     },
     {
@@ -1692,7 +1692,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L95",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_test_each_scientific_dashboard_is_inside_its_matching_tab",
-      "community": 8,
+      "community": 7,
       "norm_label": ".test_each_scientific_dashboard_is_inside_its_matching_tab()"
     },
     {
@@ -1701,7 +1701,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L106",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary",
-      "community": 8,
+      "community": 7,
       "norm_label": ".test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary()"
     },
     {
@@ -1710,7 +1710,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L121",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_dashboard_uses_exact_inventory_and_availability_semantics",
-      "community": 8,
+      "community": 7,
       "norm_label": ".test_lgad_dashboard_uses_exact_inventory_and_availability_semantics()"
     },
     {
@@ -1719,7 +1719,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L136",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory",
-      "community": 8,
+      "community": 7,
       "norm_label": ".test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory()"
     },
     {
@@ -1728,7 +1728,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L170",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory",
-      "community": 8,
+      "community": 7,
       "norm_label": ".test_tab_local_change_preserves_canonical_hybrid_inventory()"
     },
     {
@@ -1737,7 +1737,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L177",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics",
-      "community": 8,
+      "community": 7,
       "norm_label": ".test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics()"
     },
     {
@@ -1746,7 +1746,7 @@
       "source_file": "tests/test_tab_local_dashboards.py",
       "source_location": "L203",
       "id": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_dashboards_use_local_assets_and_existing_visibility_controller",
-      "community": 8,
+      "community": 7,
       "norm_label": ".test_tab_dashboards_use_local_assets_and_existing_visibility_controller()"
     },
     {
@@ -1755,124 +1755,142 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L1",
       "id": "tests_test_lxplus_dashboard_deploy_py",
-      "community": 11,
+      "community": 9,
       "norm_label": "test_lxplus_dashboard_deploy.py"
     },
     {
       "label": "LxplusDashboardDeployTests",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L17",
+      "source_location": "L20",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
-      "community": 11,
+      "community": 9,
       "norm_label": "lxplusdashboarddeploytests"
     },
     {
       "label": ".test_helper_has_valid_bash_syntax()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L18",
+      "source_location": "L21",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_valid_bash_syntax",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_has_valid_bash_syntax()"
+    },
+    {
+      "label": ".test_helper_retries_transient_asset_downloads()",
+      "file_type": "code",
+      "source_file": "tests/test_lxplus_dashboard_deploy.py",
+      "source_location": "L30",
+      "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_retries_transient_asset_downloads",
+      "community": 9,
+      "norm_label": ".test_helper_retries_transient_asset_downloads()"
+    },
+    {
+      "label": ".test_helper_fails_after_permanent_or_exhausted_download_errors()",
+      "file_type": "code",
+      "source_file": "tests/test_lxplus_dashboard_deploy.py",
+      "source_location": "L78",
+      "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_after_permanent_or_exhausted_download_errors",
+      "community": 9,
+      "norm_label": ".test_helper_fails_after_permanent_or_exhausted_download_errors()"
     },
     {
       "label": ".test_helper_pins_release_and_download_checksums()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L27",
+      "source_location": "L128",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_release_and_download_checksums",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_pins_release_and_download_checksums()"
     },
     {
       "label": ".test_helper_pins_complete_etroc_dataset_and_runtime_verification()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L48",
+      "source_location": "L149",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_complete_etroc_dataset_and_runtime_verification",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_pins_complete_etroc_dataset_and_runtime_verification()"
     },
     {
       "label": ".test_helper_fails_closed_on_context_and_permissions()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L63",
+      "source_location": "L164",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_closed_on_context_and_permissions",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_fails_closed_on_context_and_permissions()"
     },
     {
       "label": ".test_helper_uses_immutable_overlay_build_with_allowlisted_context()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L81",
+      "source_location": "L182",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_uses_immutable_overlay_build_with_allowlisted_context",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_uses_immutable_overlay_build_with_allowlisted_context()"
     },
     {
       "label": ".test_helper_verifies_backup_and_preserves_rollback_coordinates()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L94",
+      "source_location": "L195",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_verifies_backup_and_preserves_rollback_coordinates",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_verifies_backup_and_preserves_rollback_coordinates()"
     },
     {
       "label": ".test_helper_pins_and_verifies_rollout_and_static_files()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L121",
+      "source_location": "L222",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_and_verifies_rollout_and_static_files",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_pins_and_verifies_rollout_and_static_files()"
     },
     {
       "label": ".test_helper_bootstraps_official_device_flow_without_printing_tokens()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L150",
+      "source_location": "L251",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_bootstraps_official_device_flow_without_printing_tokens",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_bootstraps_official_device_flow_without_printing_tokens()"
     },
     {
       "label": ".test_helper_handles_interrupts_and_preserves_full_replace_metadata()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L165",
+      "source_location": "L266",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_handles_interrupts_and_preserves_full_replace_metadata",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_handles_interrupts_and_preserves_full_replace_metadata()"
     },
     {
       "label": ".test_rollback_renderer_rejects_same_name_with_new_uid()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L183",
+      "source_location": "L284",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_renderer_rejects_same_name_with_new_uid",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_rollback_renderer_rejects_same_name_with_new_uid()"
     },
     {
       "label": ".test_helper_runs_pinned_executable_build_provenance_validator()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L244",
+      "source_location": "L345",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_runs_pinned_executable_build_provenance_validator",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_runs_pinned_executable_build_provenance_validator()"
     },
     {
       "label": ".test_helper_exercises_etroc_assets_through_runtime_http()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L264",
+      "source_location": "L365",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_exercises_etroc_assets_through_runtime_http",
-      "community": 11,
+      "community": 9,
       "norm_label": ".test_helper_exercises_etroc_assets_through_runtime_http()"
     },
     {
@@ -2025,7 +2043,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L1",
       "id": "tests_test_analytics_dashboard_py",
-      "community": 10,
+      "community": 11,
       "norm_label": "test_analytics_dashboard.py"
     },
     {
@@ -2034,7 +2052,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L12",
       "id": "test_analytics_dashboard_analyticsdashboardtests",
-      "community": 10,
+      "community": 11,
       "norm_label": "analyticsdashboardtests"
     },
     {
@@ -2043,7 +2061,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L13",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_main_page_loads_local_dashboard_assets_and_places_dashboard_first",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_main_page_loads_local_dashboard_assets_and_places_dashboard_first()"
     },
     {
@@ -2052,7 +2070,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L22",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_exposes_semantic_chart_regions_and_scientific_caveat",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_dashboard_exposes_semantic_chart_regions_and_scientific_caveat()"
     },
     {
@@ -2061,7 +2079,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L40",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_additional_tests_use_live_registry_api_and_safe_badges",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_additional_tests_use_live_registry_api_and_safe_badges()"
     },
     {
@@ -2070,7 +2088,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L73",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_additional_test_failure_marks_table_cells_unavailable",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_additional_test_failure_marks_table_cells_unavailable()"
     },
     {
@@ -2079,7 +2097,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L82",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_table_filters_and_sorting_are_keyboard_and_screen_reader_accessible",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_table_filters_and_sorting_are_keyboard_and_screen_reader_accessible()"
     },
     {
@@ -2088,7 +2106,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L92",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_table_csv_export_contract",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_table_csv_export_contract()"
     },
     {
@@ -2097,7 +2115,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L107",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_table_has_static_advanced_tests_column_for_every_hybrid",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_table_has_static_advanced_tests_column_for_every_hybrid()"
     },
     {
@@ -2106,7 +2124,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L120",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_script_uses_existing_rows_and_live_comment_summary",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_dashboard_script_uses_existing_rows_and_live_comment_summary()"
     },
     {
@@ -2115,7 +2133,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L129",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_styles_are_responsive_and_respect_reduced_motion",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_dashboard_styles_are_responsive_and_respect_reduced_motion()"
     },
     {
@@ -2124,7 +2142,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L136",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_does_not_present_absence_of_optical_candidate_as_review_ready",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_dashboard_does_not_present_absence_of_optical_candidate_as_review_ready()"
     },
     {
@@ -2133,7 +2151,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L142",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_handles_untrusted_group_labels_and_pending_rows_safely",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_dashboard_handles_untrusted_group_labels_and_pending_rows_safely()"
     },
     {
@@ -2142,7 +2160,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L150",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_live_updates_are_announced_and_only_animate_the_reviewed_counter",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_live_updates_are_announced_and_only_animate_the_reviewed_counter()"
     },
     {
@@ -2151,7 +2169,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L159",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_does_not_change_canonical_hybrid_inventory",
-      "community": 10,
+      "community": 11,
       "norm_label": ".test_dashboard_does_not_change_canonical_hybrid_inventory()"
     },
     {
@@ -2304,7 +2322,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L1",
       "id": "tests_test_hybrid_pair_correction_py",
-      "community": 18,
+      "community": 17,
       "norm_label": "test_hybrid_pair_correction.py"
     },
     {
@@ -2313,7 +2331,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L12",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests",
-      "community": 18,
+      "community": 17,
       "norm_label": "hybridpaircorrectiontests"
     },
     {
@@ -2322,7 +2340,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L13",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_manifest_preserves_w04f2_34_and_corrects_w04f2_81",
-      "community": 18,
+      "community": 17,
       "norm_label": ".test_manifest_preserves_w04f2_34_and_corrects_w04f2_81()"
     },
     {
@@ -2331,7 +2349,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L21",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_dashboard_uses_only_the_corrected_w04f2_81_slug",
-      "community": 18,
+      "community": 17,
       "norm_label": ".test_dashboard_uses_only_the_corrected_w04f2_81_slug()"
     },
     {
@@ -2340,7 +2358,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L28",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_corrected_detail_page_keeps_an_old_url_redirect",
-      "community": 18,
+      "community": 17,
       "norm_label": ".test_corrected_detail_page_keeps_an_old_url_redirect()"
     },
     {
@@ -2349,7 +2367,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L43",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_concordance_snapshot_uses_the_corrected_comment_target",
-      "community": 18,
+      "community": 17,
       "norm_label": ".test_concordance_snapshot_uses_the_corrected_comment_target()"
     },
     {
@@ -2628,7 +2646,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L952",
       "id": "test_hybrid_registry_hybridregistryhttptests",
-      "community": 17,
+      "community": 0,
       "norm_label": "hybridregistryhttptests"
     },
     {
@@ -2646,7 +2664,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L977",
       "id": "test_hybrid_registry_hybridregistryhttptests_stop_server",
-      "community": 17,
+      "community": 0,
       "norm_label": "._stop_server()"
     },
     {
@@ -2655,7 +2673,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L982",
       "id": "test_hybrid_registry_hybridregistryhttptests_request",
-      "community": 17,
+      "community": 0,
       "norm_label": ".request()"
     },
     {
@@ -2664,7 +2682,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1011",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_registry_read_and_admin_bind_api",
-      "community": 17,
+      "community": 0,
       "norm_label": ".test_registry_read_and_admin_bind_api()"
     },
     {
@@ -2673,7 +2691,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1040",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads",
-      "community": 17,
+      "community": 0,
       "norm_label": ".test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads()"
     },
     {
@@ -2682,7 +2700,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1102",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_legacy_comment_target_reads_and_writes_canonical_registry",
-      "community": 17,
+      "community": 0,
       "norm_label": ".test_legacy_comment_target_reads_and_writes_canonical_registry()"
     },
     {
@@ -2691,7 +2709,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1145",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_summary_targets_parameter_preserves_non_hybrid_behavior",
-      "community": 17,
+      "community": 0,
       "norm_label": ".test_summary_targets_parameter_preserves_non_hybrid_behavior()"
     },
     {
@@ -2763,7 +2781,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1512",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests",
-      "community": 7,
+      "community": 12,
       "norm_label": "hybridregistrydeploymenttests"
     },
     {
@@ -2772,7 +2790,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1513",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_manifest_isolates_backend_and_prevents_overlapping_sqlite_writers",
-      "community": 7,
+      "community": 12,
       "norm_label": ".test_manifest_isolates_backend_and_prevents_overlapping_sqlite_writers()"
     },
     {
@@ -2781,7 +2799,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1538",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_single_app_pod_selector_is_owner_ready_pvc_and_cardinality_aware",
-      "community": 7,
+      "community": 12,
       "norm_label": ".test_single_app_pod_selector_is_owner_ready_pvc_and_cardinality_aware()"
     },
     {
@@ -2790,7 +2808,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1676",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_pvc_controller_inventory_is_uid_and_scale_aware",
-      "community": 7,
+      "community": 12,
       "norm_label": ".test_pvc_controller_inventory_is_uid_and_scale_aware()"
     },
     {
@@ -2799,7 +2817,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1792",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_runbook_release_and_restore_steps_fail_closed",
-      "community": 7,
+      "community": 12,
       "norm_label": ".test_runbook_release_and_restore_steps_fail_closed()"
     },
     {
@@ -2808,7 +2826,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L1",
       "id": "tests_test_build_provenance_validator_py",
-      "community": 12,
+      "community": 13,
       "norm_label": "test_build_provenance_validator.py"
     },
     {
@@ -2817,7 +2835,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L15",
       "id": "test_build_provenance_validator_buildconfig",
-      "community": 12,
+      "community": 13,
       "norm_label": "buildconfig()"
     },
     {
@@ -2826,7 +2844,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L45",
       "id": "test_build_provenance_validator_completed_build",
-      "community": 12,
+      "community": 13,
       "norm_label": "completed_build()"
     },
     {
@@ -2835,7 +2853,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L82",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests",
-      "community": 12,
+      "community": 13,
       "norm_label": "buildprovenancevalidatortests"
     },
     {
@@ -2844,7 +2862,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L83",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_run_validator",
-      "community": 12,
+      "community": 13,
       "norm_label": ".run_validator()"
     },
     {
@@ -2853,7 +2871,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L112",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_valid_documents",
-      "community": 12,
+      "community": 13,
       "norm_label": ".valid_documents()"
     },
     {
@@ -2862,7 +2880,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L118",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_accepts_exact_single_build_continuity",
-      "community": 12,
+      "community": 13,
       "norm_label": ".test_accepts_exact_single_build_continuity()"
     },
     {
@@ -2871,7 +2889,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L124",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_transient_spec_change_restored_after_build",
-      "community": 12,
+      "community": 13,
       "norm_label": ".test_rejects_transient_spec_change_restored_after_build()"
     },
     {
@@ -2880,7 +2898,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L131",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_concurrent_extra_build",
-      "community": 12,
+      "community": 13,
       "norm_label": ".test_rejects_concurrent_extra_build()"
     },
     {
@@ -2889,7 +2907,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L138",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_build_number_or_spec_drift",
-      "community": 12,
+      "community": 13,
       "norm_label": ".test_rejects_build_number_or_spec_drift()"
     },
     {
@@ -2898,7 +2916,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L152",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_identity_metadata_owner_and_deletion_drift",
-      "community": 12,
+      "community": 13,
       "norm_label": ".test_rejects_identity_metadata_owner_and_deletion_drift()"
     }
   ],
@@ -7863,7 +7881,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L17",
+      "source_location": "L20",
       "weight": 1.0,
       "_src": "tests_test_lxplus_dashboard_deploy_py",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
@@ -7875,7 +7893,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L18",
+      "source_location": "L21",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_valid_bash_syntax",
@@ -7887,7 +7905,31 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L27",
+      "source_location": "L30",
+      "weight": 1.0,
+      "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
+      "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_retries_transient_asset_downloads",
+      "source": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
+      "target": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_retries_transient_asset_downloads",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_lxplus_dashboard_deploy.py",
+      "source_location": "L78",
+      "weight": 1.0,
+      "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
+      "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_after_permanent_or_exhausted_download_errors",
+      "source": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
+      "target": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_after_permanent_or_exhausted_download_errors",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_lxplus_dashboard_deploy.py",
+      "source_location": "L128",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_release_and_download_checksums",
@@ -7899,7 +7941,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L48",
+      "source_location": "L149",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_complete_etroc_dataset_and_runtime_verification",
@@ -7911,7 +7953,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L63",
+      "source_location": "L164",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_closed_on_context_and_permissions",
@@ -7923,7 +7965,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L81",
+      "source_location": "L182",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_uses_immutable_overlay_build_with_allowlisted_context",
@@ -7935,7 +7977,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L94",
+      "source_location": "L195",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_verifies_backup_and_preserves_rollback_coordinates",
@@ -7947,7 +7989,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L121",
+      "source_location": "L222",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_and_verifies_rollout_and_static_files",
@@ -7959,7 +8001,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L150",
+      "source_location": "L251",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_bootstraps_official_device_flow_without_printing_tokens",
@@ -7971,7 +8013,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L165",
+      "source_location": "L266",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_handles_interrupts_and_preserves_full_replace_metadata",
@@ -7983,7 +8025,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L183",
+      "source_location": "L284",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_renderer_rejects_same_name_with_new_uid",
@@ -7995,7 +8037,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L244",
+      "source_location": "L345",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_runs_pinned_executable_build_provenance_validator",
@@ -8007,7 +8049,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L264",
+      "source_location": "L365",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_exercises_etroc_assets_through_runtime_http",

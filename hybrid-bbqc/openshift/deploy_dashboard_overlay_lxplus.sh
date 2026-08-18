@@ -69,6 +69,14 @@ print('https://api.paas.okd.cern.ch:443')
 PY
 }
 
+download() {
+  local url="$1" destination="$2"
+  curl --fail --silent --show-error --location \
+    --retry 5 --retry-delay 2 --retry-max-time 180 \
+    --connect-timeout 20 --max-time 300 \
+    "$url" --output "$destination"
+}
+
 verify_context() {
   test "$(normalize_api_server "$(oc whoami --show-server)")" = "$EXPECTED_API_SERVER"
   test "$(oc whoami)" = "$EXPECTED_USER"
@@ -96,9 +104,9 @@ bootstrap_sso_plugin() {
     > "$requirements"
   "${install_root}/venv/bin/python" -m pip install --disable-pip-version-check \
     --only-binary=:all: --require-hashes --requirement "$requirements"
-  curl --fail --silent --show-error --location \
+  download \
     "https://gitlab.cern.ch/paas-tools/oc-sso-login/-/raw/${SSO_SOURCE_REVISION}/oc-sso-login.py" \
-    --output "$source"
+    "$source"
   printf '%s  %s\n' "$SSO_SOURCE_SHA256" "$source" | sha256sum -c -
   python3 -I - "$source" <<'PY'
 from pathlib import Path
@@ -265,11 +273,9 @@ DEPLOYMENT_UID="$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.m
 [[ "$DEPLOYMENT_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
 verify_context
 
-curl --fail --silent --show-error --location \
-  "${RAW_ROOT}/hybrid-bbqc/openshift/select_single_app_pod.py" --output "$SELECTOR"
+download "${RAW_ROOT}/hybrid-bbqc/openshift/select_single_app_pod.py" "$SELECTOR"
 printf '%s  %s\n' "$SELECTOR_SHA256" "$SELECTOR" | sha256sum -c -
-curl --fail --silent --show-error --location \
-  "${RAW_ROOT}/hybrid-bbqc/openshift/validate_build_provenance.py" --output "$VALIDATOR"
+download "${RAW_ROOT}/hybrid-bbqc/openshift/validate_build_provenance.py" "$VALIDATOR"
 printf '%s  %s\n' "$VALIDATOR_SHA256" "$VALIDATOR" | sha256sum -c -
 POD="$(select_single_app_pod)"
 RAW_OLD_WEB_IMAGE="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].imageID}')"
@@ -412,12 +418,10 @@ printf '%s  %s\n' "$BACKUP_SHA256" "$LOCAL_BACKUP" > "${LOCAL_BACKUP}.sha256"
 
 mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay" "${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
 for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js lgad-optical-stats.js; do
-  curl --fail --silent --show-error --location \
-    "${RAW_ROOT}/hybrid-bbqc/${file}" --output "${BUILD_CONTEXT}/overlay/${file}"
+  download "${RAW_ROOT}/hybrid-bbqc/${file}" "${BUILD_CONTEXT}/overlay/${file}"
 done
 DATASET_DIR="${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
-curl --fail --silent --show-error --location \
-  "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/SHA256SUMS" --output "${DATASET_DIR}/SHA256SUMS"
+download "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/SHA256SUMS" "${DATASET_DIR}/SHA256SUMS"
 printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${DATASET_DIR}/SHA256SUMS" | sha256sum -c -
 python3 -I - "${DATASET_DIR}/SHA256SUMS" <<'PY'
 from pathlib import PurePosixPath
@@ -440,8 +444,7 @@ PY
 while read -r digest relative; do
   destination="${DATASET_DIR}/${relative}"
   mkdir -p "$(dirname "$destination")"
-  curl --fail --silent --show-error --location \
-    "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/${relative}" --output "$destination"
+  download "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/${relative}" "$destination"
 done < "${DATASET_DIR}/SHA256SUMS"
 (
   cd "${BUILD_CONTEXT}/overlay"

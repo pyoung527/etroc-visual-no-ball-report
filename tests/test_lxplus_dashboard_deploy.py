@@ -3,10 +3,13 @@ from __future__ import annotations
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 import tempfile
+import threading
 import unittest
+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
 
@@ -23,6 +26,104 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             text=True,
         )
         self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_helper_retries_transient_asset_downloads(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("download() {")
+        end = script.index("\n}\n", start) + 3
+        download_function = script[start:end]
+        payload = b"immutable-dashboard-asset"
+
+        class Handler(BaseHTTPRequestHandler):
+            attempts = 0
+
+            def do_GET(self):
+                Handler.attempts += 1
+                if Handler.attempts < 3:
+                    self.send_response(502)
+                    self.end_headers()
+                    return
+                self.send_response(200)
+                self.send_header("Content-Length", str(len(payload)))
+                self.end_headers()
+                self.wfile.write(payload)
+
+            def log_message(self, format, *args):
+                del format, args
+                return
+
+        server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+        thread = threading.Thread(target=server.serve_forever, daemon=True)
+        thread.start()
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                destination = Path(directory) / "asset"
+                url = f"http://127.0.0.1:{server.server_port}/asset"
+                command = (
+                    f"{download_function}\n"
+                    f"download {shlex.quote(url)} {shlex.quote(str(destination))}"
+                )
+                result = subprocess.run(
+                    ["bash", "-c", command], check=False,
+                    capture_output=True, text=True,
+                )
+                self.assertEqual(result.returncode, 0, result.stderr)
+                self.assertEqual(destination.read_bytes(), payload)
+        finally:
+            server.shutdown()
+            server.server_close()
+            thread.join(timeout=2)
+        self.assertEqual(Handler.attempts, 3)
+
+    def test_helper_fails_after_permanent_or_exhausted_download_errors(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("download() {")
+        end = script.index("\n}\n", start) + 3
+        download_function = script[start:end]
+
+        def run_case(status_code):
+            class Handler(BaseHTTPRequestHandler):
+                attempts = 0
+
+                def do_GET(self):
+                    Handler.attempts += 1
+                    self.send_response(status_code)
+                    self.end_headers()
+
+                def log_message(self, format, *args):
+                    del format, args
+                    return
+
+            server = ThreadingHTTPServer(("127.0.0.1", 0), Handler)
+            thread = threading.Thread(target=server.serve_forever, daemon=True)
+            thread.start()
+            try:
+                with tempfile.TemporaryDirectory() as directory:
+                    destination = Path(directory) / "asset"
+                    url = f"http://127.0.0.1:{server.server_port}/asset"
+                    command = (
+                        f"{download_function}\n"
+                        f"download {shlex.quote(url)} {shlex.quote(str(destination))}"
+                    )
+                    result = subprocess.run(
+                        ["bash", "-c", command], check=False,
+                        capture_output=True, text=True,
+                    )
+                    exists = destination.exists()
+            finally:
+                server.shutdown()
+                server.server_close()
+                thread.join(timeout=2)
+            return result, Handler.attempts, exists
+
+        permanent, permanent_attempts, permanent_exists = run_case(404)
+        exhausted, exhausted_attempts, exhausted_exists = run_case(502)
+        self.assertNotEqual(permanent.returncode, 0)
+        self.assertEqual(permanent_attempts, 1)
+        self.assertFalse(permanent_exists)
+        self.assertNotEqual(exhausted.returncode, 0)
+        self.assertEqual(exhausted_attempts, 6)
+        self.assertFalse(exhausted_exists)
 
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
