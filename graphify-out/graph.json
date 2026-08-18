@@ -9,7 +9,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/make_candidate_contact_sheet.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_make_candidate_contact_sheet_py",
-      "community": 18,
+      "community": 19,
       "norm_label": "make_candidate_contact_sheet.py"
     },
     {
@@ -18,7 +18,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_import_new_nw_scans_py",
-      "community": 4,
+      "community": 6,
       "norm_label": "import_new_nw_scans.py"
     },
     {
@@ -27,7 +27,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L24",
       "id": "import_new_nw_scans_dashboardrow",
-      "community": 4,
+      "community": 6,
       "norm_label": "dashboardrow"
     },
     {
@@ -36,7 +36,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L37",
       "id": "import_new_nw_scans_hybridtableparser",
-      "community": 4,
+      "community": 6,
       "norm_label": "hybridtableparser"
     },
     {
@@ -45,7 +45,7 @@
       "source_file": "",
       "source_location": "",
       "id": "htmlparser",
-      "community": 2,
+      "community": 4,
       "norm_label": "htmlparser"
     },
     {
@@ -54,7 +54,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L38",
       "id": "import_new_nw_scans_hybridtableparser_init",
-      "community": 4,
+      "community": 6,
       "norm_label": ".__init__()"
     },
     {
@@ -63,7 +63,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L47",
       "id": "import_new_nw_scans_hybridtableparser_handle_starttag",
-      "community": 4,
+      "community": 6,
       "norm_label": ".handle_starttag()"
     },
     {
@@ -72,7 +72,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L58",
       "id": "import_new_nw_scans_hybridtableparser_handle_data",
-      "community": 4,
+      "community": 6,
       "norm_label": ".handle_data()"
     },
     {
@@ -81,7 +81,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L62",
       "id": "import_new_nw_scans_hybridtableparser_handle_endtag",
-      "community": 4,
+      "community": 6,
       "norm_label": ".handle_endtag()"
     },
     {
@@ -90,7 +90,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L81",
       "id": "import_new_nw_scans_canonical_etroc",
-      "community": 4,
+      "community": 6,
       "norm_label": "canonical_etroc()"
     },
     {
@@ -99,7 +99,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L91",
       "id": "import_new_nw_scans_sha256",
-      "community": 4,
+      "community": 6,
       "norm_label": "sha256()"
     },
     {
@@ -108,7 +108,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L99",
       "id": "import_new_nw_scans_collect_scans",
-      "community": 4,
+      "community": 6,
       "norm_label": "collect_scans()"
     },
     {
@@ -117,7 +117,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L130",
       "id": "import_new_nw_scans_parse_dashboard_rows",
-      "community": 4,
+      "community": 6,
       "norm_label": "parse_dashboard_rows()"
     },
     {
@@ -126,7 +126,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L151",
       "id": "import_new_nw_scans_clean_reason",
-      "community": 4,
+      "community": 6,
       "norm_label": "clean_reason()"
     },
     {
@@ -135,7 +135,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L159",
       "id": "import_new_nw_scans_scan_block",
-      "community": 4,
+      "community": 6,
       "norm_label": "scan_block()"
     },
     {
@@ -144,7 +144,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L179",
       "id": "import_new_nw_scans_update_detail_page",
-      "community": 4,
+      "community": 6,
       "norm_label": "update_detail_page()"
     },
     {
@@ -153,7 +153,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L222",
       "id": "import_new_nw_scans_replace_attr",
-      "community": 4,
+      "community": 6,
       "norm_label": "replace_attr()"
     },
     {
@@ -162,7 +162,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L229",
       "id": "import_new_nw_scans_update_card",
-      "community": 4,
+      "community": 6,
       "norm_label": "update_card()"
     },
     {
@@ -171,7 +171,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L251",
       "id": "import_new_nw_scans_update_table_row",
-      "community": 4,
+      "community": 6,
       "norm_label": "update_table_row()"
     },
     {
@@ -180,7 +180,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L274",
       "id": "import_new_nw_scans_update_index",
-      "community": 4,
+      "community": 6,
       "norm_label": "update_index()"
     },
     {
@@ -189,7 +189,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/import_new_nw_scans.py",
       "source_location": "L308",
       "id": "import_new_nw_scans_main",
-      "community": 4,
+      "community": 6,
       "norm_label": "main()"
     },
     {
@@ -198,7 +198,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_apply_comment_concordance_py",
-      "community": 2,
+      "community": 4,
       "norm_label": "apply_comment_concordance.py"
     },
     {
@@ -207,7 +207,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L31",
       "id": "apply_comment_concordance_classify_comment",
-      "community": 2,
+      "community": 4,
       "norm_label": "classify_comment()"
     },
     {
@@ -216,7 +216,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L47",
       "id": "apply_comment_concordance_revision_key",
-      "community": 2,
+      "community": 4,
       "norm_label": "_revision_key()"
     },
     {
@@ -225,7 +225,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L57",
       "id": "apply_comment_concordance_choose_latest",
-      "community": 2,
+      "community": 4,
       "norm_label": "choose_latest()"
     },
     {
@@ -234,7 +234,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L68",
       "id": "apply_comment_concordance_replace_fragment",
-      "community": 2,
+      "community": 4,
       "norm_label": "_replace_fragment()"
     },
     {
@@ -243,7 +243,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L97",
       "id": "apply_comment_concordance_replace_one",
-      "community": 2,
+      "community": 4,
       "norm_label": "_replace_one()"
     },
     {
@@ -252,7 +252,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L105",
       "id": "apply_comment_concordance_update_index_html",
-      "community": 2,
+      "community": 4,
       "norm_label": "update_index_html()"
     },
     {
@@ -261,7 +261,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L126",
       "id": "apply_comment_concordance_update_detail_html",
-      "community": 2,
+      "community": 4,
       "norm_label": "update_detail_html()"
     },
     {
@@ -270,7 +270,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L156",
       "id": "apply_comment_concordance_cardstateparser",
-      "community": 2,
+      "community": 4,
       "norm_label": "cardstateparser"
     },
     {
@@ -279,7 +279,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L157",
       "id": "apply_comment_concordance_cardstateparser_init",
-      "community": 2,
+      "community": 4,
       "norm_label": ".__init__()"
     },
     {
@@ -288,7 +288,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L161",
       "id": "apply_comment_concordance_cardstateparser_handle_starttag",
-      "community": 2,
+      "community": 4,
       "norm_label": ".handle_starttag()"
     },
     {
@@ -297,7 +297,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L170",
       "id": "apply_comment_concordance_current_states",
-      "community": 2,
+      "community": 4,
       "norm_label": "current_states()"
     },
     {
@@ -306,7 +306,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L176",
       "id": "apply_comment_concordance_make_snapshot",
-      "community": 2,
+      "community": 4,
       "norm_label": "make_snapshot()"
     },
     {
@@ -315,7 +315,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/apply_comment_concordance.py",
       "source_location": "L198",
       "id": "apply_comment_concordance_main",
-      "community": 2,
+      "community": 4,
       "norm_label": "main()"
     },
     {
@@ -324,7 +324,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_analyze_xray_optical_missing_py",
-      "community": 12,
+      "community": 14,
       "norm_label": "analyze_xray_optical_missing.py"
     },
     {
@@ -333,7 +333,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L18",
       "id": "analyze_xray_optical_missing_read_manifest",
-      "community": 12,
+      "community": 14,
       "norm_label": "read_manifest()"
     },
     {
@@ -342,7 +342,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L37",
       "id": "analyze_xray_optical_missing_peaks",
-      "community": 12,
+      "community": 14,
       "norm_label": "_peaks()"
     },
     {
@@ -351,7 +351,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L50",
       "id": "analyze_xray_optical_missing_grid_centers",
-      "community": 12,
+      "community": 14,
       "norm_label": "grid_centers()"
     },
     {
@@ -360,7 +360,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L57",
       "id": "analyze_xray_optical_missing_grid_scores",
-      "community": 12,
+      "community": 14,
       "norm_label": "grid_scores()"
     },
     {
@@ -369,7 +369,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L86",
       "id": "analyze_xray_optical_missing_optical_labels",
-      "community": 12,
+      "community": 14,
       "norm_label": "optical_labels()"
     },
     {
@@ -378,7 +378,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L110",
       "id": "analyze_xray_optical_missing_analyze_one",
-      "community": 12,
+      "community": 14,
       "norm_label": "analyze_one()"
     },
     {
@@ -387,7 +387,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L133",
       "id": "analyze_xray_optical_missing_overlay",
-      "community": 12,
+      "community": 14,
       "norm_label": "overlay()"
     },
     {
@@ -396,7 +396,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/analyze_xray_optical_missing.py",
       "source_location": "L148",
       "id": "analyze_xray_optical_missing_main",
-      "community": 12,
+      "community": 14,
       "norm_label": "main()"
     },
     {
@@ -405,7 +405,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_update_second_batch_xray_mapping_py",
-      "community": 7,
+      "community": 9,
       "norm_label": "update_second_batch_xray_mapping.py"
     },
     {
@@ -414,7 +414,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L21",
       "id": "update_second_batch_xray_mapping_esc",
-      "community": 7,
+      "community": 9,
       "norm_label": "esc()"
     },
     {
@@ -423,7 +423,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L25",
       "id": "update_second_batch_xray_mapping_slug_name",
-      "community": 7,
+      "community": 9,
       "norm_label": "slug_name()"
     },
     {
@@ -432,7 +432,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L34",
       "id": "update_second_batch_xray_mapping_key_for_etroc",
-      "community": 7,
+      "community": 9,
       "norm_label": "key_for_etroc()"
     },
     {
@@ -441,7 +441,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L40",
       "id": "update_second_batch_xray_mapping_etroc_for_zip_name",
-      "community": 7,
+      "community": 9,
       "norm_label": "etroc_for_zip_name()"
     },
     {
@@ -450,7 +450,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L49",
       "id": "update_second_batch_xray_mapping_reason_after_mapping",
-      "community": 7,
+      "community": 9,
       "norm_label": "reason_after_mapping()"
     },
     {
@@ -459,7 +459,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L64",
       "id": "update_second_batch_xray_mapping_note_for_crops",
-      "community": 7,
+      "community": 9,
       "norm_label": "note_for_crops()"
     },
     {
@@ -468,7 +468,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L75",
       "id": "update_second_batch_xray_mapping_xray_full_article",
-      "community": 7,
+      "community": 9,
       "norm_label": "xray_full_article()"
     },
     {
@@ -477,7 +477,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L81",
       "id": "update_second_batch_xray_mapping_xray_crop_article",
-      "community": 7,
+      "community": 9,
       "norm_label": "xray_crop_article()"
     },
     {
@@ -486,7 +486,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L92",
       "id": "update_second_batch_xray_mapping_update_evidence_section",
-      "community": 7,
+      "community": 9,
       "norm_label": "update_evidence_section()"
     },
     {
@@ -495,7 +495,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L100",
       "id": "update_second_batch_xray_mapping_update_detail_page",
-      "community": 7,
+      "community": 9,
       "norm_label": "update_detail_page()"
     },
     {
@@ -504,7 +504,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L122",
       "id": "update_second_batch_xray_mapping_update_chip_page",
-      "community": 7,
+      "community": 9,
       "norm_label": "update_chip_page()"
     },
     {
@@ -513,7 +513,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L133",
       "id": "update_second_batch_xray_mapping_update_index_segment",
-      "community": 7,
+      "community": 9,
       "norm_label": "update_index_segment()"
     },
     {
@@ -522,7 +522,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L158",
       "id": "update_second_batch_xray_mapping_update_index",
-      "community": 7,
+      "community": 9,
       "norm_label": "update_index()"
     },
     {
@@ -531,7 +531,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/update_second_batch_xray_mapping.py",
       "source_location": "L172",
       "id": "update_second_batch_xray_mapping_main",
-      "community": 7,
+      "community": 9,
       "norm_label": "main()"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_hybrid_bbqc_comments_js",
-      "community": 14,
+      "community": 16,
       "norm_label": "comments.js"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L19",
       "id": "comments_fmt",
-      "community": 14,
+      "community": 16,
       "norm_label": "fmt()"
     },
     {
@@ -666,7 +666,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L20",
       "id": "comments_esc",
-      "community": 14,
+      "community": 16,
       "norm_label": "esc()"
     },
     {
@@ -675,7 +675,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L21",
       "id": "comments_api",
-      "community": 14,
+      "community": 16,
       "norm_label": "api()"
     },
     {
@@ -684,7 +684,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L26",
       "id": "comments_resetedit",
-      "community": 14,
+      "community": 16,
       "norm_label": "resetedit()"
     },
     {
@@ -693,7 +693,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L32",
       "id": "comments_loadme",
-      "community": 14,
+      "community": 16,
       "norm_label": "loadme()"
     },
     {
@@ -702,7 +702,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L47",
       "id": "comments_rendercomment",
-      "community": 14,
+      "community": 16,
       "norm_label": "rendercomment()"
     },
     {
@@ -711,7 +711,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L52",
       "id": "comments_loadcomments",
-      "community": 14,
+      "community": 16,
       "norm_label": "loadcomments()"
     },
     {
@@ -720,7 +720,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L1",
       "id": "hybrid_bbqc_dashboard_js",
-      "community": 6,
+      "community": 3,
       "norm_label": "dashboard.js"
     },
     {
@@ -729,7 +729,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L15",
       "id": "dashboard_titlecase",
-      "community": 6,
+      "community": 3,
       "norm_label": "titlecase()"
     },
     {
@@ -738,7 +738,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L16",
       "id": "dashboard_number",
-      "community": 6,
+      "community": 3,
       "norm_label": "number()"
     },
     {
@@ -747,7 +747,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L17",
       "id": "dashboard_countby",
-      "community": 6,
+      "community": 3,
       "norm_label": "countby()"
     },
     {
@@ -756,7 +756,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L40",
       "id": "dashboard_setstate",
-      "community": 6,
+      "community": 3,
       "norm_label": "setstate()"
     },
     {
@@ -765,7 +765,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L59",
       "id": "dashboard_updatelivestate",
-      "community": 6,
+      "community": 3,
       "norm_label": "updatelivestate()"
     },
     {
@@ -774,7 +774,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L93",
       "id": "dashboard_setkpi",
-      "community": 6,
+      "community": 3,
       "norm_label": "setkpi()"
     },
     {
@@ -783,7 +783,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L105",
       "id": "dashboard_renderdonut",
-      "community": 6,
+      "community": 3,
       "norm_label": "renderdonut()"
     },
     {
@@ -792,7 +792,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L119",
       "id": "dashboard_renderbars",
-      "community": 6,
+      "community": 3,
       "norm_label": "renderbars()"
     },
     {
@@ -801,7 +801,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L189",
       "id": "dashboard_animatecounters",
-      "community": 6,
+      "community": 3,
       "norm_label": "animatecounters()"
     },
     {
@@ -810,7 +810,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L210",
       "id": "dashboard_startanimations",
-      "community": 6,
+      "community": 3,
       "norm_label": "startanimations()"
     },
     {
@@ -819,7 +819,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L239",
       "id": "dashboard_loadadditionaltests",
-      "community": 6,
+      "community": 3,
       "norm_label": "loadadditionaltests()"
     },
     {
@@ -828,7 +828,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L430",
       "id": "dashboard_loadreviewstatus",
-      "community": 6,
+      "community": 3,
       "norm_label": "loadreviewstatus()"
     },
     {
@@ -837,7 +837,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L504",
       "id": "dashboard_normalizedtext",
-      "community": 6,
+      "community": 3,
       "norm_label": "normalizedtext()"
     },
     {
@@ -846,7 +846,7 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L507",
       "id": "dashboard_safespreadsheetvalue",
-      "community": 6,
+      "community": 3,
       "norm_label": "safespreadsheetvalue()"
     },
     {
@@ -855,8 +855,71 @@
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L508",
       "id": "dashboard_csvcell",
-      "community": 6,
+      "community": 3,
       "norm_label": "csvcell()"
+    },
+    {
+      "label": "lgad-optical-stats.js",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L1",
+      "id": "hybrid_bbqc_lgad_optical_stats_js",
+      "community": 3,
+      "norm_label": "lgad-optical-stats.js"
+    },
+    {
+      "label": "element()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L13",
+      "id": "lgad_optical_stats_element",
+      "community": 3,
+      "norm_label": "element()"
+    },
+    {
+      "label": "summarizeInventory()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L20",
+      "id": "lgad_optical_stats_summarizeinventory",
+      "community": 3,
+      "norm_label": "summarizeinventory()"
+    },
+    {
+      "label": "collectInventory()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L49",
+      "id": "lgad_optical_stats_collectinventory",
+      "community": 3,
+      "norm_label": "collectinventory()"
+    },
+    {
+      "label": "setKpi()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L56",
+      "id": "lgad_optical_stats_setkpi",
+      "community": 3,
+      "norm_label": "setkpi()"
+    },
+    {
+      "label": "render()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L62",
+      "id": "lgad_optical_stats_render",
+      "community": 3,
+      "norm_label": "render()"
+    },
+    {
+      "label": "fail()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L95",
+      "id": "lgad_optical_stats_fail",
+      "community": 3,
+      "norm_label": "fail()"
     },
     {
       "label": "server.py",
@@ -864,7 +927,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_server_py",
-      "community": 3,
+      "community": 2,
       "norm_label": "server.py"
     },
     {
@@ -873,7 +936,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L39",
       "id": "server_split_pair_key",
-      "community": 3,
+      "community": 2,
       "norm_label": "split_pair_key()"
     },
     {
@@ -882,7 +945,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L49",
       "id": "server_discover_canonical_pairs",
-      "community": 0,
+      "community": 2,
       "norm_label": "discover_canonical_pairs()"
     },
     {
@@ -891,7 +954,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L62",
       "id": "server_discover_redirect_aliases",
-      "community": 0,
+      "community": 2,
       "norm_label": "discover_redirect_aliases()"
     },
     {
@@ -900,7 +963,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L85",
       "id": "server_source_identifier_pair",
-      "community": 3,
+      "community": 2,
       "norm_label": "source_identifier_pair()"
     },
     {
@@ -909,7 +972,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L95",
       "id": "server_load_additional_tests_manifest",
-      "community": 3,
+      "community": 2,
       "norm_label": "load_additional_tests_manifest()"
     },
     {
@@ -936,7 +999,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L683",
       "id": "server_identity",
-      "community": 3,
+      "community": 2,
       "norm_label": "identity()"
     },
     {
@@ -945,7 +1008,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L704",
       "id": "server_json_response",
-      "community": 3,
+      "community": 2,
       "norm_label": "json_response()"
     },
     {
@@ -954,7 +1017,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L714",
       "id": "server_mutation_request_error",
-      "community": 3,
+      "community": 2,
       "norm_label": "mutation_request_error()"
     },
     {
@@ -963,7 +1026,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L727",
       "id": "server_read_json",
-      "community": 3,
+      "community": 2,
       "norm_label": "read_json()"
     },
     {
@@ -972,7 +1035,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L738",
       "id": "server_normalize_target",
-      "community": 3,
+      "community": 2,
       "norm_label": "normalize_target()"
     },
     {
@@ -981,7 +1044,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L748",
       "id": "server_normalize_status",
-      "community": 3,
+      "community": 2,
       "norm_label": "normalize_status()"
     },
     {
@@ -990,7 +1053,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L756",
       "id": "server_resolve_hybrid_targets",
-      "community": 3,
+      "community": 2,
       "norm_label": "resolve_hybrid_targets()"
     },
     {
@@ -999,7 +1062,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L787",
       "id": "server_resolve_hybrid_target",
-      "community": 3,
+      "community": 2,
       "norm_label": "resolve_hybrid_target()"
     },
     {
@@ -1017,7 +1080,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L896",
       "id": "server_list_hybrids",
-      "community": 3,
+      "community": 2,
       "norm_label": "list_hybrids()"
     },
     {
@@ -1026,7 +1089,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L957",
       "id": "server_handler",
-      "community": 3,
+      "community": 2,
       "norm_label": "handler"
     },
     {
@@ -1035,7 +1098,7 @@
       "source_file": "",
       "source_location": "",
       "id": "simplehttprequesthandler",
-      "community": 3,
+      "community": 2,
       "norm_label": "simplehttprequesthandler"
     },
     {
@@ -1044,7 +1107,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L960",
       "id": "server_handler_translate_path",
-      "community": 3,
+      "community": 2,
       "norm_label": ".translate_path()"
     },
     {
@@ -1053,7 +1116,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L970",
       "id": "server_handler_log_message",
-      "community": 3,
+      "community": 2,
       "norm_label": ".log_message()"
     },
     {
@@ -1062,7 +1125,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L973",
       "id": "server_handler_do_get",
-      "community": 3,
+      "community": 2,
       "norm_label": ".do_get()"
     },
     {
@@ -1071,7 +1134,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1153",
       "id": "server_handler_do_post",
-      "community": 3,
+      "community": 2,
       "norm_label": ".do_post()"
     },
     {
@@ -1080,7 +1143,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1251",
       "id": "server_handler_do_patch",
-      "community": 3,
+      "community": 2,
       "norm_label": ".do_patch()"
     },
     {
@@ -1089,7 +1152,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1305",
       "id": "server_handler_do_put",
-      "community": 3,
+      "community": 2,
       "norm_label": ".do_put()"
     },
     {
@@ -1098,7 +1161,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1308",
       "id": "server_handler_do_delete",
-      "community": 3,
+      "community": 2,
       "norm_label": ".do_delete()"
     },
     {
@@ -1107,62 +1170,206 @@
       "source_file": "hybrid-bbqc/etroc-optical.js",
       "source_location": "L1",
       "id": "hybrid_bbqc_etroc_optical_js",
-      "community": 15,
+      "community": 5,
       "norm_label": "etroc-optical.js"
     },
     {
       "label": "element()",
       "file_type": "code",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L17",
+      "source_location": "L38",
       "id": "etroc_optical_element",
-      "community": 15,
+      "community": 5,
       "norm_label": "element()"
     },
     {
       "label": "safeAssetUri()",
       "file_type": "code",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L24",
+      "source_location": "L45",
       "id": "etroc_optical_safeasseturi",
-      "community": 15,
+      "community": 5,
       "norm_label": "safeasseturi()"
+    },
+    {
+      "label": "isSha256()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L55",
+      "id": "etroc_optical_issha256",
+      "community": 5,
+      "norm_label": "issha256()"
     },
     {
       "label": "validate()",
       "file_type": "code",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L34",
+      "source_location": "L59",
       "id": "etroc_optical_validate",
-      "community": 15,
+      "community": 8,
       "norm_label": "validate()"
+    },
+    {
+      "label": "summarize()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L139",
+      "id": "etroc_optical_summarize",
+      "community": 5,
+      "norm_label": "summarize()"
+    },
+    {
+      "label": "selectRecords()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L196",
+      "id": "etroc_optical_selectrecords",
+      "community": 5,
+      "norm_label": "selectrecords()"
+    },
+    {
+      "label": "summarizeProvenance()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L204",
+      "id": "etroc_optical_summarizeprovenance",
+      "community": 5,
+      "norm_label": "summarizeprovenance()"
     },
     {
       "label": "renderSummary()",
       "file_type": "code",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L81",
+      "source_location": "L217",
       "id": "etroc_optical_rendersummary",
-      "community": 15,
+      "community": 5,
       "norm_label": "rendersummary()"
     },
     {
       "label": "renderCard()",
       "file_type": "code",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L97",
+      "source_location": "L233",
       "id": "etroc_optical_rendercard",
-      "community": 15,
+      "community": 5,
       "norm_label": "rendercard()"
     },
     {
       "label": "render()",
       "file_type": "code",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L129",
+      "source_location": "L265",
       "id": "etroc_optical_render",
-      "community": 15,
+      "community": 5,
       "norm_label": "render()"
+    },
+    {
+      "label": "ratioLabel()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L299",
+      "id": "etroc_optical_ratiolabel",
+      "community": 5,
+      "norm_label": "ratiolabel()"
+    },
+    {
+      "label": "setStatistic()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L305",
+      "id": "etroc_optical_setstatistic",
+      "community": 5,
+      "norm_label": "setstatistic()"
+    },
+    {
+      "label": "renderCategoryRows()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L310",
+      "id": "etroc_optical_rendercategoryrows",
+      "community": 5,
+      "norm_label": "rendercategoryrows()"
+    },
+    {
+      "label": "renderWaferRows()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L330",
+      "id": "etroc_optical_renderwaferrows",
+      "community": 5,
+      "norm_label": "renderwaferrows()"
+    },
+    {
+      "label": "renderWorkload()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L362",
+      "id": "etroc_optical_renderworkload",
+      "community": 5,
+      "norm_label": "renderworkload()"
+    },
+    {
+      "label": "appendCell()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L386",
+      "id": "etroc_optical_appendcell",
+      "community": 5,
+      "norm_label": "appendcell()"
+    },
+    {
+      "label": "sortedStatisticsRecords()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L390",
+      "id": "etroc_optical_sortedstatisticsrecords",
+      "community": 5,
+      "norm_label": "sortedstatisticsrecords()"
+    },
+    {
+      "label": "renderStatisticsTable()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L402",
+      "id": "etroc_optical_renderstatisticstable",
+      "community": 5,
+      "norm_label": "renderstatisticstable()"
+    },
+    {
+      "label": "renderStatistics()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L431",
+      "id": "etroc_optical_renderstatistics",
+      "community": 5,
+      "norm_label": "renderstatistics()"
+    },
+    {
+      "label": "initStatisticsTableSorting()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L461",
+      "id": "etroc_optical_initstatisticstablesorting",
+      "community": 5,
+      "norm_label": "initstatisticstablesorting()"
+    },
+    {
+      "label": "initStatistics()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L496",
+      "id": "etroc_optical_initstatistics",
+      "community": 5,
+      "norm_label": "initstatistics()"
+    },
+    {
+      "label": "renderStatisticsFailure()",
+      "file_type": "code",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L530",
+      "id": "etroc_optical_renderstatisticsfailure",
+      "community": 5,
+      "norm_label": "renderstatisticsfailure()"
     },
     {
       "label": "validate_build_provenance.py",
@@ -1170,7 +1377,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_validate_build_provenance_py",
-      "community": 11,
+      "community": 13,
       "norm_label": "validate_build_provenance.py"
     },
     {
@@ -1179,7 +1386,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L24",
       "id": "validate_build_provenance_fail",
-      "community": 11,
+      "community": 13,
       "norm_label": "fail()"
     },
     {
@@ -1188,7 +1395,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L28",
       "id": "validate_build_provenance_load_object",
-      "community": 11,
+      "community": 13,
       "norm_label": "load_object()"
     },
     {
@@ -1197,7 +1404,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L38",
       "id": "validate_build_provenance_require_mapping",
-      "community": 11,
+      "community": 13,
       "norm_label": "require_mapping()"
     },
     {
@@ -1206,7 +1413,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L44",
       "id": "validate_build_provenance_require_int",
-      "community": 11,
+      "community": 13,
       "norm_label": "require_int()"
     },
     {
@@ -1215,7 +1422,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L50",
       "id": "validate_build_provenance_compact",
-      "community": 11,
+      "community": 13,
       "norm_label": "compact()"
     },
     {
@@ -1224,7 +1431,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L60",
       "id": "validate_build_provenance_validate",
-      "community": 11,
+      "community": 13,
       "norm_label": "validate()"
     },
     {
@@ -1233,7 +1440,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L204",
       "id": "validate_build_provenance_parse_args",
-      "community": 11,
+      "community": 13,
       "norm_label": "parse_args()"
     },
     {
@@ -1242,7 +1449,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L214",
       "id": "validate_build_provenance_main",
-      "community": 11,
+      "community": 13,
       "norm_label": "main()"
     },
     {
@@ -1250,7 +1457,7 @@
       "file_type": "rationale",
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L51",
-      "community": 11,
+      "community": 13,
       "norm_label": "normalize api-defaulted empty containers without hiding non-empty drift.",
       "id": "validate_build_provenance_rationale_51"
     },
@@ -1260,7 +1467,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_select_single_app_pod_py",
-      "community": 5,
+      "community": 7,
       "norm_label": "select_single_app_pod.py"
     },
     {
@@ -1269,7 +1476,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L9",
       "id": "select_single_app_pod_owner_matches",
-      "community": 5,
+      "community": 7,
       "norm_label": "owner_matches()"
     },
     {
@@ -1278,7 +1485,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L21",
       "id": "select_single_app_pod_exact_owned_replica_sets",
-      "community": 5,
+      "community": 7,
       "norm_label": "exact_owned_replica_sets()"
     },
     {
@@ -1287,7 +1494,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L37",
       "id": "select_single_app_pod_pod_uses_pvc",
-      "community": 5,
+      "community": 7,
       "norm_label": "pod_uses_pvc()"
     },
     {
@@ -1296,7 +1503,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L44",
       "id": "select_single_app_pod_pod_owned_by_replica_set",
-      "community": 5,
+      "community": 7,
       "norm_label": "pod_owned_by_replica_set()"
     },
     {
@@ -1305,7 +1512,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L52",
       "id": "select_single_app_pod_validate_all_pvc_pods",
-      "community": 5,
+      "community": 7,
       "norm_label": "validate_all_pvc_pods()"
     },
     {
@@ -1314,7 +1521,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L66",
       "id": "select_single_app_pod_select_single_app_pod",
-      "community": 5,
+      "community": 7,
       "norm_label": "select_single_app_pod()"
     },
     {
@@ -1323,7 +1530,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L136",
       "id": "select_single_app_pod_main",
-      "community": 5,
+      "community": 7,
       "norm_label": "main()"
     },
     {
@@ -1332,7 +1539,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_validate_pvc_controllers_py",
-      "community": 5,
+      "community": 7,
       "norm_label": "validate_pvc_controllers.py"
     },
     {
@@ -1341,7 +1548,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L9",
       "id": "validate_pvc_controllers_owner_matches",
-      "community": 5,
+      "community": 7,
       "norm_label": "owner_matches()"
     },
     {
@@ -1350,7 +1557,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L21",
       "id": "validate_pvc_controllers_pod_template_spec",
-      "community": 5,
+      "community": 7,
       "norm_label": "pod_template_spec()"
     },
     {
@@ -1359,7 +1566,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L30",
       "id": "validate_pvc_controllers_uses_pvc",
-      "community": 5,
+      "community": 7,
       "norm_label": "uses_pvc()"
     },
     {
@@ -1368,7 +1575,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L37",
       "id": "validate_pvc_controllers_validate_pvc_controllers",
-      "community": 5,
+      "community": 7,
       "norm_label": "validate_pvc_controllers()"
     },
     {
@@ -1377,8 +1584,170 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L107",
       "id": "validate_pvc_controllers_main",
-      "community": 5,
+      "community": 7,
       "norm_label": "main()"
+    },
+    {
+      "label": "test_tab_local_dashboards.py",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L1",
+      "id": "tests_test_tab_local_dashboards_py",
+      "community": 8,
+      "norm_label": "test_tab_local_dashboards.py"
+    },
+    {
+      "label": "DashboardStructureParser",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L20",
+      "id": "test_tab_local_dashboards_dashboardstructureparser",
+      "community": 8,
+      "norm_label": "dashboardstructureparser"
+    },
+    {
+      "label": ".__init__()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L21",
+      "id": "test_tab_local_dashboards_dashboardstructureparser_init",
+      "community": 8,
+      "norm_label": ".__init__()"
+    },
+    {
+      "label": "_classes()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L31",
+      "id": "test_tab_local_dashboards_classes",
+      "community": 8,
+      "norm_label": "_classes()"
+    },
+    {
+      "label": "._current_tab()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L34",
+      "id": "test_tab_local_dashboards_dashboardstructureparser_current_tab",
+      "community": 8,
+      "norm_label": "._current_tab()"
+    },
+    {
+      "label": "._current_lgad_group()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L40",
+      "id": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
+      "community": 8,
+      "norm_label": "._current_lgad_group()"
+    },
+    {
+      "label": ".handle_starttag()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L46",
+      "id": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "community": 8,
+      "norm_label": ".handle_starttag()"
+    },
+    {
+      "label": ".handle_data()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L70",
+      "id": "test_tab_local_dashboards_dashboardstructureparser_handle_data",
+      "community": 8,
+      "norm_label": ".handle_data()"
+    },
+    {
+      "label": ".handle_endtag()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L74",
+      "id": "test_tab_local_dashboards_dashboardstructureparser_handle_endtag",
+      "community": 8,
+      "norm_label": ".handle_endtag()"
+    },
+    {
+      "label": "TabLocalDashboardTests",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L88",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests",
+      "community": 8,
+      "norm_label": "tablocaldashboardtests"
+    },
+    {
+      "label": ".parse()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L89",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "community": 8,
+      "norm_label": ".parse()"
+    },
+    {
+      "label": ".test_each_scientific_dashboard_is_inside_its_matching_tab()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L95",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_test_each_scientific_dashboard_is_inside_its_matching_tab",
+      "community": 8,
+      "norm_label": ".test_each_scientific_dashboard_is_inside_its_matching_tab()"
+    },
+    {
+      "label": ".test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L106",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary",
+      "community": 8,
+      "norm_label": ".test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary()"
+    },
+    {
+      "label": ".test_lgad_dashboard_uses_exact_inventory_and_availability_semantics()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L121",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_dashboard_uses_exact_inventory_and_availability_semantics",
+      "community": 8,
+      "norm_label": ".test_lgad_dashboard_uses_exact_inventory_and_availability_semantics()"
+    },
+    {
+      "label": ".test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L136",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory",
+      "community": 8,
+      "norm_label": ".test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory()"
+    },
+    {
+      "label": ".test_tab_local_change_preserves_canonical_hybrid_inventory()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L170",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory",
+      "community": 8,
+      "norm_label": ".test_tab_local_change_preserves_canonical_hybrid_inventory()"
+    },
+    {
+      "label": ".test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L177",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics",
+      "community": 8,
+      "norm_label": ".test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics()"
+    },
+    {
+      "label": ".test_tab_dashboards_use_local_assets_and_existing_visibility_controller()",
+      "file_type": "code",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L203",
+      "id": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_dashboards_use_local_assets_and_existing_visibility_controller",
+      "community": 8,
+      "norm_label": ".test_tab_dashboards_use_local_assets_and_existing_visibility_controller()"
     },
     {
       "label": "test_lxplus_dashboard_deploy.py",
@@ -1386,7 +1755,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L1",
       "id": "tests_test_lxplus_dashboard_deploy_py",
-      "community": 9,
+      "community": 11,
       "norm_label": "test_lxplus_dashboard_deploy.py"
     },
     {
@@ -1395,7 +1764,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L17",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
-      "community": 9,
+      "community": 11,
       "norm_label": "lxplusdashboarddeploytests"
     },
     {
@@ -1404,7 +1773,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L18",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_valid_bash_syntax",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_has_valid_bash_syntax()"
     },
     {
@@ -1413,7 +1782,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L27",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_release_and_download_checksums",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_pins_release_and_download_checksums()"
     },
     {
@@ -1422,7 +1791,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L47",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_complete_etroc_dataset_and_runtime_verification",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_pins_complete_etroc_dataset_and_runtime_verification()"
     },
     {
@@ -1431,7 +1800,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L62",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_closed_on_context_and_permissions",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_fails_closed_on_context_and_permissions()"
     },
     {
@@ -1440,7 +1809,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L80",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_uses_immutable_overlay_build_with_allowlisted_context",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_uses_immutable_overlay_build_with_allowlisted_context()"
     },
     {
@@ -1449,7 +1818,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L93",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_verifies_backup_and_preserves_rollback_coordinates",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_verifies_backup_and_preserves_rollback_coordinates()"
     },
     {
@@ -1458,7 +1827,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L120",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_and_verifies_rollout_and_static_files",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_pins_and_verifies_rollout_and_static_files()"
     },
     {
@@ -1467,7 +1836,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L147",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_bootstraps_official_device_flow_without_printing_tokens",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_bootstraps_official_device_flow_without_printing_tokens()"
     },
     {
@@ -1476,7 +1845,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L162",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_handles_interrupts_and_preserves_full_replace_metadata",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_handles_interrupts_and_preserves_full_replace_metadata()"
     },
     {
@@ -1485,7 +1854,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L180",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_renderer_rejects_same_name_with_new_uid",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_rollback_renderer_rejects_same_name_with_new_uid()"
     },
     {
@@ -1494,7 +1863,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L241",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_runs_pinned_executable_build_provenance_validator",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_runs_pinned_executable_build_provenance_validator()"
     },
     {
@@ -1503,7 +1872,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L261",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_exercises_etroc_assets_through_runtime_http",
-      "community": 9,
+      "community": 11,
       "norm_label": ".test_helper_exercises_etroc_assets_through_runtime_http()"
     },
     {
@@ -1633,10 +2002,19 @@
       "norm_label": ".test_browser_contract_rejects_malformed_scientific_payloads()"
     },
     {
+      "label": ".test_statistics_contract_reconciles_exact_dataset_and_wafer_totals()",
+      "file_type": "code",
+      "source_file": "tests/test_etroc_optical_pool.py",
+      "source_location": "L249",
+      "id": "test_etroc_optical_pool_etrocopticalpooltests_test_statistics_contract_reconciles_exact_dataset_and_wafer_totals",
+      "community": 1,
+      "norm_label": ".test_statistics_contract_reconciles_exact_dataset_and_wafer_totals()"
+    },
+    {
       "label": ".test_pool_renderer_is_safe_accessible_and_fail_visible()",
       "file_type": "code",
       "source_file": "tests/test_etroc_optical_pool.py",
-      "source_location": "L229",
+      "source_location": "L295",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_renderer_is_safe_accessible_and_fail_visible",
       "community": 1,
       "norm_label": ".test_pool_renderer_is_safe_accessible_and_fail_visible()"
@@ -1647,7 +2025,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L1",
       "id": "tests_test_analytics_dashboard_py",
-      "community": 8,
+      "community": 10,
       "norm_label": "test_analytics_dashboard.py"
     },
     {
@@ -1656,7 +2034,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L12",
       "id": "test_analytics_dashboard_analyticsdashboardtests",
-      "community": 8,
+      "community": 10,
       "norm_label": "analyticsdashboardtests"
     },
     {
@@ -1665,7 +2043,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L13",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_main_page_loads_local_dashboard_assets_and_places_dashboard_first",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_main_page_loads_local_dashboard_assets_and_places_dashboard_first()"
     },
     {
@@ -1674,7 +2052,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L22",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_exposes_semantic_chart_regions_and_scientific_caveat",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_dashboard_exposes_semantic_chart_regions_and_scientific_caveat()"
     },
     {
@@ -1683,7 +2061,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L40",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_additional_tests_use_live_registry_api_and_safe_badges",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_additional_tests_use_live_registry_api_and_safe_badges()"
     },
     {
@@ -1692,7 +2070,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L73",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_additional_test_failure_marks_table_cells_unavailable",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_additional_test_failure_marks_table_cells_unavailable()"
     },
     {
@@ -1701,7 +2079,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L82",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_table_filters_and_sorting_are_keyboard_and_screen_reader_accessible",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_table_filters_and_sorting_are_keyboard_and_screen_reader_accessible()"
     },
     {
@@ -1710,7 +2088,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L92",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_table_csv_export_contract",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_table_csv_export_contract()"
     },
     {
@@ -1719,7 +2097,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L107",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_table_has_static_advanced_tests_column_for_every_hybrid",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_table_has_static_advanced_tests_column_for_every_hybrid()"
     },
     {
@@ -1728,7 +2106,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L120",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_script_uses_existing_rows_and_live_comment_summary",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_dashboard_script_uses_existing_rows_and_live_comment_summary()"
     },
     {
@@ -1737,7 +2115,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L129",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_styles_are_responsive_and_respect_reduced_motion",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_dashboard_styles_are_responsive_and_respect_reduced_motion()"
     },
     {
@@ -1746,7 +2124,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L136",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_does_not_present_absence_of_optical_candidate_as_review_ready",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_dashboard_does_not_present_absence_of_optical_candidate_as_review_ready()"
     },
     {
@@ -1755,7 +2133,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L142",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_handles_untrusted_group_labels_and_pending_rows_safely",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_dashboard_handles_untrusted_group_labels_and_pending_rows_safely()"
     },
     {
@@ -1764,7 +2142,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L150",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_live_updates_are_announced_and_only_animate_the_reviewed_counter",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_live_updates_are_announced_and_only_animate_the_reviewed_counter()"
     },
     {
@@ -1773,7 +2151,7 @@
       "source_file": "tests/test_analytics_dashboard.py",
       "source_location": "L159",
       "id": "test_analytics_dashboard_analyticsdashboardtests_test_dashboard_does_not_change_canonical_hybrid_inventory",
-      "community": 8,
+      "community": 10,
       "norm_label": ".test_dashboard_does_not_change_canonical_hybrid_inventory()"
     },
     {
@@ -1782,7 +2160,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L1",
       "id": "tests_test_lxplus_additional_tests_deploy_py",
-      "community": 13,
+      "community": 15,
       "norm_label": "test_lxplus_additional_tests_deploy.py"
     },
     {
@@ -1791,7 +2169,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L17",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests",
-      "community": 13,
+      "community": 15,
       "norm_label": "lxplusadditionaltestsdeploytests"
     },
     {
@@ -1800,7 +2178,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L18",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests_test_helper_pins_advanced_table_csv_release",
-      "community": 13,
+      "community": 15,
       "norm_label": ".test_helper_pins_advanced_table_csv_release()"
     },
     {
@@ -1809,7 +2187,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L28",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests_test_helper_has_valid_bash_syntax",
-      "community": 13,
+      "community": 15,
       "norm_label": ".test_helper_has_valid_bash_syntax()"
     },
     {
@@ -1818,7 +2196,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L37",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests_test_exact_candidate_image_uses_real_startup_probe_contract",
-      "community": 13,
+      "community": 15,
       "norm_label": ".test_exact_candidate_image_uses_real_startup_probe_contract()"
     },
     {
@@ -1827,7 +2205,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L59",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests_test_candidate_probe_precedes_production_mutation",
-      "community": 13,
+      "community": 15,
       "norm_label": ".test_candidate_probe_precedes_production_mutation()"
     },
     {
@@ -1836,7 +2214,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L71",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests_test_forward_deployment_normalizes_localhost_probes",
-      "community": 13,
+      "community": 15,
       "norm_label": ".test_forward_deployment_normalizes_localhost_probes()"
     },
     {
@@ -1845,7 +2223,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L82",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests_test_external_sso_gate_retries_without_client_identity_header",
-      "community": 13,
+      "community": 15,
       "norm_label": ".test_external_sso_gate_retries_without_client_identity_header()"
     },
     {
@@ -1854,7 +2232,7 @@
       "source_file": "tests/test_lxplus_additional_tests_deploy.py",
       "source_location": "L93",
       "id": "test_lxplus_additional_tests_deploy_lxplusadditionaltestsdeploytests_test_rollback_renderer_rejects_same_name_with_new_uid",
-      "community": 13,
+      "community": 15,
       "norm_label": ".test_rollback_renderer_rejects_same_name_with_new_uid()"
     },
     {
@@ -1863,7 +2241,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/tests/test_apply_comment_concordance.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_tests_test_apply_comment_concordance_py",
-      "community": 2,
+      "community": 4,
       "norm_label": "test_apply_comment_concordance.py"
     },
     {
@@ -1872,7 +2250,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/tests/test_apply_comment_concordance.py",
       "source_location": "L11",
       "id": "test_apply_comment_concordance_commentconcordancetests",
-      "community": 2,
+      "community": 4,
       "norm_label": "commentconcordancetests"
     },
     {
@@ -1881,7 +2259,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/tests/test_apply_comment_concordance.py",
       "source_location": "L12",
       "id": "test_apply_comment_concordance_commentconcordancetests_test_classifies_explicit_review_labels",
-      "community": 2,
+      "community": 4,
       "norm_label": ".test_classifies_explicit_review_labels()"
     },
     {
@@ -1890,7 +2268,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/tests/test_apply_comment_concordance.py",
       "source_location": "L20",
       "id": "test_apply_comment_concordance_commentconcordancetests_test_classifies_explicit_post_bond_loss_as_mismatch",
-      "community": 2,
+      "community": 4,
       "norm_label": ".test_classifies_explicit_post_bond_loss_as_mismatch()"
     },
     {
@@ -1899,7 +2277,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/tests/test_apply_comment_concordance.py",
       "source_location": "L27",
       "id": "test_apply_comment_concordance_commentconcordancetests_test_choose_latest_per_target",
-      "community": 2,
+      "community": 4,
       "norm_label": ".test_choose_latest_per_target()"
     },
     {
@@ -1908,7 +2286,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/tests/test_apply_comment_concordance.py",
       "source_location": "L34",
       "id": "test_apply_comment_concordance_commentconcordancetests_test_updates_card_and_table_together",
-      "community": 2,
+      "community": 4,
       "norm_label": ".test_updates_card_and_table_together()"
     },
     {
@@ -1917,7 +2295,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/tests/test_apply_comment_concordance.py",
       "source_location": "L52",
       "id": "test_apply_comment_concordance_commentconcordancetests_test_detail_badge_is_inserted_then_updated_without_duplicate",
-      "community": 2,
+      "community": 4,
       "norm_label": ".test_detail_badge_is_inserted_then_updated_without_duplicate()"
     },
     {
@@ -1926,7 +2304,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L1",
       "id": "tests_test_hybrid_pair_correction_py",
-      "community": 17,
+      "community": 18,
       "norm_label": "test_hybrid_pair_correction.py"
     },
     {
@@ -1935,7 +2313,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L12",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests",
-      "community": 17,
+      "community": 18,
       "norm_label": "hybridpaircorrectiontests"
     },
     {
@@ -1944,7 +2322,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L13",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_manifest_preserves_w04f2_34_and_corrects_w04f2_81",
-      "community": 17,
+      "community": 18,
       "norm_label": ".test_manifest_preserves_w04f2_34_and_corrects_w04f2_81()"
     },
     {
@@ -1953,7 +2331,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L21",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_dashboard_uses_only_the_corrected_w04f2_81_slug",
-      "community": 17,
+      "community": 18,
       "norm_label": ".test_dashboard_uses_only_the_corrected_w04f2_81_slug()"
     },
     {
@@ -1962,7 +2340,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L28",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_corrected_detail_page_keeps_an_old_url_redirect",
-      "community": 17,
+      "community": 18,
       "norm_label": ".test_corrected_detail_page_keeps_an_old_url_redirect()"
     },
     {
@@ -1971,7 +2349,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L43",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_concordance_snapshot_uses_the_corrected_comment_target",
-      "community": 17,
+      "community": 18,
       "norm_label": ".test_concordance_snapshot_uses_the_corrected_comment_target()"
     },
     {
@@ -2250,7 +2628,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L952",
       "id": "test_hybrid_registry_hybridregistryhttptests",
-      "community": 16,
+      "community": 17,
       "norm_label": "hybridregistryhttptests"
     },
     {
@@ -2268,7 +2646,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L977",
       "id": "test_hybrid_registry_hybridregistryhttptests_stop_server",
-      "community": 16,
+      "community": 17,
       "norm_label": "._stop_server()"
     },
     {
@@ -2277,7 +2655,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L982",
       "id": "test_hybrid_registry_hybridregistryhttptests_request",
-      "community": 16,
+      "community": 17,
       "norm_label": ".request()"
     },
     {
@@ -2286,7 +2664,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1011",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_registry_read_and_admin_bind_api",
-      "community": 16,
+      "community": 17,
       "norm_label": ".test_registry_read_and_admin_bind_api()"
     },
     {
@@ -2295,7 +2673,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1040",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads",
-      "community": 16,
+      "community": 17,
       "norm_label": ".test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads()"
     },
     {
@@ -2304,7 +2682,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1102",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_legacy_comment_target_reads_and_writes_canonical_registry",
-      "community": 16,
+      "community": 17,
       "norm_label": ".test_legacy_comment_target_reads_and_writes_canonical_registry()"
     },
     {
@@ -2313,7 +2691,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1145",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_summary_targets_parameter_preserves_non_hybrid_behavior",
-      "community": 16,
+      "community": 17,
       "norm_label": ".test_summary_targets_parameter_preserves_non_hybrid_behavior()"
     },
     {
@@ -2385,7 +2763,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1512",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests",
-      "community": 5,
+      "community": 7,
       "norm_label": "hybridregistrydeploymenttests"
     },
     {
@@ -2394,7 +2772,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1513",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_manifest_isolates_backend_and_prevents_overlapping_sqlite_writers",
-      "community": 5,
+      "community": 7,
       "norm_label": ".test_manifest_isolates_backend_and_prevents_overlapping_sqlite_writers()"
     },
     {
@@ -2403,7 +2781,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1538",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_single_app_pod_selector_is_owner_ready_pvc_and_cardinality_aware",
-      "community": 5,
+      "community": 7,
       "norm_label": ".test_single_app_pod_selector_is_owner_ready_pvc_and_cardinality_aware()"
     },
     {
@@ -2412,7 +2790,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1676",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_pvc_controller_inventory_is_uid_and_scale_aware",
-      "community": 5,
+      "community": 7,
       "norm_label": ".test_pvc_controller_inventory_is_uid_and_scale_aware()"
     },
     {
@@ -2421,7 +2799,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1792",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_runbook_release_and_restore_steps_fail_closed",
-      "community": 5,
+      "community": 7,
       "norm_label": ".test_runbook_release_and_restore_steps_fail_closed()"
     },
     {
@@ -2430,7 +2808,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L1",
       "id": "tests_test_build_provenance_validator_py",
-      "community": 10,
+      "community": 12,
       "norm_label": "test_build_provenance_validator.py"
     },
     {
@@ -2439,7 +2817,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L15",
       "id": "test_build_provenance_validator_buildconfig",
-      "community": 10,
+      "community": 12,
       "norm_label": "buildconfig()"
     },
     {
@@ -2448,7 +2826,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L45",
       "id": "test_build_provenance_validator_completed_build",
-      "community": 10,
+      "community": 12,
       "norm_label": "completed_build()"
     },
     {
@@ -2457,7 +2835,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L82",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests",
-      "community": 10,
+      "community": 12,
       "norm_label": "buildprovenancevalidatortests"
     },
     {
@@ -2466,7 +2844,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L83",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_run_validator",
-      "community": 10,
+      "community": 12,
       "norm_label": ".run_validator()"
     },
     {
@@ -2475,7 +2853,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L112",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_valid_documents",
-      "community": 10,
+      "community": 12,
       "norm_label": ".valid_documents()"
     },
     {
@@ -2484,7 +2862,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L118",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_accepts_exact_single_build_continuity",
-      "community": 10,
+      "community": 12,
       "norm_label": ".test_accepts_exact_single_build_continuity()"
     },
     {
@@ -2493,7 +2871,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L124",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_transient_spec_change_restored_after_build",
-      "community": 10,
+      "community": 12,
       "norm_label": ".test_rejects_transient_spec_change_restored_after_build()"
     },
     {
@@ -2502,7 +2880,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L131",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_concurrent_extra_build",
-      "community": 10,
+      "community": 12,
       "norm_label": ".test_rejects_concurrent_extra_build()"
     },
     {
@@ -2511,7 +2889,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L138",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_build_number_or_spec_drift",
-      "community": 10,
+      "community": 12,
       "norm_label": ".test_rejects_build_number_or_spec_drift()"
     },
     {
@@ -2520,7 +2898,7 @@
       "source_file": "tests/test_build_provenance_validator.py",
       "source_location": "L152",
       "id": "test_build_provenance_validator_buildprovenancevalidatortests_test_rejects_identity_metadata_owner_and_deletion_drift",
-      "community": 10,
+      "community": 12,
       "norm_label": ".test_rejects_identity_metadata_owner_and_deletion_drift()"
     }
   ],
@@ -2787,6 +3165,18 @@
       "_tgt": "htmlparser",
       "source": "htmlparser",
       "target": "apply_comment_concordance_cardstateparser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "inherits",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser",
+      "_tgt": "htmlparser",
+      "source": "htmlparser",
+      "target": "test_tab_local_dashboards_dashboardstructureparser",
       "confidence_score": 1.0
     },
     {
@@ -4149,6 +4539,18 @@
       "relation": "calls",
       "confidence": "INFERRED",
       "confidence_score": 0.8,
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L174",
+      "weight": 1.0,
+      "_src": "build_etroc_optical_pool_sha256",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory",
+      "source": "build_etroc_optical_pool_sha256",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory"
+    },
+    {
+      "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L145",
       "weight": 1.0,
@@ -4723,6 +5125,18 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L59",
+      "weight": 1.0,
+      "_src": "dashboard_number",
+      "_tgt": "lgad_optical_stats_setkpi",
+      "source": "dashboard_number",
+      "target": "lgad_optical_stats_setkpi"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/dashboard.js",
       "source_location": "L64",
@@ -4815,6 +5229,102 @@
       "_tgt": "dashboard_safespreadsheetvalue",
       "source": "dashboard_safespreadsheetvalue",
       "target": "dashboard_csvcell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L13",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_lgad_optical_stats_js",
+      "_tgt": "lgad_optical_stats_element",
+      "source": "hybrid_bbqc_lgad_optical_stats_js",
+      "target": "lgad_optical_stats_element",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_lgad_optical_stats_js",
+      "_tgt": "lgad_optical_stats_summarizeinventory",
+      "source": "hybrid_bbqc_lgad_optical_stats_js",
+      "target": "lgad_optical_stats_summarizeinventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L49",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_lgad_optical_stats_js",
+      "_tgt": "lgad_optical_stats_collectinventory",
+      "source": "hybrid_bbqc_lgad_optical_stats_js",
+      "target": "lgad_optical_stats_collectinventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_lgad_optical_stats_js",
+      "_tgt": "lgad_optical_stats_setkpi",
+      "source": "hybrid_bbqc_lgad_optical_stats_js",
+      "target": "lgad_optical_stats_setkpi",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L62",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_lgad_optical_stats_js",
+      "_tgt": "lgad_optical_stats_render",
+      "source": "hybrid_bbqc_lgad_optical_stats_js",
+      "target": "lgad_optical_stats_render",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_lgad_optical_stats_js",
+      "_tgt": "lgad_optical_stats_fail",
+      "source": "hybrid_bbqc_lgad_optical_stats_js",
+      "target": "lgad_optical_stats_fail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L101",
+      "weight": 1.0,
+      "_src": "lgad_optical_stats_fail",
+      "_tgt": "lgad_optical_stats_element",
+      "source": "lgad_optical_stats_element",
+      "target": "lgad_optical_stats_fail",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/lgad-optical-stats.js",
+      "source_location": "L63",
+      "weight": 1.0,
+      "_src": "lgad_optical_stats_render",
+      "_tgt": "lgad_optical_stats_setkpi",
+      "source": "lgad_optical_stats_setkpi",
+      "target": "lgad_optical_stats_render",
       "confidence_score": 1.0
     },
     {
@@ -5961,7 +6471,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L17",
+      "source_location": "L38",
       "weight": 1.0,
       "_src": "hybrid_bbqc_etroc_optical_js",
       "_tgt": "etroc_optical_element",
@@ -5973,7 +6483,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L24",
+      "source_location": "L45",
       "weight": 1.0,
       "_src": "hybrid_bbqc_etroc_optical_js",
       "_tgt": "etroc_optical_safeasseturi",
@@ -5985,7 +6495,19 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L34",
+      "source_location": "L55",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_issha256",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_issha256",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L59",
       "weight": 1.0,
       "_src": "hybrid_bbqc_etroc_optical_js",
       "_tgt": "etroc_optical_validate",
@@ -5997,7 +6519,43 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L81",
+      "source_location": "L139",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_summarize",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_summarize",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L196",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_selectrecords",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_selectrecords",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L204",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_summarizeprovenance",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_summarizeprovenance",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L217",
       "weight": 1.0,
       "_src": "hybrid_bbqc_etroc_optical_js",
       "_tgt": "etroc_optical_rendersummary",
@@ -6009,7 +6567,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L97",
+      "source_location": "L233",
       "weight": 1.0,
       "_src": "hybrid_bbqc_etroc_optical_js",
       "_tgt": "etroc_optical_rendercard",
@@ -6021,7 +6579,7 @@
       "relation": "contains",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L129",
+      "source_location": "L265",
       "weight": 1.0,
       "_src": "hybrid_bbqc_etroc_optical_js",
       "_tgt": "etroc_optical_render",
@@ -6030,10 +6588,154 @@
       "confidence_score": 1.0
     },
     {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L299",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_ratiolabel",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_ratiolabel",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L305",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_setstatistic",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_setstatistic",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L310",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_rendercategoryrows",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_rendercategoryrows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L330",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_renderwaferrows",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_renderwaferrows",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L362",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_renderworkload",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_renderworkload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L386",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_appendcell",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_appendcell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L390",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_sortedstatisticsrecords",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_sortedstatisticsrecords",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L402",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_renderstatisticstable",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_renderstatisticstable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L431",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_renderstatistics",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L461",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_initstatisticstablesorting",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_initstatisticstablesorting",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L496",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_initstatistics",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_initstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L530",
+      "weight": 1.0,
+      "_src": "hybrid_bbqc_etroc_optical_js",
+      "_tgt": "etroc_optical_renderstatisticsfailure",
+      "source": "hybrid_bbqc_etroc_optical_js",
+      "target": "etroc_optical_renderstatisticsfailure",
+      "confidence_score": 1.0
+    },
+    {
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L82",
+      "source_location": "L218",
       "weight": 1.0,
       "_src": "etroc_optical_rendersummary",
       "_tgt": "etroc_optical_element",
@@ -6045,7 +6747,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L98",
+      "source_location": "L234",
       "weight": 1.0,
       "_src": "etroc_optical_rendercard",
       "_tgt": "etroc_optical_element",
@@ -6057,7 +6759,43 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L99",
+      "source_location": "L383",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderworkload",
+      "_tgt": "etroc_optical_element",
+      "source": "etroc_optical_element",
+      "target": "etroc_optical_renderworkload",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L387",
+      "weight": 1.0,
+      "_src": "etroc_optical_appendcell",
+      "_tgt": "etroc_optical_element",
+      "source": "etroc_optical_element",
+      "target": "etroc_optical_appendcell",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L449",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_element",
+      "source": "etroc_optical_element",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L235",
       "weight": 1.0,
       "_src": "etroc_optical_rendercard",
       "_tgt": "etroc_optical_safeasseturi",
@@ -6067,14 +6805,146 @@
     },
     {
       "relation": "calls",
+      "confidence": "INFERRED",
+      "confidence_score": 0.8,
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L60",
+      "weight": 1.0,
+      "_src": "etroc_optical_validate",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "etroc_optical_validate",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_parse"
+    },
+    {
+      "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "hybrid-bbqc/etroc-optical.js",
-      "source_location": "L131",
+      "source_location": "L433",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_summarize",
+      "source": "etroc_optical_summarize",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L522",
+      "weight": 1.0,
+      "_src": "etroc_optical_initstatistics",
+      "_tgt": "etroc_optical_summarizeprovenance",
+      "source": "etroc_optical_summarizeprovenance",
+      "target": "etroc_optical_initstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L267",
       "weight": 1.0,
       "_src": "etroc_optical_render",
       "_tgt": "etroc_optical_rendersummary",
       "source": "etroc_optical_rendersummary",
       "target": "etroc_optical_render",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L439",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_ratiolabel",
+      "source": "etroc_optical_ratiolabel",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L434",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_setstatistic",
+      "source": "etroc_optical_setstatistic",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L453",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_rendercategoryrows",
+      "source": "etroc_optical_rendercategoryrows",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L454",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_renderwaferrows",
+      "source": "etroc_optical_renderwaferrows",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L455",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_renderworkload",
+      "source": "etroc_optical_renderworkload",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L406",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatisticstable",
+      "_tgt": "etroc_optical_sortedstatisticsrecords",
+      "source": "etroc_optical_sortedstatisticsrecords",
+      "target": "etroc_optical_renderstatisticstable",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L457",
+      "weight": 1.0,
+      "_src": "etroc_optical_renderstatistics",
+      "_tgt": "etroc_optical_renderstatisticstable",
+      "source": "etroc_optical_renderstatisticstable",
+      "target": "etroc_optical_renderstatistics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "hybrid-bbqc/etroc-optical.js",
+      "source_location": "L517",
+      "weight": 1.0,
+      "_src": "etroc_optical_initstatistics",
+      "_tgt": "etroc_optical_initstatisticstablesorting",
+      "source": "etroc_optical_initstatisticstablesorting",
+      "target": "etroc_optical_initstatistics",
       "confidence_score": 1.0
     },
     {
@@ -6644,6 +7514,354 @@
     {
       "relation": "contains",
       "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L20",
+      "weight": 1.0,
+      "_src": "tests_test_tab_local_dashboards_py",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser",
+      "source": "tests_test_tab_local_dashboards_py",
+      "target": "test_tab_local_dashboards_dashboardstructureparser",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L31",
+      "weight": 1.0,
+      "_src": "tests_test_tab_local_dashboards_py",
+      "_tgt": "test_tab_local_dashboards_classes",
+      "source": "tests_test_tab_local_dashboards_py",
+      "target": "test_tab_local_dashboards_classes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L88",
+      "weight": 1.0,
+      "_src": "tests_test_tab_local_dashboards_py",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests",
+      "source": "tests_test_tab_local_dashboards_py",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L21",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_init",
+      "source": "test_tab_local_dashboards_dashboardstructureparser",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_init",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L34",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_current_tab",
+      "source": "test_tab_local_dashboards_dashboardstructureparser",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_current_tab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L40",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
+      "source": "test_tab_local_dashboards_dashboardstructureparser",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L46",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "source": "test_tab_local_dashboards_dashboardstructureparser",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L70",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_handle_data",
+      "source": "test_tab_local_dashboards_dashboardstructureparser",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_handle_data",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L74",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_handle_endtag",
+      "source": "test_tab_local_dashboards_dashboardstructureparser",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_handle_endtag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L91",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser",
+      "source": "test_tab_local_dashboards_dashboardstructureparser",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L48",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "_tgt": "test_tab_local_dashboards_classes",
+      "source": "test_tab_local_dashboards_classes",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L51",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_current_tab",
+      "source": "test_tab_local_dashboards_dashboardstructureparser_current_tab",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L56",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
+      "source": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_handle_starttag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L77",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_dashboardstructureparser_handle_endtag",
+      "_tgt": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
+      "source": "test_tab_local_dashboards_dashboardstructureparser_current_lgad_group",
+      "target": "test_tab_local_dashboards_dashboardstructureparser_handle_endtag",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L89",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L95",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_each_scientific_dashboard_is_inside_its_matching_tab",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_each_scientific_dashboard_is_inside_its_matching_tab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L106",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_dashboard_uses_exact_inventory_and_availability_semantics",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_dashboard_uses_exact_inventory_and_availability_semantics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L136",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L170",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L177",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L203",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_dashboards_use_local_assets_and_existing_visibility_controller",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_dashboards_use_local_assets_and_existing_visibility_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L96",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_test_each_scientific_dashboard_is_inside_its_matching_tab",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_each_scientific_dashboard_is_inside_its_matching_tab",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L107",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_etroc_dashboard_has_monitor_regions_and_interpretation_boundary",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L122",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_dashboard_uses_exact_inventory_and_availability_semantics",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_dashboard_uses_exact_inventory_and_availability_semantics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L137",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L171",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_local_change_preserves_canonical_hybrid_inventory",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L178",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_and_etroc_table_controls_have_keyboard_screen_reader_semantics",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_tab_local_dashboards.py",
+      "source_location": "L204",
+      "weight": 1.0,
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_dashboards_use_local_assets_and_existing_visibility_controller",
+      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "target": "test_tab_local_dashboards_tablocaldashboardtests_test_tab_dashboards_use_local_assets_and_existing_visibility_controller",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L17",
       "weight": 1.0,
@@ -6957,7 +8175,19 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_etroc_optical_pool.py",
-      "source_location": "L229",
+      "source_location": "L249",
+      "weight": 1.0,
+      "_src": "test_etroc_optical_pool_etrocopticalpooltests",
+      "_tgt": "test_etroc_optical_pool_etrocopticalpooltests_test_statistics_contract_reconciles_exact_dataset_and_wafer_totals",
+      "source": "test_etroc_optical_pool_etrocopticalpooltests",
+      "target": "test_etroc_optical_pool_etrocopticalpooltests_test_statistics_contract_reconciles_exact_dataset_and_wafer_totals",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_etroc_optical_pool.py",
+      "source_location": "L295",
       "weight": 1.0,
       "_src": "test_etroc_optical_pool_etrocopticalpooltests",
       "_tgt": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_renderer_is_safe_accessible_and_fail_visible",

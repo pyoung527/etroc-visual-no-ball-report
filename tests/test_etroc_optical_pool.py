@@ -211,6 +211,26 @@ const mutations = [
   p => { p.records[0].chip = "999"; },
   p => { p.records[0].preview_uri = "previews/W02G4-45.jpg"; },
   p => { p.position_record_count = 9215; },
+  p => { p.analysis_config_sha256 = "bad"; },
+  p => { p.analysis_created_at_utc = "not-a-timestamp"; },
+  p => { delete p.records[0].analysis_run_id; },
+  p => { p.records[0].analysis_run_id = "ETROC_OI_2608:common-baseline-v0:unknown"; },
+  p => { p.records[0].analysis_batch = "pack1"; },
+  p => { p.records[0].montage_sha256 = "not-a-hash"; },
+  p => { p.records[0].preview_sha256 = "not-a-hash"; },
+  p => { p.records[0].source_montage_sha256 = "not-a-hash"; },
+  p => { p.records[0].montage_size_bytes = 0; },
+  p => { p.records[0].preview_size_bytes = 1.5; },
+  p => { p.records[0].source_montage_size_bytes = -1; },
+  p => {
+    const hash = p.pipeline_files_sha256["etroc_inspection/__init__.py"];
+    delete p.pipeline_files_sha256["etroc_inspection/__init__.py"];
+    p.pipeline_files_sha256["arbitrary.py"] = hash;
+  },
+  p => {
+    p.records[0].source_revision = "supplement-re";
+    p.records[0].acquisition_id = `ETROC_OI_2608:${p.records[0].etroc_serial}:supplement-re`;
+  },
 ];
 for (const mutate of mutations) {
   const payload = structuredClone(source);
@@ -219,6 +239,52 @@ for (const mutate of mutations) {
   try { validate(payload); } catch (_) { rejected = true; }
   if (!rejected) process.exit(20);
 }
+'''
+        result = subprocess.run(
+            ["node", "-e", program, str(SCRIPT), str(POOL)],
+            check=False, capture_output=True, text=True,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+
+    def test_statistics_contract_reconciles_exact_dataset_and_wafer_totals(self):
+        program = r'''
+global.document = {querySelector: () => null};
+require(process.argv[1]);
+const source = require(process.argv[2]);
+const contract = global.ETROCOpticalContract;
+const records = contract.validate(structuredClone(source));
+const all = contract.summarize(records);
+const w02 = contract.summarize(contract.selectRecords(records, "W02G4", ""));
+const one = contract.selectRecords(records, "W02G4", "w02g4-68");
+const empty = contract.selectRecords(records, "W03F7", "does-not-exist");
+const provenance = contract.summarizeProvenance(records);
+const expectedAll = {
+  recordCount: 36, positionCount: 9216,
+  categoryTotals: {green:6512, blue:2035, yellow:570, redCandidate:17, needsInspection:82},
+  reviewCandidateCount:669, noBallCandidateCount:3,
+  redCandidateRecordCount:9, needsInspectionRecordCount:22, noBallCandidateRecordCount:3,
+};
+const expectedW02 = {
+  recordCount: 18, positionCount: 4608,
+  categoryTotals: {green:3216, blue:924, yellow:388, redCandidate:12, needsInspection:68},
+  reviewCandidateCount:468, noBallCandidateCount:1,
+  redCandidateRecordCount:5, needsInspectionRecordCount:16, noBallCandidateRecordCount:1,
+};
+if (JSON.stringify(all) !== JSON.stringify(expectedAll)) process.exit(31);
+if (JSON.stringify(w02) !== JSON.stringify(expectedW02)) process.exit(32);
+if (one.length !== 1 || one[0].etroc_serial !== "W02G4-68") process.exit(33);
+if (empty.length !== 0) process.exit(34);
+const expectedRuns = {
+  runCount: 5,
+  runs: [
+    {analysisRunId:"ETROC_OI_2608:common-baseline-v0:pack1", recordCount:9},
+    {analysisRunId:"ETROC_OI_2608:common-baseline-v0:pack1_original", recordCount:8},
+    {analysisRunId:"ETROC_OI_2608:common-baseline-v0:pack2", recordCount:17},
+    {analysisRunId:"ETROC_OI_2608:common-baseline-v0:re_chip24", recordCount:1},
+    {analysisRunId:"ETROC_OI_2608:common-baseline-v0:re_chip51", recordCount:1},
+  ],
+};
+if (JSON.stringify(provenance) !== JSON.stringify(expectedRuns)) process.exit(35);
 '''
         result = subprocess.run(
             ["node", "-e", program, str(SCRIPT), str(POOL)],

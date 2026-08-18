@@ -191,3 +191,407 @@
     transform: none;
   }
 }
+
+/* Tab-local optical statistics */
+.optical-analytics {
+  margin: 0 0 24px;
+  border: 1px solid #d8d2c3;
+  border-radius: 20px;
+  padding: 20px;
+  background:
+    linear-gradient(130deg, rgba(16, 75, 58, .055), transparent 40%),
+    #fffdf8;
+  box-shadow: 0 10px 32px rgba(16, 75, 58, .08);
+}
+
+.optical-analytics-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 16px;
+}
+
+.optical-analytics-heading h2,
+.optical-analytics-heading p {
+  margin: 0;
+}
+
+.optical-analytics-heading h2 {
+  color: #104b3a;
+  font-size: clamp(22px, 3vw, 31px);
+}
+
+.optical-analytics-heading p:not(.optical-analytics-kicker) {
+  margin-top: 4px;
+  color: #59635e;
+}
+
+.optical-analytics-kicker {
+  color: #88701c;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.optical-analytics-state {
+  max-width: 460px;
+  border: 1px solid #d9c56f;
+  border-radius: 999px;
+  padding: 7px 11px;
+  background: #fff8d9;
+  color: #6f5200;
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.optical-analytics-state.loaded {
+  border-color: #9ccab8;
+  background: #e6f3ee;
+  color: #104b3a;
+}
+
+.optical-analytics-state.failed {
+  border-color: #efb09f;
+  background: #fff1ea;
+  color: #9f2118;
+}
+
+.optical-analytics-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  gap: 10px;
+  margin: 14px 0;
+}
+
+.optical-analytics-kpi {
+  min-width: 0;
+  border: 1px solid #e6e0d2;
+  border-top: 3px solid #77a992;
+  border-radius: 13px;
+  padding: 11px 12px;
+  background: rgba(255, 255, 255, .74);
+}
+
+.optical-analytics-kpi.candidate {
+  border-top-color: #d7301f;
+}
+
+.optical-analytics-kpi span,
+.optical-analytics-kpi em {
+  display: block;
+  color: #6d756f;
+  font-size: 10px;
+  font-style: normal;
+}
+
+.optical-analytics-kpi span {
+  font-weight: 820;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.optical-analytics-kpi strong {
+  display: block;
+  margin: 2px 0;
+  color: #104b3a;
+  font-size: clamp(24px, 3vw, 32px);
+  line-height: 1.1;
+}
+
+.optical-analytics-kpi.candidate strong {
+  color: #b5281e;
+}
+
+.optical-analytics-toolbar {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+  border-top: 1px solid #e6e0d2;
+  border-bottom: 1px solid #e6e0d2;
+  padding: 12px 0;
+}
+
+.optical-analytics-toolbar label {
+  display: grid;
+  gap: 4px;
+  color: #59635e;
+  font-size: 10px;
+  font-weight: 820;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.optical-analytics-toolbar select,
+.optical-analytics-toolbar input {
+  min-width: 190px;
+  min-height: 44px;
+  border: 1px solid #d8d2c3;
+  border-radius: 11px;
+  padding: 8px 11px;
+  background: #fff;
+  color: #183c31;
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.optical-analytics-toolbar [role="status"] {
+  margin-left: auto;
+  color: #4c5650;
+  font-size: 12px;
+  font-weight: 780;
+}
+
+.optical-provenance {
+  margin: -4px 0 14px;
+  color: #59635e;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 10px;
+  overflow-wrap: anywhere;
+}
+
+.optical-analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.optical-chart-card {
+  min-width: 0;
+  border: 1px solid #e6e0d2;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+}
+
+.optical-chart-card.wide {
+  grid-column: 1 / -1;
+}
+
+.optical-chart-card h3,
+.optical-chart-card > p {
+  margin: 0;
+}
+
+.optical-chart-card h3 {
+  color: #173f33;
+  font-size: 16px;
+}
+
+.optical-chart-card > p {
+  margin: 2px 0 12px;
+  color: #6d756f;
+  font-size: 11px;
+}
+
+.optical-stat-row,
+.optical-wafer-row,
+.optical-workload-row {
+  display: grid;
+  gap: 5px;
+  margin: 9px 0;
+}
+
+.optical-stat-row-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  color: #4c5650;
+  font-size: 11px;
+}
+
+.optical-stat-row-heading strong {
+  color: #173f33;
+}
+
+.optical-stat-key::before {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  margin-right: 6px;
+  border-radius: 50%;
+  background: #749081;
+  content: "";
+}
+
+.optical-stat-key.green::before,
+.optical-stat-fill.green,
+.optical-stack-segment.green { background: #5d9d78; }
+.optical-stat-key.blue::before,
+.optical-stat-fill.blue,
+.optical-stack-segment.blue { background: #4f82c4; }
+.optical-stat-key.yellow::before,
+.optical-stat-fill.yellow,
+.optical-stack-segment.yellow { background: #d9b84c; }
+.optical-stat-key.red::before,
+.optical-stat-fill.red,
+.optical-stack-segment.red { background: #d7301f; }
+.optical-stat-key.inspect::before,
+.optical-stat-fill.inspect,
+.optical-stack-segment.inspect { background: #8a8f8c; }
+
+.optical-stat-track,
+.optical-stack {
+  position: relative;
+  display: flex;
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ebe9e2;
+}
+
+.optical-stat-fill,
+.optical-stack-segment {
+  display: block;
+  min-width: 0;
+  height: 100%;
+  transition: width .45s ease;
+}
+
+.optical-stat-fill.nonzero,
+.optical-stack-segment.nonzero {
+  min-width: 2px;
+}
+
+.optical-stat-fill.workload {
+  background: linear-gradient(90deg, #d9c56f, #b28224);
+}
+
+.optical-stat-fill.lgad {
+  background: linear-gradient(90deg, #4f82c4, #104b3a);
+}
+
+.optical-wafer-details {
+  margin: 0;
+  color: #707872;
+  font-size: 10px;
+}
+
+.optical-workload {
+  max-height: 390px;
+  overflow-y: auto;
+  padding-right: 6px;
+  scrollbar-color: #b8afa0 transparent;
+}
+
+.optical-stats-table-wrap {
+  max-width: 100%;
+  margin-top: 14px;
+  overflow-x: auto;
+  border: 1px solid #e6e0d2;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.optical-stats-table-wrap table {
+  width: 100%;
+  min-width: 1120px;
+}
+
+.optical-stats-table-wrap caption {
+  padding: 11px 12px;
+  color: #4c5650;
+  font-size: 12px;
+  font-weight: 760;
+  text-align: left;
+}
+
+.optical-stats-table-wrap th,
+.optical-stats-table-wrap td {
+  padding: 8px 9px;
+  font-size: 11px;
+}
+
+.optical-stats-table-wrap th[data-etroc-sort] {
+  cursor: pointer;
+}
+
+.optical-stats-table-wrap th[data-etroc-sort]:focus-visible {
+  outline: 3px solid #2f6fdd;
+  outline-offset: -3px;
+}
+
+.optical-table-link {
+  color: #104b3a;
+  font-weight: 790;
+}
+
+.optical-analytics-note {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin: 14px 0 0;
+  border-left: 4px solid #d9c56f;
+  padding: 10px 12px;
+  background: #fff8d9;
+  color: #514a34;
+  font-size: 11px;
+}
+
+.optical-analytics-note strong {
+  color: #6f5200;
+}
+
+.optical-chart-empty {
+  color: #787f7b;
+  font-size: 12px;
+}
+
+@media (max-width: 800px) {
+  .optical-analytics {
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .optical-analytics-heading,
+  .optical-stat-row-heading {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .optical-analytics-state {
+    max-width: none;
+    border-radius: 12px;
+  }
+
+  .optical-analytics-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .optical-chart-card.wide {
+    grid-column: auto;
+  }
+
+  .optical-analytics-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .optical-analytics-toolbar select,
+  .optical-analytics-toolbar input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .optical-analytics-toolbar [role="status"] {
+    margin-left: 0;
+  }
+
+  .optical-analytics-note {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .optical-stat-fill,
+  .optical-stack-segment {
+    transition: none;
+  }
+}
