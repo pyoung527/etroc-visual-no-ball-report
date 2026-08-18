@@ -3,11 +3,15 @@ set -Eeuo pipefail
 umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 
-SOURCE_REVISION='d720aaff176f70e539d9833fec7ba3ca12ca2dcf'
+SOURCE_REVISION='90b648221739588a373be9231be45743c40d66e1'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
-INDEX_SHA256='1437ad8b600151f188a6cd1c344251fdf5cdf58b41d4f60e12e4443bf81afe05'
-CSS_SHA256='45c9e4ea6ebba50a6021bda5d2298b7cd4fa4dc581d3839402017f999522e053'
-JS_SHA256='139367fcf30f4df939d5e83bc606379e045ea0c735238d44f8167386e2e5ed31'
+INDEX_SHA256='63abb3062d2a65656066e1ced955f9b78357e76ece08cc223b5e6d0bec4956a7'
+CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
+JS_SHA256='317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644'
+ETROC_CSS_SHA256='e29d616a56987dc38039fe416c97d76651bee02cb59c4e9c3bcfc6465ea1c619'
+ETROC_JS_SHA256='64a372a7f1b3214d78e3724abe67f50e939c423e05ba4f355f01901f9a3ed4f3'
+ETROC_MANIFEST_SHA256='96de00c344aabb3152a0d44323cc52c26e1e930dad63f25ae1d59fb4be5d3f9e'
+ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'
 SELECTOR_SHA256='54e53acf4853fab3d804101568cfd4276272c45e15cc59e8bb5bb3befb91cc86'
 SSO_SOURCE_REVISION='d049ae2182f795c4f5dec15dfb8dbef8971518da'
 SSO_SOURCE_SHA256='67b6eebc40f8b36e44124bfcec3fc526e29f93830fa203d0c8feeedfd99e9ca3'
@@ -397,24 +401,56 @@ BACKUP_SHA256="$(sha256sum "$LOCAL_BACKUP" | cut -d' ' -f1)"
 [[ "$BACKUP_SHA256" =~ ^[0-9a-f]{64}$ ]]
 printf '%s  %s\n' "$BACKUP_SHA256" "$LOCAL_BACKUP" > "${LOCAL_BACKUP}.sha256"
 
-mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay"
-for file in index.html dashboard.css dashboard.js; do
+mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay" "${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
+for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js; do
   curl --fail --silent --show-error --location \
     "${RAW_ROOT}/hybrid-bbqc/${file}" --output "${BUILD_CONTEXT}/overlay/${file}"
 done
+DATASET_DIR="${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
+curl --fail --silent --show-error --location \
+  "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/SHA256SUMS" --output "${DATASET_DIR}/SHA256SUMS"
+printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${DATASET_DIR}/SHA256SUMS" | sha256sum -c -
+python3 -I - "${DATASET_DIR}/SHA256SUMS" <<'PY'
+from pathlib import PurePosixPath
+import re, sys
+lines=open(sys.argv[1], encoding='ascii').read().splitlines()
+if len(lines) != 73:
+    raise SystemExit(f'unexpected ETROC dataset manifest cardinality: {len(lines)}')
+seen=set()
+for line in lines:
+    if not re.fullmatch(r'[0-9a-f]{64}  (chips\.json|(?:montages|previews)/(?:W02G4|W03F7|W05E5)-[0-9]+\.jpg)', line):
+        raise SystemExit(f'unsafe ETROC dataset manifest entry: {line!r}')
+    relative=line[66:]
+    path=PurePosixPath(relative)
+    if path.is_absolute() or '..' in path.parts or relative in seen:
+        raise SystemExit(f'unsafe or duplicate ETROC dataset path: {relative!r}')
+    seen.add(relative)
+if sum(path.startswith('montages/') for path in seen) != 36 or sum(path.startswith('previews/') for path in seen) != 36 or 'chips.json' not in seen:
+    raise SystemExit('unexpected ETROC dataset asset roles')
+PY
+while read -r digest relative; do
+  destination="${DATASET_DIR}/${relative}"
+  mkdir -p "$(dirname "$destination")"
+  curl --fail --silent --show-error --location \
+    "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/${relative}" --output "$destination"
+done < "${DATASET_DIR}/SHA256SUMS"
 (
   cd "${BUILD_CONTEXT}/overlay"
   printf '%s  %s\n' "$INDEX_SHA256" index.html > SHA256SUMS
   printf '%s  %s\n' "$CSS_SHA256" dashboard.css >> SHA256SUMS
   printf '%s  %s\n' "$JS_SHA256" dashboard.js >> SHA256SUMS
+  printf '%s  %s\n' "$ETROC_CSS_SHA256" etroc-optical.css >> SHA256SUMS
+  printf '%s  %s\n' "$ETROC_JS_SHA256" etroc-optical.js >> SHA256SUMS
+  printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${ETROC_DATASET_REL}/SHA256SUMS" >> SHA256SUMS
+  sha256sum -c SHA256SUMS
+  cd "$ETROC_DATASET_REL"
   sha256sum -c SHA256SUMS
 )
 printf '%s\n' \
   "FROM ${OLD_WEB_IMAGE}" \
   'USER root' \
   'COPY overlay/ /app/static/' \
-  'RUN chown root:root /app/static/index.html /app/static/dashboard.css /app/static/dashboard.js /app/static/SHA256SUMS \' \
-  '    && chmod u=rw,go=r /app/static/index.html /app/static/dashboard.css /app/static/dashboard.js /app/static/SHA256SUMS' \
+  'RUN chown -R root:root /app/static && chmod -R u=rwX,go=rX /app/static' \
   'USER app' > "${BUILD_CONTEXT}/hybrid-bbqc/Containerfile"
 ACTUAL_TOP_LEVEL="$(python3 -I - "$BUILD_CONTEXT" <<'PY'
 from pathlib import Path
@@ -428,7 +464,7 @@ BUILD_CONTEXT_SHA256="$(tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --gro
 [[ "$BUILD_CONTEXT_SHA256" =~ ^[0-9a-f]{64}$ ]]
 
 {
-  declare -p SOURCE_REVISION API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
+  declare -p SOURCE_REVISION ETROC_DATASET_REL ETROC_MANIFEST_SHA256 API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
   declare -p DEPLOYMENT_UID OLD_WEB_IMAGE OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256
   declare -p DEPLOYMENT_RESOURCE_VERSION CAPTURED_DEPLOYMENT_FILE CAPTURED_DEPLOYMENT_SHA256
   declare -p BUILDCONFIG_FILE BUILDCONFIG_SHA256 BUILDCONFIG_UID BUILDCONFIG_RESOURCE_VERSION
@@ -522,11 +558,35 @@ test "$POD_PROXY_IMAGE" = "$OLD_PROXY_IMAGE"
 REMOTE_INDEX_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/index.html | cut -d' ' -f1)"
 REMOTE_CSS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/dashboard.css | cut -d' ' -f1)"
 REMOTE_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/dashboard.js | cut -d' ' -f1)"
+REMOTE_ETROC_CSS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.css | cut -d' ' -f1)"
+REMOTE_ETROC_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.js | cut -d' ' -f1)"
+REMOTE_ETROC_MANIFEST_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum "/app/static/${ETROC_DATASET_REL}/SHA256SUMS" | cut -d' ' -f1)"
 test "$REMOTE_INDEX_SHA" = "$INDEX_SHA256"
 test "$REMOTE_CSS_SHA" = "$CSS_SHA256"
 test "$REMOTE_JS_SHA" = "$JS_SHA256"
-oc -n "$PROJECT" exec "$POD" -c web -- python -c \
-  "from pathlib import Path; [p.read_bytes() for p in map(Path, ['/app/static/index.html','/app/static/dashboard.css','/app/static/dashboard.js'])]; print('STATIC_READ PASS')"
+test "$REMOTE_ETROC_CSS_SHA" = "$ETROC_CSS_SHA256"
+test "$REMOTE_ETROC_JS_SHA" = "$ETROC_JS_SHA256"
+test "$REMOTE_ETROC_MANIFEST_SHA" = "$ETROC_MANIFEST_SHA256"
+oc -n "$PROJECT" exec "$POD" -c web -- sh -c \
+  "cd '/app/static/${ETROC_DATASET_REL}' && sha256sum -c SHA256SUMS"
+oc -n "$PROJECT" exec -i "$POD" -c web -- env ETROC_DATASET_REL="$ETROC_DATASET_REL" python - <<'PY'
+import json, os
+from collections import Counter
+from pathlib import Path
+root=Path('/app/static') / os.environ['ETROC_DATASET_REL']
+payload=json.loads((root / 'chips.json').read_text(encoding='utf-8'))
+records=payload.get('records')
+if payload.get('dataset_id') != 'ETROC_OI_2608' or payload.get('publication_status') != 'exploratory_review_pending':
+    raise SystemExit('runtime ETROC dataset identity/status mismatch')
+if not isinstance(records, list) or len(records) != 36 or payload.get('position_record_count') != 9216:
+    raise SystemExit('runtime ETROC dataset cardinality mismatch')
+if Counter(row['wafer'] for row in records) != Counter({'W02G4': 18, 'W03F7': 9, 'W05E5': 9}):
+    raise SystemExit('runtime ETROC wafer cardinality mismatch')
+assets=[root / row[key] for row in records for key in ('montage_uri','preview_uri')]
+if len(set(assets)) != 72 or any(not path.is_file() or path.stat().st_size == 0 for path in assets):
+    raise SystemExit('runtime ETROC asset inventory mismatch')
+print({'dataset_id': payload['dataset_id'], 'records': len(records), 'assets': len(assets), 'positions': payload['position_record_count']})
+PY
 
 oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" python - <<'PY'
 import hashlib, json, os, sqlite3

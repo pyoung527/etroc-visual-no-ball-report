@@ -23,19 +23,37 @@ class LxplusDashboardDeployTests(unittest.TestCase):
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='d720aaff176f70e539d9833fec7ba3ca12ca2dcf'",
+            "SOURCE_REVISION='90b648221739588a373be9231be45743c40d66e1'",
             script,
         )
         expected = {
-            "index.html": "1437ad8b600151f188a6cd1c344251fdf5cdf58b41d4f60e12e4443bf81afe05",
-            "dashboard.css": "45c9e4ea6ebba50a6021bda5d2298b7cd4fa4dc581d3839402017f999522e053",
-            "dashboard.js": "139367fcf30f4df939d5e83bc606379e045ea0c735238d44f8167386e2e5ed31",
+            "index.html": "63abb3062d2a65656066e1ced955f9b78357e76ece08cc223b5e6d0bec4956a7",
+            "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
+            "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
+            "etroc-optical.css": "e29d616a56987dc38039fe416c97d76651bee02cb59c4e9c3bcfc6465ea1c619",
+            "etroc-optical.js": "64a372a7f1b3214d78e3724abe67f50e939c423e05ba4f355f01901f9a3ed4f3",
+            "ETROC_MANIFEST_SHA256": "96de00c344aabb3152a0d44323cc52c26e1e930dad63f25ae1d59fb4be5d3f9e",
         }
         for filename, digest in expected.items():
             self.assertIn(filename, script)
             self.assertIn(digest, script)
         self.assertIn("sha256sum -c", script)
         self.assertIn("raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report", script)
+
+    def test_helper_pins_complete_etroc_dataset_and_runtime_verification(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        for required in (
+            "ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'",
+            "unexpected ETROC dataset manifest cardinality",
+            "unsafe ETROC dataset manifest entry",
+            "sum(path.startswith('montages/') for path in seen) != 36",
+            "sum(path.startswith('previews/') for path in seen) != 36",
+            "cd '/app/static/${ETROC_DATASET_REL}' && sha256sum -c SHA256SUMS",
+            "payload.get('position_record_count') != 9216",
+            "len(set(assets)) != 72",
+        ):
+            self.assertIn(required, script)
+        self.assertIn('"${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/${relative}"', script)
 
     def test_helper_fails_closed_on_context_and_permissions(self):
         script = SCRIPT.read_text(encoding="utf-8")
@@ -61,7 +79,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
         self.assertIn("case \"$OLD_WEB_IMAGE\" in *@sha256:*)", script)
         self.assertIn("FROM ${OLD_WEB_IMAGE}", script)
         self.assertIn("COPY overlay/ /app/static/", script)
-        self.assertIn("u=rw,go=r", script)
+        self.assertIn("u=rwX,go=rX", script)
         self.assertIn("--from-dir=\"$BUILD_CONTEXT\"", script)
         self.assertNotIn("--from-dir=.", script)
         self.assertNotIn("oc rollout undo", script)
@@ -110,6 +128,9 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "/app/static/index.html",
             "/app/static/dashboard.css",
             "/app/static/dashboard.js",
+            "/app/static/etroc-optical.css",
+            "/app/static/etroc-optical.js",
+            "/app/static/${ETROC_DATASET_REL}/SHA256SUMS",
             "if runtime_schema_sha256 != os.environ['BACKUP_SCHEMA_SHA256']:",
             "if comments < int(os.environ['BEFORE_COMMENTS']):",
             "BBQC_STARTUP_OK|Serving /app/static with comments API on :8080;",
