@@ -27,15 +27,16 @@ class LxplusDashboardDeployTests(unittest.TestCase):
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='90b648221739588a373be9231be45743c40d66e1'",
+            "SOURCE_REVISION='17f0132629095866531f5f903f6b55c240b40d70'",
             script,
         )
         expected = {
-            "index.html": "63abb3062d2a65656066e1ced955f9b78357e76ece08cc223b5e6d0bec4956a7",
+            "index.html": "e473694530c58cda95ccd270abe9c2dea11b8db61f8684b7671292628500faa9",
             "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
             "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
-            "etroc-optical.css": "e29d616a56987dc38039fe416c97d76651bee02cb59c4e9c3bcfc6465ea1c619",
-            "etroc-optical.js": "64a372a7f1b3214d78e3724abe67f50e939c423e05ba4f355f01901f9a3ed4f3",
+            "etroc-optical.css": "028bb4d38f70740aa18fed096de79772ec5104012f27576b5e194de7796b7ca2",
+            "etroc-optical.js": "98059cd915fb72b6228b96acbfe98646d45d5011ee1ac8491f957255b79f5cad",
+            "lgad-optical-stats.js": "e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02",
             "ETROC_MANIFEST_SHA256": "96de00c344aabb3152a0d44323cc52c26e1e930dad63f25ae1d59fb4be5d3f9e",
         }
         for filename, digest in expected.items():
@@ -134,6 +135,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "/app/static/dashboard.js",
             "/app/static/etroc-optical.css",
             "/app/static/etroc-optical.js",
+            "/app/static/lgad-optical-stats.js",
             "/app/static/${ETROC_DATASET_REL}/SHA256SUMS",
             "if runtime_schema_sha256 != os.environ['BACKUP_SCHEMA_SHA256']:",
             "if comments < int(os.environ['BEFORE_COMMENTS']):",
@@ -143,6 +145,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
         ):
             self.assertIn(required, script)
         self.assertNotIn("get istag etl-hybrid-bbqc:latest", script)
+        self.assertNotIn("X-Forwarded-Email", script)
 
     def test_helper_bootstraps_official_device_flow_without_printing_tokens(self):
         script = SCRIPT.read_text(encoding="utf-8")
@@ -265,6 +268,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "http://127.0.0.1:8080/",
             "etroc-optical.js",
             "etroc-optical.css",
+            "lgad-optical-stats.js",
             "data/etroc-optical/ETROC_OI_2608/chips.json",
             "data/etroc-optical/ETROC_OI_2608/previews/W02G4-44.jpg",
             "data/etroc-optical/ETROC_OI_2608/montages/W02G4-44.jpg",

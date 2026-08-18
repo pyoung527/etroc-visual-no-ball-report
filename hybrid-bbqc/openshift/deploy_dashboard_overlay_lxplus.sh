@@ -3,13 +3,14 @@ set -Eeuo pipefail
 umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 
-SOURCE_REVISION='90b648221739588a373be9231be45743c40d66e1'
+SOURCE_REVISION='17f0132629095866531f5f903f6b55c240b40d70'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
-INDEX_SHA256='63abb3062d2a65656066e1ced955f9b78357e76ece08cc223b5e6d0bec4956a7'
+INDEX_SHA256='e473694530c58cda95ccd270abe9c2dea11b8db61f8684b7671292628500faa9'
 CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
 JS_SHA256='317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644'
-ETROC_CSS_SHA256='e29d616a56987dc38039fe416c97d76651bee02cb59c4e9c3bcfc6465ea1c619'
-ETROC_JS_SHA256='64a372a7f1b3214d78e3724abe67f50e939c423e05ba4f355f01901f9a3ed4f3'
+ETROC_CSS_SHA256='028bb4d38f70740aa18fed096de79772ec5104012f27576b5e194de7796b7ca2'
+ETROC_JS_SHA256='98059cd915fb72b6228b96acbfe98646d45d5011ee1ac8491f957255b79f5cad'
+LGAD_STATS_JS_SHA256='e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02'
 ETROC_MANIFEST_SHA256='96de00c344aabb3152a0d44323cc52c26e1e930dad63f25ae1d59fb4be5d3f9e'
 ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'
 SELECTOR_SHA256='54e53acf4853fab3d804101568cfd4276272c45e15cc59e8bb5bb3befb91cc86'
@@ -410,7 +411,7 @@ BACKUP_SHA256="$(sha256sum "$LOCAL_BACKUP" | cut -d' ' -f1)"
 printf '%s  %s\n' "$BACKUP_SHA256" "$LOCAL_BACKUP" > "${LOCAL_BACKUP}.sha256"
 
 mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay" "${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
-for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js; do
+for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js lgad-optical-stats.js; do
   curl --fail --silent --show-error --location \
     "${RAW_ROOT}/hybrid-bbqc/${file}" --output "${BUILD_CONTEXT}/overlay/${file}"
 done
@@ -449,6 +450,7 @@ done < "${DATASET_DIR}/SHA256SUMS"
   printf '%s  %s\n' "$JS_SHA256" dashboard.js >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_CSS_SHA256" etroc-optical.css >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_JS_SHA256" etroc-optical.js >> SHA256SUMS
+  printf '%s  %s\n' "$LGAD_STATS_JS_SHA256" lgad-optical-stats.js >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${ETROC_DATASET_REL}/SHA256SUMS" >> SHA256SUMS
   sha256sum -c SHA256SUMS
   cd "$ETROC_DATASET_REL"
@@ -567,12 +569,14 @@ REMOTE_CSS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/d
 REMOTE_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/dashboard.js | cut -d' ' -f1)"
 REMOTE_ETROC_CSS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.css | cut -d' ' -f1)"
 REMOTE_ETROC_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.js | cut -d' ' -f1)"
+REMOTE_LGAD_STATS_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/lgad-optical-stats.js | cut -d' ' -f1)"
 REMOTE_ETROC_MANIFEST_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum "/app/static/${ETROC_DATASET_REL}/SHA256SUMS" | cut -d' ' -f1)"
 test "$REMOTE_INDEX_SHA" = "$INDEX_SHA256"
 test "$REMOTE_CSS_SHA" = "$CSS_SHA256"
 test "$REMOTE_JS_SHA" = "$JS_SHA256"
 test "$REMOTE_ETROC_CSS_SHA" = "$ETROC_CSS_SHA256"
 test "$REMOTE_ETROC_JS_SHA" = "$ETROC_JS_SHA256"
+test "$REMOTE_LGAD_STATS_JS_SHA" = "$LGAD_STATS_JS_SHA256"
 test "$REMOTE_ETROC_MANIFEST_SHA" = "$ETROC_MANIFEST_SHA256"
 oc -n "$PROJECT" exec "$POD" -c web -- sh -c \
   "cd '/app/static/${ETROC_DATASET_REL}' && sha256sum -c SHA256SUMS"
@@ -597,7 +601,7 @@ PY
 
 oc -n "$PROJECT" exec -i "$POD" -c web -- env \
   INDEX_SHA256="$INDEX_SHA256" ETROC_CSS_SHA256="$ETROC_CSS_SHA256" \
-  ETROC_JS_SHA256="$ETROC_JS_SHA256" python - <<'PY'
+  ETROC_JS_SHA256="$ETROC_JS_SHA256" LGAD_STATS_JS_SHA256="$LGAD_STATS_JS_SHA256" python - <<'PY'
 import hashlib, json, os
 import urllib.request
 
@@ -616,6 +620,7 @@ for path, expected_sha256 in (
     ('', os.environ['INDEX_SHA256']),
     ('etroc-optical.js', os.environ['ETROC_JS_SHA256']),
     ('etroc-optical.css', os.environ['ETROC_CSS_SHA256']),
+    ('lgad-optical-stats.js', os.environ['LGAD_STATS_JS_SHA256']),
 ):
     actual = hashlib.sha256(fetch(path)).hexdigest()
     if actual != expected_sha256:
@@ -676,7 +681,7 @@ fi
 
 HEADERS="${WORK_DIR}/route-headers"
 HTTP_STATUS="$(curl --silent --show-error --dump-header "$HEADERS" --output /dev/null --write-out '%{http_code}' \
-  -H 'X-Forwarded-Email: ypark@cern.ch' https://etl-hybrid-bbqc.app.cern.ch/api/health)"
+  https://etl-hybrid-bbqc.app.cern.ch/api/health)"
 test "$HTTP_STATUS" = 302
 LOCATION="$(python3 -I - "$HEADERS" <<'PY'
 import sys
