@@ -1848,7 +1848,7 @@ PY
   sleep 5
 done
 verify_candidate_probe_identity
-grep -q 'BBQC_STARTUP_OK' <<< "$(oc -n "$PROJECT" logs "$CANDIDATE_PROBE_POD")"
+grep -q 'BBQC_STARTUP_OK' <<< "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" sh -ec 'test "$POD_UID" = "$EXPECTED_POD_UID"; cat /tmp/candidate-entrypoint.log')"
 cleanup_candidate_probe_pod
 printf 'CANDIDATE_IMAGE_STARTUP PASS image=%s\n' "$NEW_WEB_IMAGE"
 

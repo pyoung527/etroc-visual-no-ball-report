@@ -2008,6 +2008,8 @@ validate_manifest_topology {mode} {shlex.quote(str(deployment_file))} {shlex.quo
         self.assertIn('"fieldPath":"metadata.uid"', candidate)
         self.assertNotIn('oc -n "$PROJECT" cp ', candidate)
         self.assertGreaterEqual(candidate.count('EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID"'), 4)
+        self.assertIn("cat /tmp/candidate-entrypoint.log", candidate)
+        self.assertNotIn('logs "$CANDIDATE_PROBE_POD"', candidate)
         self.assertLess(
             candidate.index("CANDIDATE_PROBE_POD_OWNED=1"),
             candidate.index("candidate probe create response spec mismatch"),
