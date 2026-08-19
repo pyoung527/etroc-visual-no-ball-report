@@ -110,7 +110,7 @@ spec:
             - --reverse-proxy=true
             - --pass-host-header=true
             - --pass-user-headers=true
-            - --skip-auth-strip-headers=true
+            - --skip-auth-strip-headers=false
             - --skip-provider-button=true
             - --cookie-secure=true
             - --cookie-samesite=lax

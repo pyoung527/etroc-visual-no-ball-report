@@ -1526,7 +1526,8 @@ class HybridRegistryDeploymentTests(unittest.TestCase):
             "quay.io/oauth2-proxy/oauth2-proxy@sha256:10a1165743a192e1940b4708fb9647027185ce11a681a1c5519b442ff7f1f561",
             manifest,
         )
-        self.assertIn("--skip-auth-strip-headers=true", manifest)
+        self.assertIn("--skip-auth-strip-headers=false", manifest)
+        self.assertNotIn("--skip-auth-strip-headers=true", manifest)
         containerfile = (ROOT / "hybrid-bbqc" / "Containerfile").read_text(
             encoding="utf-8"
         )
