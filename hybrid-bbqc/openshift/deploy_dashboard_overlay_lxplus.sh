@@ -822,9 +822,10 @@ select_single_app_pod() {
 }
 
 validate_previous_release_annotations() {
-  CAPTURED_DEPLOYMENT_FILE="$CAPTURED_DEPLOYMENT_FILE" OLD_WEB_IMAGE="$OLD_WEB_IMAGE" \
-    PROJECT="$PROJECT" BUILDCONFIG="$BUILDCONFIG" BUILDCONFIG_UID="$BUILDCONFIG_UID" python3 -I - <<'PY'
+  CAPTURED_DEPLOYMENT_FILE="$CAPTURED_DEPLOYMENT_FILE" CAPTURED_BUILDCONFIG_FILE="$BUILDCONFIG_FILE" OLD_WEB_IMAGE="$OLD_WEB_IMAGE" \
+    PROJECT="$PROJECT" BUILDCONFIG="$BUILDCONFIG" BUILDCONFIG_UID="$BUILDCONFIG_UID" DEPLOYMENT_UID="$DEPLOYMENT_UID" python3 -I - <<'PY'
 import json, os, re, subprocess
+from datetime import datetime
 
 captured=json.load(open(os.environ['CAPTURED_DEPLOYMENT_FILE'], encoding='utf-8'))
 annotations=captured.get('metadata', {}).get('annotations', {})
@@ -836,6 +837,12 @@ annotations.pop('kubectl.kubernetes.io/last-applied-configuration', None)
 if not annotations:
     print('{}')
     raise SystemExit(0)
+metadata=captured.get('metadata', {})
+if metadata.get('uid') != os.environ['DEPLOYMENT_UID']:
+    raise SystemExit('previous release Deployment UID differs from captured identity')
+web_images=[item.get('image') for item in captured.get('spec', {}).get('template', {}).get('spec', {}).get('containers', []) if item.get('name') == 'web']
+if web_images != [os.environ['OLD_WEB_IMAGE']]:
+    raise SystemExit('previous release Deployment immutable web image differs from captured digest')
 keys={
     'bbqc.cern.ch/source-revision',
     'bbqc.cern.ch/build-context-sha256',
@@ -856,36 +863,142 @@ if match is None:
     raise SystemExit('previous release Build reference is invalid')
 build_name=match.group(1)
 build_number=build_name.rsplit('-', 1)[1]
+old_image=os.environ['OLD_WEB_IMAGE']
+old_digest=old_image.rsplit('@', 1)[1] if '@' in old_image else ''
+if re.fullmatch(r'sha256:[0-9a-f]{64}', old_digest) is None:
+    raise SystemExit('deployed old image digest is invalid')
 result=subprocess.run(
-    ['oc', '-n', os.environ['PROJECT'], 'get', 'build/' + build_name, '-o', 'json'],
+    ['oc', '-n', os.environ['PROJECT'], 'get', 'build/' + build_name, '--ignore-not-found', '-o', 'json'],
     check=False, capture_output=True, text=True,
 )
 if result.returncode != 0:
-    raise SystemExit('previous release Build is unavailable')
-build=json.loads(result.stdout)
-metadata=build.get('metadata', {})
-status=build.get('status', {})
-if metadata.get('name') != build_name or metadata.get('namespace') != os.environ['PROJECT']:
-    raise SystemExit('previous release Build identity changed')
-expected_owner=[{
-    'apiVersion': 'build.openshift.io/v1',
-    'controller': True,
-    'kind': 'BuildConfig',
-    'name': buildconfig,
-    'uid': os.environ['BUILDCONFIG_UID'],
-}]
-if metadata.get('ownerReferences') != expected_owner:
-    raise SystemExit('previous release Build controller ownerReference is invalid')
-if metadata.get('labels', {}).get('buildconfig') != buildconfig or metadata.get('annotations', {}).get('openshift.io/build-config.name') != buildconfig or metadata.get('annotations', {}).get('openshift.io/build.number') != build_number:
-    raise SystemExit('previous release Build ownership is invalid')
-if status.get('phase') != 'Complete':
-    raise SystemExit('previous release Build is not complete')
-# Required provenance contract: status.output.to.imageDigest
-build_digest=status.get('output', {}).get('to', {}).get('imageDigest')
-old_image=os.environ['OLD_WEB_IMAGE']
-old_digest=old_image.rsplit('@', 1)[1] if '@' in old_image else ''
-if re.fullmatch(r'sha256:[0-9a-f]{64}', build_digest or '') is None or build_digest != old_digest:
-    raise SystemExit('previous release Build digest differs from deployed old image')
+    raise SystemExit('previous release Build lookup failed')
+if result.stdout.strip():
+    build=json.loads(result.stdout)
+    metadata=build.get('metadata', {})
+    status=build.get('status', {})
+    if metadata.get('name') != build_name or metadata.get('namespace') != os.environ['PROJECT']:
+        raise SystemExit('previous release Build identity changed')
+    expected_owner=[{
+        'apiVersion': 'build.openshift.io/v1',
+        'controller': True,
+        'kind': 'BuildConfig',
+        'name': buildconfig,
+        'uid': os.environ['BUILDCONFIG_UID'],
+    }]
+    if metadata.get('ownerReferences') != expected_owner:
+        raise SystemExit('previous release Build controller ownerReference is invalid')
+    if metadata.get('labels', {}).get('buildconfig') != buildconfig or metadata.get('annotations', {}).get('openshift.io/build-config.name') != buildconfig or metadata.get('annotations', {}).get('openshift.io/build.number') != build_number:
+        raise SystemExit('previous release Build ownership is invalid')
+    if status.get('phase') != 'Complete':
+        raise SystemExit('previous release Build is not complete')
+    # Required provenance contract: status.output.to.imageDigest
+    build_digest=status.get('output', {}).get('to', {}).get('imageDigest')
+    if re.fullmatch(r'sha256:[0-9a-f]{64}', build_digest or '') is None or build_digest != old_digest:
+        raise SystemExit('previous release Build digest differs from deployed old image')
+else:
+    captured_buildconfig=json.load(open(os.environ['CAPTURED_BUILDCONFIG_FILE'], encoding='utf-8'))
+    bc_metadata=captured_buildconfig.get('metadata', {})
+    bc_spec=captured_buildconfig.get('spec', {})
+    bc_status=captured_buildconfig.get('status', {})
+    history_limit=bc_spec.get('successfulBuildsHistoryLimit')
+    last_version=bc_status.get('lastVersion')
+    if bc_metadata.get('name') != buildconfig or bc_metadata.get('namespace') != os.environ['PROJECT'] or bc_metadata.get('uid') != os.environ['BUILDCONFIG_UID']:
+        raise SystemExit('captured BuildConfig identity changed during prune validation')
+    if not isinstance(history_limit, int) or isinstance(history_limit, bool) or history_limit < 1 or not isinstance(last_version, int) or isinstance(last_version, bool):
+        raise SystemExit('BuildConfig successful-build retention is not explicit')
+    def parse_timestamp(value, label):
+        if not isinstance(value, str):
+            raise SystemExit(label + ' timestamp is invalid')
+        try:
+            parsed=datetime.fromisoformat(value.replace('Z', '+00:00'))
+        except ValueError:
+            raise SystemExit(label + ' timestamp is invalid') from None
+        if parsed.tzinfo is None or parsed.utcoffset() is None:
+            raise SystemExit(label + ' timestamp is invalid')
+        return parsed
+    buildconfig_created=parse_timestamp(bc_metadata.get('creationTimestamp'), 'BuildConfig creation')
+    builds_result=subprocess.run(
+        ['oc', '-n', os.environ['PROJECT'], 'get', 'builds', '-l', 'buildconfig=' + buildconfig, '-o', 'json'],
+        check=False, capture_output=True, text=True,
+    )
+    if builds_result.returncode != 0:
+        raise SystemExit('retained Build inventory lookup failed')
+    retained_builds=json.loads(builds_result.stdout)
+    historical_number=int(build_number)
+    newer_completed=[]
+    expected_retained_owner=[{
+        'apiVersion': 'build.openshift.io/v1',
+        'controller': True,
+        'kind': 'BuildConfig',
+        'name': buildconfig,
+        'uid': os.environ['BUILDCONFIG_UID'],
+    }]
+    for retained in retained_builds.get('items', []):
+        retained_metadata=retained.get('metadata', {})
+        retained_status=retained.get('status', {})
+        retained_annotations=retained_metadata.get('annotations', {})
+        number_text=retained_annotations.get('openshift.io/build.number')
+        if retained_status.get('phase') != 'Complete':
+            continue
+        if not isinstance(number_text, str) or re.fullmatch(r'(0|[1-9][0-9]*)', number_text) is None:
+            raise SystemExit('retained successful Build number is invalid')
+        number=int(number_text)
+        if number <= historical_number:
+            continue
+        if retained_metadata.get('name') != buildconfig + '-' + number_text or retained_metadata.get('namespace') != os.environ['PROJECT'] or retained_metadata.get('ownerReferences') != expected_retained_owner:
+            raise SystemExit('retained successful Build identity or owner is invalid')
+        if retained_metadata.get('labels', {}).get('buildconfig') != buildconfig or retained_annotations.get('openshift.io/build-config.name') != buildconfig:
+            raise SystemExit('retained successful Build ownership is invalid')
+        retained_completed=parse_timestamp(retained_status.get('completionTimestamp'), 'retained successful Build completion')
+        newer_completed.append((number, retained_completed))
+    newer_numbers={number for number, _created in newer_completed}
+    required_newer_numbers=set(range(historical_number + 1, historical_number + history_limit + 1))
+    if not required_newer_numbers.issubset(newer_numbers) or max(newer_numbers, default=historical_number) > last_version:
+        raise SystemExit('missing previous release Build is not explained by successful-Build retention')
+    isi_name=buildconfig + '@' + old_digest
+    isi_result=subprocess.run(
+        ['oc', '-n', os.environ['PROJECT'], 'get', 'imagestreamimage/' + isi_name, '-o', 'json'],
+        check=False, capture_output=True, text=True,
+    )
+    if isi_result.returncode != 0:
+        raise SystemExit('previous release ImageStreamImage is unavailable')
+    isi=json.loads(isi_result.stdout)
+    isi_metadata=isi.get('metadata', {})
+    image=isi.get('image', {})
+    image_metadata=image.get('metadata', {})
+    image_labels=image.get('dockerImageMetadata', {}).get('Config', {}).get('Labels', {})
+    required_image_labels={
+        'io.openshift.build.name': build_name,
+        'io.openshift.build.namespace': os.environ['PROJECT'],
+    }
+    openshift_build_labels={key: value for key, value in image_labels.items() if key.startswith('io.openshift.build.')}
+    image_annotations=image_metadata.get('annotations', {})
+    if isi_metadata.get('name') != isi_name or isi_metadata.get('namespace') != os.environ['PROJECT'] or image_metadata.get('name') != old_digest or image.get('dockerImageReference') != old_image:
+        raise SystemExit('previous release ImageStreamImage identity differs from deployed old image')
+    image_created=parse_timestamp(image_metadata.get('creationTimestamp'), 'previous release image creation')
+    if image_created <= buildconfig_created:
+        raise SystemExit('previous release image predates current BuildConfig UID')
+    first_newer_completed=min(completed for number, completed in newer_completed if number == historical_number + 1)
+    if image_created >= first_newer_completed:
+        raise SystemExit('previous release image creation is inconsistent with retained Build completion sequence')
+    if openshift_build_labels != required_image_labels or image_annotations.get('openshift.io/image.managed') != 'true' or image_annotations.get('image.openshift.io/manifestBlobStored') != 'true':
+        raise SystemExit('previous release ImageStreamImage provenance is invalid')
+    stream_result=subprocess.run(
+        ['oc', '-n', os.environ['PROJECT'], 'get', 'imagestream/' + buildconfig, '-o', 'json'],
+        check=False, capture_output=True, text=True,
+    )
+    if stream_result.returncode != 0:
+        raise SystemExit('previous release ImageStream is unavailable')
+    stream=json.loads(stream_result.stdout)
+    stream_metadata=stream.get('metadata', {})
+    tag_items=[item for tag in stream.get('status', {}).get('tags', []) if tag.get('tag') == 'latest' for item in tag.get('items', [])]
+    matching_items=[item for item in tag_items if item.get('image') == old_digest and item.get('dockerImageReference') == old_image]
+    if stream_metadata.get('name') != buildconfig or stream_metadata.get('namespace') != os.environ['PROJECT'] or len(matching_items) != 1:
+        raise SystemExit('previous release image is absent or duplicated in ImageStream history')
+    history_created=parse_timestamp(matching_items[0].get('created'), 'ImageStream history creation')
+    if history_created != image_created:
+        raise SystemExit('ImageStream history creation differs from immutable image metadata')
 print(json.dumps(annotations, sort_keys=True, separators=(',', ':')))
 PY
 }
@@ -1485,6 +1598,8 @@ if not isinstance(uid, str) or not uid or not isinstance(resource_version, str) 
     raise SystemExit('captured BuildConfig identity is incomplete')
 if metadata.get('name') != 'etl-hybrid-bbqc' or metadata.get('namespace') != 'etroc-solder-inspection':
     raise SystemExit('captured BuildConfig target identity changed')
+if spec.get('successfulBuildsHistoryLimit') != 5 or spec.get('failedBuildsHistoryLimit') != 5:
+    raise SystemExit('captured BuildConfig history retention differs from pinned limits')
 if spec.get('source', {}).get('type') != 'Binary':
     raise SystemExit('captured BuildConfig source is not Binary')
 if spec.get('strategy', {}).get('dockerStrategy', {}).get('dockerfilePath') != 'hybrid-bbqc/Containerfile':

@@ -5,6 +5,8 @@ metadata:
   labels:
     app: etl-hybrid-bbqc
 spec:
+  successfulBuildsHistoryLimit: 5
+  failedBuildsHistoryLimit: 5
   source:
     type: Binary
   strategy:

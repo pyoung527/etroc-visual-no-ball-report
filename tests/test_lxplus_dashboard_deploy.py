@@ -1514,6 +1514,11 @@ measure_dashboard_headroom
                 if expected_failure:
                     self.assertIn("annotations differ from pinned baseline", result.stderr)
 
+    def test_buildconfig_manifest_pins_build_history_retention(self):
+        manifest = yaml.safe_load((ROOT / "hybrid-bbqc" / "openshift" / "buildconfig.yaml").read_text(encoding="utf-8"))
+        self.assertEqual(manifest["spec"]["successfulBuildsHistoryLimit"], 5)
+        self.assertEqual(manifest["spec"]["failedBuildsHistoryLimit"], 5)
+
     def test_previous_release_annotations_are_bound_to_completed_build_digest(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn("validate_previous_release_annotations() {", script)
@@ -1528,6 +1533,15 @@ measure_dashboard_headroom
             "bbqc.cern.ch/build-name",
             "bbqc.cern.ch/release-mode",
             "status.output.to.imageDigest",
+            "successfulBuildsHistoryLimit",
+            "get', 'builds', '-l', 'buildconfig=' + buildconfig",
+            "retained successful Build identity or owner is invalid",
+            "missing previous release Build is not explained by successful-Build retention",
+            "imagestreamimage/",
+            "openshift.io/image.managed",
+            "image.openshift.io/manifestBlobStored",
+            "io.openshift.build.name",
+            "previous release image is absent or duplicated in ImageStream history",
             "BUILDCONFIG_UID",
             "ownerReferences",
             "previous release Build controller ownerReference is invalid",
@@ -1555,7 +1569,7 @@ measure_dashboard_headroom
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             captured = root / "deployment.json"
-            captured.write_text(json.dumps({"metadata": {"annotations": annotations}}), encoding="utf-8")
+            captured.write_text(json.dumps({"metadata": {"uid": "deployment-uid", "annotations": annotations}, "spec": {"template": {"spec": {"containers": [{"name": "web", "image": "registry.example/etl-hybrid-bbqc@" + digest}]}}}}), encoding="utf-8")
             fake_build = root / "build.json"
             fake_oc = root / "oc"
             fake_oc.write_text("#!/bin/sh\ncat \"$FAKE_BUILD_JSON\"\n", encoding="utf-8")
@@ -1580,6 +1594,7 @@ measure_dashboard_headroom
                 "PROJECT": "etroc-solder-inspection",
                 "BUILDCONFIG": "etl-hybrid-bbqc",
                 "BUILDCONFIG_UID": buildconfig_uid,
+                "DEPLOYMENT_UID": "deployment-uid",
             }
             cases = (
                 ("valid", [{"apiVersion": "build.openshift.io/v1", "controller": True, "kind": "BuildConfig", "name": "etl-hybrid-bbqc", "uid": buildconfig_uid}], 0),
@@ -1595,6 +1610,116 @@ measure_dashboard_headroom
                     self.assertEqual(result.returncode != 0, bool(expected_failure), result.stderr)
                     if expected_failure:
                         self.assertIn("controller ownerReference is invalid", result.stderr)
+
+    def test_previous_release_pruned_build_fallback_is_executable(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        function_start = script.index("validate_previous_release_annotations() {")
+        python_start = script.index("import json, os, re, subprocess", function_start)
+        validator = script[python_start : script.index("\nPY\n}\n\nrender_forward_object()", python_start)]
+        annotations = {
+            "bbqc.cern.ch/source-revision": "a" * 40,
+            "bbqc.cern.ch/build-context-sha256": "b" * 64,
+            "bbqc.cern.ch/build-name": "build.build.openshift.io/etl-hybrid-bbqc-39",
+            "bbqc.cern.ch/release-mode": "immutable-overlay",
+        }
+        uid = "c79ed76a-20fe-4798-9194-b30a617a3590"
+        digest = "sha256:" + "c" * 64
+        old_image = "registry.example/etroc-solder-inspection/etl-hybrid-bbqc@" + digest
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            deployment = root / "deployment.json"
+            buildconfig = root / "buildconfig.json"
+            isi_file = root / "isi.json"
+            stream_file = root / "stream.json"
+            builds_file = root / "builds.json"
+            deployment.write_text(json.dumps({"metadata": {"uid": "deployment-uid", "annotations": annotations}, "spec": {"template": {"spec": {"containers": [{"name": "web", "image": old_image}]}}}}), encoding="utf-8")
+            buildconfig.write_text(json.dumps({
+                "metadata": {"name": "etl-hybrid-bbqc", "namespace": "etroc-solder-inspection", "uid": uid, "creationTimestamp": "2026-07-03T06:36:44Z"},
+                "spec": {"successfulBuildsHistoryLimit": 5}, "status": {"lastVersion": 45},
+            }), encoding="utf-8")
+            isi_file.write_text(json.dumps({
+                "metadata": {"name": "etl-hybrid-bbqc@" + digest, "namespace": "etroc-solder-inspection"},
+                "image": {
+                    "metadata": {"name": digest, "creationTimestamp": "2026-08-18T12:38:58Z", "annotations": {"openshift.io/image.managed": "true", "image.openshift.io/manifestBlobStored": "true"}},
+                    "dockerImageReference": old_image,
+                    "dockerImageMetadata": {"Config": {"Labels": {"io.openshift.build.name": "etl-hybrid-bbqc-39", "io.openshift.build.namespace": "etroc-solder-inspection"}}},
+                },
+            }), encoding="utf-8")
+            valid_stream = {
+                "metadata": {"name": "etl-hybrid-bbqc", "namespace": "etroc-solder-inspection"},
+                "status": {"tags": [{"tag": "latest", "items": [{"image": digest, "dockerImageReference": old_image, "created": "2026-08-18T12:38:58Z"}]}]},
+            }
+            stream_file.write_text(json.dumps(valid_stream), encoding="utf-8")
+            retained_owner = [{"apiVersion": "build.openshift.io/v1", "controller": True, "kind": "BuildConfig", "name": "etl-hybrid-bbqc", "uid": uid}]
+            builds_file.write_text(json.dumps({"items": [
+                {
+                    "metadata": {
+                        "name": f"etl-hybrid-bbqc-{number}", "namespace": "etroc-solder-inspection", "creationTimestamp": f"2026-08-19T12:{number}:00Z",
+                        "ownerReferences": retained_owner, "labels": {"buildconfig": "etl-hybrid-bbqc"},
+                        "annotations": {"openshift.io/build.number": str(number), "openshift.io/build-config.name": "etl-hybrid-bbqc"},
+                    },
+                    "status": {"phase": "Complete", "completionTimestamp": f"2026-08-19T13:{number}:00Z"},
+                }
+                for number in range(40, 45)
+            ]}), encoding="utf-8")
+            fake_oc = root / "oc"
+            fake_oc.write_text(
+                "#!/bin/sh\ncase \"$*\" in\n"
+                "  *\"get build/\"*) exit 0 ;;\n"
+                "  *\"get builds \"*) cat \"$FAKE_BUILDS_JSON\" ;;\n"
+                "  *\"get imagestreamimage/\"*) cat \"$FAKE_ISI_JSON\" ;;\n"
+                "  *\"get imagestream/\"*) cat \"$FAKE_STREAM_JSON\" ;;\n"
+                "  *) exit 1 ;;\n"
+                "esac\n",
+                encoding="utf-8",
+            )
+            fake_oc.chmod(0o700)
+            environment = os.environ | {
+                "PATH": str(root) + os.pathsep + os.environ["PATH"],
+                "FAKE_ISI_JSON": str(isi_file), "FAKE_STREAM_JSON": str(stream_file), "FAKE_BUILDS_JSON": str(builds_file),
+                "CAPTURED_DEPLOYMENT_FILE": str(deployment), "CAPTURED_BUILDCONFIG_FILE": str(buildconfig),
+                "OLD_WEB_IMAGE": old_image, "PROJECT": "etroc-solder-inspection",
+                "BUILDCONFIG": "etl-hybrid-bbqc", "BUILDCONFIG_UID": uid, "DEPLOYMENT_UID": "deployment-uid",
+            }
+            valid = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertEqual(valid.returncode, 0, valid.stderr)
+            valid_buildconfig = json.loads(buildconfig.read_text(encoding="utf-8"))
+            missing_history = json.loads(json.dumps(valid_buildconfig))
+            missing_history["spec"].pop("successfulBuildsHistoryLimit")
+            buildconfig.write_text(json.dumps(missing_history), encoding="utf-8")
+            missing_history_result = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(missing_history_result.returncode, 0)
+            self.assertIn("retention is not explicit", missing_history_result.stderr)
+            recreated_buildconfig = json.loads(json.dumps(valid_buildconfig))
+            recreated_buildconfig["metadata"]["creationTimestamp"] = "2026-08-18T13:00:00Z"
+            buildconfig.write_text(json.dumps(recreated_buildconfig), encoding="utf-8")
+            recreated_result = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(recreated_result.returncode, 0)
+            self.assertIn("image predates current BuildConfig UID", recreated_result.stderr)
+            buildconfig.write_text(json.dumps(valid_buildconfig), encoding="utf-8")
+            valid_builds = json.loads(builds_file.read_text(encoding="utf-8"))
+            insufficient_builds = json.loads(json.dumps(valid_builds))
+            insufficient_builds["items"] = insufficient_builds["items"][:4]
+            builds_file.write_text(json.dumps(insufficient_builds), encoding="utf-8")
+            insufficient = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(insufficient.returncode, 0)
+            self.assertIn("not explained by successful-Build retention", insufficient.stderr)
+            gapped_builds = json.loads(json.dumps(valid_builds))
+            last = gapped_builds["items"][-1]
+            last["metadata"]["name"] = "etl-hybrid-bbqc-45"
+            last["metadata"]["annotations"]["openshift.io/build.number"] = "45"
+            last["status"]["completionTimestamp"] = "2026-08-19T13:45:00Z"
+            builds_file.write_text(json.dumps(gapped_builds), encoding="utf-8")
+            gapped = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(gapped.returncode, 0)
+            self.assertIn("not explained by successful-Build retention", gapped.stderr)
+            builds_file.write_text(json.dumps(valid_builds), encoding="utf-8")
+            invalid_stream = json.loads(json.dumps(valid_stream))
+            invalid_stream["status"]["tags"][0]["items"] = []
+            stream_file.write_text(json.dumps(invalid_stream), encoding="utf-8")
+            invalid = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(invalid.returncode, 0)
+            self.assertIn("absent or duplicated in ImageStream history", invalid.stderr)
 
     def test_candidate_probe_cleanup_is_uid_guarded_and_owned_before_possible_failures(self):
         # Given: candidate creation succeeded and later wait, copy, or startup can fail.
