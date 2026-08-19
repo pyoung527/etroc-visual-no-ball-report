@@ -3,15 +3,21 @@ set -Eeuo pipefail
 umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 
-SOURCE_REVISION='17f0132629095866531f5f903f6b55c240b40d70'
+SOURCE_REVISION='4e30f825ea9d2c72c905993fd171ed08c5b6963f'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
-INDEX_SHA256='e473694530c58cda95ccd270abe9c2dea11b8db61f8684b7671292628500faa9'
+INDEX_SHA256='af5dbe0db30b41bb231be3248a4c9a1aebd831988759d839aece1c07c996e2ae'
 CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
 JS_SHA256='317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644'
-ETROC_CSS_SHA256='028bb4d38f70740aa18fed096de79772ec5104012f27576b5e194de7796b7ca2'
-ETROC_JS_SHA256='98059cd915fb72b6228b96acbfe98646d45d5011ee1ac8491f957255b79f5cad'
+ETROC_CSS_SHA256='d34af84b4828f6b354813c3356fce1d1f064cbc09826c0d4abd999451bf49d1d'
+ETROC_JS_SHA256='cf44ffb22cde59e6f527e02711db01f594c69081cc53ec275758b77ec7f35ecd'
+ETROC_REVIEW_JS_SHA256='2c1bcdd76b0fec0b05c32807b23526b1da543b9adde1429f87a1ce64dbce7809'
 LGAD_STATS_JS_SHA256='e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02'
-ETROC_MANIFEST_SHA256='96de00c344aabb3152a0d44323cc52c26e1e930dad63f25ae1d59fb4be5d3f9e'
+ETROC_MANIFEST_SHA256='616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29'
+SERVER_PY_SHA256='45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e'
+ETROC_REVIEWS_PY_SHA256='0da4caf6bc275941c00bda485daf1bdc9475646e1c1528af0a941cfea0b35984'
+DEPLOYMENT_MANIFEST_SHA256='0b102e22bd2a3ee08f9bde197da4a6fdad105beb1425e1ed91e604c98ad5b809'
+SERVICE_MANIFEST_SHA256='84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c'
+ROUTE_MANIFEST_SHA256='23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43'
 ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'
 SELECTOR_SHA256='54e53acf4853fab3d804101568cfd4276272c45e15cc59e8bb5bb3befb91cc86'
 VALIDATOR_SHA256='ecec82614fdc8c6524c722fd5809886d8fbe1e7799d6b04a0da2f50cfdd1f9f8'
@@ -25,11 +31,29 @@ PROJECT='etroc-solder-inspection'
 DEPLOYMENT='etl-hybrid-bbqc'
 BUILDCONFIG='etl-hybrid-bbqc'
 PVC='etl-hybrid-bbqc-comments'
-EXPECTED_TOP_LEVEL=$'hybrid-bbqc\noverlay'
+ETROC_REVIEWER_USERS='ypark,ypark@cern.ch'
+ETROC_REVIEWER_USERS_NORMALIZED=''
+ETROC_REVIEWER_USERS_COUNT=''
+ETROC_REVIEWER_USERS_SHA256=''
+EXPECTED_TOP_LEVEL=$'hybrid-bbqc\noverlay\nruntime'
 BACKUP_DIR="${HOME}/bbqc-backups"
 CURRENT_RELEASE_STATE="${BACKUP_DIR}/current-release.env"
+PVC_BACKUP_SAFETY_KIB=102400
+AFS_CHECKSUMS_KIB=64
+AFS_RELEASE_EVIDENCE_KIB=20480
+AFS_SAFETY_MARGIN_KIB=102400
+MAX_RELEASE_ARTIFACT_SETS=20
 WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/bbqc-dashboard-release.XXXXXXXX")"
 BUILD_CONTEXT="${WORK_DIR}/context"
+CANDIDATE_DB="${WORK_DIR}/comments-candidate.sqlite3"
+OLD_RUNTIME_DIR="${WORK_DIR}/previous-runtime"
+OLD_RUNTIME_SERVER="${OLD_RUNTIME_DIR}/server.py"
+MANIFESTS_DIR="${WORK_DIR}/manifests"
+SERVICE_MANIFEST_FILE="${MANIFESTS_DIR}/service.yaml"
+ROUTE_MANIFEST_FILE="${MANIFESTS_DIR}/route.yaml"
+BASELINE_DEPLOYMENT_FILE="${WORK_DIR}/baseline-deployment.json"
+BASELINE_SERVICE_FILE="${WORK_DIR}/baseline-service.json"
+BASELINE_ROUTE_FILE="${WORK_DIR}/baseline-route.json"
 SELECTOR="${WORK_DIR}/select_single_app_pod.py"
 VALIDATOR="${WORK_DIR}/validate_build_provenance.py"
 ROLLOUT_MUTATED=0
@@ -37,21 +61,134 @@ RELEASE_STATE=''
 OLD_DEPLOYMENT_FILE=''
 CAPTURED_DEPLOYMENT_FILE=''
 CAPTURED_DEPLOYMENT_SHA256=''
+CAPTURED_SERVICE_FILE=''
+CAPTURED_SERVICE_SHA256=''
+CAPTURED_ROUTE_FILE=''
+CAPTURED_ROUTE_SHA256=''
 FORWARD_DEPLOYMENT_FILE=''
 FORWARD_DEPLOYMENT_SHA256=''
+FORWARD_SERVICE_FILE=''
+FORWARD_SERVICE_SHA256=''
+FORWARD_ROUTE_FILE=''
+FORWARD_ROUTE_SHA256=''
+OLD_SERVICE_FILE=''
+OLD_SERVICE_SHA256=''
+OLD_ROUTE_FILE=''
+OLD_ROUTE_SHA256=''
 OLD_WEB_IMAGE=''
+OLD_RUNTIME_SERVER_SHA256=''
 OLD_PROXY_IMAGE=''
 DEPLOYMENT_UID=''
 DEPLOYMENT_RESOURCE_VERSION=''
+SERVICE_UID=''
+SERVICE_RESOURCE_VERSION=''
+ROUTE_UID=''
+ROUTE_RESOURCE_VERSION=''
 BUILDCONFIG_FILE=''
 BUILDCONFIG_SHA256=''
 BUILDCONFIG_UID=''
 BUILDCONFIG_RESOURCE_VERSION=''
 BUILD_OUTPUT_DIGEST=''
 NEW_WEB_IMAGE=''
+ETROC_EVENT_SNAPSHOT_BEFORE=''
+ETROC_EVENT_SNAPSHOT_BACKUP=''
+ETROC_EVENT_SNAPSHOT_POST_ROLLOUT=''
+ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK=''
+CANDIDATE_PROBE_POD=''
+CANDIDATE_PROBE_POD_UID=''
+CANDIDATE_PROBE_POD_OWNED=0
+CANDIDATE_PROBE_CREATE_RESPONSE="${WORK_DIR}/candidate-probe-create.json"
 
 cleanup() {
+  if ! cleanup_candidate_probe_pod; then
+    printf '%s\n' 'WARNING candidate probe cleanup did not complete' >&2
+  fi
   rm -rf "$WORK_DIR"
+}
+
+cleanup_candidate_probe_pod() {
+  local current_uid delete_options encoded_project encoded_pod status
+  if test "$CANDIDATE_PROBE_POD_OWNED" != 1; then
+    return
+  fi
+  if test -z "$CANDIDATE_PROBE_POD" || test -z "$CANDIDATE_PROBE_POD_UID"; then
+    printf '%s\n' 'WARNING candidate probe ownership lacks an exact UID; refusing deletion' >&2
+    return 1
+  fi
+  set +e
+  current_uid="$(oc -n "$PROJECT" get pod/"$CANDIDATE_PROBE_POD" -o jsonpath='{.metadata.uid}' 2>/dev/null)"
+  status=$?
+  set -e
+  if test "$status" -ne 0; then
+    printf '%s\n' 'WARNING candidate probe is no longer resolvable; no deletion attempted' >&2
+    return 1
+  fi
+  if test "$current_uid" != "$CANDIDATE_PROBE_POD_UID"; then
+    printf '%s\n' 'WARNING candidate probe UID changed; refusing deletion' >&2
+    return 1
+  fi
+  read -r encoded_project encoded_pod < <(python3 -I - "$PROJECT" "$CANDIDATE_PROBE_POD" <<'PY'
+import re, sys
+from urllib.parse import quote
+for value in sys.argv[1:]:
+    if re.fullmatch(r'[a-z0-9]([-a-z0-9.]*[a-z0-9])?', value) is None:
+        raise SystemExit('unsafe Kubernetes resource name')
+print(*(quote(value, safe='') for value in sys.argv[1:]))
+PY
+)
+  delete_options="${WORK_DIR}/candidate-probe-delete-options.json"
+  CANDIDATE_PROBE_POD_UID="$CANDIDATE_PROBE_POD_UID" python3 -I - > "$delete_options" <<'PY'
+import json, os
+json.dump({'apiVersion': 'v1', 'kind': 'DeleteOptions', 'preconditions': {'uid': os.environ['CANDIDATE_PROBE_POD_UID']}}, __import__('sys').stdout)
+PY
+  set +e
+  oc -n "$PROJECT" delete --raw="/api/v1/namespaces/${encoded_project}/pods/${encoded_pod}" -f "$delete_options"
+  status=$?
+  set -e
+  if test "$status" -ne 0; then
+    printf '%s\n' 'WARNING candidate probe deletion failed; copied database may remain until manually removed' >&2
+    return 1
+  fi
+  CANDIDATE_PROBE_POD_OWNED=0
+}
+
+extract_previous_runtime_server() {
+  test -n "$OLD_WEB_IMAGE"
+  [[ "$OLD_WEB_IMAGE" =~ @sha256:[0-9a-f]{64}$ ]]
+  mkdir -m 700 "$OLD_RUNTIME_DIR"
+  oc image extract "$OLD_WEB_IMAGE" --path "/app/static/server.py:${OLD_RUNTIME_DIR}"
+  OLD_RUNTIME_SERVER_SHA256="$(OLD_RUNTIME_DIR="$OLD_RUNTIME_DIR" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
+import os, stat
+from pathlib import Path
+
+root = Path(os.environ['OLD_RUNTIME_DIR'])
+source = Path(os.environ['OLD_RUNTIME_SERVER'])
+root_status = root.lstat()
+if stat.S_ISLNK(root_status.st_mode) or not stat.S_ISDIR(root_status.st_mode):
+    raise SystemExit('previous runtime extraction directory is unsafe')
+if root_status.st_uid != os.geteuid() or root_status.st_mode & 0o077:
+    raise SystemExit('previous runtime extraction directory ownership or mode is unsafe')
+entries = list(root.iterdir())
+if entries != [source]:
+    raise SystemExit('previous runtime extraction produced unexpected files')
+source_status = source.lstat()
+if stat.S_ISLNK(source_status.st_mode) or not stat.S_ISREG(source_status.st_mode) or source_status.st_nlink != 1:
+    raise SystemExit('previous runtime server is not a regular non-symlink file')
+if source_status.st_uid != os.geteuid() or source_status.st_mode & 0o022:
+    raise SystemExit('previous runtime server ownership or mode is unsafe')
+contents = source.read_bytes()
+if not contents:
+    raise SystemExit('previous runtime server is empty')
+try:
+    compile(contents.decode('utf-8'), str(source), 'exec')
+except (SyntaxError, UnicodeDecodeError) as error:
+    raise SystemExit(f'previous runtime server source is malformed: {error}') from error
+import hashlib
+print(hashlib.sha256(contents).hexdigest())
+PY
+)"
+  [[ "$OLD_RUNTIME_SERVER_SHA256" =~ ^[0-9a-f]{64}$ ]]
+  printf 'OLD_RUNTIME_SERVER_EXTRACT PASS image=%s sha256=%s\n' "$OLD_WEB_IMAGE" "$OLD_RUNTIME_SERVER_SHA256"
 }
 
 normalize_api_server() {
@@ -77,6 +214,132 @@ download() {
     "$url" --output "$destination"
 }
 
+validate_dashboard_headroom() {
+  DB_BYTES="$1" PVC_AVAILABLE_KIB="$2" AFS_QUOTA_KIB="$3" AFS_USED_KIB="$4" \
+    RETAINED_ARTIFACT_SETS="$5" PVC_BACKUP_SAFETY_KIB="$PVC_BACKUP_SAFETY_KIB" \
+    AFS_CHECKSUMS_KIB="$AFS_CHECKSUMS_KIB" AFS_RELEASE_EVIDENCE_KIB="$AFS_RELEASE_EVIDENCE_KIB" \
+    AFS_SAFETY_MARGIN_KIB="$AFS_SAFETY_MARGIN_KIB" MAX_RELEASE_ARTIFACT_SETS="$MAX_RELEASE_ARTIFACT_SETS" \
+    python3 -I - <<'PY'
+import os, re, sys
+
+maximum = 9223372036854775807
+values = {}
+for name in ('DB_BYTES', 'PVC_AVAILABLE_KIB', 'AFS_QUOTA_KIB', 'AFS_USED_KIB', 'RETAINED_ARTIFACT_SETS',
+             'PVC_BACKUP_SAFETY_KIB', 'AFS_CHECKSUMS_KIB', 'AFS_RELEASE_EVIDENCE_KIB',
+             'AFS_SAFETY_MARGIN_KIB', 'MAX_RELEASE_ARTIFACT_SETS'):
+    raw = os.environ[name]
+    if re.fullmatch(r'(?:0|[1-9][0-9]{0,18})', raw) is None:
+        raise SystemExit(f'invalid numeric headroom measurement: {name}')
+    value = int(raw)
+    if value > maximum:
+        raise SystemExit(f'invalid numeric headroom measurement: {name}')
+    values[name] = value
+if values['DB_BYTES'] == 0 or values['AFS_QUOTA_KIB'] == 0:
+    raise SystemExit('invalid numeric headroom measurement: zero database size or AFS quota')
+if values['AFS_USED_KIB'] > values['AFS_QUOTA_KIB']:
+    raise SystemExit('invalid numeric headroom measurement: AFS used KiB exceeds quota KiB')
+if values['RETAINED_ARTIFACT_SETS'] >= values['MAX_RELEASE_ARTIFACT_SETS']:
+    raise SystemExit(
+        'dashboard release artifact retention cap reached; manual archive/cleanup is required; no evidence was deleted'
+    )
+db_kib = (values['DB_BYTES'] + 1023) // 1024
+pvc_required_kib = db_kib + values['PVC_BACKUP_SAFETY_KIB']
+afs_free_kib = values['AFS_QUOTA_KIB'] - values['AFS_USED_KIB']
+afs_required_kib = db_kib + values['AFS_CHECKSUMS_KIB'] + values['AFS_RELEASE_EVIDENCE_KIB'] + values['AFS_SAFETY_MARGIN_KIB']
+if any(value > maximum for value in (db_kib, pvc_required_kib, afs_free_kib, afs_required_kib)):
+    raise SystemExit('invalid numeric headroom measurement: computed value exceeds supported range')
+if values['PVC_AVAILABLE_KIB'] < pvc_required_kib:
+    raise SystemExit('PVC backup headroom is insufficient; no production backup was started')
+if afs_free_kib < afs_required_kib:
+    raise SystemExit('AFS release-evidence headroom is insufficient; no backup or release artifact was written')
+print(
+    'DASHBOARD_HEADROOM PASS '
+    f"db_bytes={values['DB_BYTES']} db_kib={db_kib} "
+    f"pvc_available_kib={values['PVC_AVAILABLE_KIB']} pvc_required_kib={pvc_required_kib} "
+    f"afs_quota_kib={values['AFS_QUOTA_KIB']} afs_used_kib={values['AFS_USED_KIB']} "
+    f"afs_free_kib={afs_free_kib} afs_required_kib={afs_required_kib} "
+    f"retained_artifact_sets={values['RETAINED_ARTIFACT_SETS']}"
+)
+PY
+}
+
+measure_dashboard_headroom() {
+  local db_bytes pvc_available_kib afs_quota_kib afs_used_kib afs_measurement retained_artifact_sets remote_measurement trailing
+  remote_measurement="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
+import os, stat
+database = '/data/comments.sqlite3'
+total = 0
+for path in (database, database + '-wal', database + '-shm'):
+    try:
+        entry = os.lstat(path)
+    except FileNotFoundError:
+        if path == database:
+            raise SystemExit('production database is missing')
+        continue
+    if stat.S_ISLNK(entry.st_mode) or not stat.S_ISREG(entry.st_mode) or entry.st_size < 0:
+        raise SystemExit('production SQLite live file is unsafe')
+    total += entry.st_size
+    if total > 9223372036854775807:
+        raise SystemExit('production SQLite live footprint is too large')
+if total <= 0:
+    raise SystemExit('production database is empty')
+available_kib = os.statvfs('/data').f_bavail * os.statvfs('/data').f_frsize // 1024
+print(total, available_kib)
+PY
+)"
+  remote_measurement="$(printf '%s' "$remote_measurement" | python3 -I -c '
+import re, sys
+match=re.fullmatch(r"([0-9]+) ([0-9]+)\\n?", sys.stdin.read())
+if match is None:
+    raise SystemExit("invalid numeric headroom measurement: malformed web-container DB/PVC output")
+print(*match.groups())
+')"
+  read -r db_bytes pvc_available_kib <<< "$remote_measurement"
+  afs_measurement="$(fs lq "$HOME" | python3 -I -c '
+import re, sys
+matches=[]
+for line in sys.stdin:
+    match=re.fullmatch(r"\\s*\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\d+%\\s+\\S+\\s*", line)
+    if match:
+        matches.append(match.groups())
+if len(matches) != 1:
+    raise SystemExit("invalid numeric headroom measurement: malformed fs lq output")
+quota, used=matches[0]
+print(quota, used)
+')"
+  read -r afs_quota_kib afs_used_kib trailing <<< "$afs_measurement"
+  if test -z "${afs_quota_kib:-}" || test -z "${afs_used_kib:-}" || test -n "${trailing:-}"; then
+    printf '%s\n' 'invalid numeric headroom measurement: malformed fs lq output' >&2
+    false
+  fi
+  retained_artifact_sets=0
+  if test -d "$BACKUP_DIR"; then
+    retained_artifact_sets="$(BACKUP_DIR="$BACKUP_DIR" python3 -I - <<'PY'
+import os, re
+from pathlib import Path
+root=Path(os.environ['BACKUP_DIR'])
+known=(
+    r'dashboard-release-(?P<stamp>\d{8}T\d{6}Z)\.env',
+    r'comments\.sqlite3\.before-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.bak',
+    r'(?:deployment|service|route)-(?:before|captured|forward)-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.json',
+    r'buildconfig-captured-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.json',
+)
+stamps=set()
+for entry in root.iterdir():
+    if not entry.is_file() or entry.is_symlink():
+        continue
+    match=next((re.fullmatch(pattern, entry.name) for pattern in known if re.fullmatch(pattern, entry.name)), None)
+    if match is not None:
+        stamps.add(match['stamp'])
+    elif 'dashboard' in entry.name or entry.name.startswith('comments.sqlite3.before-dashboard-'):
+        raise SystemExit('unknown dashboard release artifact; refusing retention estimate')
+print(len(stamps))
+PY
+)"
+  fi
+  validate_dashboard_headroom "$db_bytes" "$pvc_available_kib" "$afs_quota_kib" "$afs_used_kib" "$retained_artifact_sets"
+}
+
 verify_context() {
   test "$(normalize_api_server "$(oc whoami --show-server)")" = "$EXPECTED_API_SERVER"
   test "$(oc whoami)" = "$EXPECTED_USER"
@@ -84,6 +347,194 @@ verify_context() {
   if test -n "${DEPLOYMENT_UID:-}"; then
     test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.uid}')" = "$DEPLOYMENT_UID"
   fi
+}
+
+normalize_etroc_reviewer_users() {
+  python3 -I - "$1" <<'PY'
+import hashlib, re, sys
+values={item.strip().lower() for item in sys.argv[1].split(',') if item.strip()}
+if not values or any(re.fullmatch(r'[a-z0-9][a-z0-9._@-]{0,127}', item) is None for item in values):
+    raise SystemExit('ETROC_REVIEWER_USERS must contain at least one normalized identity')
+normalized=','.join(sorted(values))
+print(normalized, len(values), hashlib.sha256(normalized.encode('utf-8')).hexdigest())
+PY
+}
+
+validate_operator_review_inputs() {
+  local publication_path="${1:-}"
+  ETROC_REVIEW_ACQUISITION_ID="${ETROC_REVIEW_ACQUISITION_ID:-}" \
+    ETROC_REVIEW_STATE="${ETROC_REVIEW_STATE:-}" \
+    ETROC_REVIEW_NOTE="${ETROC_REVIEW_NOTE:-}" \
+    ETROC_REVIEW_PUBLICATION="$publication_path" python3 -I - <<'PY'
+import json, os, re
+acquisition_id=os.environ['ETROC_REVIEW_ACQUISITION_ID']
+state=os.environ['ETROC_REVIEW_STATE']
+note=os.environ['ETROC_REVIEW_NOTE']
+if not acquisition_id:
+    raise SystemExit('operator review acquisition ID is required')
+if not re.fullmatch(r'ETROC_OI_2608:[^\x00-\x1f\x7f]{1,450}', acquisition_id):
+    raise SystemExit('operator review acquisition ID is invalid')
+if state not in {'reviewed_no_optical_concern', 'reviewed_concern_observed', 'follow_up_required'}:
+    raise SystemExit('operator review state is invalid')
+if not note:
+    raise SystemExit('operator review note is required')
+if len(note) > 2000 or not note.isprintable():
+    raise SystemExit('operator review note is invalid')
+publication=os.environ['ETROC_REVIEW_PUBLICATION']
+if publication:
+    records=json.load(open(publication, encoding='utf-8')).get('records')
+    if not isinstance(records, list) or sum(record.get('acquisition_id') == acquisition_id for record in records if isinstance(record, dict)) != 1:
+        raise SystemExit('operator review acquisition is not canonical candidate publication evidence')
+PY
+}
+
+validate_oauth2_proxy_topology() {
+  local phase expected_proxy_image deployment_file services_file routes_file
+  phase="$1"
+  expected_proxy_image="${2:-}"
+  deployment_file="${WORK_DIR}/topology-${phase}-deployment.json"
+  services_file="${WORK_DIR}/topology-${phase}-services.json"
+  routes_file="${WORK_DIR}/topology-${phase}-routes.json"
+  oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$deployment_file"
+  oc -n "$PROJECT" get services -o json > "$services_file"
+  oc -n "$PROJECT" get routes -o json > "$routes_file"
+  EXPECTED_PROXY_IMAGE="$expected_proxy_image" python3 -I - "$deployment_file" "$services_file" "$routes_file" <<'PY'
+import json, os, re, sys
+deployment, services, routes = (json.load(open(path, encoding='utf-8')) for path in sys.argv[1:])
+containers = {item.get('name'): item for item in deployment.get('spec', {}).get('template', {}).get('spec', {}).get('containers', [])}
+web, proxy = containers.get('web'), containers.get('oauth2-proxy')
+if not isinstance(web, dict) or not isinstance(proxy, dict):
+    raise SystemExit('BBQC proxy topology containers are incomplete')
+web_env = {item.get('name'): item.get('value') for item in web.get('env', [])}
+if web_env.get('HOST') != '127.0.0.1' or web_env.get('APP_ORIGIN') != 'https://etl-hybrid-bbqc.app.cern.ch':
+    raise SystemExit('web loopback topology mismatch')
+if proxy.get('ports') != [{'name': 'oauth', 'containerPort': 4180, 'protocol': 'TCP'}]:
+    raise SystemExit('oauth2-proxy listen ports mismatch')
+image = proxy.get('image')
+if not isinstance(image, str) or re.fullmatch(r'.+@sha256:[0-9a-f]{64}', image) is None:
+    raise SystemExit('oauth2-proxy image is not digest pinned')
+if os.environ['EXPECTED_PROXY_IMAGE'] and image != os.environ['EXPECTED_PROXY_IMAGE']:
+    raise SystemExit('oauth2-proxy image differs from captured reviewed digest')
+expected_args = [
+    '--provider=oidc', '--http-address=0.0.0.0:4180', '--upstream=http://127.0.0.1:8080',
+    '--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback', '--email-domain=*',
+    '--reverse-proxy=true', '--pass-host-header=true', '--pass-user-headers=true',
+    '--skip-auth-strip-headers=true', '--skip-provider-button=true', '--cookie-secure=true',
+    '--cookie-samesite=lax',
+]
+if proxy.get('args') != expected_args:
+    raise SystemExit('exact oauth2-proxy args mismatch')
+expected_service = 'etl-hybrid-bbqc'
+template_labels = deployment.get('spec', {}).get('template', {}).get('metadata', {}).get('labels', {})
+if not isinstance(template_labels, dict) or not template_labels:
+    raise SystemExit('live pod-template labels are incomplete')
+selected_services = []
+for service in services.get('items', []):
+    selector = service.get('spec', {}).get('selector', {})
+    ports = service.get('spec', {}).get('ports', [])
+    selects_live_pod = isinstance(selector, dict) and bool(selector) and all(template_labels.get(key) == value for key, value in selector.items())
+    if not selects_live_pod:
+        continue
+    selected_services.append(service)
+    name = service.get('metadata', {}).get('name')
+    if name != expected_service:
+        raise SystemExit('additional Service selects live web pod')
+    if any(port.get('targetPort') in ('web', 8080) or port.get('port') == 8080 for port in ports):
+        raise SystemExit('selected Service exposes backend web')
+if len(selected_services) != 1 or selected_services[0].get('metadata', {}).get('name') != expected_service:
+    raise SystemExit('oauth2-proxy Service topology mismatch')
+ports = selected_services[0].get('spec', {}).get('ports', [])
+if ports != [{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]:
+    raise SystemExit('oauth2-proxy Service ports mismatch')
+matching_routes = []
+for route in routes.get('items', []):
+    route_spec = route.get('spec', {})
+    target = route_spec.get('to', {})
+    if target.get('kind') == 'Service' and target.get('name') == expected_service:
+        matching_routes.append(route)
+if len(matching_routes) != 1 or matching_routes[0].get('metadata', {}).get('name') != expected_service:
+    raise SystemExit('additional Route targets a Service selecting live pod')
+route_spec = matching_routes[0].get('spec', {})
+if route_spec.get('host') != 'etl-hybrid-bbqc.app.cern.ch':
+    raise SystemExit('route host topology mismatch')
+if route_spec.get('to') != {'kind': 'Service', 'name': expected_service} or route_spec.get('port') != {'targetPort': 'oauth'}:
+    raise SystemExit('BBQC Route must target only the oauth2-proxy Service')
+if route_spec.get('tls') != {'termination': 'edge', 'insecureEdgeTerminationPolicy': 'Redirect'}:
+    raise SystemExit('BBQC Route TLS topology mismatch')
+print('BBQC_OAUTH2_PROXY_TOPOLOGY PASS')
+PY
+}
+
+validate_manifest_topology() {
+  local phase deployment_manifest service_manifest route_manifest deployment_file service_file route_file
+  phase="$1"
+  deployment_manifest="$2"
+  service_manifest="$3"
+  route_manifest="$4"
+  deployment_file="${WORK_DIR}/rendered-${phase}-deployment.json"
+  service_file="${WORK_DIR}/rendered-${phase}-service.json"
+  route_file="${WORK_DIR}/rendered-${phase}-route.json"
+  oc create --dry-run=client -o json -f "$deployment_manifest" > "$deployment_file"
+  oc create --dry-run=client -o json -f "$service_manifest" > "$service_file"
+  oc create --dry-run=client -o json -f "$route_manifest" > "$route_file"
+  python3 -I - "$deployment_file" "$service_file" "$route_file" <<'PY'
+import json, sys
+deployment, service, route = (json.load(open(path, encoding='utf-8')) for path in sys.argv[1:])
+if [deployment.get('kind'), service.get('kind'), route.get('kind')] != ['Deployment', 'Service', 'Route']:
+    raise SystemExit('unexpected canonical manifest kinds')
+if any('items' in item for item in (deployment, service, route)):
+    raise SystemExit('canonical manifest contains multiple objects')
+name='etl-hybrid-bbqc'
+if any(item.get('metadata', {}).get('name') != name for item in (deployment, service, route)):
+    raise SystemExit('canonical manifest names do not match')
+containers={item.get('name'): item for item in deployment.get('spec', {}).get('template', {}).get('spec', {}).get('containers', [])}
+web, proxy=containers.get('web'), containers.get('oauth2-proxy')
+if not isinstance(web, dict) or not isinstance(proxy, dict):
+    raise SystemExit('canonical Deployment proxy topology is incomplete')
+web_env={item.get('name'): item.get('value') for item in web.get('env', [])}
+if web_env.get('HOST') != '127.0.0.1' or web_env.get('APP_ORIGIN') != 'https://etl-hybrid-bbqc.app.cern.ch':
+    raise SystemExit('canonical Deployment web loopback topology mismatch')
+if proxy.get('ports') != [{'name': 'oauth', 'containerPort': 4180, 'protocol': 'TCP'}]:
+    raise SystemExit('canonical Deployment oauth2-proxy listen ports mismatch')
+if service.get('spec', {}).get('ports') != [{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]:
+    raise SystemExit('canonical Service must expose only oauth port 4180')
+if service.get('spec', {}).get('selector') != {'app': name}:
+    raise SystemExit('canonical Service selector mismatch')
+route_spec=route.get('spec', {})
+if route_spec.get('host') != 'etl-hybrid-bbqc.app.cern.ch':
+    raise SystemExit('canonical Route host mismatch')
+if route_spec.get('to') != {'kind': 'Service', 'name': name} or route_spec.get('port') != {'targetPort': 'oauth'}:
+    raise SystemExit('canonical Route must target only the oauth Service port')
+if route_spec.get('tls') != {'termination': 'edge', 'insecureEdgeTerminationPolicy': 'Redirect'}:
+    raise SystemExit('canonical Route TLS topology mismatch')
+print('BBQC_RENDERED_OAUTH2_PROXY_TOPOLOGY PASS')
+PY
+}
+
+snapshot_etroc_review_events() {
+  python3 -I - "$1" <<'PY'
+import json, sqlite3, sys
+with sqlite3.connect(sys.argv[1]) as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM etroc_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+}
+
+assert_etroc_snapshot() {
+  ETROC_SNAPSHOT_BEFORE="$1" ETROC_SNAPSHOT_AFTER="$2" python3 -I - <<'PY'
+import json, os
+before=json.loads(os.environ['ETROC_SNAPSHOT_BEFORE'])
+after=json.loads(os.environ['ETROC_SNAPSHOT_AFTER'])
+if before == after:
+    raise SystemExit(0)
+if before == {'present': False} and after == {'present': True, 'count': 0, 'identity_chain': []}:
+    raise SystemExit(0)
+raise SystemExit('ETROC event identity chain changed')
+PY
 }
 
 bootstrap_sso_plugin() {
@@ -155,48 +606,243 @@ select_single_app_pod() {
   printf '%s\n' "$selected"
 }
 
+render_forward_object() {
+  local kind="$1" baseline_file="$2" captured_file="$3" forward_file="$4"
+  RELEASE_KIND="$kind" BASELINE_OBJECT_FILE="$baseline_file" CAPTURED_OBJECT_FILE="$captured_file" \
+    NEW_WEB_IMAGE="$NEW_WEB_IMAGE" OLD_WEB_IMAGE="$OLD_WEB_IMAGE" OLD_PROXY_IMAGE="$OLD_PROXY_IMAGE" \
+    SOURCE_REVISION="$SOURCE_REVISION" BUILD_CONTEXT_SHA256="$BUILD_CONTEXT_SHA256" BUILD_NAME="$BUILD_NAME" \
+    ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY' > "$forward_file"
+import copy, json, os, sys
+baseline=json.load(open(os.environ['BASELINE_OBJECT_FILE'], encoding='utf-8'))
+captured=json.load(open(os.environ['CAPTURED_OBJECT_FILE'], encoding='utf-8'))
+kind=os.environ['RELEASE_KIND']
+if baseline.get('kind') != kind or captured.get('kind') != kind:
+    raise SystemExit('baseline/captured object kind mismatch')
+baseline_metadata=baseline.get('metadata', {})
+captured_metadata=captured.get('metadata', {})
+if baseline_metadata.get('name') != captured_metadata.get('name') or captured_metadata.get('namespace') != 'etroc-solder-inspection':
+    raise SystemExit(f'captured {kind} identity differs from pinned baseline')
+if baseline_metadata.get('labels', {}) != captured_metadata.get('labels', {}):
+    raise SystemExit(f'captured {kind} labels differ from pinned baseline')
+def normalized_annotations(metadata):
+    annotations=metadata.get('annotations', {})
+    if not isinstance(annotations, dict):
+        raise SystemExit(f'captured {kind} annotations are invalid')
+    result=copy.deepcopy(annotations)
+    result.pop('kubectl.kubernetes.io/last-applied-configuration', None)
+    if kind == 'Deployment':
+        result.pop('deployment.kubernetes.io/revision', None)
+    return result
+baseline_annotations=normalized_annotations(baseline_metadata)
+if normalized_annotations(captured_metadata) != baseline_annotations:
+    raise SystemExit(f'captured {kind} annotations differ from pinned baseline')
+baseline_spec=copy.deepcopy(baseline.get('spec'))
+captured_spec=copy.deepcopy(captured.get('spec'))
+if kind == 'Deployment':
+    baseline_containers={item.get('name'): item for item in baseline_spec.get('template', {}).get('spec', {}).get('containers', [])}
+    captured_containers={item.get('name'): item for item in captured_spec.get('template', {}).get('spec', {}).get('containers', [])}
+    if set(baseline_containers) != set(captured_containers) or captured_containers.get('web', {}).get('image') != os.environ['OLD_WEB_IMAGE'] or captured_containers.get('oauth2-proxy', {}).get('image') != os.environ['OLD_PROXY_IMAGE']:
+        raise SystemExit('captured Deployment image identity differs from reviewed pre-release digests')
+    captured_containers['web']['image']=baseline_containers['web']['image']
+if kind == 'Service':
+    for field in ('clusterIP', 'clusterIPs', 'ipFamilies', 'ipFamilyPolicy', 'healthCheckNodePort'):
+        if field in captured_spec:
+            baseline_spec[field]=captured_spec[field]
+if captured_spec != baseline_spec:
+    raise SystemExit(f'captured {kind} spec differs from pinned baseline')
+uid=captured_metadata.get('uid')
+resource_version=captured_metadata.get('resourceVersion')
+if not isinstance(uid, str) or not uid or not isinstance(resource_version, str) or not resource_version:
+    raise SystemExit(f'captured {kind} UID/resourceVersion is incomplete')
+metadata={
+    'name': baseline_metadata['name'], 'namespace': captured_metadata['namespace'], 'uid': uid,
+    'resourceVersion': resource_version, 'labels': copy.deepcopy(baseline_metadata.get('labels', {})),
+    'annotations': {
+        **baseline_annotations,
+        'bbqc.cern.ch/source-revision': os.environ['SOURCE_REVISION'],
+        'bbqc.cern.ch/build-context-sha256': os.environ['BUILD_CONTEXT_SHA256'],
+        'bbqc.cern.ch/build-name': os.environ['BUILD_NAME'],
+        'bbqc.cern.ch/release-mode': 'immutable-overlay',
+    },
+}
+for key in ('finalizers', 'ownerReferences'):
+    if key in captured_metadata:
+        metadata[key]=copy.deepcopy(captured_metadata[key])
+desired={'apiVersion': baseline['apiVersion'], 'kind': kind, 'metadata': metadata, 'spec': baseline_spec}
+if kind == 'Deployment':
+    images={'web': os.environ['NEW_WEB_IMAGE'], 'oauth2-proxy': os.environ['OLD_PROXY_IMAGE']}
+    found=set()
+    for container in desired['spec']['template']['spec']['containers']:
+        if container['name'] in images:
+            container['image']=images[container['name']]
+            found.add(container['name'])
+        if container['name'] == 'web':
+            env=container.setdefault('env', [])
+            env[:]=[entry for entry in env if entry.get('name') != 'ETROC_REVIEWER_USERS']
+            env.append({'name': 'ETROC_REVIEWER_USERS', 'value': os.environ['ETROC_REVIEWER_USERS_NORMALIZED']})
+    if found != set(images):
+        raise SystemExit(f'forward containers do not match expected set: {sorted(found)}')
+json.dump(desired, sys.stdout, indent=2, sort_keys=True)
+PY
+}
+
+render_captured_rollback_object() {
+  local captured_file="$1" rollback_file="$2"
+  CAPTURED_OBJECT_FILE="$captured_file" ROLLBACK_OBJECT_FILE="$rollback_file" python3 -I - <<'PY'
+import copy, json, os
+captured=json.load(open(os.environ['CAPTURED_OBJECT_FILE'], encoding='utf-8'))
+metadata=captured.get('metadata', {})
+keep={key: copy.deepcopy(metadata[key]) for key in ('name','namespace','uid','labels','annotations','finalizers','ownerReferences') if key in metadata}
+desired={'apiVersion': captured['apiVersion'], 'kind': captured['kind'], 'metadata': keep, 'spec': copy.deepcopy(captured['spec'])}
+json.dump(desired, open(os.environ['ROLLBACK_OBJECT_FILE'], 'w', encoding='utf-8'), indent=2, sort_keys=True)
+PY
+}
+
+prepare_rollback_object() {
+  local captured_file="$1" forward_file="$2" current_file="$3" rendered_file="$4" expected_uid="$5" action_file="$6"
+  EXPECTED_UID="$expected_uid" OLD_DEPLOYMENT_FILE="$captured_file" CAPTURED_OBJECT_FILE="$captured_file" FORWARD_OBJECT_FILE="$forward_file" \
+    CURRENT_DEPLOYMENT="$current_file" ROLLBACK_DEPLOYMENT="$rendered_file" ROLLBACK_ACTION_FILE="$action_file" python3 -I - <<'PY'
+import copy, json, os
+old = json.load(open(os.environ.get('CAPTURED_OBJECT_FILE') or os.environ['OLD_DEPLOYMENT_FILE'], encoding='utf-8'))
+forward = json.load(open(os.environ.get('FORWARD_OBJECT_FILE') or os.environ['FORWARD_DEPLOYMENT_FILE'], encoding='utf-8'))
+current = json.load(open(os.environ['CURRENT_DEPLOYMENT'], encoding='utf-8'))
+kind=forward.get('kind')
+if kind not in {'Deployment', 'Service', 'Route'} or old.get('kind') != kind or current.get('kind') != kind:
+    raise SystemExit('rollback object kind changed')
+expected_uid = os.environ['EXPECTED_UID']
+old_metadata, forward_metadata, current_metadata = (item.get('metadata', {}) for item in (old, forward, current))
+if current_metadata.get('uid') != expected_uid:
+    raise SystemExit('rollback target UID changed')
+for key in ('name', 'namespace', 'uid'):
+    if old_metadata.get(key) != forward_metadata.get(key) or old_metadata.get(key) != current_metadata.get(key):
+        raise SystemExit('rollback target identity changed')
+resource_version=current_metadata.get('resourceVersion')
+if not isinstance(resource_version, str) or not resource_version:
+    raise SystemExit('rollback target resourceVersion is missing')
+def annotations(value):
+    result=copy.deepcopy(value or {})
+    result.pop('kubectl.kubernetes.io/last-applied-configuration', None)
+    if kind == 'Deployment':
+        result.pop('deployment.kubernetes.io/revision', None)
+    return result
+def release_owned(candidate, reference):
+    candidate_metadata=candidate.get('metadata', {})
+    reference_metadata=reference.get('metadata', {})
+    return (
+        candidate.get('spec') == reference.get('spec')
+        and candidate_metadata.get('labels', {}) == reference_metadata.get('labels', {})
+        and candidate_metadata.get('finalizers', []) == reference_metadata.get('finalizers', [])
+        and candidate_metadata.get('ownerReferences', []) == reference_metadata.get('ownerReferences', [])
+        and annotations(candidate_metadata.get('annotations')) == annotations(reference_metadata.get('annotations'))
+    )
+if release_owned(current, forward):
+    desired=copy.deepcopy(old)
+    desired.setdefault('metadata', {})['resourceVersion']=resource_version
+    json.dump(desired, open(os.environ['ROLLBACK_DEPLOYMENT'], 'w', encoding='utf-8'), indent=2, sort_keys=True)
+    action='restore'
+elif release_owned(current, old):
+    action='unchanged'
+else:
+    raise SystemExit(f'rollback current {kind} is foreign/concurrent drift; refusing rollback overwrite')
+open(os.environ['ROLLBACK_ACTION_FILE'], 'w', encoding='utf-8').write(action + '\n')
+PY
+}
+
+verify_rollback_object() {
+  local old_file="$1" current_file="$2"
+  ROLLBACK_OLD_FILE="$old_file" ROLLBACK_CURRENT_FILE="$current_file" python3 -I - <<'PY'
+import copy, json, os
+old=json.load(open(os.environ['ROLLBACK_OLD_FILE'], encoding='utf-8'))
+current=json.load(open(os.environ['ROLLBACK_CURRENT_FILE'], encoding='utf-8'))
+if old.get('kind') != current.get('kind'):
+    raise SystemExit('post-rollback object kind changed')
+for key in ('name', 'namespace', 'uid'):
+    if old.get('metadata', {}).get(key) != current.get('metadata', {}).get(key):
+        raise SystemExit('post-rollback object identity changed')
+if old.get('spec') != current.get('spec') or old.get('metadata', {}).get('labels', {}) != current.get('metadata', {}).get('labels', {}):
+    raise SystemExit('post-rollback captured spec or labels mismatch')
+for key in ('finalizers', 'ownerReferences'):
+    if old.get('metadata', {}).get(key, []) != current.get('metadata', {}).get(key, []):
+        raise SystemExit(f'post-rollback captured metadata {key} mismatch')
+def annotations(value, kind):
+    result=copy.deepcopy(value or {})
+    result.pop('kubectl.kubernetes.io/last-applied-configuration', None)
+    if kind == 'Deployment':
+        result.pop('deployment.kubernetes.io/revision', None)
+    return result
+if annotations(old.get('metadata', {}).get('annotations'), old['kind']) != annotations(current.get('metadata', {}).get('annotations'), current['kind']):
+    raise SystemExit('post-rollback captured annotations mismatch')
+PY
+}
+
 rollback_deployment() {
-  local current rendered pod raw_web raw_proxy web proxy
+  local deployment_current service_current route_current deployment_rendered service_rendered route_rendered deployment_action service_action route_action deployment_topology service_topology route_topology pod raw_web raw_proxy web proxy rollback_failures=0
   set -Eeuo pipefail
   verify_context
   test -r "$OLD_DEPLOYMENT_FILE"
+  test -r "$OLD_SERVICE_FILE"
+  test -r "$OLD_ROUTE_FILE"
   test -r "$FORWARD_DEPLOYMENT_FILE"
+  test -r "$FORWARD_SERVICE_FILE"
+  test -r "$FORWARD_ROUTE_FILE"
   test "$(sha256sum "$OLD_DEPLOYMENT_FILE" | cut -d' ' -f1)" = "$OLD_DEPLOYMENT_SHA256"
+  test "$(sha256sum "$OLD_SERVICE_FILE" | cut -d' ' -f1)" = "$OLD_SERVICE_SHA256"
+  test "$(sha256sum "$OLD_ROUTE_FILE" | cut -d' ' -f1)" = "$OLD_ROUTE_SHA256"
   test "$(sha256sum "$FORWARD_DEPLOYMENT_FILE" | cut -d' ' -f1)" = "$FORWARD_DEPLOYMENT_SHA256"
-  current="${WORK_DIR}/deployment-current.json"
-  rendered="${WORK_DIR}/deployment-rollback.json"
-  oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$current"
-  DEPLOYMENT_UID="$DEPLOYMENT_UID" OLD_DEPLOYMENT_FILE="$OLD_DEPLOYMENT_FILE" FORWARD_DEPLOYMENT_FILE="$FORWARD_DEPLOYMENT_FILE" \
-    CURRENT_DEPLOYMENT="$current" ROLLBACK_DEPLOYMENT="$rendered" python3 -I - <<'PY'
-import json, os
-old = json.load(open(os.environ['OLD_DEPLOYMENT_FILE'], encoding='utf-8'))
-forward = json.load(open(os.environ['FORWARD_DEPLOYMENT_FILE'], encoding='utf-8'))
-current = json.load(open(os.environ['CURRENT_DEPLOYMENT'], encoding='utf-8'))
-expected_uid = os.environ['DEPLOYMENT_UID']
-if current['metadata'].get('uid') != expected_uid:
-    raise SystemExit('rollback target UID changed')
-if old['metadata']['name'] != current['metadata']['name'] or old['metadata']['namespace'] != current['metadata']['namespace']:
-    raise SystemExit('rollback target identity changed')
-if current['spec'] != forward['spec']:
-    raise SystemExit('current Deployment spec differs from this release; refusing rollback overwrite')
-if current['metadata'].get('labels', {}) != forward['metadata'].get('labels', {}):
-    raise SystemExit('current Deployment metadata labels differs from this release')
-for key in ('finalizers', 'ownerReferences'):
-    if current['metadata'].get(key, []) != forward['metadata'].get(key, []):
-        raise SystemExit(f'current Deployment metadata {key} differs from this release')
-def operator_annotations(value):
-    result=dict(value or {})
-    result.pop('deployment.kubernetes.io/revision', None)
-    result.pop('kubectl.kubernetes.io/last-applied-configuration', None)
-    return result
-if operator_annotations(current['metadata'].get('annotations')) != operator_annotations(forward['metadata'].get('annotations')):
-    raise SystemExit('current Deployment metadata annotations differs from this release')
-old['metadata']['resourceVersion'] = current['metadata']['resourceVersion']
-json.dump(old, open(os.environ['ROLLBACK_DEPLOYMENT'], 'w', encoding='utf-8'), indent=2, sort_keys=True)
-PY
-  oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$rendered" >/dev/null
-  oc -n "$PROJECT" replace --save-config=false -f "$rendered"
-  oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s
+  test "$(sha256sum "$FORWARD_SERVICE_FILE" | cut -d' ' -f1)" = "$FORWARD_SERVICE_SHA256"
+  test "$(sha256sum "$FORWARD_ROUTE_FILE" | cut -d' ' -f1)" = "$FORWARD_ROUTE_SHA256"
+  deployment_current="${WORK_DIR}/deployment-current.json"
+  service_current="${WORK_DIR}/service-current.json"
+  route_current="${WORK_DIR}/route-current.json"
+  deployment_rendered="${WORK_DIR}/deployment-rollback.json"
+  service_rendered="${WORK_DIR}/service-rollback.json"
+  route_rendered="${WORK_DIR}/route-rollback.json"
+  deployment_action="${WORK_DIR}/deployment-rollback.action"
+  service_action="${WORK_DIR}/service-rollback.action"
+  route_action="${WORK_DIR}/route-rollback.action"
+  oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$deployment_current"
+  oc -n "$PROJECT" get service/"$DEPLOYMENT" -o json > "$service_current"
+  oc -n "$PROJECT" get route/"$DEPLOYMENT" -o json > "$route_current"
+  prepare_rollback_object "$OLD_DEPLOYMENT_FILE" "$FORWARD_DEPLOYMENT_FILE" "$deployment_current" "$deployment_rendered" "$DEPLOYMENT_UID" "$deployment_action"
+  prepare_rollback_object "$OLD_SERVICE_FILE" "$FORWARD_SERVICE_FILE" "$service_current" "$service_rendered" "$SERVICE_UID" "$service_action"
+  prepare_rollback_object "$OLD_ROUTE_FILE" "$FORWARD_ROUTE_FILE" "$route_current" "$route_rendered" "$ROUTE_UID" "$route_action"
+  deployment_topology="$OLD_DEPLOYMENT_FILE"
+  service_topology="$OLD_SERVICE_FILE"
+  route_topology="$OLD_ROUTE_FILE"
+  if test "$(cat "$deployment_action")" = restore; then
+    if ! oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$deployment_rendered" >/dev/null; then rollback_failures=$((rollback_failures + 1)); fi
+    deployment_topology="$deployment_rendered"
+  fi
+  if test "$(cat "$service_action")" = restore; then
+    if ! oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$service_rendered" >/dev/null; then rollback_failures=$((rollback_failures + 1)); fi
+    service_topology="$service_rendered"
+  fi
+  if test "$(cat "$route_action")" = restore; then
+    if ! oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$route_rendered" >/dev/null; then rollback_failures=$((rollback_failures + 1)); fi
+    route_topology="$route_rendered"
+  fi
+  if test "$(cat "$deployment_action")" = restore; then
+    if ! oc -n "$PROJECT" replace --save-config=false -f "$deployment_rendered"; then rollback_failures=$((rollback_failures + 1)); fi
+    if ! oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s; then rollback_failures=$((rollback_failures + 1)); fi
+  fi
+  if test "$(cat "$service_action")" = restore; then
+    if ! oc -n "$PROJECT" replace --save-config=false -f "$service_rendered"; then rollback_failures=$((rollback_failures + 1)); fi
+  fi
+  if test "$(cat "$route_action")" = restore; then
+    if ! oc -n "$PROJECT" replace --save-config=false -f "$route_rendered"; then rollback_failures=$((rollback_failures + 1)); fi
+  fi
+  if ! validate_manifest_topology rollback "$deployment_topology" "$service_topology" "$route_topology"; then rollback_failures=$((rollback_failures + 1)); fi
+  if ! validate_oauth2_proxy_topology rollback "$OLD_PROXY_IMAGE"; then rollback_failures=$((rollback_failures + 1)); fi
+  if ! oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$deployment_current"; then rollback_failures=$((rollback_failures + 1)); fi
+  if ! oc -n "$PROJECT" get service/"$DEPLOYMENT" -o json > "$service_current"; then rollback_failures=$((rollback_failures + 1)); fi
+  if ! oc -n "$PROJECT" get route/"$DEPLOYMENT" -o json > "$route_current"; then rollback_failures=$((rollback_failures + 1)); fi
+  if test -s "$deployment_current" && ! verify_rollback_object "$OLD_DEPLOYMENT_FILE" "$deployment_current"; then rollback_failures=$((rollback_failures + 1)); fi
+  if test -s "$service_current" && ! verify_rollback_object "$OLD_SERVICE_FILE" "$service_current"; then rollback_failures=$((rollback_failures + 1)); fi
+  if test -s "$route_current" && ! verify_rollback_object "$OLD_ROUTE_FILE" "$route_current"; then rollback_failures=$((rollback_failures + 1)); fi
+  if test "$rollback_failures" -ne 0; then
+    printf 'rollback restore failures=%s; exact old state was not proven\n' "$rollback_failures" >&2
+    return 1
+  fi
   pod="$(select_single_app_pod)"
   raw_web="$(oc -n "$PROJECT" get pod "$pod" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].imageID}')"
   raw_proxy="$(oc -n "$PROJECT" get pod "$pod" -o jsonpath='{.status.containerStatuses[?(@.name=="oauth2-proxy")].imageID}')"
@@ -204,6 +850,22 @@ PY
   proxy="${raw_proxy#docker-pullable://}"
   test "$web" = "$OLD_WEB_IMAGE"
   test "$proxy" = "$OLD_PROXY_IMAGE"
+  comments="$(oc -n "$PROJECT" exec "$pod" -c web -- python -c "import sqlite3; print(sqlite3.connect('/data/comments.sqlite3').execute('SELECT COUNT(*) FROM comments').fetchone()[0])")"
+  test "$comments" = "$BEFORE_COMMENTS"
+  if test -n "$ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK"; then
+    ETROC_EVENT_SNAPSHOT_ROLLBACK="$(oc -n "$PROJECT" exec "$pod" -c web -- python - <<'PY'
+import json, sqlite3
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM etroc_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+)"
+    assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK" "$ETROC_EVENT_SNAPSHOT_ROLLBACK"
+  fi
   printf 'ROLLBACK PASS web=%s proxy=%s\n' "$web" "$proxy"
 }
 
@@ -254,12 +916,35 @@ trap 'on_signal HUP 129' HUP
 trap 'on_signal INT 130' INT
 trap 'on_signal TERM 143' TERM
 
-for command in oc curl python3 sha256sum tar; do
+for command in oc curl python3 sha256sum tar fs find wc; do
   command -v "$command" >/dev/null
  done
 ensure_authenticated
 oc project "$PROJECT" >/dev/null
 verify_context
+
+read -r ETROC_REVIEWER_USERS_NORMALIZED ETROC_REVIEWER_USERS_COUNT ETROC_REVIEWER_USERS_SHA256 < <(
+  normalize_etroc_reviewer_users "$ETROC_REVIEWER_USERS"
+)
+[[ "$ETROC_REVIEWER_USERS_COUNT" =~ ^[1-9][0-9]*$ ]]
+[[ "$ETROC_REVIEWER_USERS_SHA256" =~ ^[0-9a-f]{64}$ ]]
+validate_operator_review_inputs
+printf 'ETROC_REVIEWER_ALLOWLIST PASS count=%s sha256=%s\n' \
+  "$ETROC_REVIEWER_USERS_COUNT" "$ETROC_REVIEWER_USERS_SHA256"
+
+mkdir -p "$MANIFESTS_DIR"
+for manifest in deployment.yaml service.yaml route.yaml; do
+  download "${RAW_ROOT}/hybrid-bbqc/openshift/${manifest}" "${MANIFESTS_DIR}/${manifest}"
+done
+printf '%s  %s\n' "$DEPLOYMENT_MANIFEST_SHA256" "${MANIFESTS_DIR}/deployment.yaml" > "${MANIFESTS_DIR}/SHA256SUMS"
+printf '%s  %s\n' "$SERVICE_MANIFEST_SHA256" "$SERVICE_MANIFEST_FILE" >> "${MANIFESTS_DIR}/SHA256SUMS"
+printf '%s  %s\n' "$ROUTE_MANIFEST_SHA256" "$ROUTE_MANIFEST_FILE" >> "${MANIFESTS_DIR}/SHA256SUMS"
+sha256sum -c "${MANIFESTS_DIR}/SHA256SUMS"
+validate_manifest_topology source-baseline \
+  "${MANIFESTS_DIR}/deployment.yaml" "$SERVICE_MANIFEST_FILE" "$ROUTE_MANIFEST_FILE"
+oc create --dry-run=client -o json -f "${MANIFESTS_DIR}/deployment.yaml" > "$BASELINE_DEPLOYMENT_FILE"
+oc create --dry-run=client -o json -f "$SERVICE_MANIFEST_FILE" > "$BASELINE_SERVICE_FILE"
+oc create --dry-run=client -o json -f "$ROUTE_MANIFEST_FILE" > "$BASELINE_ROUTE_FILE"
 
 test "$(oc auth can-i create builds/build.openshift.io -n "$PROJECT")" = yes
 test "$(oc auth can-i update deployments.apps -n "$PROJECT")" = yes
@@ -272,6 +957,7 @@ oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s
 DEPLOYMENT_UID="$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.uid}')"
 [[ "$DEPLOYMENT_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
 verify_context
+validate_oauth2_proxy_topology preflight
 
 download "${RAW_ROOT}/hybrid-bbqc/openshift/select_single_app_pod.py" "$SELECTOR"
 printf '%s  %s\n' "$SELECTOR_SHA256" "$SELECTOR" | sha256sum -c -
@@ -281,27 +967,53 @@ POD="$(select_single_app_pod)"
 RAW_OLD_WEB_IMAGE="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].imageID}')"
 OLD_WEB_IMAGE="${RAW_OLD_WEB_IMAGE#docker-pullable://}"
 case "$OLD_WEB_IMAGE" in *@sha256:*) ;; *) printf '%s\n' 'Current web image is not immutable.' >&2; false;; esac
+extract_previous_runtime_server
 RAW_OLD_PROXY_IMAGE="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{.status.containerStatuses[?(@.name=="oauth2-proxy")].imageID}')"
 OLD_PROXY_IMAGE="${RAW_OLD_PROXY_IMAGE#docker-pullable://}"
 case "$OLD_PROXY_IMAGE" in *@sha256:*) ;; *) printf '%s\n' 'Current proxy image is not immutable.' >&2; false;; esac
+validate_oauth2_proxy_topology captured-pre-rollout "$OLD_PROXY_IMAGE"
 
 BEFORE_COMMENTS="$(oc -n "$PROJECT" exec "$POD" -c web -- python -c \
   "import sqlite3; print(sqlite3.connect('/data/comments.sqlite3').execute('SELECT COUNT(*) FROM comments').fetchone()[0])")"
 [[ "$BEFORE_COMMENTS" =~ ^[0-9]+$ ]]
+ETROC_EVENT_SNAPSHOT_BEFORE="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
+import json, sqlite3
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM etroc_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+)"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="/data/comments.sqlite3.before-dashboard-${STAMP}.bak"
+measure_dashboard_headroom
 install -d -m 700 "$BACKUP_DIR"
 LOCAL_BACKUP="${BACKUP_DIR}/$(basename "$BACKUP")"
 RELEASE_STATE="${BACKUP_DIR}/dashboard-release-${STAMP}.env"
 OLD_DEPLOYMENT_FILE="${BACKUP_DIR}/deployment-before-dashboard-${STAMP}.json"
 CAPTURED_DEPLOYMENT_FILE="${BACKUP_DIR}/deployment-captured-dashboard-${STAMP}.json"
 FORWARD_DEPLOYMENT_FILE="${BACKUP_DIR}/deployment-forward-dashboard-${STAMP}.json"
+OLD_SERVICE_FILE="${BACKUP_DIR}/service-before-dashboard-${STAMP}.json"
+CAPTURED_SERVICE_FILE="${BACKUP_DIR}/service-captured-dashboard-${STAMP}.json"
+FORWARD_SERVICE_FILE="${BACKUP_DIR}/service-forward-dashboard-${STAMP}.json"
+OLD_ROUTE_FILE="${BACKUP_DIR}/route-before-dashboard-${STAMP}.json"
+CAPTURED_ROUTE_FILE="${BACKUP_DIR}/route-captured-dashboard-${STAMP}.json"
+FORWARD_ROUTE_FILE="${BACKUP_DIR}/route-forward-dashboard-${STAMP}.json"
 BUILDCONFIG_FILE="${BACKUP_DIR}/buildconfig-captured-dashboard-${STAMP}.json"
 oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$CAPTURED_DEPLOYMENT_FILE"
+oc -n "$PROJECT" get service/"$DEPLOYMENT" -o json > "$CAPTURED_SERVICE_FILE"
+oc -n "$PROJECT" get route/"$DEPLOYMENT" -o json > "$CAPTURED_ROUTE_FILE"
 oc -n "$PROJECT" get buildconfig/"$BUILDCONFIG" -o json > "$BUILDCONFIG_FILE"
 CAPTURED_DEPLOYMENT_SHA256="$(sha256sum "$CAPTURED_DEPLOYMENT_FILE" | cut -d' ' -f1)"
+CAPTURED_SERVICE_SHA256="$(sha256sum "$CAPTURED_SERVICE_FILE" | cut -d' ' -f1)"
+CAPTURED_ROUTE_SHA256="$(sha256sum "$CAPTURED_ROUTE_FILE" | cut -d' ' -f1)"
 BUILDCONFIG_SHA256="$(sha256sum "$BUILDCONFIG_FILE" | cut -d' ' -f1)"
 [[ "$CAPTURED_DEPLOYMENT_SHA256" =~ ^[0-9a-f]{64}$ ]]
+[[ "$CAPTURED_SERVICE_SHA256" =~ ^[0-9a-f]{64}$ ]]
+[[ "$CAPTURED_ROUTE_SHA256" =~ ^[0-9a-f]{64}$ ]]
 [[ "$BUILDCONFIG_SHA256" =~ ^[0-9a-f]{64}$ ]]
 DEPLOYMENT_RESOURCE_VERSION="$(python3 -I - "$CAPTURED_DEPLOYMENT_FILE" <<'PY'
 import json, sys
@@ -330,6 +1042,24 @@ import json, sys
 print(json.load(open(sys.argv[1], encoding='utf-8'))['metadata']['uid'])
 PY
 )" = "$DEPLOYMENT_UID"
+read -r SERVICE_UID SERVICE_RESOURCE_VERSION ROUTE_UID ROUTE_RESOURCE_VERSION < <(python3 -I - "$CAPTURED_SERVICE_FILE" "$CAPTURED_ROUTE_FILE" <<'PY'
+import json, sys
+service, route=(json.load(open(path, encoding='utf-8')) for path in sys.argv[1:])
+for expected_kind, source in (('Service', service), ('Route', route)):
+    metadata=source.get('metadata', {})
+    if source.get('kind') != expected_kind or metadata.get('name') != 'etl-hybrid-bbqc' or metadata.get('namespace') != 'etroc-solder-inspection':
+        raise SystemExit(f'captured {expected_kind} target identity changed')
+    if not isinstance(metadata.get('uid'), str) or not metadata['uid'] or not isinstance(metadata.get('resourceVersion'), str) or not metadata['resourceVersion']:
+        raise SystemExit(f'captured {expected_kind} UID/resourceVersion is incomplete')
+    if metadata.get('deletionTimestamp') is not None:
+        raise SystemExit(f'captured {expected_kind} is being deleted')
+print(service['metadata']['uid'], service['metadata']['resourceVersion'], route['metadata']['uid'], route['metadata']['resourceVersion'])
+PY
+)
+[[ "$SERVICE_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
+[[ "$SERVICE_RESOURCE_VERSION" =~ ^[A-Za-z0-9._:-]+$ ]]
+[[ "$ROUTE_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
+[[ "$ROUTE_RESOURCE_VERSION" =~ ^[A-Za-z0-9._:-]+$ ]]
 read -r BUILDCONFIG_UID BUILDCONFIG_RESOURCE_VERSION < <(python3 -I - "$BUILDCONFIG_FILE" <<'PY'
 import json, sys
 source=json.load(open(sys.argv[1], encoding='utf-8'))
@@ -354,26 +1084,15 @@ PY
 [[ "$BUILDCONFIG_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
 [[ "$BUILDCONFIG_RESOURCE_VERSION" =~ ^[A-Za-z0-9._:-]+$ ]]
 
-export OLD_WEB_IMAGE OLD_PROXY_IMAGE DEPLOYMENT_UID CAPTURED_DEPLOYMENT_FILE
-python3 -I - <<'PY' > "$OLD_DEPLOYMENT_FILE"
-import json, os, sys
-source=json.load(open(os.environ['CAPTURED_DEPLOYMENT_FILE'], encoding='utf-8'))
-if source.get('metadata', {}).get('uid') != os.environ['DEPLOYMENT_UID']:
-    raise SystemExit('captured Deployment UID changed')
-metadata={key: source['metadata'][key] for key in ('name','namespace','labels','annotations','finalizers','ownerReferences') if key in source['metadata']}
-desired={'apiVersion': source['apiVersion'], 'kind': 'Deployment', 'metadata': metadata, 'spec': source['spec']}
-images={'web': os.environ['OLD_WEB_IMAGE'], 'oauth2-proxy': os.environ['OLD_PROXY_IMAGE']}
-found=set()
-for container in desired['spec']['template']['spec']['containers']:
-    if container['name'] in images:
-        container['image']=images[container['name']]
-        found.add(container['name'])
-if found != set(images):
-    raise SystemExit(f'captured containers do not match expected set: {sorted(found)}')
-json.dump(desired, sys.stdout, indent=2, sort_keys=True)
-PY
+render_captured_rollback_object "$CAPTURED_DEPLOYMENT_FILE" "$OLD_DEPLOYMENT_FILE"
+render_captured_rollback_object "$CAPTURED_SERVICE_FILE" "$OLD_SERVICE_FILE"
+render_captured_rollback_object "$CAPTURED_ROUTE_FILE" "$OLD_ROUTE_FILE"
 OLD_DEPLOYMENT_SHA256="$(sha256sum "$OLD_DEPLOYMENT_FILE" | cut -d' ' -f1)"
+OLD_SERVICE_SHA256="$(sha256sum "$OLD_SERVICE_FILE" | cut -d' ' -f1)"
+OLD_ROUTE_SHA256="$(sha256sum "$OLD_ROUTE_FILE" | cut -d' ' -f1)"
 [[ "$OLD_DEPLOYMENT_SHA256" =~ ^[0-9a-f]{64}$ ]]
+[[ "$OLD_SERVICE_SHA256" =~ ^[0-9a-f]{64}$ ]]
+[[ "$OLD_ROUTE_SHA256" =~ ^[0-9a-f]{64}$ ]]
 
 oc -n "$PROJECT" exec -i "$POD" -c web -- env BACKUP="$BACKUP" BEFORE_COMMENTS="$BEFORE_COMMENTS" python - <<'PY'
 import os, sqlite3
@@ -412,14 +1131,26 @@ print(hashlib.sha256(payload).hexdigest())
 PY
 )"
 [[ "$BACKUP_SCHEMA_SHA256" =~ ^[0-9a-f]{64}$ ]]
+BACKUP_HYBRID_SCHEMA_SHA256="$(python3 -I - "$LOCAL_BACKUP" <<'PY'
+import hashlib, json, sqlite3, sys
+with sqlite3.connect(sys.argv[1]) as db:
+    rows=db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
+print(hashlib.sha256(json.dumps(rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest())
+PY
+)"
+[[ "$BACKUP_HYBRID_SCHEMA_SHA256" =~ ^[0-9a-f]{64}$ ]]
 BACKUP_SHA256="$(sha256sum "$LOCAL_BACKUP" | cut -d' ' -f1)"
 [[ "$BACKUP_SHA256" =~ ^[0-9a-f]{64}$ ]]
 printf '%s  %s\n' "$BACKUP_SHA256" "$LOCAL_BACKUP" > "${LOCAL_BACKUP}.sha256"
+ETROC_EVENT_SNAPSHOT_BACKUP="$(snapshot_etroc_review_events "$LOCAL_BACKUP")"
+assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$ETROC_EVENT_SNAPSHOT_BACKUP"
 
-mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay" "${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
-for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js lgad-optical-stats.js; do
+mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay" "${BUILD_CONTEXT}/runtime" "${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
+for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js etroc-review.js lgad-optical-stats.js; do
   download "${RAW_ROOT}/hybrid-bbqc/${file}" "${BUILD_CONTEXT}/overlay/${file}"
 done
+download "${RAW_ROOT}/hybrid-bbqc/server.py" "${BUILD_CONTEXT}/runtime/server.py"
+download "${RAW_ROOT}/hybrid-bbqc/etroc_reviews.py" "${BUILD_CONTEXT}/runtime/etroc_reviews.py"
 DATASET_DIR="${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
 download "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/SHA256SUMS" "${DATASET_DIR}/SHA256SUMS"
 printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${DATASET_DIR}/SHA256SUMS" | sha256sum -c -
@@ -431,14 +1162,14 @@ if len(lines) != 73:
     raise SystemExit(f'unexpected ETROC dataset manifest cardinality: {len(lines)}')
 seen=set()
 for line in lines:
-    if not re.fullmatch(r'[0-9a-f]{64}  (chips\.json|(?:montages|previews)/(?:W02G4|W03F7|W05E5)-[0-9]+\.jpg)', line):
+    if not re.fullmatch(r'[0-9a-f]{64}  (chips\.json|montages/sha256/[0-9a-f]{64}\.jpg|previews/(?:W02G4|W03F7|W05E5)-[0-9]+\.jpg)', line):
         raise SystemExit(f'unsafe ETROC dataset manifest entry: {line!r}')
     relative=line[66:]
     path=PurePosixPath(relative)
     if path.is_absolute() or '..' in path.parts or relative in seen:
         raise SystemExit(f'unsafe or duplicate ETROC dataset path: {relative!r}')
     seen.add(relative)
-if sum(path.startswith('montages/') for path in seen) != 36 or sum(path.startswith('previews/') for path in seen) != 36 or 'chips.json' not in seen:
+if sum(path.startswith('montages/') for path in seen) != 36 or sum(path.startswith('montages/sha256/') for path in seen) != 36 or sum(path.startswith('previews/') for path in seen) != 36 or 'chips.json' not in seen:
     raise SystemExit('unexpected ETROC dataset asset roles')
 PY
 while read -r digest relative; do
@@ -453,16 +1184,25 @@ done < "${DATASET_DIR}/SHA256SUMS"
   printf '%s  %s\n' "$JS_SHA256" dashboard.js >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_CSS_SHA256" etroc-optical.css >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_JS_SHA256" etroc-optical.js >> SHA256SUMS
+  printf '%s  %s\n' "$ETROC_REVIEW_JS_SHA256" etroc-review.js >> SHA256SUMS
   printf '%s  %s\n' "$LGAD_STATS_JS_SHA256" lgad-optical-stats.js >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${ETROC_DATASET_REL}/SHA256SUMS" >> SHA256SUMS
   sha256sum -c SHA256SUMS
   cd "$ETROC_DATASET_REL"
   sha256sum -c SHA256SUMS
 )
+validate_operator_review_inputs "${DATASET_DIR}/chips.json"
+(
+  cd "${BUILD_CONTEXT}/runtime"
+  printf '%s  %s\n' "$SERVER_PY_SHA256" server.py > SHA256SUMS
+  printf '%s  %s\n' "$ETROC_REVIEWS_PY_SHA256" etroc_reviews.py >> SHA256SUMS
+  sha256sum -c SHA256SUMS
+)
 printf '%s\n' \
   "FROM ${OLD_WEB_IMAGE}" \
   'USER root' \
   'COPY overlay/ /app/static/' \
+  'COPY runtime/ /app/static/' \
   'RUN chown -R root:root /app/static && chmod -R u=rwX,go=rX /app/static' \
   'USER app' > "${BUILD_CONTEXT}/hybrid-bbqc/Containerfile"
 ACTUAL_TOP_LEVEL="$(python3 -I - "$BUILD_CONTEXT" <<'PY'
@@ -473,15 +1213,109 @@ PY
 )"
 test "$ACTUAL_TOP_LEVEL" = "$EXPECTED_TOP_LEVEL"
 BUILD_CONTEXT_SHA256="$(tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
-  -cf - -C "$BUILD_CONTEXT" hybrid-bbqc overlay | sha256sum | cut -d' ' -f1)"
+  -cf - -C "$BUILD_CONTEXT" hybrid-bbqc overlay runtime | sha256sum | cut -d' ' -f1)"
 [[ "$BUILD_CONTEXT_SHA256" =~ ^[0-9a-f]{64}$ ]]
+
+cp "$LOCAL_BACKUP" "$CANDIDATE_DB"
+CANDIDATE_DB="$CANDIDATE_DB" CANDIDATE_RUNTIME="${BUILD_CONTEXT}/runtime" BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python3 -I - <<'PY'
+import hashlib, json, os, sqlite3, sys
+from pathlib import Path
+
+candidate = Path(os.environ['CANDIDATE_DB'])
+sys.path.insert(0, os.environ['CANDIDATE_RUNTIME'])
+import etroc_reviews
+
+with sqlite3.connect(candidate) as db:
+    before_comments = db.execute('SELECT COUNT(*) FROM comments').fetchone()[0]
+if before_comments != int(os.environ['BEFORE_COMMENTS']):
+    raise SystemExit(f'candidate comment count changed before migration: {before_comments}')
+etroc_reviews.init_schema(candidate)
+with sqlite3.connect(candidate) as db:
+    db.execute('PRAGMA foreign_keys=ON')
+    etroc_reviews.validate_schema(db)
+    objects = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE name LIKE 'etroc_review_%' OR name LIKE 'idx_etroc_review_%'")}
+    version = db.execute('SELECT singleton,version FROM etroc_review_schema').fetchall()
+    foreign_key_errors = db.execute('PRAGMA foreign_key_check').fetchall()
+    integrity = db.execute('PRAGMA integrity_check').fetchone()[0]
+    hybrid_rows=db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
+candidate_hybrid_schema_sha256=hashlib.sha256(json.dumps(hybrid_rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest()
+expected_objects = {
+    'etroc_review_schema', 'etroc_review_events', 'idx_etroc_review_one_root',
+    'idx_etroc_review_one_successor', 'idx_etroc_review_author_mutation',
+    'idx_etroc_review_current_lookup', 'etroc_review_no_update',
+    'etroc_review_no_delete', 'etroc_review_same_evidence_successor',
+}
+if objects != expected_objects or version != [(1, 1)] or foreign_key_errors or integrity != 'ok':
+    raise SystemExit('candidate ETROC schema/integrity verification failed')
+if candidate_hybrid_schema_sha256 != os.environ['BACKUP_HYBRID_SCHEMA_SHA256']:
+    raise SystemExit('existing Hybrid schema changed during ETROC migration')
+etroc_reviews.init_schema(candidate)
+with sqlite3.connect(candidate) as db:
+    etroc_reviews.validate_schema(db)
+    if db.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
+        raise SystemExit('candidate ETROC migration is not idempotent')
+    db.execute('CREATE INDEX etroc_review_unapproved_attachment ON etroc_review_events(author)')
+    try:
+        etroc_reviews.validate_schema(db)
+    except ValueError:
+        pass
+    else:
+        raise SystemExit('arbitrary ETROC attached object bypassed schema validation')
+    db.execute('DROP INDEX etroc_review_unapproved_attachment')
+    etroc_reviews.validate_schema(db)
+print('CANDIDATE_ETROC_SCHEMA PASS')
+PY
+assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$(snapshot_etroc_review_events "$CANDIDATE_DB")"
+COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
+import http.client, importlib.util, json, os, threading, uuid
+from http.server import ThreadingHTTPServer
+from pathlib import Path
+
+source = Path(os.environ['OLD_RUNTIME_SERVER'])
+spec = importlib.util.spec_from_file_location('previous_binary_server', source)
+if spec is None or spec.loader is None:
+    raise SystemExit('previous-binary comments server is unavailable')
+server = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(server)
+server.init_db()
+httpd = ThreadingHTTPServer(('127.0.0.1', 0), server.Handler)
+thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+thread.start()
+target = f'legacy-compat:{uuid.uuid4().hex}'
+headers = {
+    'Content-Type': 'application/json', 'Origin': server.APP_ORIGIN,
+    server.IDENTITY_HEADER: 'ypark@cern.ch',
+}
+try:
+    connection = http.client.HTTPConnection('127.0.0.1', httpd.server_port, timeout=10)
+    connection.request('POST', '/api/comments', body=json.dumps({'target': target, 'body': 'previous-binary comments compatibility', 'status': 'note'}), headers=headers)
+    created = connection.getresponse()
+    created_body = json.loads(created.read())
+    connection.close()
+    if created.status != 201 or created_body.get('target') != target:
+        raise SystemExit('previous-binary comments write failed on additive schema')
+    connection = http.client.HTTPConnection('127.0.0.1', httpd.server_port, timeout=10)
+    connection.request('GET', f'/api/comments?target={target}', headers={server.IDENTITY_HEADER: 'ypark@cern.ch'})
+    listed = connection.getresponse()
+    comments = json.loads(listed.read())
+    connection.close()
+    if listed.status != 200 or not any(comment.get('id') == created_body.get('id') for comment in comments):
+        raise SystemExit('previous-binary comments read failed on additive schema')
+finally:
+    httpd.shutdown()
+    httpd.server_close()
+    thread.join(timeout=2)
+print('CANDIDATE_LEGACY_COMMENTS_COMPAT PASS')
+PY
 
 {
   declare -p SOURCE_REVISION ETROC_DATASET_REL ETROC_MANIFEST_SHA256 API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
-  declare -p DEPLOYMENT_UID OLD_WEB_IMAGE OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256
-  declare -p DEPLOYMENT_RESOURCE_VERSION CAPTURED_DEPLOYMENT_FILE CAPTURED_DEPLOYMENT_SHA256
+  declare -p DEPLOYMENT_MANIFEST_SHA256 SERVICE_MANIFEST_SHA256 ROUTE_MANIFEST_SHA256
+  declare -p ETROC_REVIEWER_USERS_COUNT ETROC_REVIEWER_USERS_SHA256
+  declare -p DEPLOYMENT_UID SERVICE_UID ROUTE_UID OLD_WEB_IMAGE OLD_RUNTIME_SERVER_SHA256 OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256 BACKUP_HYBRID_SCHEMA_SHA256
+  declare -p DEPLOYMENT_RESOURCE_VERSION SERVICE_RESOURCE_VERSION ROUTE_RESOURCE_VERSION CAPTURED_DEPLOYMENT_FILE CAPTURED_DEPLOYMENT_SHA256 CAPTURED_SERVICE_FILE CAPTURED_SERVICE_SHA256 CAPTURED_ROUTE_FILE CAPTURED_ROUTE_SHA256
   declare -p BUILDCONFIG_FILE BUILDCONFIG_SHA256 BUILDCONFIG_UID BUILDCONFIG_RESOURCE_VERSION
-  declare -p OLD_DEPLOYMENT_FILE OLD_DEPLOYMENT_SHA256 FORWARD_DEPLOYMENT_FILE BUILD_CONTEXT_SHA256
+  declare -p OLD_DEPLOYMENT_FILE OLD_DEPLOYMENT_SHA256 OLD_SERVICE_FILE OLD_SERVICE_SHA256 OLD_ROUTE_FILE OLD_ROUTE_SHA256 FORWARD_DEPLOYMENT_FILE FORWARD_SERVICE_FILE FORWARD_ROUTE_FILE BUILD_CONTEXT_SHA256
 } > "$RELEASE_STATE"
 chmod 600 "$RELEASE_STATE"
 
@@ -521,44 +1355,96 @@ case "$NEW_WEB_IMAGE" in *@"$BUILD_OUTPUT_DIGEST") ;; *) printf '%s\n' 'Build-sp
 test "$NEW_WEB_IMAGE" != "$OLD_WEB_IMAGE"
 declare -p BUILD_NAME BUILD_OUTPUT_DIGEST NEW_WEB_IMAGE >> "$RELEASE_STATE"
 
+CANDIDATE_PROBE_POD="${DEPLOYMENT}-candidate-startup-probe-${RANDOM}${RANDOM}"
+ETROC_REVIEWER_TEST_USER="${ETROC_REVIEWER_USERS_NORMALIZED%%,*}"
+if ! oc -n "$PROJECT" run "$CANDIDATE_PROBE_POD" --restart=Never --image="$NEW_WEB_IMAGE" --output=json \
+  --overrides='{"spec":{"volumes":[{"name":"data","emptyDir":{}}],"containers":[{"name":"'"$CANDIDATE_PROBE_POD"'","volumeMounts":[{"name":"data","mountPath":"/data"}],"env":[{"name":"HOST","value":"127.0.0.1"},{"name":"ETROC_REVIEWER_USERS","value":"'"$ETROC_REVIEWER_USERS_NORMALIZED"'"}]}]}}' \
+  --command -- sleep 300 > "$CANDIDATE_PROBE_CREATE_RESPONSE"; then
+  if ! oc -n "$PROJECT" get pod/"$CANDIDATE_PROBE_POD" -o json > "$CANDIDATE_PROBE_CREATE_RESPONSE"; then
+    printf '%s\n' 'candidate probe creation failed and no exact pod could be reconciled' >&2
+    false
+  fi
+fi
+CANDIDATE_PROBE_POD_UID="$(CANDIDATE_PROBE_CREATE_RESPONSE="$CANDIDATE_PROBE_CREATE_RESPONSE" CANDIDATE_PROBE_POD="$CANDIDATE_PROBE_POD" PROJECT="$PROJECT" NEW_WEB_IMAGE="$NEW_WEB_IMAGE" ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY'
+import json, os, re
+pod=json.load(open(os.environ['CANDIDATE_PROBE_CREATE_RESPONSE'], encoding='utf-8'))
+metadata=pod.get('metadata', {})
+spec=pod.get('spec', {})
+containers=spec.get('containers')
+if pod.get('apiVersion') != 'v1' or pod.get('kind') != 'Pod':
+    raise SystemExit('candidate probe create response is not a Pod')
+if metadata.get('name') != os.environ['CANDIDATE_PROBE_POD'] or metadata.get('namespace') != os.environ['PROJECT']:
+    raise SystemExit('candidate probe create response identity mismatch')
+uid=metadata.get('uid')
+if not isinstance(uid, str) or re.fullmatch(r'[A-Za-z0-9._:-]+', uid) is None:
+    raise SystemExit('candidate probe create response UID is invalid')
+if spec.get('restartPolicy') != 'Never' or not isinstance(containers, list) or len(containers) != 1:
+    raise SystemExit('candidate probe create response spec mismatch')
+container=containers[0]
+expected_env={'HOST': '127.0.0.1', 'ETROC_REVIEWER_USERS': os.environ['ETROC_REVIEWER_USERS_NORMALIZED']}
+actual_env={entry.get('name'): entry.get('value') for entry in container.get('env', []) if isinstance(entry, dict)}
+if container.get('name') != os.environ['CANDIDATE_PROBE_POD'] or container.get('image') != os.environ['NEW_WEB_IMAGE'] or actual_env != expected_env:
+    raise SystemExit('candidate probe create response container mismatch')
+if container.get('command') != ['sleep', '300'] or container.get('volumeMounts') != [{'name': 'data', 'mountPath': '/data'}] or spec.get('volumes') != [{'name': 'data', 'emptyDir': {}}]:
+    raise SystemExit('candidate probe create response spec mismatch')
+print(uid)
+PY
+)"
+CANDIDATE_PROBE_POD_OWNED=1
+oc -n "$PROJECT" wait --for=condition=Ready pod/"$CANDIDATE_PROBE_POD" --timeout=120s
+oc -n "$PROJECT" cp "$LOCAL_BACKUP" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3"
+oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- sh -c 'python /app/static/server.py >/tmp/candidate-entrypoint.log 2>&1 &'
+for candidate_attempt in $(seq 1 24); do
+  if oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" python - <<'PY'
+import hashlib, json, os
+from urllib.request import Request, urlopen
+request=Request('http://127.0.0.1:8080/api/etroc-reviews?dataset_id=ETROC_OI_2608', headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']})
+with urlopen(request, timeout=5) as response:
+    summary=json.loads(response.read())
+if summary.get('record_count') != 36 or not isinstance(summary.get('evidence'), dict) or len(summary['evidence']) != 36:
+    raise SystemExit('candidate evidence loader did not return exact cohort')
+record=next(iter(summary['evidence'].values()))
+with urlopen('http://127.0.0.1:8080/' + record['montage_uri'], timeout=5) as response:
+    montage=response.read()
+if hashlib.sha256(montage).hexdigest() != record['montage_sha256']:
+    raise SystemExit('candidate served montage bytes mismatch')
+PY
+  then
+    break
+  fi
+  test "$candidate_attempt" -lt 24
+  sleep 5
+done
+grep -q 'BBQC_STARTUP_OK' <<< "$(oc -n "$PROJECT" logs "$CANDIDATE_PROBE_POD")"
+cleanup_candidate_probe_pod
+printf 'CANDIDATE_IMAGE_STARTUP PASS image=%s\n' "$NEW_WEB_IMAGE"
+
 verify_context
 test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$DEPLOYMENT_RESOURCE_VERSION"
-export NEW_WEB_IMAGE SOURCE_REVISION BUILD_CONTEXT_SHA256 BUILD_NAME DEPLOYMENT_RESOURCE_VERSION
-python3 -I - <<'PY' > "$FORWARD_DEPLOYMENT_FILE"
-import json, os, sys
-source=json.load(open(os.environ['CAPTURED_DEPLOYMENT_FILE'], encoding='utf-8'))
-metadata=source.get('metadata', {})
-if metadata.get('uid') != os.environ['DEPLOYMENT_UID']:
-    raise SystemExit('captured Deployment UID changed before rollout')
-if metadata.get('resourceVersion') != os.environ['DEPLOYMENT_RESOURCE_VERSION']:
-    raise SystemExit('captured Deployment resourceVersion changed before rollout')
-desired_metadata={key: metadata[key] for key in ('name','namespace','labels','annotations','finalizers','ownerReferences','resourceVersion') if key in metadata}
-desired_metadata.setdefault('annotations', {}).pop('kubectl.kubernetes.io/last-applied-configuration', None)
-desired_metadata['annotations'].update({
-    'bbqc.cern.ch/source-revision': os.environ['SOURCE_REVISION'],
-    'bbqc.cern.ch/build-context-sha256': os.environ['BUILD_CONTEXT_SHA256'],
-    'bbqc.cern.ch/build-name': os.environ['BUILD_NAME'],
-    'bbqc.cern.ch/release-mode': 'immutable-overlay',
-})
-desired={'apiVersion': source['apiVersion'], 'kind': 'Deployment', 'metadata': desired_metadata, 'spec': source['spec']}
-images={'web': os.environ['NEW_WEB_IMAGE'], 'oauth2-proxy': os.environ['OLD_PROXY_IMAGE']}
-found=set()
-for container in desired['spec']['template']['spec']['containers']:
-    if container['name'] in images:
-        container['image']=images[container['name']]
-        found.add(container['name'])
-if found != set(images):
-    raise SystemExit(f'forward containers do not match expected set: {sorted(found)}')
-json.dump(desired, sys.stdout, indent=2, sort_keys=True)
-PY
+test "$(oc -n "$PROJECT" get service/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$SERVICE_RESOURCE_VERSION"
+test "$(oc -n "$PROJECT" get route/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$ROUTE_RESOURCE_VERSION"
+render_forward_object Deployment "$BASELINE_DEPLOYMENT_FILE" "$CAPTURED_DEPLOYMENT_FILE" "$FORWARD_DEPLOYMENT_FILE"
+render_forward_object Service "$BASELINE_SERVICE_FILE" "$CAPTURED_SERVICE_FILE" "$FORWARD_SERVICE_FILE"
+render_forward_object Route "$BASELINE_ROUTE_FILE" "$CAPTURED_ROUTE_FILE" "$FORWARD_ROUTE_FILE"
 FORWARD_DEPLOYMENT_SHA256="$(sha256sum "$FORWARD_DEPLOYMENT_FILE" | cut -d' ' -f1)"
+FORWARD_SERVICE_SHA256="$(sha256sum "$FORWARD_SERVICE_FILE" | cut -d' ' -f1)"
+FORWARD_ROUTE_SHA256="$(sha256sum "$FORWARD_ROUTE_FILE" | cut -d' ' -f1)"
 [[ "$FORWARD_DEPLOYMENT_SHA256" =~ ^[0-9a-f]{64}$ ]]
-declare -p FORWARD_DEPLOYMENT_SHA256 >> "$RELEASE_STATE"
+[[ "$FORWARD_SERVICE_SHA256" =~ ^[0-9a-f]{64}$ ]]
+[[ "$FORWARD_ROUTE_SHA256" =~ ^[0-9a-f]{64}$ ]]
+declare -p FORWARD_DEPLOYMENT_SHA256 FORWARD_SERVICE_SHA256 FORWARD_ROUTE_SHA256 >> "$RELEASE_STATE"
+validate_manifest_topology rendered-pre-rollout \
+  "$FORWARD_DEPLOYMENT_FILE" "$FORWARD_SERVICE_FILE" "$FORWARD_ROUTE_FILE"
 oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$FORWARD_DEPLOYMENT_FILE" >/dev/null
+oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$FORWARD_SERVICE_FILE" >/dev/null
+oc -n "$PROJECT" replace --save-config=false --dry-run=server -f "$FORWARD_ROUTE_FILE" >/dev/null
 ROLLOUT_MUTATED=1
+oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_SERVICE_FILE"
+oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_ROUTE_FILE"
 oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_DEPLOYMENT_FILE"
 oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s
 verify_context
+validate_oauth2_proxy_topology post-rollout "$OLD_PROXY_IMAGE"
 POD="$(select_single_app_pod)"
 RAW_POD_WEB_IMAGE="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].imageID}')"
 POD_WEB_IMAGE="${RAW_POD_WEB_IMAGE#docker-pullable://}"
@@ -572,14 +1458,20 @@ REMOTE_CSS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/d
 REMOTE_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/dashboard.js | cut -d' ' -f1)"
 REMOTE_ETROC_CSS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.css | cut -d' ' -f1)"
 REMOTE_ETROC_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.js | cut -d' ' -f1)"
+REMOTE_ETROC_REVIEW_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-review.js | cut -d' ' -f1)"
 REMOTE_LGAD_STATS_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/lgad-optical-stats.js | cut -d' ' -f1)"
+REMOTE_SERVER_PY_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/server.py | cut -d' ' -f1)"
+REMOTE_ETROC_REVIEWS_PY_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc_reviews.py | cut -d' ' -f1)"
 REMOTE_ETROC_MANIFEST_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum "/app/static/${ETROC_DATASET_REL}/SHA256SUMS" | cut -d' ' -f1)"
 test "$REMOTE_INDEX_SHA" = "$INDEX_SHA256"
 test "$REMOTE_CSS_SHA" = "$CSS_SHA256"
 test "$REMOTE_JS_SHA" = "$JS_SHA256"
 test "$REMOTE_ETROC_CSS_SHA" = "$ETROC_CSS_SHA256"
 test "$REMOTE_ETROC_JS_SHA" = "$ETROC_JS_SHA256"
+test "$REMOTE_ETROC_REVIEW_JS_SHA" = "$ETROC_REVIEW_JS_SHA256"
 test "$REMOTE_LGAD_STATS_JS_SHA" = "$LGAD_STATS_JS_SHA256"
+test "$REMOTE_SERVER_PY_SHA" = "$SERVER_PY_SHA256"
+test "$REMOTE_ETROC_REVIEWS_PY_SHA" = "$ETROC_REVIEWS_PY_SHA256"
 test "$REMOTE_ETROC_MANIFEST_SHA" = "$ETROC_MANIFEST_SHA256"
 oc -n "$PROJECT" exec "$POD" -c web -- sh -c \
   "cd '/app/static/${ETROC_DATASET_REL}' && sha256sum -c SHA256SUMS"
@@ -602,9 +1494,50 @@ if len(set(assets)) != 72 or any(not path.is_file() or path.stat().st_size == 0 
 print({'dataset_id': payload['dataset_id'], 'records': len(records), 'assets': len(assets), 'positions': payload['position_record_count']})
 PY
 
+CHIPS_PUBLICATION_SHA256="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum "/app/static/${ETROC_DATASET_REL}/chips.json" | cut -d' ' -f1)"
+[[ "$CHIPS_PUBLICATION_SHA256" =~ ^[0-9a-f]{64}$ ]]
+oc -n "$PROJECT" exec -i "$POD" -c web -- env \
+  ETROC_DATASET_REL="$ETROC_DATASET_REL" CHIPS_PUBLICATION_SHA256="$CHIPS_PUBLICATION_SHA256" python - <<'PY'
+import hashlib, json, os
+from pathlib import Path, PurePosixPath
+root=Path('/app/static') / os.environ['ETROC_DATASET_REL']
+payload=json.loads((root / 'chips.json').read_text(encoding='utf-8'))
+if hashlib.sha256((root / 'chips.json').read_bytes()).hexdigest() != os.environ['CHIPS_PUBLICATION_SHA256']:
+    raise SystemExit('runtime chips.json publication hash mismatch')
+records=payload.get('records')
+if not isinstance(records, list) or len(records) != 36:
+    raise SystemExit('runtime ETROC review evidence cardinality mismatch')
+evidence={}
+keys=set()
+for record in records:
+    acquisition_id=record.get('acquisition_id')
+    key=tuple(record.get(field) for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256'))
+    if acquisition_id in evidence:
+        raise SystemExit('duplicate ETROC acquisition_id')
+    if key in keys or not all(isinstance(value, str) and value for value in key):
+        raise SystemExit('duplicate canonical ETROC evidence key')
+    keys.add(key)
+    montage_sha256=record['montage_sha256']
+    uri=record.get('montage_uri')
+    path=PurePosixPath(uri) if isinstance(uri, str) else None
+    if path is None or path.parts[:2] != ('montages', 'sha256') or path.name != f'{montage_sha256}.jpg':
+        raise SystemExit('runtime content-addressed montage URI mismatch')
+    path_digest=path.stem
+    if path_digest != montage_sha256:
+        raise SystemExit('runtime content-addressed montage digest mismatch')
+    montage_path=root / path
+    if not montage_path.is_file() or hashlib.sha256(montage_path.read_bytes()).hexdigest() != montage_sha256:
+        raise SystemExit('runtime content-addressed montage bytes mismatch')
+    evidence[acquisition_id]=key
+if len(evidence) != 36:
+    raise SystemExit('runtime ETROC review evidence map cardinality mismatch')
+print({'publication_sha256': os.environ['CHIPS_PUBLICATION_SHA256'], 'evidence': len(evidence)})
+PY
+
 oc -n "$PROJECT" exec -i "$POD" -c web -- env \
   INDEX_SHA256="$INDEX_SHA256" ETROC_CSS_SHA256="$ETROC_CSS_SHA256" \
-  ETROC_JS_SHA256="$ETROC_JS_SHA256" LGAD_STATS_JS_SHA256="$LGAD_STATS_JS_SHA256" python - <<'PY'
+  ETROC_JS_SHA256="$ETROC_JS_SHA256" ETROC_REVIEW_JS_SHA256="$ETROC_REVIEW_JS_SHA256" \
+  LGAD_STATS_JS_SHA256="$LGAD_STATS_JS_SHA256" python - <<'PY'
 import hashlib, json, os
 import urllib.request
 
@@ -623,6 +1556,7 @@ for path, expected_sha256 in (
     ('', os.environ['INDEX_SHA256']),
     ('etroc-optical.js', os.environ['ETROC_JS_SHA256']),
     ('etroc-optical.css', os.environ['ETROC_CSS_SHA256']),
+    ('etroc-review.js', os.environ['ETROC_REVIEW_JS_SHA256']),
     ('lgad-optical-stats.js', os.environ['LGAD_STATS_JS_SHA256']),
 ):
     actual = hashlib.sha256(fetch(path)).hexdigest()
@@ -634,36 +1568,142 @@ payload = json.loads(fetch(chips_path))
 if payload.get('dataset_id') != 'ETROC_OI_2608' or len(payload.get('records', [])) != 36:
     raise SystemExit('runtime HTTP ETROC payload identity/cardinality mismatch')
 
-for path in (
-    'data/etroc-optical/ETROC_OI_2608/previews/W02G4-44.jpg',
-    'data/etroc-optical/ETROC_OI_2608/montages/W02G4-44.jpg',
-):
+record = payload['records'][0]
+dataset_root = 'data/etroc-optical/ETROC_OI_2608'
+for path in (f"{dataset_root}/{record['preview_uri']}", f"{dataset_root}/{record['montage_uri']}"):
     image = fetch(path)
     if not image.startswith(b'\xff\xd8') or not image.endswith(b'\xff\xd9'):
         raise SystemExit(f'runtime HTTP JPEG contract failed: {path}')
+if not record['montage_uri'].startswith('montages/sha256/'):
+    raise SystemExit('runtime HTTP content-addressed montage URI mismatch')
+montage = fetch(f"{dataset_root}/{record['montage_uri']}")
+if hashlib.sha256(montage).hexdigest() != record['montage_sha256']:
+    raise SystemExit('runtime HTTP montage bytes mismatch')
 
 print(f"RUNTIME_HTTP_ASSETS PASS dataset_id={payload['dataset_id']} records={len(payload['records'])}")
 PY
 
-oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" python - <<'PY'
-import hashlib, json, os, sqlite3
+ETROC_REVIEWER_TEST_USER="${ETROC_REVIEWER_USERS_NORMALIZED%%,*}"
+oc -n "$PROJECT" exec -i "$POD" -c web -- env ETROC_REVIEWER_USERS="$ETROC_REVIEWER_USERS_NORMALIZED" \
+  CHIPS_PUBLICATION_SHA256="$CHIPS_PUBLICATION_SHA256" \
+  ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" python - <<'PY'
+import hashlib, json, os
+from pathlib import Path, PurePosixPath
+import urllib.request
+base='http://127.0.0.1:8080/'
+request=urllib.request.Request(
+    base + '/api/etroc-reviews?dataset_id=ETROC_OI_2608',
+    headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']},
+)
+with urllib.request.urlopen(request, timeout=10) as response:
+    if response.status != 200 or response.headers.get('Cache-Control') != 'no-store':
+        raise SystemExit('ETROC review runtime response headers/status mismatch')
+    summary=json.loads(response.read())
+evidence=summary.get('evidence')
+if summary.get('dataset_id') != 'ETROC_OI_2608' or summary.get('record_count') != 36:
+    raise SystemExit('ETROC review runtime dataset/cardinality mismatch')
+if summary.get('publication_sha256') != os.environ['CHIPS_PUBLICATION_SHA256']:
+    raise SystemExit('ETROC review runtime publication hash mismatch')
+if not isinstance(evidence, dict) or len(evidence) != 36:
+    raise SystemExit('ETROC review runtime evidence map mismatch')
+root=Path('/app/static/data/etroc-optical/ETROC_OI_2608')
+raw=(root / 'chips.json').read_bytes()
+if hashlib.sha256(raw).hexdigest() != os.environ['CHIPS_PUBLICATION_SHA256']:
+    raise SystemExit('locally validated publication hash mismatch')
+publication=json.loads(raw)
+expected_evidence={}
+for record in publication.get('records', []):
+    key=record.get('acquisition_id')
+    digest=record.get('montage_sha256')
+    uri=record.get('montage_uri')
+    path=PurePosixPath(uri) if isinstance(uri, str) else None
+    if not isinstance(key, str) or not isinstance(digest, str) or path is None or path != PurePosixPath('montages/sha256') / f'{digest}.jpg':
+        raise SystemExit('locally validated publication evidence is invalid')
+    expected_evidence[key]={
+        field: record.get(field) for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')
+    }
+    expected_evidence[key]['montage_uri']=(PurePosixPath('data/etroc-optical/ETROC_OI_2608') / path).as_posix()
+if len(expected_evidence) != 36:
+    raise SystemExit('locally validated publication evidence cardinality mismatch')
+if set(evidence) != set(expected_evidence):
+    raise SystemExit('API evidence keyset mismatch')
+for acquisition_id, expected in expected_evidence.items():
+    actual=evidence.get(acquisition_id)
+    if actual != expected:
+        raise SystemExit('API evidence identity/URI mismatch')
+if summary.get('viewer', {}).get('can_append_review') is not True:
+    raise SystemExit('internal proxy-derived allowlisted identity was not accepted')
+print(f"ETROC_REVIEW_RUNTIME_CONTRACT PASS records={len(evidence)}")
+PY
+
+oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python - <<'PY'
+import hashlib, json, os, sqlite3, sys
+sys.path.insert(0, '/app/static')
+import etroc_reviews
 with sqlite3.connect('/data/comments.sqlite3') as db:
+    db.execute('PRAGMA foreign_keys=ON')
     schema_rows = db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name,tbl_name,sql").fetchall()
+    hybrid_rows = db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
     comments = db.execute('SELECT COUNT(*) FROM comments').fetchone()[0]
     foreign_key_errors = db.execute('PRAGMA foreign_key_check').fetchall()
     integrity = db.execute('PRAGMA integrity_check').fetchone()[0]
+    attached_objects = db.execute("SELECT type,name,tbl_name FROM sqlite_master WHERE name IN ('etroc_review_schema','etroc_review_events') OR tbl_name IN ('etroc_review_schema','etroc_review_events') ORDER BY type,name").fetchall()
+    review_objects = {row[1] for row in attached_objects}
+    review_version = db.execute('SELECT singleton,version FROM etroc_review_schema').fetchall()
+    columns = [(row[1], row[2].upper(), row[3]) for row in db.execute('PRAGMA table_info(etroc_review_events)')]
+    indexes = {row[1]: (row[2], row[3], row[4], tuple(index_row[2] for index_row in db.execute(f'PRAGMA index_info("{row[1]}")'))) for row in db.execute('PRAGMA index_list(etroc_review_events)')}
+    foreign_keys = [tuple(row) for row in db.execute('PRAGMA foreign_key_list(etroc_review_events)')]
+    etroc_reviews.validate_schema(db)
 schema_payload = json.dumps(schema_rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
 runtime_schema_sha256 = hashlib.sha256(schema_payload).hexdigest()
-if runtime_schema_sha256 != os.environ['BACKUP_SCHEMA_SHA256']:
-    raise SystemExit(f'runtime database schema changed: {runtime_schema_sha256}')
+runtime_hybrid_schema_sha256 = hashlib.sha256(json.dumps(hybrid_rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest()
+expected_review_objects = {
+    'etroc_review_schema', 'etroc_review_events', 'idx_etroc_review_one_root',
+    'idx_etroc_review_one_successor', 'idx_etroc_review_author_mutation',
+    'idx_etroc_review_current_lookup', 'etroc_review_no_update',
+    'etroc_review_no_delete', 'etroc_review_same_evidence_successor',
+}
+if review_objects != expected_review_objects or len(review_version) != 1 or review_version[0][:2] != (1, 1):
+    raise SystemExit('ETROC review schema/startup probe failed')
+if any(name not in expected_review_objects for _kind, name, _table in attached_objects):
+    raise SystemExit('arbitrary ETROC attached object')
+expected_columns = [
+    ('id', 'INTEGER', 0), ('dataset_id', 'TEXT', 1), ('etroc_serial', 'TEXT', 1),
+    ('acquisition_id', 'TEXT', 1), ('analysis_run_id', 'TEXT', 1), ('montage_sha256', 'TEXT', 1),
+    ('state', 'TEXT', 1), ('note', 'TEXT', 1), ('author', 'TEXT', 1), ('author_display', 'TEXT', 1),
+    ('created_at', 'INTEGER', 1), ('mutation_id', 'TEXT', 1), ('supersedes_event_id', 'INTEGER', 0),
+]
+expected_indexes = {
+    'idx_etroc_review_one_root': (1, 'c', 1, ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')),
+    'idx_etroc_review_one_successor': (1, 'c', 1, ('supersedes_event_id',)),
+    'idx_etroc_review_author_mutation': (1, 'c', 0, ('author','mutation_id')),
+    'idx_etroc_review_current_lookup': (0, 'c', 0, ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256','id')),
+}
+expected_foreign_keys = [(0, 0, 'etroc_review_events', 'supersedes_event_id', 'id', 'NO ACTION', 'RESTRICT', 'NONE')]
+if columns != expected_columns or indexes != expected_indexes or foreign_keys != expected_foreign_keys:
+    raise SystemExit('ETROC review schema columns/indexes/index_info/FK actions mismatch')
+if runtime_hybrid_schema_sha256 != os.environ['BACKUP_HYBRID_SCHEMA_SHA256']:
+    raise SystemExit('existing Hybrid schema changed after rollout')
 if comments < int(os.environ['BEFORE_COMMENTS']):
     raise SystemExit(f'comment count regressed: {comments}')
 if foreign_key_errors:
     raise SystemExit(f'foreign key errors: {foreign_key_errors}')
 if integrity != 'ok':
     raise SystemExit(f'runtime database integrity check failed: {integrity}')
-print({'schema_sha256': runtime_schema_sha256, 'comments': comments, 'integrity': integrity})
+print({'schema_sha256': runtime_schema_sha256, 'comments': comments, 'integrity': integrity, 'review_objects': len(review_objects), 'schema': 'POST_ROLLOUT_ETROC_SCHEMA PASS'})
 PY
+ETROC_EVENT_SNAPSHOT_POST_ROLLOUT="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
+import json, sqlite3
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM etroc_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+)"
+assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$ETROC_EVENT_SNAPSHOT_POST_ROLLOUT"
 READY="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{range .status.containerStatuses[*]}{.name}={.ready}{"\n"}{end}')"
 grep -qx 'web=true' <<< "$READY"
 grep -qx 'oauth2-proxy=true' <<< "$READY"
@@ -696,6 +1736,266 @@ PY
 )"
 case "$LOCATION" in https://auth.cern.ch/*) ;; *) printf 'Unexpected SSO redirect: %s\n' "$LOCATION" >&2; false;; esac
 printf 'SSO_PROXY_GATE PASS status=%s location=%s\n' "$HTTP_STATUS" "$LOCATION"
+SPOOF_STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+  --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
+SPOOF_APPEND_STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+  --request POST --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
+  --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
+  --data '{}' 'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
+if [[ "$SPOOF_STATUS" =~ ^2[0-9][0-9]$ ]] || [[ "$SPOOF_APPEND_STATUS" =~ ^2[0-9][0-9]$ ]]; then
+  printf '%s\n' 'external trusted-header spoof manufactured append capability' >&2
+  false
+fi
+if test "$SPOOF_STATUS" = 200; then
+  printf '%s\n' 'external trusted-header spoof was accepted' >&2
+  false
+fi
+INTERNAL_STATUS="$(oc -n "$PROJECT" exec "$POD" -c web -- sh -c \
+  "curl --silent --output /dev/null --write-out '%{http_code}' --header 'X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}' 'http://127.0.0.1:8080/api/etroc-reviews?dataset_id=ETROC_OI_2608'")"
+test "$INTERNAL_STATUS" = 200
+validate_cookie_jar_inputs() {
+  local authenticated="$1" non_allowlisted="$2" mode parent parent_mode
+  for jar in "$authenticated" "$non_allowlisted"; do
+    if ! test -f "$jar" || test -L "$jar" || ! test -O "$jar"; then
+      printf '%s\n' 'authenticated cookie jar is not a safe regular file' >&2
+      return 1
+    fi
+    mode="$(stat -c '%a' "$jar")"
+    if test "$mode" != 400 && test "$mode" != 600; then
+      printf '%s\n' 'authenticated cookie jar has unsafe permissions' >&2
+      return 1
+    fi
+    parent="$(dirname "$jar")"
+    if ! test -d "$parent" || test -L "$parent" || ! test -O "$parent"; then
+      printf '%s\n' 'authenticated cookie jar parent is unsafe' >&2
+      return 1
+    fi
+    parent_mode="$(stat -c '%a' "$parent")"
+    if (( (8#$parent_mode & 8#022) != 0 )); then
+      printf '%s\n' 'authenticated cookie jar parent is writable by others' >&2
+      return 1
+    fi
+  done
+  if test "$authenticated" = "$non_allowlisted" || test "$authenticated" -ef "$non_allowlisted"; then
+    printf '%s\n' 'authenticated cookie jars must be distinct inputs' >&2
+    return 1
+  fi
+}
+AUTHENTICATED_SESSION_COOKIE_JAR="${ETROC_AUTHENTICATED_SESSION_COOKIE_JAR:-}"
+if test -z "$AUTHENTICATED_SESSION_COOKIE_JAR" || ! test -r "$AUTHENTICATED_SESSION_COOKIE_JAR"; then
+  printf '%s\n' 'authenticated conflicting-header proof unavailable' >&2
+  false
+fi
+NON_ALLOWLISTED_SESSION_COOKIE_JAR="${ETROC_NON_ALLOWLISTED_SESSION_COOKIE_JAR:-}"
+if test -z "$NON_ALLOWLISTED_SESSION_COOKIE_JAR" || ! test -r "$NON_ALLOWLISTED_SESSION_COOKIE_JAR"; then
+  printf '%s\n' 'non-allowlisted authenticated spoof proof unavailable' >&2
+  false
+fi
+validate_cookie_jar_inputs "$AUTHENTICATED_SESSION_COOKIE_JAR" "$NON_ALLOWLISTED_SESSION_COOKIE_JAR"
+NON_ALLOWLISTED_SPOOF_SUMMARY="$(curl --fail --silent --show-error --cookie "$NON_ALLOWLISTED_SESSION_COOKIE_JAR" \
+  --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
+NON_ALLOWLISTED_SPOOF_APPEND_STATUS="$(curl --silent --show-error --cookie "$NON_ALLOWLISTED_SESSION_COOKIE_JAR" \
+  --request POST --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
+  --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
+  --data '{}' --output /dev/null --write-out '%{http_code}' 'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
+NON_ALLOWLISTED_SPOOF_SUMMARY="$NON_ALLOWLISTED_SPOOF_SUMMARY" NON_ALLOWLISTED_SPOOF_APPEND_STATUS="$NON_ALLOWLISTED_SPOOF_APPEND_STATUS" python3 -I - <<'PY'
+import json, os
+summary=json.loads(os.environ['NON_ALLOWLISTED_SPOOF_SUMMARY'])
+if summary.get('viewer', {}).get('can_append_review') is not False:
+    raise SystemExit('non-allowlisted session spoof manufactured append capability')
+if os.environ['NON_ALLOWLISTED_SPOOF_APPEND_STATUS'] != '403':
+    raise SystemExit('non-allowlisted session spoof append was not forbidden')
+if not isinstance(summary.get('viewer', {}).get('identity_display'), str) or not summary['viewer']['identity_display']:
+    raise SystemExit('non-allowlisted session identity was not preserved')
+PY
+AUTHENTICATED_SUMMARY="$(curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
+CONFLICTING_HEADER_SUMMARY="$(curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  --header 'X-Forwarded-Email: attacker@cern.ch' \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
+AUTHENTICATED_SUMMARY="$AUTHENTICATED_SUMMARY" CONFLICTING_HEADER_SUMMARY="$CONFLICTING_HEADER_SUMMARY" python3 -I - <<'PY'
+import json, os
+baseline=json.loads(os.environ['AUTHENTICATED_SUMMARY'])
+conflicted=json.loads(os.environ['CONFLICTING_HEADER_SUMMARY'])
+if baseline.get('viewer', {}).get('can_append_review') is not True:
+    raise SystemExit('authenticated conflicting-header identity mismatch')
+if baseline.get('viewer') != conflicted.get('viewer'):
+    raise SystemExit('allowlisted session identity was not preserved against attacker header')
+print('AUTHENTICATED_CONFLICTING_IDENTITY_GATE PASS')
+PY
+REVIEW_SUMMARY_HEADERS="${WORK_DIR}/review-summary-headers"
+REVIEW_SUMMARY="${WORK_DIR}/review-summary.json"
+REVIEW_REQUEST="${WORK_DIR}/review-request.json"
+REVIEW_EXPECTED="${WORK_DIR}/review-expected.json"
+REVIEW_CREATED_HEADERS="${WORK_DIR}/review-created-headers"
+REVIEW_CREATED="${WORK_DIR}/review-created.json"
+REVIEW_REPLAY_HEADERS="${WORK_DIR}/review-replay-headers"
+REVIEW_REPLAY="${WORK_DIR}/review-replay.json"
+REVIEW_HISTORY_HEADERS="${WORK_DIR}/review-history-headers"
+REVIEW_HISTORY="${WORK_DIR}/review-history.json"
+REVIEW_AUDIT_HEADERS="${WORK_DIR}/review-audit-headers"
+REVIEW_AUDIT="${WORK_DIR}/review-audit.json"
+REVIEW_STALE_HEADERS="${WORK_DIR}/review-stale-headers"
+REVIEW_STALE="${WORK_DIR}/review-stale.json"
+curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  --dump-header "$REVIEW_SUMMARY_HEADERS" --output "$REVIEW_SUMMARY" \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608'
+ETROC_REVIEW_ACQUISITION_ID="$ETROC_REVIEW_ACQUISITION_ID" \
+  ETROC_REVIEW_STATE="$ETROC_REVIEW_STATE" ETROC_REVIEW_NOTE="$ETROC_REVIEW_NOTE" \
+  REVIEW_SUMMARY="$REVIEW_SUMMARY" REVIEW_SUMMARY_HEADERS="$REVIEW_SUMMARY_HEADERS" \
+  REVIEW_REQUEST="$REVIEW_REQUEST" REVIEW_EXPECTED="$REVIEW_EXPECTED" python3 -I - <<'PY'
+import json, os, uuid
+
+def headers(path):
+    parsed = {}
+    for line in open(path, encoding='iso-8859-1'):
+        if ':' in line:
+            name, value = line.split(':', 1)
+            parsed[name.strip().lower()] = value.strip()
+    return parsed
+
+summary=json.load(open(os.environ['REVIEW_SUMMARY'], encoding='utf-8'))
+response_headers=headers(os.environ['REVIEW_SUMMARY_HEADERS'])
+if response_headers.get('cache-control') != 'no-store' or not response_headers.get('content-type', '').startswith('application/json'):
+    raise SystemExit('authenticated review summary response headers are invalid')
+viewer=summary.get('viewer')
+if not isinstance(viewer, dict) or viewer.get('can_append_review') is not True or not isinstance(viewer.get('identity_display'), str) or not viewer['identity_display']:
+    raise SystemExit('authenticated proxy reviewer capability is invalid')
+evidence=summary.get('evidence')
+acquisition_id=os.environ['ETROC_REVIEW_ACQUISITION_ID']
+record=evidence.get(acquisition_id) if isinstance(evidence, dict) else None
+fields=('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')
+if not isinstance(record, dict) or any(not isinstance(record.get(field), str) or not record[field] for field in fields):
+    raise SystemExit('operator review acquisition is not canonical current publication evidence')
+if record['acquisition_id'] != acquisition_id:
+    raise SystemExit('operator review acquisition identity mismatch')
+review=summary.get('reviews', {}).get(acquisition_id)
+expected=review.get('current_event_id') if isinstance(review, dict) else None
+if expected is not None and (type(expected) is not int or expected <= 0):
+    raise SystemExit('current review event identity is invalid')
+request={field: record[field] for field in fields}
+request.update({
+    'state': os.environ['ETROC_REVIEW_STATE'], 'note': os.environ['ETROC_REVIEW_NOTE'],
+    'expected_current_event_id': expected, 'mutation_id': str(uuid.uuid4()),
+})
+json.dump(request, open(os.environ['REVIEW_REQUEST'], 'w', encoding='utf-8'), separators=(',', ':'))
+json.dump({'evidence': record, 'history_count': review.get('history_count', 0) if isinstance(review, dict) else 0}, open(os.environ['REVIEW_EXPECTED'], 'w', encoding='utf-8'), separators=(',', ':'))
+PY
+printf '%s\n' 'FORWARD_RELEASE_COMMITTED before irreversible ETROC review verification' >> "$RELEASE_STATE"
+ROLLOUT_MUTATED=0
+REVIEW_CREATED_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  --request POST --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
+  --data-binary "@${REVIEW_REQUEST}" --dump-header "$REVIEW_CREATED_HEADERS" --output "$REVIEW_CREATED" --write-out '%{http_code}' \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
+test "$REVIEW_CREATED_STATUS" = 201
+REVIEW_REPLAY_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  --request POST --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
+  --data-binary "@${REVIEW_REQUEST}" --dump-header "$REVIEW_REPLAY_HEADERS" --output "$REVIEW_REPLAY" --write-out '%{http_code}' \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
+test "$REVIEW_REPLAY_STATUS" = 200
+REVIEW_HISTORY_URL="$(ETROC_REVIEW_ACQUISITION_ID="$ETROC_REVIEW_ACQUISITION_ID" python3 -I - <<'PY'
+import os
+from urllib.parse import quote
+print('https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews/history?acquisition_id=' + quote(os.environ['ETROC_REVIEW_ACQUISITION_ID'], safe=''))
+PY
+)"
+REVIEW_HISTORY_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  --dump-header "$REVIEW_HISTORY_HEADERS" --output "$REVIEW_HISTORY" --write-out '%{http_code}' \
+  "$REVIEW_HISTORY_URL")"
+test "$REVIEW_HISTORY_STATUS" = 200
+REVIEW_AUDIT_URL="$(ETROC_REVIEW_ACQUISITION_ID="$ETROC_REVIEW_ACQUISITION_ID" python3 -I - <<'PY'
+import os
+from urllib.parse import quote
+print('https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews/audit?acquisition_id=' + quote(os.environ['ETROC_REVIEW_ACQUISITION_ID'], safe=''))
+PY
+)"
+REVIEW_AUDIT_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  --dump-header "$REVIEW_AUDIT_HEADERS" --output "$REVIEW_AUDIT" --write-out '%{http_code}' "$REVIEW_AUDIT_URL")"
+test "$REVIEW_AUDIT_STATUS" = 200
+REVIEW_STALE_REQUEST="${WORK_DIR}/review-stale-request.json"
+REVIEW_REQUEST="$REVIEW_REQUEST" REVIEW_STALE_REQUEST="$REVIEW_STALE_REQUEST" python3 -I - <<'PY'
+import json, os, uuid
+request=json.load(open(os.environ['REVIEW_REQUEST'], encoding='utf-8'))
+request['mutation_id']=str(uuid.uuid4())
+json.dump(request, open(os.environ['REVIEW_STALE_REQUEST'], 'w', encoding='utf-8'), separators=(',', ':'))
+PY
+REVIEW_STALE_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
+  --request POST --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
+  --data-binary "@${REVIEW_STALE_REQUEST}" --dump-header "$REVIEW_STALE_HEADERS" --output "$REVIEW_STALE" --write-out '%{http_code}' \
+  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
+test "$REVIEW_STALE_STATUS" = 409
+REVIEW_HISTORY_AFTER="${WORK_DIR}/review-history-after-stale.json"
+curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" --output "$REVIEW_HISTORY_AFTER" \
+  "$REVIEW_HISTORY_URL"
+REVIEW_EXPECTED="$REVIEW_EXPECTED" REVIEW_REQUEST="$REVIEW_REQUEST" REVIEW_CREATED="$REVIEW_CREATED" \
+  REVIEW_CREATED_HEADERS="$REVIEW_CREATED_HEADERS" REVIEW_REPLAY="$REVIEW_REPLAY" REVIEW_REPLAY_HEADERS="$REVIEW_REPLAY_HEADERS" \
+  REVIEW_HISTORY="$REVIEW_HISTORY" REVIEW_HISTORY_HEADERS="$REVIEW_HISTORY_HEADERS" REVIEW_AUDIT="$REVIEW_AUDIT" \
+  REVIEW_AUDIT_HEADERS="$REVIEW_AUDIT_HEADERS" REVIEW_STALE="$REVIEW_STALE" REVIEW_STALE_HEADERS="$REVIEW_STALE_HEADERS" \
+  REVIEW_HISTORY_AFTER="$REVIEW_HISTORY_AFTER" python3 -I - <<'PY'
+import json, os
+
+def load(name):
+    return json.load(open(os.environ[name], encoding='utf-8'))
+
+def headers(name):
+    parsed = {}
+    for line in open(os.environ[name], encoding='iso-8859-1'):
+        if ':' in line:
+            key, value = line.split(':', 1)
+            parsed[key.strip().lower()] = value.strip()
+    if parsed.get('cache-control') != 'no-store' or not parsed.get('content-type', '').startswith('application/json'):
+        raise SystemExit(f'{name} response headers are invalid')
+
+for name in ('REVIEW_CREATED_HEADERS','REVIEW_REPLAY_HEADERS','REVIEW_HISTORY_HEADERS','REVIEW_AUDIT_HEADERS','REVIEW_STALE_HEADERS'):
+    headers(name)
+expected, request, created, replay, history, audit, stale, history_after = (load(name) for name in ('REVIEW_EXPECTED','REVIEW_REQUEST','REVIEW_CREATED','REVIEW_REPLAY','REVIEW_HISTORY','REVIEW_AUDIT','REVIEW_STALE','REVIEW_HISTORY_AFTER'))
+event=created.get('event')
+if created.get('ok') is not True or created.get('idempotent_replay') is not False or not isinstance(event, dict):
+    raise SystemExit('authorized review append response is invalid')
+if any(event.get(field) != request[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256','state','note','mutation_id')) or not isinstance(event.get('event_id'), int) or event['event_id'] <= 0 or not isinstance(event.get('author'), str) or not event['author'] or not isinstance(event.get('author_display'), str) or not event['author_display']:
+    raise SystemExit('authorized review append identity/content readback mismatch')
+current=created.get('current')
+if not isinstance(current, dict) or current.get('current_event_id') != event['event_id'] or current.get('history_count') != expected['history_count'] + 1 or any(current.get(field) != event[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256','state','note','author','author_display')):
+    raise SystemExit('authorized review current readback mismatch')
+if replay.get('ok') is not True or replay.get('idempotent_replay') is not True or replay.get('event') != event or replay.get('current') != current:
+    raise SystemExit('lost-response idempotent replay mismatch')
+if history.get('evidence') != expected['evidence'] or history.get('current') != event or history.get('history', [None])[0] != event or len(history.get('history', [])) != expected['history_count'] + 1:
+    raise SystemExit('review history exactness mismatch')
+if len(history_after.get('history', [])) != len(history.get('history', [])):
+    raise SystemExit('history count changed after stale conflict')
+if stale.get('error', {}).get('code') != 'stale_current':
+    raise SystemExit('stale review conflict was not returned')
+if len(history.get('history', [])) != expected['history_count'] + 1:
+    raise SystemExit('history count changed after idempotent replay')
+chains=audit.get('chains')
+matching=[chain for chain in chains if chain.get('evidence') == {field: request[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')}]
+if audit.get('acquisition_id') != request['acquisition_id'] or len(matching) != 1 or matching[0].get('current_publication') is not True or matching[0].get('current_event') != event or matching[0].get('history') != history['history']:
+    raise SystemExit('historical audit exactness mismatch')
+print('ETROC_REVIEW_PROXY_FLOW PASS')
+PY
+ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
+import json, sqlite3
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM etroc_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+)"
+ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK="$ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK" REVIEW_CREATED="$REVIEW_CREATED" python3 -I - <<'PY'
+import json, os
+snapshot=json.loads(os.environ['ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK'])
+created=json.load(open(os.environ['REVIEW_CREATED'], encoding='utf-8'))
+event=created.get('event', {})
+if not snapshot.get('present') or not isinstance(snapshot.get('identity_chain'), list) or not any(row[0] == event.get('event_id') for row in snapshot['identity_chain']):
+    raise SystemExit('post-append ETROC rollback snapshot is missing the authorized event')
+PY
+declare -p ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK >> "$RELEASE_STATE"
+printf 'ETROC_PROXY_IDENTITY_GATE PASS spoof=%s spoof_append=%s internal=%s\n' "$SPOOF_STATUS" "$SPOOF_APPEND_STATUS" "$INTERNAL_STATUS"
 ln -sfn "$(basename "$RELEASE_STATE")" "$CURRENT_RELEASE_STATE"
 ROLLOUT_MUTATED=0
 printf 'DEPLOYMENT PASS source=%s build=%s image=%s comments_before=%s release_state=%s\n' \
