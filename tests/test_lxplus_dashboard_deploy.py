@@ -4,6 +4,7 @@ import json
 import os
 import re
 import shlex
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -680,7 +681,7 @@ printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
             "PRAGMA foreign_key_check",
             "PRAGMA integrity_check",
             "OLD_RUNTIME_SERVER",
-            "oc image extract \"$OLD_WEB_IMAGE\" --path \"/app/static/server.py:${OLD_RUNTIME_DIR}\"",
+            "oc image extract --registry-config=\"$registry_auth\" \"$public_image\" --path \"/app/static/server.py:${OLD_RUNTIME_DIR}\"",
             "previous-binary comments",
         ):
             self.assertIn(required, script)
@@ -1881,7 +1882,7 @@ validate_manifest_topology {mode} {shlex.quote(str(deployment_file))} {shlex.quo
         self.assertNotIn('delete pod/"$CANDIDATE_PROBE_POD"', cleanup)
 
     def test_old_runtime_server_extraction_is_digest_pinned_and_rejects_bad_output(self):
-        # Given: a fake `oc image extract` has controlled success and malformed outputs.
+        # Given: a fake `oc` records authenticated public-registry extraction calls.
         script = SCRIPT.read_text(encoding="utf-8")
         start = script.index("extract_previous_runtime_server() {")
         extraction = script[start : script.index("\n}\n", start) + 3]
@@ -1894,17 +1895,33 @@ validate_manifest_topology {mode} {shlex.quote(str(deployment_file))} {shlex.quo
             fake_oc.write_text(
                 """#!/usr/bin/env bash
 set -Eeuo pipefail
-printf '%s\\n' \"$@\" > \"$FAKE_OC_ARGS\"
-test \"$1\" = image
-test \"$2\" = extract
-test \"$4\" = --path
-case \"$FAKE_OC_MODE\" in
-  success) cp \"$FAKE_SERVER\" \"${5#*:}/server.py\" ;;
-  symlink) ln -s \"$FAKE_SERVER\" \"${5#*:}/server.py\" ;;
-  extra) cp \"$FAKE_SERVER\" \"${5#*:}/server.py\"; : > \"${5#*:}/unexpected.py\" ;;
-  empty) : > \"${5#*:}/server.py\" ;;
-  malformed) printf 'not valid python =\\n' > \"${5#*:}/server.py\" ;;
-  failure) exit 42 ;;
+printf '%s\\n' \"$@\" >> \"$FAKE_OC_ARGS\"
+case \"$1 $2\" in
+  'registry login')
+    test \"$3\" = --to=\"$FAKE_AUTH_PATH\"
+    case \"$FAKE_AUTH_MODE\" in
+      success) printf '%s' \"$FAKE_AUTH_CONTENT\" > \"$FAKE_AUTH_PATH\"; chmod 600 \"$FAKE_AUTH_PATH\" ;;
+      symlink) ln -s \"$FAKE_SERVER\" \"$FAKE_AUTH_PATH\" ;;
+      world_readable) printf '%s' \"$FAKE_AUTH_CONTENT\" > \"$FAKE_AUTH_PATH\"; chmod 644 \"$FAKE_AUTH_PATH\" ;;
+      empty) : > \"$FAKE_AUTH_PATH\" ;;
+      hardlink) printf '%s' \"$FAKE_AUTH_CONTENT\" > \"$FAKE_AUTH_PATH\"; ln \"$FAKE_AUTH_PATH\" \"$FAKE_AUTH_PATH.link\" ;;
+    esac ;;
+  'image extract')
+    test \"$3\" = --registry-config=\"$FAKE_AUTH_PATH\"
+    test \"$4\" = \"$FAKE_PUBLIC_IMAGE\"
+    test \"$5\" = --path
+    test \"$(stat -c '%a' \"$FAKE_AUTH_PATH\")\" = 600
+    test \"$(stat -c '%h' \"$FAKE_AUTH_PATH\")\" = 1
+    test -s \"$FAKE_AUTH_PATH\"
+    case \"$FAKE_OC_MODE\" in
+      success) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\" ;;
+      symlink) ln -s \"$FAKE_SERVER\" \"${6#*:}/server.py\" ;;
+      extra) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; : > \"${6#*:}/unexpected.py\" ;;
+      empty) : > \"${6#*:}/server.py\" ;;
+      malformed) printf 'not valid python =\\n' > \"${6#*:}/server.py\" ;;
+      failure) exit 42 ;;
+    esac ;;
+  *) exit 99 ;;
 esac
 """,
                 encoding="utf-8",
@@ -1953,16 +1970,31 @@ class Handler(BaseHTTPRequestHandler):
                 "FAKE_OC_ARGS": str(root / "oc-args"),
                 "FAKE_SERVER": str(source),
                 "CANDIDATE_DB": str(candidate_db),
+                "FAKE_AUTH_CONTENT": "registry-token-must-not-escape",
             }
             harness = f'''set -Eeuo pipefail
 {extraction}
 WORK_DIR={shlex.quote(str(root / "work"))}
-rm -rf "$WORK_DIR"
 mkdir -p "$WORK_DIR"
 OLD_RUNTIME_DIR="$WORK_DIR/previous-runtime"
 OLD_RUNTIME_SERVER="$OLD_RUNTIME_DIR/server.py"
-OLD_WEB_IMAGE='registry.example/etroc@sha256:{'a' * 64}'
+OLD_WEB_IMAGE="${{TEST_OLD_WEB_IMAGE:-image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}}}"
+FAKE_AUTH_PATH="$WORK_DIR/registry-auth.json"
+FAKE_PUBLIC_IMAGE="registry.paas.cern.ch/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}"
+export FAKE_AUTH_PATH FAKE_PUBLIC_IMAGE
+: > "$FAKE_OC_ARGS"
+if test "${{FAKE_EXPECT_FAILURE:-0}}" = 1; then
+  set +e
+  extract_previous_runtime_server
+  status=$?
+  set -e
+  test "$status" -ne 0
+  test ! -e "$FAKE_AUTH_PATH"
+  printf 'EXPECTED_FAILURE_CLEANUP PASS\\n'
+  exit 0
+fi
 extract_previous_runtime_server
+test ! -e "$FAKE_AUTH_PATH"
 COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
 import importlib.util, os
 from pathlib import Path
@@ -1980,22 +2012,67 @@ printf 'sha=%s\\n' "$OLD_RUNTIME_SERVER_SHA256"
 
             # When: a valid old image extraction succeeds.
             environment["FAKE_OC_MODE"] = "success"
+            environment["FAKE_AUTH_MODE"] = "success"
             result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True, env=environment)
 
-            # Then: the precise immutable image and path are extracted and evidence is hashed.
+            # Then: only the host changes; login is private and extraction is digest pinned.
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertIn("LOCAL_OLD_RUNTIME_EXECUTION PASS", result.stdout)
             self.assertRegex(result.stdout, r"sha=[0-9a-f]{64}")
+            self.assertNotIn(environment["FAKE_AUTH_CONTENT"], result.stdout + result.stderr)
+            self.assertNotIn(
+                environment["FAKE_AUTH_CONTENT"],
+                (root / "oc-args").read_text(encoding="utf-8"),
+            )
             self.assertEqual(
                 (root / "oc-args").read_text(encoding="utf-8").splitlines(),
-                ["image", "extract", f"registry.example/etroc@sha256:{'a' * 64}", "--path", f"/app/static/server.py:{root / 'work' / 'previous-runtime'}"],
+                [
+                    "registry", "login", f"--to={root / 'work' / 'registry-auth.json'}",
+                    "image", "extract", f"--registry-config={root / 'work' / 'registry-auth.json'}",
+                    f"registry.paas.cern.ch/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}",
+                    "--path", f"/app/static/server.py:{root / 'work' / 'previous-runtime'}",
+                ],
             )
+            self.assertFalse((root / "work" / "registry-auth.json").exists())
+            release_state = script[
+                script.index("{\n  declare -p SOURCE_REVISION") : script.index("} > \"$RELEASE_STATE\"")
+            ]
+            self.assertNotIn("registry-auth.json", release_state)
 
-            # Then: image extraction failures and unsafe archive output fail closed.
+            # Then: unsafe auth files and image extraction failures clean up at the boundary.
+            environment["FAKE_EXPECT_FAILURE"] = "1"
+            for auth_mode in ("symlink", "world_readable", "empty", "hardlink"):
+                shutil.rmtree(root / "work")
+                environment["FAKE_AUTH_MODE"] = auth_mode
+                environment["FAKE_OC_MODE"] = "success"
+                failed = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True, env=environment)
+                self.assertEqual(failed.returncode, 0, failed.stderr)
+                self.assertIn("EXPECTED_FAILURE_CLEANUP PASS", failed.stdout)
+
             for mode in ("failure", "symlink", "extra", "empty", "malformed"):
+                shutil.rmtree(root / "work")
+                environment["FAKE_AUTH_MODE"] = "success"
                 environment["FAKE_OC_MODE"] = mode
                 failed = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True, env=environment)
-                self.assertNotEqual(failed.returncode, 0, mode)
+                self.assertEqual(failed.returncode, 0, failed.stderr)
+                self.assertIn("EXPECTED_FAILURE_CLEANUP PASS", failed.stdout)
+
+            # Then: an untrusted internal reference cannot initiate login or extraction.
+            for image in (
+                f"image-registry.openshift-image-registry.svc:5000/other/etl-hybrid-bbqc@sha256:{'a' * 64}",
+                f"image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/other@sha256:{'a' * 64}",
+                "image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc:latest",
+                f"image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'A' * 64}",
+                f"image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 63}",
+                "registry.example/etroc-solder-inspection/etl-hybrid-bbqc@sha256:" + "a" * 64,
+            ):
+                shutil.rmtree(root / "work")
+                environment["TEST_OLD_WEB_IMAGE"] = image
+                environment["FAKE_AUTH_MODE"] = "success"
+                environment["FAKE_OC_MODE"] = "success"
+                failed = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True, env=environment)
+                self.assertEqual(failed.returncode, 0, failed.stderr)
+                self.assertEqual((root / "oc-args").read_text(encoding="utf-8"), "")
 
     def test_legacy_compatibility_is_local_and_never_copies_a_candidate_db_to_production(self):
         # Given: the candidate DB has been migrated locally from the copied backup.

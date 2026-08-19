@@ -157,11 +157,37 @@ PY
 }
 
 extract_previous_runtime_server() {
-  test -n "$OLD_WEB_IMAGE"
-  [[ "$OLD_WEB_IMAGE" =~ @sha256:[0-9a-f]{64}$ ]]
-  mkdir -m 700 "$OLD_RUNTIME_DIR"
-  oc image extract "$OLD_WEB_IMAGE" --path "/app/static/server.py:${OLD_RUNTIME_DIR}"
-  OLD_RUNTIME_SERVER_SHA256="$(OLD_RUNTIME_DIR="$OLD_RUNTIME_DIR" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
+  local internal_prefix='image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:'
+  local image_digest public_image registry_auth
+  test -n "$OLD_WEB_IMAGE" || return 1
+  [[ "$OLD_WEB_IMAGE" =~ ^image-registry\.openshift-image-registry\.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:[0-9a-f]{64}$ ]] || return 1
+  image_digest="${OLD_WEB_IMAGE#"$internal_prefix"}"
+  [[ "$image_digest" =~ ^[0-9a-f]{64}$ ]] || return 1
+  public_image="registry.paas.cern.ch/etroc-solder-inspection/etl-hybrid-bbqc@sha256:${image_digest}"
+  registry_auth="${WORK_DIR}/registry-auth.json"
+  trap 'rm -f -- "$registry_auth"' RETURN
+  mkdir -m 700 "$OLD_RUNTIME_DIR" || return 1
+  (umask 077; oc registry login --to="$registry_auth" >/dev/null) || return 1
+  if ! REGISTRY_AUTH="$registry_auth" python3 -I - <<'PY'
+import os, stat
+from pathlib import Path
+
+auth = Path(os.environ['REGISTRY_AUTH'])
+status = auth.lstat()
+if stat.S_ISLNK(status.st_mode) or not stat.S_ISREG(status.st_mode) or status.st_nlink != 1:
+    raise SystemExit('registry auth file is not a regular non-symlink file')
+if status.st_uid != os.geteuid() or status.st_mode & 0o077:
+    raise SystemExit('registry auth file ownership or mode is unsafe')
+if status.st_size == 0:
+    raise SystemExit('registry auth file is empty')
+PY
+  then
+    return 1
+  fi
+  oc image extract --registry-config="$registry_auth" "$public_image" --path "/app/static/server.py:${OLD_RUNTIME_DIR}" || return 1
+  rm -f -- "$registry_auth"
+  trap - RETURN
+  if ! OLD_RUNTIME_SERVER_SHA256="$(OLD_RUNTIME_DIR="$OLD_RUNTIME_DIR" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
 import os, stat
 from pathlib import Path
 
@@ -190,8 +216,10 @@ except (SyntaxError, UnicodeDecodeError) as error:
 import hashlib
 print(hashlib.sha256(contents).hexdigest())
 PY
-)"
-  [[ "$OLD_RUNTIME_SERVER_SHA256" =~ ^[0-9a-f]{64}$ ]]
+)"; then
+    return 1
+  fi
+  [[ "$OLD_RUNTIME_SERVER_SHA256" =~ ^[0-9a-f]{64}$ ]] || return 1
   printf 'OLD_RUNTIME_SERVER_EXTRACT PASS image=%s sha256=%s\n' "$OLD_WEB_IMAGE" "$OLD_RUNTIME_SERVER_SHA256"
 }
 
