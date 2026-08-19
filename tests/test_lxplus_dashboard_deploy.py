@@ -1285,10 +1285,11 @@ measure_dashboard_headroom
         self.assertNotIn("'spec': source['spec']", forward)
 
     def test_forward_renderer_normalizes_only_the_exact_reviewed_legacy_deltas(self):
-        # Given: the captured legacy objects differ from the pinned target only in the
-        # reviewed APP_ORIGIN, proxy-args, Service-port, and immutable web-image fields.
+        # Given: the captured legacy object differs from the pinned target only in the
+        # reviewed target env/proxy topology, immutable images, exact Kubernetes defaults,
+        # and the single operational restart annotation.
         script = SCRIPT.read_text(encoding="utf-8")
-        start = script.index("import copy, json, os, sys", script.index("render_forward_object() {"))
+        start = script.index("import copy, json, os, re, sys", script.index("render_forward_object() {"))
         renderer = script[start : script.index("\nPY\n", start)]
         target_origin = "https://etl-hybrid-bbqc.app.cern.ch"
         common_args = ["--provider=oidc", "--http-address=0.0.0.0:4180", "--upstream=http://127.0.0.1:8080", "--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback", "--email-domain=*", "--reverse-proxy=true", "--pass-host-header=true", "--pass-user-headers=true"]
@@ -1297,9 +1298,14 @@ measure_dashboard_headroom
         baseline_deployment = {
             "apiVersion": "apps/v1", "kind": "Deployment",
             "metadata": {"name": "etl-hybrid-bbqc", "labels": {"app": "etl-hybrid-bbqc"}, "annotations": {}},
-            "spec": {"template": {"spec": {"containers": [
-                {"name": "web", "image": "baseline-web", "env": [{"name": "HOST", "value": "127.0.0.1"}, {"name": "APP_ORIGIN", "value": target_origin}]},
-                {"name": "oauth2-proxy", "image": "old-proxy", "args": target_args},
+            "spec": {"template": {"metadata": {"labels": {"app": "etl-hybrid-bbqc"}}, "spec": {"containers": [
+                {"name": "web", "image": "baseline-web", "env": [
+                    {"name": "HOST", "value": "127.0.0.1"},
+                    {"name": "COMMENTS_ADMIN_USERS", "value": "user@cern.ch"},
+                    {"name": "ETROC_REVIEWER_USERS", "value": "user@cern.ch"},
+                    {"name": "APP_ORIGIN", "value": target_origin},
+                ], "readinessProbe": {"exec": {"command": ["probe"]}, "periodSeconds": 10}, "livenessProbe": {"exec": {"command": ["probe"]}, "periodSeconds": 20}},
+                {"name": "oauth2-proxy", "image": "baseline-proxy", "args": target_args},
             ]}}},
         }
         baseline_service = {
@@ -1314,8 +1320,19 @@ measure_dashboard_headroom
             captured_deployment = json.loads(json.dumps(baseline_deployment))
             captured_deployment["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "deployment-uid", "resourceVersion": "1"}
             captured_deployment["spec"]["template"]["spec"]["containers"][0]["image"] = "old-web"
-            captured_deployment["spec"]["template"]["spec"]["containers"][0]["env"].pop()
+            captured_deployment["spec"]["template"]["spec"]["containers"][0]["env"] = [{"name": "HOST", "value": "127.0.0.1"}]
+            captured_deployment["spec"]["template"]["spec"]["containers"][1]["image"] = "old-proxy"
             captured_deployment["spec"]["template"]["spec"]["containers"][1]["args"] = legacy_args
+            for probe_name in ("readinessProbe", "livenessProbe"):
+                captured_deployment["spec"]["template"]["spec"]["containers"][0][probe_name] |= {
+                    "failureThreshold": 3, "successThreshold": 1, "timeoutSeconds": 3,
+                }
+            captured_deployment["spec"] |= {"progressDeadlineSeconds": 600, "revisionHistoryLimit": 10}
+            captured_deployment["spec"]["template"]["metadata"]["annotations"] = {"kubectl.kubernetes.io/restartedAt": "2026-07-29T09:00:57+02:00"}
+            captured_deployment["spec"]["template"]["spec"] |= {
+                "dnsPolicy": "ClusterFirst", "restartPolicy": "Always", "schedulerName": "default-scheduler",
+                "securityContext": {}, "terminationGracePeriodSeconds": 30,
+            }
             captured_service = json.loads(json.dumps(baseline_service))
             captured_service["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "service-uid", "resourceVersion": "1"}
             captured_service["spec"]["ports"] = [{"name": "oauth", "protocol": "TCP", "port": 8080, "targetPort": "oauth"}]
@@ -1328,11 +1345,43 @@ measure_dashboard_headroom
                 self.assertEqual(result.returncode, 0, result.stderr)
                 rendered = json.loads(result.stdout)
                 if kind == "Deployment":
-                    self.assertEqual(rendered["spec"]["template"]["spec"]["containers"][0]["env"][1], {"name": "APP_ORIGIN", "value": target_origin})
+                    rendered_web = next(item for item in rendered["spec"]["template"]["spec"]["containers"] if item["name"] == "web")
+                    rendered_proxy = next(item for item in rendered["spec"]["template"]["spec"]["containers"] if item["name"] == "oauth2-proxy")
+                    rendered_env = {item["name"]: item["value"] for item in rendered_web["env"]}
+                    self.assertEqual(rendered_env["APP_ORIGIN"], target_origin)
+                    self.assertEqual(rendered_env["COMMENTS_ADMIN_USERS"], "user@cern.ch")
+                    self.assertEqual(rendered_env["ETROC_REVIEWER_USERS"], "user@cern.ch")
+                    self.assertEqual(rendered_proxy["image"], "old-proxy")
+                    self.assertNotIn("timeoutSeconds", rendered_web["readinessProbe"])
+                    self.assertNotIn("timeoutSeconds", rendered_web["livenessProbe"])
+                    self.assertEqual(rendered["spec"]["progressDeadlineSeconds"], 600)
                 else:
                     self.assertEqual(rendered["spec"]["ports"], baseline_service["spec"]["ports"])
 
-            # Then: a legacy-shaped drift outside those deltas remains release-blocking.
+            # Then: an invalid calendar/timezone value and unrelated legacy drift remain blocking.
+            for invalid_value in ("2026-99-99T99:99:99+99:99", "2026-07-29T09:00:57+00:60"):
+                invalid_time = json.loads(json.dumps(captured_deployment))
+                invalid_time["spec"]["template"]["metadata"]["annotations"]["kubectl.kubernetes.io/restartedAt"] = invalid_value
+                invalid_time_file = root / "Deployment-captured-invalid-time.json"
+                invalid_time_file.write_text(json.dumps(invalid_time), encoding="utf-8")
+                environment["RELEASE_KIND"] = "Deployment"
+                environment["BASELINE_OBJECT_FILE"] = str(root / "Deployment-baseline.json")
+                environment["CAPTURED_OBJECT_FILE"] = str(invalid_time_file)
+                invalid_time_result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
+                self.assertNotEqual(invalid_time_result.returncode, 0)
+                self.assertIn("restart annotation is invalid", invalid_time_result.stderr)
+
+            subset_baseline = json.loads(json.dumps(baseline_deployment))
+            subset_env = subset_baseline["spec"]["template"]["spec"]["containers"][0]["env"]
+            subset_baseline["spec"]["template"]["spec"]["containers"][0]["env"] = [item for item in subset_env if item["name"] != "ETROC_REVIEWER_USERS"]
+            subset_baseline_file = root / "Deployment-baseline-subset.json"
+            subset_baseline_file.write_text(json.dumps(subset_baseline), encoding="utf-8")
+            environment["BASELINE_OBJECT_FILE"] = str(subset_baseline_file)
+            environment["CAPTURED_OBJECT_FILE"] = str(root / "Deployment-captured.json")
+            subset_result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
+            self.assertNotEqual(subset_result.returncode, 0)
+            self.assertIn("target environment is incomplete or duplicated", subset_result.stderr)
+
             captured_deployment["spec"]["template"]["spec"]["containers"][0]["env"][0]["value"] = "0.0.0.0"
             captured_file = root / "Deployment-captured-drift.json"
             captured_file.write_text(json.dumps(captured_deployment), encoding="utf-8")
@@ -1346,7 +1395,7 @@ measure_dashboard_headroom
     def test_forward_renderer_preserves_only_baseline_approved_annotations(self):
         # Given: a captured object has exactly the pinned annotations plus generated noise.
         script = SCRIPT.read_text(encoding="utf-8")
-        start = script.index("import copy, json, os, sys", script.index("render_forward_object() {"))
+        start = script.index("import copy, json, os, re, sys", script.index("render_forward_object() {"))
         renderer = script[start : script.index("\nPY\n", start)]
         baseline_annotations = {"haproxy.router.openshift.io/ip_whitelist": "10.0.0.0/8"}
         with tempfile.TemporaryDirectory() as directory:
@@ -1374,7 +1423,7 @@ measure_dashboard_headroom
 
     def test_forward_renderer_normalizes_only_reviewed_route_server_defaults(self):
         script = SCRIPT.read_text(encoding="utf-8")
-        start = script.index("import copy, json, os, sys", script.index("render_forward_object() {"))
+        start = script.index("import copy, json, os, re, sys", script.index("render_forward_object() {"))
         renderer = script[start : script.index("\nPY\n", start)]
         baseline = {
             "apiVersion": "route.openshift.io/v1", "kind": "Route",
@@ -1444,7 +1493,7 @@ measure_dashboard_headroom
     def test_forward_renderer_rejects_annotation_drift_except_known_generated_values(self):
         # Given: generated annotations are tolerated but policy and unknown annotations are not.
         script = SCRIPT.read_text(encoding="utf-8")
-        start = script.index("import copy, json, os, sys", script.index("render_forward_object() {"))
+        start = script.index("import copy, json, os, re, sys", script.index("render_forward_object() {"))
         renderer = script[start : script.index("\nPY\n", start)]
         cases = (
             ("deployment generated", "Deployment", {"kubectl.kubernetes.io/last-applied-configuration": "generated", "deployment.kubernetes.io/revision": "7"}, 0),

@@ -897,7 +897,8 @@ render_forward_object() {
     OLD_TOPOLOGY_MODE="$OLD_TOPOLOGY_MODE" OLD_RELEASE_ANNOTATIONS_JSON="$OLD_RELEASE_ANNOTATIONS_JSON" \
     SOURCE_REVISION="$SOURCE_REVISION" BUILD_CONTEXT_SHA256="$BUILD_CONTEXT_SHA256" BUILD_NAME="$BUILD_NAME" \
     ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY' > "$forward_file"
-import copy, json, os, sys
+import copy, json, os, re, sys
+from datetime import datetime
 baseline=json.load(open(os.environ['BASELINE_OBJECT_FILE'], encoding='utf-8'))
 captured=json.load(open(os.environ['CAPTURED_OBJECT_FILE'], encoding='utf-8'))
 kind=os.environ['RELEASE_KIND']
@@ -949,11 +950,79 @@ target_args=[
     '--cookie-samesite=lax',
 ]
 if kind == 'Deployment':
-    baseline_containers={item.get('name'): item for item in baseline_spec.get('template', {}).get('spec', {}).get('containers', [])}
-    captured_containers={item.get('name'): item for item in captured_spec.get('template', {}).get('spec', {}).get('containers', [])}
+    baseline_template=baseline_spec.get('template', {})
+    captured_template=captured_spec.get('template', {})
+    baseline_pod_spec=baseline_template.get('spec', {})
+    captured_pod_spec=captured_template.get('spec', {})
+    baseline_containers={item.get('name'): item for item in baseline_pod_spec.get('containers', [])}
+    captured_containers={item.get('name'): item for item in captured_pod_spec.get('containers', [])}
     if set(baseline_containers) != set(captured_containers) or captured_containers.get('web', {}).get('image') != os.environ['OLD_WEB_IMAGE'] or captured_containers.get('oauth2-proxy', {}).get('image') != os.environ['OLD_PROXY_IMAGE']:
         raise SystemExit('captured Deployment image identity differs from reviewed pre-release digests')
+
+    def preserve_optional_defaults(baseline_parent, captured_parent, expected, label):
+        for field, value in expected.items():
+            if field not in baseline_parent and field in captured_parent:
+                if captured_parent[field] != value:
+                    raise SystemExit(f'captured Deployment {label} default {field} is unexpected')
+                baseline_parent[field]=copy.deepcopy(value)
+
+    preserve_optional_defaults(baseline_spec, captured_spec, {
+        'progressDeadlineSeconds': 600, 'revisionHistoryLimit': 10,
+    }, 'spec')
+    baseline_template_metadata=baseline_template.get('metadata', {})
+    captured_template_metadata=captured_template.get('metadata', {})
+    if 'annotations' not in baseline_template_metadata and 'annotations' in captured_template_metadata:
+        restart_annotations=captured_template_metadata['annotations']
+        restarted_at=restart_annotations.get('kubectl.kubernetes.io/restartedAt') if isinstance(restart_annotations, dict) else None
+        if set(restart_annotations or {}) != {'kubectl.kubernetes.io/restartedAt'} or not isinstance(restarted_at, str) or re.fullmatch(r'\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:Z|[+-]\d{2}:\d{2})', restarted_at) is None:
+            raise SystemExit('captured Deployment restart annotation is invalid')
+        offset_match=re.search(r'([+-])(\d{2}):(\d{2})$', restarted_at)
+        if offset_match is not None and (int(offset_match.group(2)) > 23 or int(offset_match.group(3)) > 59):
+            raise SystemExit('captured Deployment restart annotation is invalid')
+        try:
+            parsed_restarted_at=datetime.fromisoformat(restarted_at.replace('Z', '+00:00'))
+        except ValueError:
+            raise SystemExit('captured Deployment restart annotation is invalid') from None
+        if parsed_restarted_at.tzinfo is None or parsed_restarted_at.utcoffset() is None:
+            raise SystemExit('captured Deployment restart annotation is invalid')
+        baseline_template.setdefault('metadata', {})['annotations']=copy.deepcopy(restart_annotations)
+    preserve_optional_defaults(baseline_pod_spec, captured_pod_spec, {
+        'dnsPolicy': 'ClusterFirst', 'restartPolicy': 'Always', 'schedulerName': 'default-scheduler',
+        'securityContext': {}, 'terminationGracePeriodSeconds': 30,
+    }, 'pod spec')
+    probe_defaults={
+        ('web', 'startupProbe'): {'successThreshold': 1},
+        ('web', 'readinessProbe'): {'failureThreshold': 3, 'successThreshold': 1, 'timeoutSeconds': 1},
+        ('web', 'livenessProbe'): {'failureThreshold': 3, 'successThreshold': 1, 'timeoutSeconds': 1},
+        ('oauth2-proxy', 'readinessProbe'): {'failureThreshold': 3, 'successThreshold': 1, 'timeoutSeconds': 1},
+        ('oauth2-proxy', 'livenessProbe'): {'failureThreshold': 3, 'successThreshold': 1, 'timeoutSeconds': 1},
+    }
+    for container_name, baseline_container in baseline_containers.items():
+        captured_container=captured_containers[container_name]
+        preserve_optional_defaults(baseline_container, captured_container, {
+            'terminationMessagePath': '/dev/termination-log', 'terminationMessagePolicy': 'File',
+        }, f'{container_name} container')
+        baseline_ports=baseline_container.get('ports', [])
+        captured_ports=captured_container.get('ports', [])
+        if len(baseline_ports) == len(captured_ports):
+            for baseline_port, captured_port in zip(baseline_ports, captured_ports):
+                preserve_optional_defaults(baseline_port, captured_port, {'protocol': 'TCP'}, f'{container_name} port')
+        for probe_name in ('startupProbe', 'readinessProbe', 'livenessProbe'):
+            baseline_probe=baseline_container.get(probe_name)
+            captured_probe=captured_container.get(probe_name)
+            if isinstance(baseline_probe, dict) and isinstance(captured_probe, dict):
+                if old_topology_mode == 'legacy' and container_name == 'web' and probe_name in {'readinessProbe', 'livenessProbe'} and 'timeoutSeconds' not in baseline_probe:
+                    if captured_probe.get('timeoutSeconds') != 3:
+                        raise SystemExit(f'captured legacy Deployment web {probe_name} timeout is not the reviewed delta')
+                    captured_probe.pop('timeoutSeconds')
+                preserve_optional_defaults(baseline_probe, captured_probe, probe_defaults.get((container_name, probe_name), {}), f'{container_name} {probe_name}')
+                baseline_http=baseline_probe.get('httpGet')
+                captured_http=captured_probe.get('httpGet')
+                if isinstance(baseline_http, dict) and isinstance(captured_http, dict):
+                    preserve_optional_defaults(baseline_http, captured_http, {'scheme': 'HTTP'}, f'{container_name} {probe_name} httpGet')
+
     captured_containers['web']['image']=baseline_containers['web']['image']
+    captured_containers['oauth2-proxy']['image']=baseline_containers['oauth2-proxy']['image']
     if old_topology_mode == 'legacy':
         baseline_web=baseline_containers.get('web')
         captured_web=captured_containers.get('web')
@@ -965,12 +1034,14 @@ if kind == 'Deployment':
         captured_env=captured_web.get('env')
         if not isinstance(baseline_env, list) or not isinstance(captured_env, list) or any(not isinstance(item, dict) or not isinstance(item.get('name'), str) for item in baseline_env + captured_env):
             raise SystemExit('captured Deployment web environment is malformed')
-        baseline_origins=[(index, item) for index, item in enumerate(baseline_env) if item['name'] == 'APP_ORIGIN']
-        if len(baseline_origins) != 1 or baseline_origins[0][1] != {'name': 'APP_ORIGIN', 'value': 'https://etl-hybrid-bbqc.app.cern.ch'}:
-            raise SystemExit('pinned Deployment APP_ORIGIN topology is invalid')
-        if any(item['name'] == 'APP_ORIGIN' for item in captured_env):
-            raise SystemExit('captured legacy Deployment APP_ORIGIN is present')
-        captured_env.insert(baseline_origins[0][0], copy.deepcopy(baseline_origins[0][1]))
+        reviewed_missing_names={'COMMENTS_ADMIN_USERS', 'ETROC_REVIEWER_USERS', 'APP_ORIGIN'}
+        reviewed_missing=[(index, item) for index, item in enumerate(baseline_env) if item['name'] in reviewed_missing_names]
+        if len(reviewed_missing) != len(reviewed_missing_names) or {item['name'] for _index, item in reviewed_missing} != reviewed_missing_names:
+            raise SystemExit('pinned Deployment reviewed target environment is incomplete or duplicated')
+        if any(item['name'] in reviewed_missing_names for item in captured_env):
+            raise SystemExit('captured legacy Deployment reviewed target environment is already present')
+        for index, item in reviewed_missing:
+            captured_env.insert(index, copy.deepcopy(item))
         if captured_proxy.get('args') != legacy_args or baseline_proxy.get('args') != target_args:
             raise SystemExit('captured legacy Deployment proxy args are not the reviewed delta')
         captured_proxy['args']=copy.deepcopy(baseline_proxy['args'])
