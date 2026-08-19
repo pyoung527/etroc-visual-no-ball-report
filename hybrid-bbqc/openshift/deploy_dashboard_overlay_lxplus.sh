@@ -1534,7 +1534,8 @@ if not isinstance(event1, dict) or any(event1.get(field) != request1[field] for 
     raise SystemExit('local empty-history exact append readback mismatch')
 history1=etroc_reviews.history(candidate, evidence, record.acquisition_id)
 audit1=etroc_reviews.audit(candidate, record.acquisition_id, evidence)
-matching1=[chain for chain in audit1.payload.get('chains', []) if chain.get('evidence') == record.as_dict()]
+audit_record_key={field: getattr(record, field) for field in etroc_reviews.KEY_FIELDS}
+matching1=[chain for chain in audit1.payload.get('chains', []) if chain.get('evidence') == audit_record_key]
 if history1.status != 200 or audit1.status != 200 or history1.payload.get('evidence') != record.as_dict() or history1.payload.get('current') != event1 or history1.payload.get('history') != [event1] or len(matching1) != 1 or matching1[0].get('current_event') != event1 or matching1[0].get('history') != [event1]:
     raise SystemExit('local empty-history history/audit exactness mismatch')
 replay1=etroc_reviews.append(candidate, evidence, request1, 'candidate@cern.ch', 'candidate@cern.ch')
@@ -1555,7 +1556,7 @@ if not isinstance(event2, dict) or any(event2.get(field) != request2[field] for 
     raise SystemExit('local existing-history exact append readback mismatch')
 history2=etroc_reviews.history(candidate, evidence, record.acquisition_id)
 audit2=etroc_reviews.audit(candidate, record.acquisition_id, evidence)
-matching2=[chain for chain in audit2.payload.get('chains', []) if chain.get('evidence') == record.as_dict()]
+matching2=[chain for chain in audit2.payload.get('chains', []) if chain.get('evidence') == audit_record_key]
 if history2.status != 200 or audit2.status != 200 or history2.payload.get('evidence') != record.as_dict() or history2.payload.get('current') != event2 or history2.payload.get('history') != [event2, event1] or len(matching2) != 1 or matching2[0].get('current_event') != event2 or matching2[0].get('history') != [event2, event1]:
     raise SystemExit('local existing-history history/audit exactness mismatch')
 replay2=etroc_reviews.append(candidate, evidence, request2, 'candidate@cern.ch', 'candidate@cern.ch')

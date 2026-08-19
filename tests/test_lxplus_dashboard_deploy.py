@@ -1639,6 +1639,12 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
             validate = reset.index("etroc_reviews.init_schema(candidate)")
             self.assertLess(delete, restore)
             self.assertLess(restore, validate)
+        self.assertEqual(
+            local_gate.count("audit_record_key={field: getattr(record, field) for field in etroc_reviews.KEY_FIELDS}"),
+            1,
+        )
+        self.assertEqual(local_gate.count("chain.get('evidence') == audit_record_key"), 2)
+        self.assertNotIn("chain.get('evidence') == record.as_dict()", local_gate)
         for required in (
             'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
             'CANDIDATE_HTTP_ACQUISITION_FILE',
