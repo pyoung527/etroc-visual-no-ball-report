@@ -20,8 +20,260 @@ SCRIPT = ROOT / "hybrid-bbqc" / "openshift" / "deploy_dashboard_overlay_lxplus.s
 
 
 class LxplusDashboardDeployTests(unittest.TestCase):
+    def test_backup_dir_override_defaults_exactly_and_rejects_unsafe_paths(self):
+        # Given: production may select a private durable directory, never a traversal or symlink.
+        script = SCRIPT.read_text(encoding="utf-8")
+        helpers = script[
+            script.index("validate_backup_directory() {") : script.index(
+                "validate_dashboard_headroom() {"
+            )
+        ]
+
+        # When: an override and unsafe values are supplied to the boundary parser.
+        with tempfile.TemporaryDirectory() as directory:
+            parent = Path(directory)
+            override = parent / "eos-backups"
+            symlink = parent / "symlink"
+            symlink.symlink_to(override)
+            unsafe_parent = parent / "unsafe"
+            unsafe_parent.mkdir(mode=0o700)
+            unsafe_parent.chmod(0o777)
+            temporary_root = subprocess.run(
+                ["bash", "-c", f"{helpers}\nvalidate_backup_directory {shlex.quote(str(override))}"],
+                check=False, capture_output=True, text=True,
+            )
+            traversal = subprocess.run(
+                ["bash", "-c", f"{helpers}\nvalidate_backup_directory {shlex.quote(str(parent / '..' / 'escape'))}"],
+                check=False, capture_output=True, text=True,
+            )
+            symlinked = subprocess.run(
+                ["bash", "-c", f"{helpers}\nvalidate_backup_directory {shlex.quote(str(symlink))}"],
+                check=False, capture_output=True, text=True,
+            )
+            unsafe = subprocess.run(
+                ["bash", "-c", f"{helpers}\nvalidate_backup_directory {shlex.quote(str(unsafe_parent / 'backups'))}"],
+                check=False, capture_output=True, text=True,
+            )
+
+            # Then: temporary, traversal, symlink, and writable-parent paths are refused.
+            self.assertNotEqual(temporary_root.returncode, 0)
+            self.assertNotEqual(traversal.returncode, 0)
+            self.assertNotEqual(symlinked.returncode, 0)
+            self.assertNotEqual(unsafe.returncode, 0)
+        self.assertIn('BACKUP_DIR="${BBQC_BACKUP_DIR:-${HOME}/bbqc-backups}"', script)
+        assignment = next(line for line in script.splitlines() if line.startswith("BACKUP_DIR="))
+        selected = subprocess.run(
+            ["bash", "-c", f"{assignment}; printf '%s' \"$BACKUP_DIR\""],
+            check=False, capture_output=True, text=True,
+            env={"HOME": "/home/default", "BBQC_BACKUP_DIR": "/eos/user/y/ypark/bbqc-production-backups"},
+        )
+        self.assertEqual(selected.returncode, 0, selected.stderr)
+        self.assertEqual(selected.stdout, "/eos/user/y/ypark/bbqc-production-backups")
+
+    def test_backup_dir_is_strictly_below_only_the_current_users_home_or_eos_root(self):
+        # Given: durable backup evidence must stay under the current user's canonical roots.
+        script = SCRIPT.read_text(encoding="utf-8")
+        validator = script[
+            script.index("validate_backup_directory() {") : script.index(
+                "measure_durable_storage() {"
+            )
+        ]
+
+        # When: the boundary policy is inspected for accepted and rejected roots.
+
+        # Then: only descendants of canonical HOME or the exact current-user EOS root
+        # qualify; roots themselves, other users, transient filesystems, traversal, and
+        # symlinks do not.
+        self.assertIn("pwd.getpwnam(username).pw_dir", validator)
+        self.assertIn("PurePath('/eos/user', username[0], username)", validator)
+        self.assertIn("path != root and root in path.parents", validator)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            home = root / "home"
+            eos_root = root / "eos" / "user" / "y" / "young-park"
+            home.mkdir()
+            eos_root.mkdir(parents=True)
+            home.chmod(0o700)
+            eos_root.chmod(0o700)
+            symlink = root / "home-link"
+            symlink.symlink_to(home)
+            exercised = validator.replace(
+                "home = PurePath(pwd.getpwnam(username).pw_dir)",
+                "home = PurePath(os.environ['TEST_HOME'])",
+            ).replace(
+                "eos_root = PurePath('/eos/user', username[0], username)",
+                "eos_root = PurePath(os.environ['TEST_EOS_ROOT'])",
+            ).replace(
+                "for index in range(1, len(path.parts) - 1):\n    directory_status(PurePath(*path.parts[:index + 1]))",
+                "for index in ():\n    pass",
+            ).replace(
+                "parent_status = directory_status(parent)",
+                "parent_status = os.stat(parent)",
+            ).replace(
+                "if parent_status.st_uid != os.geteuid() or parent_status.st_mode & 0o022 or not os.access(parent, os.W_OK | os.X_OK):",
+                "if False:",
+            )
+
+            def validate(path: Path | str) -> subprocess.CompletedProcess[str]:
+                return subprocess.run(
+                    ["bash", "-c", f"umask 077\n{exercised}\nvalidate_backup_directory {shlex.quote(str(path))}"],
+                    check=False,
+                    capture_output=True,
+                    text=True,
+                    env={
+                        **os.environ,
+                        "HOME": str(home),
+                        "TEST_HOME": str(home),
+                        "TEST_EOS_ROOT": str(eos_root),
+                        "WORK_DIR": str(root / "work"),
+                    },
+                )
+
+            accepted_home = validate(home / "bbqc-backups")
+            accepted_eos = validate(eos_root / "bbqc-production-backups")
+            rejected = (
+                validate(home),
+                validate(eos_root),
+                validate(root / "eos" / "user" / "y" / "another-user" / "backups"),
+                validate(root / "run" / "user" / "1000" / "backups"),
+                validate(root / "data" / "backups"),
+                validate(home / ".." / "escape"),
+                validate(symlink / "backups"),
+            )
+
+        self.assertEqual(accepted_home.returncode, 0, accepted_home.stderr)
+        self.assertEqual(accepted_eos.returncode, 0, accepted_eos.stderr)
+        for result in rejected:
+            self.assertNotEqual(result.returncode, 0)
+
+    def test_retention_treats_checksum_sidecar_as_one_release_set(self):
+        # Given: a completed helper release includes a checksum beside its backup.
+        script = SCRIPT.read_text(encoding="utf-8")
+        measurement = script[
+            script.index("measure_dashboard_headroom() {") : script.index("verify_context() {")
+        ]
+
+        # When: retention groups recognized release artifacts by timestamp.
+
+        # Then: the checksum is allowlisted and shares the backup's timestamp instead of
+        # becoming an unknown artifact or a second retained release.
+        checksum_pattern = r"comments\.sqlite3\.before-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.bak\.sha256"
+        self.assertIn(checksum_pattern, measurement)
+        self.assertIn("stamps.add(match['stamp'])", measurement)
+        self.assertIn("unknown dashboard release artifact", measurement)
+        retention_start = measurement.index("import os, re\nfrom pathlib import Path")
+        retention_end = measurement.index("\nPY\n)", retention_start)
+        retention = measurement[retention_start:retention_end]
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            complete_stamp = "20260819T120000Z"
+            incomplete_stamp = "20260820T120000Z"
+            for name in (
+                f"dashboard-release-{complete_stamp}.env",
+                f"comments.sqlite3.before-dashboard-{complete_stamp}.bak",
+                f"comments.sqlite3.before-dashboard-{complete_stamp}.bak.sha256",
+                f"deployment-before-dashboard-{complete_stamp}.json",
+                f"service-before-dashboard-{complete_stamp}.json",
+                f"route-before-dashboard-{complete_stamp}.json",
+                f"buildconfig-captured-dashboard-{complete_stamp}.json",
+                f"comments.sqlite3.before-dashboard-{incomplete_stamp}.bak",
+            ):
+                (root / name).touch()
+            counted = subprocess.run(
+                ["python3", "-I", "-c", retention],
+                check=False,
+                capture_output=True,
+                text=True,
+                env={**os.environ, "BACKUP_DIR": str(root)},
+            )
+            (root / "dashboard-unknown-artifact").touch()
+            unknown = subprocess.run(
+                ["python3", "-I", "-c", retention],
+                check=False,
+                capture_output=True,
+                text=True,
+                env={**os.environ, "BACKUP_DIR": str(root)},
+            )
+
+        self.assertEqual(counted.returncode, 0, counted.stderr)
+        self.assertEqual(counted.stdout, "2\n")
+        self.assertNotEqual(unknown.returncode, 0)
+
+    def test_candidate_create_failure_never_adopts_or_operates_on_a_same_name_pod(self):
+        # Given: a failed create can race with an unrelated same-name pod.
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index('CANDIDATE_PROBE_POD="${DEPLOYMENT}')
+        end = script.index('oc -n "$PROJECT" wait', start)
+        candidate_create = script[start:end]
+
+        # When: oc run fails in a shell that records every oc invocation.
+        with tempfile.TemporaryDirectory() as directory:
+            commands = Path(directory) / "oc-commands"
+            harness = f"""set -Eeuo pipefail
+WORK_DIR={shlex.quote(directory)}
+DEPLOYMENT=dashboard
+PROJECT=project
+NEW_WEB_IMAGE=registry.example/dashboard@sha256:{'a' * 64}
+ETROC_REVIEWER_USERS_NORMALIZED=reviewer@example.invalid
+CANDIDATE_PROBE_CREATE_RESPONSE="$WORK_DIR/candidate-probe-create.json"
+oc() {{ printf '%s\\n' "$*" >> {shlex.quote(str(commands))}; return 1; }}
+{candidate_create}
+printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
+"""
+            result = subprocess.run(
+                ["bash", "-c", harness], check=False, capture_output=True, text=True
+            )
+            recorded = commands.read_text(encoding="utf-8")
+
+        # Then: failure is release-blocking and there is no get/adoption, copy, exec,
+        # delete, or rollout continuation after the failed create.
+        self.assertNotEqual(result.returncode, 0)
+        self.assertEqual(recorded.count("run "), 1)
+        for forbidden in (" get ", " cp ", " exec ", " delete ", "ROLLOUT_REACHED"):
+            self.assertNotIn(forbidden, recorded)
+
+    def test_storage_measurement_uses_afs_then_df_and_rejects_malformed_output(self):
+        # Given: both AFS and EOS storage report formats are untrusted command output.
+        script = SCRIPT.read_text(encoding="utf-8")
+        helpers = script[
+            script.index("measure_durable_storage() {") : script.index(
+                "measure_dashboard_headroom() {"
+            )
+        ]
+
+        # When: AFS uses fs lq, non-AFS uses df, and each output is malformed.
+        afs = subprocess.run(
+            ["bash", "-c", f"{helpers}\nBACKUP_DIR=/afs/cern.ch/user/y/ypark/bbqc-backups; fs() {{ printf 'Volume Name Quota Used %%Used Partition\\nuser 5000000 1000000 20%% disk\\n'; }}; df() {{ false; }}; measure_durable_storage"],
+            check=False, capture_output=True, text=True,
+        )
+        eos = subprocess.run(
+            ["bash", "-c", f"{helpers}\nBACKUP_DIR=/eos/user/y/ypark/bbqc-production-backups; df() {{ printf 'Filesystem 1024-blocks Used Available Capacity Mounted on\\neos 6000000 1000000 4900000 17%% /eos\\n'; }}; measure_durable_storage"],
+            check=False, capture_output=True, text=True,
+        )
+        malformed_fs = subprocess.run(
+            ["bash", "-c", f"{helpers}\nBACKUP_DIR=/afs/cern.ch/user/y/ypark/bbqc-backups; fs() {{ printf 'bad\\n'; }}; measure_durable_storage"],
+            check=False, capture_output=True, text=True,
+        )
+        failed_afs_quota = subprocess.run(
+            ["bash", "-c", f"{helpers}\nBACKUP_DIR=/afs/cern.ch/user/y/ypark/bbqc-backups; fs() {{ return 1; }}; df() {{ printf 'Filesystem 1024-blocks Used Available Capacity Mounted on\\nafs 999999999 1 999999998 1%% /afs\\n'; }}; measure_durable_storage"],
+            check=False, capture_output=True, text=True,
+        )
+        malformed_df = subprocess.run(
+            ["bash", "-c", f"{helpers}\nBACKUP_DIR=/safe; df() {{ printf 'Filesystem 1K-blocks Used Available Use%% Mounted on\\na 1 2 3 4%% /x\\nb 1 2 3 4%% /y\\n'; }}; measure_durable_storage"],
+            check=False, capture_output=True, text=True,
+        )
+
+        # Then: AFS and EOS expose exact numeric evidence; malformed output fails closed.
+        self.assertEqual(afs.returncode, 0, afs.stderr)
+        self.assertEqual(afs.stdout.strip(), "afs 5000000 1000000 4000000")
+        self.assertEqual(eos.returncode, 0, eos.stderr)
+        self.assertEqual(eos.stdout.strip(), "df 6000000 1000000 4900000")
+        self.assertNotEqual(malformed_fs.returncode, 0)
+        self.assertNotEqual(failed_afs_quota.returncode, 0)
+        self.assertNotEqual(malformed_df.returncode, 0)
+
     def test_dashboard_headroom_gate_accepts_sufficient_numeric_space(self):
-        # Given: a database, PVC, and AFS quota with room beyond every explicit margin.
+        # Given: a database, PVC, and durable storage capacity with room beyond every explicit margin.
         script = SCRIPT.read_text(encoding="utf-8")
         gate = script[
             script.index("PVC_BACKUP_SAFETY_KIB=") : script.index(
@@ -31,7 +283,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
 
         # When: the gate receives strict numeric KiB measurements.
         result = subprocess.run(
-            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1049600 5000000 1000000 0"],
+            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1049600 afs 5000000 1000000 4000000 0"],
             check=False,
             capture_output=True,
             text=True,
@@ -39,7 +291,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
 
         # Then: it permits the release and emits only numeric headroom evidence.
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertRegex(result.stdout, r"DASHBOARD_HEADROOM PASS db_bytes=1048576 .*afs_free_kib=4000000")
+        self.assertRegex(result.stdout, r"DASHBOARD_HEADROOM PASS db_bytes=1048576 .*storage_type=afs .*storage_free_kib=4000000")
 
     def test_dashboard_headroom_gate_rejects_low_pvc_space(self):
         # Given: the same-filesystem SQLite backup would not fit with its safety margin.
@@ -52,7 +304,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
 
         # When: PVC available KiB is below the required backup headroom.
         result = subprocess.run(
-            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1000 5000000 1000000 0"],
+            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1000 afs 5000000 1000000 4000000 0"],
             check=False,
             capture_output=True,
             text=True,
@@ -63,7 +315,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
         self.assertIn("PVC backup headroom is insufficient", result.stderr)
 
     def test_dashboard_headroom_gate_rejects_low_afs_space(self):
-        # Given: AFS has less free KiB than the copied DB, evidence allowance, and margin.
+        # Given: durable storage has less free KiB than the copied DB, evidence allowance, and margin.
         script = SCRIPT.read_text(encoding="utf-8")
         gate = script[
             script.index("PVC_BACKUP_SAFETY_KIB=") : script.index(
@@ -73,7 +325,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
 
         # When: the exact quota/used values leave inadequate free space.
         result = subprocess.run(
-            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1049600 1000 999 0"],
+            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1049600 afs 1000 999 1 0"],
             check=False,
             capture_output=True,
             text=True,
@@ -81,7 +333,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
 
         # Then: no release artifacts are permitted.
         self.assertNotEqual(result.returncode, 0)
-        self.assertIn("AFS release-evidence headroom is insufficient", result.stderr)
+        self.assertIn("durable storage release-evidence headroom is insufficient", result.stderr)
 
     def test_dashboard_headroom_gate_rejects_malformed_or_overflow_values(self):
         # Given: quota tooling can return corrupted, negative, or overflow-like values.
@@ -94,19 +346,19 @@ class LxplusDashboardDeployTests(unittest.TestCase):
 
         # When: each untrusted measurement crosses the numeric boundary.
         malformed = subprocess.run(
-            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1KiB 1000 5000000 1 0"],
+            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1KiB 1000 afs 5000000 1 4999999 0"],
             check=False,
             capture_output=True,
             text=True,
         )
         negative = subprocess.run(
-            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1024 -1 5000000 1 0"],
+            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1024 -1 afs 5000000 1 4999999 0"],
             check=False,
             capture_output=True,
             text=True,
         )
         overflow = subprocess.run(
-            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 999999999999999999999999 1000 5000000 1 0"],
+            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 999999999999999999999999 1000 afs 5000000 1 4999999 0"],
             check=False,
             capture_output=True,
             text=True,
@@ -156,7 +408,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
 
         # When: another set would exceed the no-auto-delete retention cap.
         result = subprocess.run(
-            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1049600 5000000 1000000 20"],
+            ["bash", "-c", f"{gate}\nvalidate_dashboard_headroom 1048576 1049600 afs 5000000 1000000 4000000 20"],
             check=False,
             capture_output=True,
             text=True,
@@ -173,12 +425,12 @@ class LxplusDashboardDeployTests(unittest.TestCase):
         # When: deployment ordering is inspected.
 
         # Then: the gate runs before both the remote backup and the first BACKUP_DIR write.
-        gate = script.index("measure_dashboard_headroom\ninstall -d -m 700 \"$BACKUP_DIR\"")
+        gate = script.index("validate_backup_directory \"$BACKUP_DIR\"\nmeasure_dashboard_headroom")
         backup = script.index('oc -n "$PROJECT" exec -i "$POD" -c web -- env BACKUP=')
         artifact_write = script.index('oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$CAPTURED_DEPLOYMENT_FILE"')
         self.assertLess(gate, backup)
         self.assertLess(gate, artifact_write)
-        self.assertLess(gate, script.index('install -d -m 700 "$BACKUP_DIR"'))
+        self.assertLess(script.index('validate_backup_directory "$BACKUP_DIR"'), gate + len('validate_backup_directory "$BACKUP_DIR"'))
         self.assertNotIn("rm -f \"$BACKUP_DIR", script)
 
     def test_helper_has_valid_bash_syntax(self):
@@ -297,7 +549,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='4e30f825ea9d2c72c905993fd171ed08c5b6963f'",
+            "SOURCE_REVISION='041fbb0f63a8d2a1ec86be7ede2a28e8534e0f8c'",
             script,
         )
         expected = {
@@ -311,7 +563,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "ETROC_MANIFEST_SHA256": "616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29",
             "SERVER_PY_SHA256": "45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e",
             "ETROC_REVIEWS_PY_SHA256": "0da4caf6bc275941c00bda485daf1bdc9475646e1c1528af0a941cfea0b35984",
-            "DEPLOYMENT_MANIFEST_SHA256": "0b102e22bd2a3ee08f9bde197da4a6fdad105beb1425e1ed91e604c98ad5b809",
+            "DEPLOYMENT_MANIFEST_SHA256": "658c6db56b9dd4f85eec18900462951d1c00de65c1273d2f7a33a21804ca61fb",
             "SERVICE_MANIFEST_SHA256": "84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c",
             "ROUTE_MANIFEST_SHA256": "23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43",
         }
@@ -778,8 +1030,8 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             "etroc_review_events",
             "external trusted-header spoof was accepted",
             "internal proxy-derived allowlisted identity was not accepted",
-            "X-Forwarded-Email: attacker@cern.ch",
             "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}",
+            "ETROC review history/audit read-only schema mismatch",
         ):
             self.assertIn(required, script)
         self.assertNotIn("X-ETROC-Author", script)
@@ -889,24 +1141,22 @@ class LxplusDashboardDeployTests(unittest.TestCase):
         ):
             self.assertIn(required, script)
 
-    def test_helper_proves_spoofed_and_conflicting_identity_headers_cannot_append(self):
+    def test_helper_proves_unauthenticated_spoofed_identity_headers_cannot_bypass_sso(self):
         # Given: only oauth2-proxy may establish the trusted identity header.
         script = SCRIPT.read_text(encoding="utf-8")
 
         # When: the external identity boundary is verified.
 
-        # Then: spoofing sends the configured allowlisted identity header, proves it
-        # cannot manufacture append capability, and requires an authenticated
-        # conflicting-header/session-derived identity probe when available.
+        # Then: spoofing sends the configured allowlisted identity header but is
+        # redirected through CERN SSO without needing an exported browser session.
         for required in (
             "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}",
-            "SPOOF_APPEND_STATUS",
-            "external trusted-header spoof manufactured append capability",
-            "AUTHENTICATED_CONFLICTING_IDENTITY_GATE PASS",
-            "authenticated conflicting-header proof unavailable",
-            "--cookie",
+            "external trusted-header spoof was accepted",
+            "AUTHENTICATED_BROWSER_QA PENDING",
         ):
             self.assertIn(required, script)
+        self.assertNotIn("SPOOF_APPEND_STATUS", script)
+        self.assertNotIn('curl --cookie ', script)
 
     def test_helper_preserves_etroc_events_and_identity_chain_across_release_boundaries(self):
         # Given: ETROC reviews and Hybrid comments are durable user data.
@@ -1067,8 +1317,8 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         ):
             self.assertIn(required, rollback)
 
-    def test_rollback_after_authorized_append_accepts_post_append_event_snapshot(self):
-        # Given: an authorized append has irreversibly extended the audit chain.
+    def test_rollback_keeps_pre_rollout_etroc_snapshot_as_the_invariant(self):
+        # Given: production verification never appends a review event.
         script = SCRIPT.read_text(encoding="utf-8")
         before = '{"present":true,"count":1,"identity_chain":[[1,"old"]]}'
         after_append = '{"present":true,"count":2,"identity_chain":[[1,"old"],[2,"append"]]}'
@@ -1076,8 +1326,7 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         end = script.index("\n}\n", start) + 3
         assertion = script[start:end]
 
-        # When: rollback sees the legitimate append-only state after a simulated later
-        # failure.
+        # When: rollback compares the restored database with the pre-rollout snapshot.
         accepted = subprocess.run(
             ["bash", "-c", f"{assertion}\nassert_etroc_snapshot {shlex.quote(after_append)} {shlex.quote(after_append)}"],
             check=False, capture_output=True, text=True,
@@ -1087,123 +1336,97 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
             check=False, capture_output=True, text=True,
         )
 
-        # Then: rollback uses the post-append expectation, never the stale pre-append
-        # snapshot, and the capture occurs immediately after append/audit verification.
+        # Then: an appended production event is rejected, and rollback remains owned
+        # until every mandatory read-only production gate has passed.
         self.assertEqual(accepted.returncode, 0, accepted.stderr)
         self.assertNotEqual(rejected.returncode, 0)
-        self.assertIn("ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK", script)
-        post = script.index('REVIEW_CREATED_STATUS="$(curl')
-        committed = script.index("FORWARD_RELEASE_COMMITTED before irreversible ETROC review verification")
+        self.assertNotIn("ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK", script)
+        committed = script.index("FORWARD_RELEASE_COMMITTED after mandatory read-only post-rollout gates")
         ownership_released = script.index("ROLLOUT_MUTATED=0", committed)
+        self.assertLess(script.index("AUTHENTICATED_BROWSER_QA PENDING"), committed)
         self.assertLess(committed, ownership_released)
-        self.assertLess(ownership_released, post)
-        append = script.index("ETROC_REVIEW_PROXY_FLOW PASS")
-        capture = script.index("ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK=", append)
-        self.assertLess(append, capture)
         rollback = script[script.index("rollback_deployment() {") : script.index("attempt_rollback() {")]
-        self.assertIn('assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK"', rollback)
+        self.assertIn('assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE"', rollback)
 
-    def test_helper_requires_operator_review_inputs_before_rollout(self):
-        # Given: a deployment gate must never choose a scientific disposition itself.
+    def test_helper_never_accepts_operator_scientific_review_inputs(self):
+        # Given: deployment verification is operational, not a scientific review.
         script = SCRIPT.read_text(encoding="utf-8")
 
-        # When: the operator has not supplied the exact review target and decision.
+        # When: the helper is inspected for operator-provided dispositions.
 
-        # Then: all three required values are validated before any production Deployment
-        # replacement, with no fallback acquisition, state, or note baked into the helper.
-        validation = script[script.index("validate_operator_review_inputs() {"):script.index("bootstrap_sso_plugin() {")]
-        mutation = script.index('ROLLOUT_MUTATED=1')
-        invocation = script.index("validate_operator_review_inputs", script.index("ETROC_REVIEWER_ALLOWLIST PASS"))
-        self.assertLess(invocation, mutation)
-        for required in (
+        # Then: no acquisition, state, note, validator, or production proxy flow can
+        # choose or synthesize a scientific disposition.
+        for forbidden in (
             "ETROC_REVIEW_ACQUISITION_ID",
             "ETROC_REVIEW_STATE",
             "ETROC_REVIEW_NOTE",
-            "operator review acquisition ID is required",
-            "operator review state is invalid",
-            "operator review note is required",
-            "operator review note is invalid",
-            "operator review acquisition is not canonical candidate publication evidence",
-            "ETROC_OI_2608:",
-            "reviewed_no_optical_concern",
-            "reviewed_concern_observed",
-            "follow_up_required",
-        ):
-            self.assertIn(required, validation)
-        self.assertNotIn("ETROC_REVIEW_ACQUISITION_ID='", validation)
-        self.assertNotIn("ETROC_REVIEW_STATE='", validation)
-        self.assertNotIn("ETROC_REVIEW_NOTE='", validation)
-
-    def test_operator_review_input_validation_is_deterministic(self):
-        script = SCRIPT.read_text(encoding="utf-8")
-        start = script.index("validate_operator_review_inputs() {")
-        end = script.index("\n}\n", start) + 3
-        validator = script[start:end]
-
-        def run_case(**values):
-            environment = os.environ.copy()
-            environment.update(values)
-            return subprocess.run(
-                ["bash", "-c", f"set -Eeuo pipefail\n{validator}\nvalidate_operator_review_inputs"],
-                check=False,
-                capture_output=True,
-                text=True,
-                env=environment,
-            )
-
-        missing = run_case()
-        malformed = run_case(
-            ETROC_REVIEW_ACQUISITION_ID="not-a-canonical-id",
-            ETROC_REVIEW_STATE="reviewed_concern_observed",
-            ETROC_REVIEW_NOTE="operator note",
-        )
-        invalid_state = run_case(
-            ETROC_REVIEW_ACQUISITION_ID="ETROC_OI_2608:W02G4-44:base",
-            ETROC_REVIEW_STATE="unsafe_disposition",
-            ETROC_REVIEW_NOTE="operator note",
-        )
-        valid = run_case(
-            ETROC_REVIEW_ACQUISITION_ID="ETROC_OI_2608:W02G4-44:base",
-            ETROC_REVIEW_STATE="reviewed_concern_observed",
-            ETROC_REVIEW_NOTE="operator note",
-        )
-        self.assertNotEqual(missing.returncode, 0)
-        self.assertIn("operator review acquisition ID is required", missing.stderr)
-        self.assertNotEqual(malformed.returncode, 0)
-        self.assertIn("operator review acquisition ID is invalid", malformed.stderr)
-        self.assertNotEqual(invalid_state.returncode, 0)
-        self.assertIn("operator review state is invalid", invalid_state.stderr)
-        self.assertEqual(valid.returncode, 0, valid.stderr)
-
-    def test_helper_exercises_authenticated_proxy_review_append_contract(self):
-        # Given: an operator-provided canonical review must be verified through the
-        # SSO-protected proxy after the new release is live.
-        script = SCRIPT.read_text(encoding="utf-8")
-        start = script.index("ETROC_REVIEW_PROXY_FLOW PASS") - 12000
-        flow = script[start:script.index("ETROC_PROXY_IDENTITY_GATE PASS", start)]
-
-        # Then: the flow derives the entire canonical key from the authenticated summary,
-        # sends identity/content/origin-safe requests, and proves one write, exact
-        # readback, lost-response replay, stale conflict, history, and audit without
-        # restoring or deleting any database data.
-        for required in (
-            "ETROC_REVIEW_ACQUISITION_ID",
-            "ETROC_REVIEW_STATE",
-            "ETROC_REVIEW_NOTE",
-            "can_append_review",
-            "Content-Type: application/json",
-            "Origin: https://etl-hybrid-bbqc.app.cern.ch",
-            "cache-control",
-            "idempotent_replay",
-            "stale_current",
-            "/api/etroc-reviews/audit?acquisition_id=",
-            "history count changed after idempotent replay",
-            "history count changed after stale conflict",
+            "validate_operator_review_inputs",
             "ETROC_REVIEW_PROXY_FLOW PASS",
         ):
-            self.assertIn(required, flow)
-        self.assertNotIn("DELETE FROM etroc_review_events", flow)
-        self.assertNotIn("restore", flow.lower())
+            self.assertNotIn(forbidden, script)
+
+    def test_helper_exercises_review_mutation_only_on_disposable_candidate_copies(self):
+        # Given: append semantics need end-to-end coverage without changing production.
+        script = SCRIPT.read_text(encoding="utf-8")
+        candidate = script[script.index('CANDIDATE_PROBE_POD="${DEPLOYMENT}') : script.index("CANDIDATE_IMAGE_STARTUP PASS")]
+
+        # When: the new image is started with a copied local backup on emptyDir.
+
+        # Then: it performs one authorized append with exact readback/history/audit,
+        # idempotent replay and stale conflict, while retaining append-only and legacy
+        # Hybrid-comments invariants entirely before the production mutation.
+        for required in (
+            "emptyDir",
+            'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
+            "candidate HTTP existing-history supersession response is invalid",
+            "idempotent_replay",
+            "stale_current",
+            "candidate history/audit exactness mismatch",
+            "candidate HTTP replay/stale conflict changed event count",
+            "candidate Hybrid comments changed during review mutation verification",
+            "CANDIDATE_REVIEW_MUTATION PASS",
+        ):
+            self.assertIn(required, candidate)
+        self.assertLess(script.index("CANDIDATE_REVIEW_MUTATION PASS"), script.index('ROLLOUT_MUTATED=1'))
+        self.assertNotRegex(candidate, re.compile(r'oc -n "\$PROJECT" (?:cp|exec).*"\$POD"'))
+
+    def test_helper_makes_disposable_empty_and_existing_review_history_gates_deterministic(self):
+        # Given: the production backup may contain either no ETROC history or arbitrary
+        # pre-existing history for the canonical publication acquisition.
+        script = SCRIPT.read_text(encoding="utf-8")
+        local_gate = script[script.index('cp "$LOCAL_BACKUP" "$CANDIDATE_DB"') : script.index("CANDIDATE_ETROC_SCHEMA PASS")]
+        candidate = script[script.index('CANDIDATE_PROBE_POD="${DEPLOYMENT}') : script.index("CANDIDATE_IMAGE_STARTUP PASS")]
+
+        # When: the disposable local and new-image candidate gates are assembled.
+
+        # Then: the local gate clears one deterministic chain, proves empty-history
+        # append then supersession with +2 events, and seeds the emptyDir copy with a
+        # deterministic one-event chain for an HTTP-only existing-history +1 proof.
+        for required in (
+            "CANDIDATE_HTTP_ACQUISITION_FILE",
+            "DELETE FROM etroc_review_events WHERE acquisition_id=?",
+            "expected_current_event_id': None",
+            "local empty-history append response is invalid",
+            "local existing-history supersession response is invalid",
+            "local empty-history replay/stale conflict changed event count",
+            "local existing-history replay/stale conflict changed event count",
+            "local deterministic mutation count is not +2",
+            "supersedes_event_id') is not None",
+            "supersedes_event_id') != event1['event_id']",
+            "candidate HTTP seed event is invalid",
+        ):
+            self.assertIn(required, local_gate)
+        for required in (
+            'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
+            'CANDIDATE_HTTP_ACQUISITION_FILE',
+            "candidate HTTP existing-history supersession response is invalid",
+            "candidate HTTP replay/stale conflict changed event count",
+            "candidate HTTP mutation count is not +1",
+            "supersedes_event_id') != prior_event_id",
+        ):
+            self.assertIn(required, candidate)
+        self.assertNotIn('oc -n "$PROJECT" cp "$LOCAL_BACKUP"', candidate)
+        self.assertLess(script.index("CANDIDATE_REVIEW_MUTATION PASS"), script.index('ROLLOUT_MUTATED=1'))
 
     def test_topology_inventory_covers_every_service_and_route_selecting_live_pods(self):
         # Given: an additional Service can select the live template with labels other
@@ -1289,12 +1512,12 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         # Then: a disposable copied legacy DB is installed before the actual entrypoint
         # is started, and its evidence loader plus montage bytes are probed before the
         # production Deployment replacement.
-        candidate = script[script.index("CANDIDATE_IMAGE_STARTUP PASS") - 7000 : script.index("CANDIDATE_IMAGE_STARTUP PASS")]
+        candidate = script[script.index('CANDIDATE_PROBE_POD="${DEPLOYMENT}') : script.index("CANDIDATE_IMAGE_STARTUP PASS")]
         mutation = script.index('ROLLOUT_MUTATED=1')
         self.assertLess(script.index("CANDIDATE_IMAGE_STARTUP PASS"), mutation)
         for required in (
             "candidate-startup-probe",
-            'oc -n "$PROJECT" cp "$LOCAL_BACKUP"',
+            'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
             "python /app/static/server.py",
             "/api/etroc-reviews?dataset_id=ETROC_OI_2608",
             "candidate evidence loader did not return exact cohort",
@@ -1303,24 +1526,24 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         ):
             self.assertIn(required, candidate if required != "CANDIDATE_LEGACY_COMMENTS_COMPAT PASS" else script)
 
-    def test_authenticated_spoof_proofs_use_both_real_session_roles(self):
-        # Given: proxy header stripping must hold for both reviewer and non-reviewer
-        # sessions, not only for an unauthenticated request.
+    def test_helper_has_no_cookie_export_or_production_review_post_workflow(self):
+        # Given: post-rollout gates must be read-only and session-independent.
         script = SCRIPT.read_text(encoding="utf-8")
 
-        # When: external spoof resistance is verified.
+        # When: the complete helper and post-rollout section are inspected.
 
-        # Then: a non-allowlisted real session injects an allowlisted header and an
-        # allowlisted real session injects an attacker header.
-        for required in (
+        # Then: no cookie jars or second-user session inputs remain, and no production
+        # request can invoke the ETROC review POST endpoint after rollout.
+        for forbidden in (
+            "ETROC_AUTHENTICATED_SESSION_COOKIE_JAR",
             "ETROC_NON_ALLOWLISTED_SESSION_COOKIE_JAR",
-            "non-allowlisted session spoof manufactured append capability",
-            "non-allowlisted session identity was not preserved",
-            "allowlisted session identity was not preserved against attacker header",
-            "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}",
-            "X-Forwarded-Email: attacker@cern.ch",
+            "validate_cookie_jar_inputs",
+            'curl --cookie ',
         ):
-            self.assertIn(required, script)
+            self.assertNotIn(forbidden, script)
+        post_rollout = script[script.index('ROLLOUT_MUTATED=1') :]
+        self.assertNotIn("--request POST", post_rollout)
+        self.assertNotIn("method='POST'", post_rollout)
 
     def test_runtime_http_montage_bytes_equal_the_published_digest(self):
         # Given: JPEG magic bytes do not establish immutable evidence identity.
@@ -1482,17 +1705,16 @@ printf 'sha=%s\\n' "$OLD_RUNTIME_SERVER_SHA256"
         self.assertNotRegex(script, re.compile(r'oc -n "\$PROJECT" cp "\$CANDIDATE_DB" "\$POD:'))
         self.assertNotRegex(script, re.compile(r'oc -n "\$PROJECT" exec(?: -i)? "\$POD" -c web -- env COMMENTS_DB='))
 
-    def test_cookie_jars_are_validated_read_only_inputs(self):
-        # Given: authenticated proof jars may contain bearer-equivalent cookies.
+    def test_authenticated_browser_qa_is_explicitly_deferred(self):
+        # Given: helper completion must not require a human browser session.
         script = SCRIPT.read_text(encoding="utf-8")
 
-        # When: the proof requests are constructed.
-        cookies = script[script.index("validate_cookie_jar_inputs() {") : script.index("REVIEW_SUMMARY_HEADERS=")]
+        # When: post-rollout external SSO handling is reached.
 
-        # Then: both jars are ownership/mode checked, distinct, and never rewritten.
-        for required in ("-f", "-L", "-O", "400", "600", "-ef"):
-            self.assertIn(required, cookies)
-        self.assertNotIn("--cookie-jar", cookies)
+        # Then: the marker precedes the commit boundary instead of blocking it.
+        marker = script.index("AUTHENTICATED_BROWSER_QA PENDING")
+        committed = script.index("FORWARD_RELEASE_COMMITTED after mandatory read-only post-rollout gates")
+        self.assertLess(marker, committed)
 
     def test_headroom_counts_wal_and_shm_and_retention_rejects_unknown_artifacts(self):
         # Given: SQLite WAL state and interrupted evidence sets consume real capacity.

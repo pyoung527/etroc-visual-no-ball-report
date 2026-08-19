@@ -3,7 +3,7 @@ set -Eeuo pipefail
 umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 
-SOURCE_REVISION='4e30f825ea9d2c72c905993fd171ed08c5b6963f'
+SOURCE_REVISION='041fbb0f63a8d2a1ec86be7ede2a28e8534e0f8c'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
 INDEX_SHA256='af5dbe0db30b41bb231be3248a4c9a1aebd831988759d839aece1c07c996e2ae'
 CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
@@ -15,7 +15,7 @@ LGAD_STATS_JS_SHA256='e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36
 ETROC_MANIFEST_SHA256='616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29'
 SERVER_PY_SHA256='45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e'
 ETROC_REVIEWS_PY_SHA256='0da4caf6bc275941c00bda485daf1bdc9475646e1c1528af0a941cfea0b35984'
-DEPLOYMENT_MANIFEST_SHA256='0b102e22bd2a3ee08f9bde197da4a6fdad105beb1425e1ed91e604c98ad5b809'
+DEPLOYMENT_MANIFEST_SHA256='658c6db56b9dd4f85eec18900462951d1c00de65c1273d2f7a33a21804ca61fb'
 SERVICE_MANIFEST_SHA256='84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c'
 ROUTE_MANIFEST_SHA256='23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43'
 ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'
@@ -36,16 +36,17 @@ ETROC_REVIEWER_USERS_NORMALIZED=''
 ETROC_REVIEWER_USERS_COUNT=''
 ETROC_REVIEWER_USERS_SHA256=''
 EXPECTED_TOP_LEVEL=$'hybrid-bbqc\noverlay\nruntime'
-BACKUP_DIR="${HOME}/bbqc-backups"
+BACKUP_DIR="${BBQC_BACKUP_DIR:-${HOME}/bbqc-backups}"
 CURRENT_RELEASE_STATE="${BACKUP_DIR}/current-release.env"
 PVC_BACKUP_SAFETY_KIB=102400
-AFS_CHECKSUMS_KIB=64
-AFS_RELEASE_EVIDENCE_KIB=20480
-AFS_SAFETY_MARGIN_KIB=102400
+STORAGE_CHECKSUMS_KIB=64
+STORAGE_RELEASE_EVIDENCE_KIB=20480
+STORAGE_SAFETY_MARGIN_KIB=102400
 MAX_RELEASE_ARTIFACT_SETS=20
 WORK_DIR="$(mktemp -d "${TMPDIR:-/tmp}/bbqc-dashboard-release.XXXXXXXX")"
 BUILD_CONTEXT="${WORK_DIR}/context"
 CANDIDATE_DB="${WORK_DIR}/comments-candidate.sqlite3"
+CANDIDATE_HTTP_ACQUISITION_FILE="${WORK_DIR}/candidate-http-acquisition-id"
 OLD_RUNTIME_DIR="${WORK_DIR}/previous-runtime"
 OLD_RUNTIME_SERVER="${OLD_RUNTIME_DIR}/server.py"
 MANIFESTS_DIR="${WORK_DIR}/manifests"
@@ -93,11 +94,14 @@ NEW_WEB_IMAGE=''
 ETROC_EVENT_SNAPSHOT_BEFORE=''
 ETROC_EVENT_SNAPSHOT_BACKUP=''
 ETROC_EVENT_SNAPSHOT_POST_ROLLOUT=''
-ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK=''
 CANDIDATE_PROBE_POD=''
 CANDIDATE_PROBE_POD_UID=''
 CANDIDATE_PROBE_POD_OWNED=0
 CANDIDATE_PROBE_CREATE_RESPONSE="${WORK_DIR}/candidate-probe-create.json"
+DURABLE_STORAGE_TYPE=''
+DURABLE_STORAGE_CAPACITY_KIB=''
+DURABLE_STORAGE_USED_KIB=''
+DURABLE_STORAGE_FREE_KIB=''
 
 cleanup() {
   if ! cleanup_candidate_probe_pod; then
@@ -214,19 +218,133 @@ download() {
     "$url" --output "$destination"
 }
 
+validate_backup_directory() {
+  BACKUP_DIR="$1" WORK_DIR="$WORK_DIR" python3 -I - <<'PY'
+import os, pwd, stat
+from pathlib import PurePath
+
+raw = os.environ['BACKUP_DIR']
+if not raw or any(ord(character) < 32 or ord(character) == 127 for character in raw):
+    raise SystemExit('unsafe backup directory path')
+path = PurePath(raw)
+if not path.is_absolute() or raw.startswith('//') or raw != os.path.normpath(raw) or any(part in ('.', '..') for part in path.parts):
+    raise SystemExit('backup directory path must be canonical and absolute')
+work_dir = os.environ['WORK_DIR']
+if raw in ('/tmp', '/var/tmp') or (work_dir and (raw == work_dir or raw.startswith(work_dir + '/'))):
+    raise SystemExit('unsafe backup directory path')
+username = pwd.getpwuid(os.geteuid()).pw_name
+home = PurePath(pwd.getpwnam(username).pw_dir)
+if os.environ.get('HOME') != str(home) or not home.is_absolute() or os.path.realpath(home) != str(home):
+    raise SystemExit('canonical HOME is invalid')
+eos_root = PurePath('/eos/user', username[0], username)
+if not any(path != root and root in path.parents for root in (home, eos_root)):
+    raise SystemExit('backup directory must be below the current user home or EOS root')
+
+def directory_status(candidate: PurePath) -> os.stat_result:
+    try:
+        entry = os.lstat(candidate)
+    except FileNotFoundError:
+        raise SystemExit('backup directory parent is missing') from None
+    if stat.S_ISLNK(entry.st_mode) or not stat.S_ISDIR(entry.st_mode):
+        raise SystemExit('backup directory contains an unsafe path component')
+    if entry.st_uid not in (0, os.geteuid()) or entry.st_mode & 0o022:
+        raise SystemExit('backup directory path component ownership or mode is unsafe')
+    return entry
+
+for index in range(1, len(path.parts) - 1):
+    directory_status(PurePath(*path.parts[:index + 1]))
+parent = path.parent
+parent_status = directory_status(parent)
+if parent_status.st_uid != os.geteuid() or parent_status.st_mode & 0o022 or not os.access(parent, os.W_OK | os.X_OK):
+    raise SystemExit('backup directory parent ownership or mode is unsafe')
+try:
+    final_status = os.lstat(path)
+except FileNotFoundError:
+    try:
+        os.mkdir(path, 0o700)
+    except FileExistsError:
+        pass
+    final_status = os.lstat(path)
+if stat.S_ISLNK(final_status.st_mode) or not stat.S_ISDIR(final_status.st_mode):
+    raise SystemExit('backup directory is not a directory')
+if final_status.st_uid != os.geteuid() or final_status.st_mode & 0o077 or not os.access(path, os.W_OK | os.X_OK):
+    raise SystemExit('backup directory ownership or mode is unsafe')
+if os.path.realpath(path) != raw:
+    raise SystemExit('backup directory is not canonical')
+PY
+}
+
+measure_durable_storage() {
+  local measurement storage_type storage_capacity_kib storage_used_kib storage_free_kib trailing
+  if [[ "$BACKUP_DIR" == /afs/* ]]; then
+    if ! measurement="$(fs lq "$BACKUP_DIR" 2>/dev/null)"; then
+      printf '%s\n' 'invalid durable storage measurement: AFS quota lookup failed' >&2
+      return 1
+    fi
+    if ! measurement="$(printf '%s' "$measurement" | python3 -I -c '
+import re, sys
+rows=[]
+for line in sys.stdin:
+    match=re.fullmatch(r"\s*\S+\s+(\d+)\s+(\d+)\s+\d+%\s+\S+\s*", line)
+    if match is not None:
+        rows.append(match.groups())
+if len(rows) != 1:
+    raise SystemExit("invalid durable storage measurement: malformed fs lq output")
+quota, used = map(int, rows[0])
+if quota == 0 or quota > 9223372036854775807 or used > quota:
+    raise SystemExit("invalid durable storage measurement: invalid fs lq capacity or used KiB")
+print(quota, used, quota - used)
+')"; then
+      return 1
+    fi
+    read -r storage_capacity_kib storage_used_kib storage_free_kib trailing <<< "$measurement"
+    if test -z "${storage_capacity_kib:-}" || test -z "${storage_used_kib:-}" || test -z "${storage_free_kib:-}" || test -n "${trailing:-}"; then
+      printf '%s\n' 'invalid durable storage measurement: malformed fs lq output' >&2
+      return 1
+    fi
+    storage_type=afs
+  else
+    if ! measurement="$(df -Pk "$BACKUP_DIR" | python3 -I -c '
+import re, sys
+rows=[]
+for line in sys.stdin:
+    match=re.fullmatch(r"\S+\s+(\d+)\s+(\d+)\s+(\d+)\s+\d+%\s+\S+(?:\s+.*)?\s*", line)
+    if match is not None:
+        rows.append(match.groups())
+if len(rows) != 1:
+    raise SystemExit("invalid durable storage measurement: malformed df output")
+capacity, used, available = map(int, rows[0])
+if capacity == 0 or capacity > 9223372036854775807 or used > capacity or available > capacity - used:
+    raise SystemExit("invalid durable storage measurement: invalid df capacity, used, or available KiB")
+print(capacity, used, min(capacity - used, available))
+')"; then
+      return 1
+    fi
+    read -r storage_capacity_kib storage_used_kib storage_free_kib trailing <<< "$measurement"
+    if test -z "${storage_capacity_kib:-}" || test -z "${storage_used_kib:-}" || test -z "${storage_free_kib:-}" || test -n "${trailing:-}"; then
+      printf '%s\n' 'invalid durable storage measurement: malformed df output' >&2
+      return 1
+    fi
+    storage_type=df
+  fi
+  printf '%s %s %s %s\n' "$storage_type" "$storage_capacity_kib" "$storage_used_kib" "$storage_free_kib"
+}
+
 validate_dashboard_headroom() {
-  DB_BYTES="$1" PVC_AVAILABLE_KIB="$2" AFS_QUOTA_KIB="$3" AFS_USED_KIB="$4" \
-    RETAINED_ARTIFACT_SETS="$5" PVC_BACKUP_SAFETY_KIB="$PVC_BACKUP_SAFETY_KIB" \
-    AFS_CHECKSUMS_KIB="$AFS_CHECKSUMS_KIB" AFS_RELEASE_EVIDENCE_KIB="$AFS_RELEASE_EVIDENCE_KIB" \
-    AFS_SAFETY_MARGIN_KIB="$AFS_SAFETY_MARGIN_KIB" MAX_RELEASE_ARTIFACT_SETS="$MAX_RELEASE_ARTIFACT_SETS" \
+  DB_BYTES="$1" PVC_AVAILABLE_KIB="$2" STORAGE_TYPE="$3" STORAGE_CAPACITY_KIB="$4" STORAGE_USED_KIB="$5" STORAGE_FREE_KIB="$6" \
+    RETAINED_ARTIFACT_SETS="$7" PVC_BACKUP_SAFETY_KIB="$PVC_BACKUP_SAFETY_KIB" \
+    STORAGE_CHECKSUMS_KIB="$STORAGE_CHECKSUMS_KIB" STORAGE_RELEASE_EVIDENCE_KIB="$STORAGE_RELEASE_EVIDENCE_KIB" \
+    STORAGE_SAFETY_MARGIN_KIB="$STORAGE_SAFETY_MARGIN_KIB" MAX_RELEASE_ARTIFACT_SETS="$MAX_RELEASE_ARTIFACT_SETS" \
     python3 -I - <<'PY'
 import os, re, sys
 
 maximum = 9223372036854775807
 values = {}
-for name in ('DB_BYTES', 'PVC_AVAILABLE_KIB', 'AFS_QUOTA_KIB', 'AFS_USED_KIB', 'RETAINED_ARTIFACT_SETS',
-             'PVC_BACKUP_SAFETY_KIB', 'AFS_CHECKSUMS_KIB', 'AFS_RELEASE_EVIDENCE_KIB',
-             'AFS_SAFETY_MARGIN_KIB', 'MAX_RELEASE_ARTIFACT_SETS'):
+if os.environ['STORAGE_TYPE'] not in ('afs', 'df'):
+    raise SystemExit('invalid durable storage measurement: unsupported storage type')
+for name in ('DB_BYTES', 'PVC_AVAILABLE_KIB', 'STORAGE_CAPACITY_KIB', 'STORAGE_USED_KIB', 'STORAGE_FREE_KIB', 'RETAINED_ARTIFACT_SETS',
+             'PVC_BACKUP_SAFETY_KIB', 'STORAGE_CHECKSUMS_KIB', 'STORAGE_RELEASE_EVIDENCE_KIB',
+             'STORAGE_SAFETY_MARGIN_KIB', 'MAX_RELEASE_ARTIFACT_SETS'):
     raw = os.environ[name]
     if re.fullmatch(r'(?:0|[1-9][0-9]{0,18})', raw) is None:
         raise SystemExit(f'invalid numeric headroom measurement: {name}')
@@ -234,37 +352,39 @@ for name in ('DB_BYTES', 'PVC_AVAILABLE_KIB', 'AFS_QUOTA_KIB', 'AFS_USED_KIB', '
     if value > maximum:
         raise SystemExit(f'invalid numeric headroom measurement: {name}')
     values[name] = value
-if values['DB_BYTES'] == 0 or values['AFS_QUOTA_KIB'] == 0:
-    raise SystemExit('invalid numeric headroom measurement: zero database size or AFS quota')
-if values['AFS_USED_KIB'] > values['AFS_QUOTA_KIB']:
-    raise SystemExit('invalid numeric headroom measurement: AFS used KiB exceeds quota KiB')
+if values['DB_BYTES'] == 0 or values['STORAGE_CAPACITY_KIB'] == 0:
+    raise SystemExit('invalid numeric headroom measurement: zero database size or durable storage capacity')
+if values['STORAGE_USED_KIB'] > values['STORAGE_CAPACITY_KIB']:
+    raise SystemExit('invalid numeric headroom measurement: durable storage used KiB exceeds capacity KiB')
+storage_calculated_free_kib = values['STORAGE_CAPACITY_KIB'] - values['STORAGE_USED_KIB']
+if values['STORAGE_FREE_KIB'] > storage_calculated_free_kib:
+    raise SystemExit('invalid durable storage measurement: reported free KiB exceeds capacity minus used KiB')
 if values['RETAINED_ARTIFACT_SETS'] >= values['MAX_RELEASE_ARTIFACT_SETS']:
     raise SystemExit(
         'dashboard release artifact retention cap reached; manual archive/cleanup is required; no evidence was deleted'
     )
 db_kib = (values['DB_BYTES'] + 1023) // 1024
 pvc_required_kib = db_kib + values['PVC_BACKUP_SAFETY_KIB']
-afs_free_kib = values['AFS_QUOTA_KIB'] - values['AFS_USED_KIB']
-afs_required_kib = db_kib + values['AFS_CHECKSUMS_KIB'] + values['AFS_RELEASE_EVIDENCE_KIB'] + values['AFS_SAFETY_MARGIN_KIB']
-if any(value > maximum for value in (db_kib, pvc_required_kib, afs_free_kib, afs_required_kib)):
+storage_required_kib = db_kib + values['STORAGE_CHECKSUMS_KIB'] + values['STORAGE_RELEASE_EVIDENCE_KIB'] + values['STORAGE_SAFETY_MARGIN_KIB']
+if any(value > maximum for value in (db_kib, pvc_required_kib, storage_calculated_free_kib, storage_required_kib)):
     raise SystemExit('invalid numeric headroom measurement: computed value exceeds supported range')
 if values['PVC_AVAILABLE_KIB'] < pvc_required_kib:
     raise SystemExit('PVC backup headroom is insufficient; no production backup was started')
-if afs_free_kib < afs_required_kib:
-    raise SystemExit('AFS release-evidence headroom is insufficient; no backup or release artifact was written')
+if values['STORAGE_FREE_KIB'] < storage_required_kib:
+    raise SystemExit('durable storage release-evidence headroom is insufficient; no backup or release artifact was written')
 print(
     'DASHBOARD_HEADROOM PASS '
     f"db_bytes={values['DB_BYTES']} db_kib={db_kib} "
     f"pvc_available_kib={values['PVC_AVAILABLE_KIB']} pvc_required_kib={pvc_required_kib} "
-    f"afs_quota_kib={values['AFS_QUOTA_KIB']} afs_used_kib={values['AFS_USED_KIB']} "
-    f"afs_free_kib={afs_free_kib} afs_required_kib={afs_required_kib} "
+    f"storage_type={os.environ['STORAGE_TYPE']} storage_capacity_kib={values['STORAGE_CAPACITY_KIB']} storage_used_kib={values['STORAGE_USED_KIB']} "
+    f"storage_free_kib={values['STORAGE_FREE_KIB']} storage_required_kib={storage_required_kib} "
     f"retained_artifact_sets={values['RETAINED_ARTIFACT_SETS']}"
 )
 PY
 }
 
 measure_dashboard_headroom() {
-  local db_bytes pvc_available_kib afs_quota_kib afs_used_kib afs_measurement retained_artifact_sets remote_measurement trailing
+  local db_bytes pvc_available_kib retained_artifact_sets remote_measurement trailing
   remote_measurement="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
 import os, stat
 database = '/data/comments.sqlite3'
@@ -295,22 +415,10 @@ if match is None:
 print(*match.groups())
 ')"
   read -r db_bytes pvc_available_kib <<< "$remote_measurement"
-  afs_measurement="$(fs lq "$HOME" | python3 -I -c '
-import re, sys
-matches=[]
-for line in sys.stdin:
-    match=re.fullmatch(r"\\s*\\S+\\s+(\\d+)\\s+(\\d+)\\s+\\d+%\\s+\\S+\\s*", line)
-    if match:
-        matches.append(match.groups())
-if len(matches) != 1:
-    raise SystemExit("invalid numeric headroom measurement: malformed fs lq output")
-quota, used=matches[0]
-print(quota, used)
-')"
-  read -r afs_quota_kib afs_used_kib trailing <<< "$afs_measurement"
-  if test -z "${afs_quota_kib:-}" || test -z "${afs_used_kib:-}" || test -n "${trailing:-}"; then
-    printf '%s\n' 'invalid numeric headroom measurement: malformed fs lq output' >&2
-    false
+  read -r DURABLE_STORAGE_TYPE DURABLE_STORAGE_CAPACITY_KIB DURABLE_STORAGE_USED_KIB DURABLE_STORAGE_FREE_KIB trailing < <(measure_durable_storage)
+  if test -z "${DURABLE_STORAGE_TYPE:-}" || test -z "${DURABLE_STORAGE_CAPACITY_KIB:-}" || test -z "${DURABLE_STORAGE_USED_KIB:-}" || test -z "${DURABLE_STORAGE_FREE_KIB:-}" || test -n "${trailing:-}"; then
+    printf '%s\n' 'invalid durable storage measurement' >&2
+    return 1
   fi
   retained_artifact_sets=0
   if test -d "$BACKUP_DIR"; then
@@ -321,6 +429,7 @@ root=Path(os.environ['BACKUP_DIR'])
 known=(
     r'dashboard-release-(?P<stamp>\d{8}T\d{6}Z)\.env',
     r'comments\.sqlite3\.before-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.bak',
+    r'comments\.sqlite3\.before-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.bak\.sha256',
     r'(?:deployment|service|route)-(?:before|captured|forward)-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.json',
     r'buildconfig-captured-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.json',
 )
@@ -337,7 +446,7 @@ print(len(stamps))
 PY
 )"
   fi
-  validate_dashboard_headroom "$db_bytes" "$pvc_available_kib" "$afs_quota_kib" "$afs_used_kib" "$retained_artifact_sets"
+  validate_dashboard_headroom "$db_bytes" "$pvc_available_kib" "$DURABLE_STORAGE_TYPE" "$DURABLE_STORAGE_CAPACITY_KIB" "$DURABLE_STORAGE_USED_KIB" "$DURABLE_STORAGE_FREE_KIB" "$retained_artifact_sets"
 }
 
 verify_context() {
@@ -357,34 +466,6 @@ if not values or any(re.fullmatch(r'[a-z0-9][a-z0-9._@-]{0,127}', item) is None 
     raise SystemExit('ETROC_REVIEWER_USERS must contain at least one normalized identity')
 normalized=','.join(sorted(values))
 print(normalized, len(values), hashlib.sha256(normalized.encode('utf-8')).hexdigest())
-PY
-}
-
-validate_operator_review_inputs() {
-  local publication_path="${1:-}"
-  ETROC_REVIEW_ACQUISITION_ID="${ETROC_REVIEW_ACQUISITION_ID:-}" \
-    ETROC_REVIEW_STATE="${ETROC_REVIEW_STATE:-}" \
-    ETROC_REVIEW_NOTE="${ETROC_REVIEW_NOTE:-}" \
-    ETROC_REVIEW_PUBLICATION="$publication_path" python3 -I - <<'PY'
-import json, os, re
-acquisition_id=os.environ['ETROC_REVIEW_ACQUISITION_ID']
-state=os.environ['ETROC_REVIEW_STATE']
-note=os.environ['ETROC_REVIEW_NOTE']
-if not acquisition_id:
-    raise SystemExit('operator review acquisition ID is required')
-if not re.fullmatch(r'ETROC_OI_2608:[^\x00-\x1f\x7f]{1,450}', acquisition_id):
-    raise SystemExit('operator review acquisition ID is invalid')
-if state not in {'reviewed_no_optical_concern', 'reviewed_concern_observed', 'follow_up_required'}:
-    raise SystemExit('operator review state is invalid')
-if not note:
-    raise SystemExit('operator review note is required')
-if len(note) > 2000 or not note.isprintable():
-    raise SystemExit('operator review note is invalid')
-publication=os.environ['ETROC_REVIEW_PUBLICATION']
-if publication:
-    records=json.load(open(publication, encoding='utf-8')).get('records')
-    if not isinstance(records, list) or sum(record.get('acquisition_id') == acquisition_id for record in records if isinstance(record, dict)) != 1:
-        raise SystemExit('operator review acquisition is not canonical candidate publication evidence')
 PY
 }
 
@@ -419,7 +500,7 @@ expected_args = [
     '--provider=oidc', '--http-address=0.0.0.0:4180', '--upstream=http://127.0.0.1:8080',
     '--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback', '--email-domain=*',
     '--reverse-proxy=true', '--pass-host-header=true', '--pass-user-headers=true',
-    '--skip-auth-strip-headers=true', '--skip-provider-button=true', '--cookie-secure=true',
+    '--skip-auth-strip-headers=false', '--skip-provider-button=true', '--cookie-secure=true',
     '--cookie-samesite=lax',
 ]
 if proxy.get('args') != expected_args:
@@ -852,8 +933,7 @@ rollback_deployment() {
   test "$proxy" = "$OLD_PROXY_IMAGE"
   comments="$(oc -n "$PROJECT" exec "$pod" -c web -- python -c "import sqlite3; print(sqlite3.connect('/data/comments.sqlite3').execute('SELECT COUNT(*) FROM comments').fetchone()[0])")"
   test "$comments" = "$BEFORE_COMMENTS"
-  if test -n "$ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK"; then
-    ETROC_EVENT_SNAPSHOT_ROLLBACK="$(oc -n "$PROJECT" exec "$pod" -c web -- python - <<'PY'
+  ETROC_EVENT_SNAPSHOT_ROLLBACK="$(oc -n "$PROJECT" exec "$pod" -c web -- python - <<'PY'
 import json, sqlite3
 with sqlite3.connect('/data/comments.sqlite3') as db:
     exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
@@ -864,8 +944,7 @@ with sqlite3.connect('/data/comments.sqlite3') as db:
         print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
 PY
 )"
-    assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK" "$ETROC_EVENT_SNAPSHOT_ROLLBACK"
-  fi
+  assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$ETROC_EVENT_SNAPSHOT_ROLLBACK"
   printf 'ROLLBACK PASS web=%s proxy=%s\n' "$web" "$proxy"
 }
 
@@ -928,7 +1007,6 @@ read -r ETROC_REVIEWER_USERS_NORMALIZED ETROC_REVIEWER_USERS_COUNT ETROC_REVIEWE
 )
 [[ "$ETROC_REVIEWER_USERS_COUNT" =~ ^[1-9][0-9]*$ ]]
 [[ "$ETROC_REVIEWER_USERS_SHA256" =~ ^[0-9a-f]{64}$ ]]
-validate_operator_review_inputs
 printf 'ETROC_REVIEWER_ALLOWLIST PASS count=%s sha256=%s\n' \
   "$ETROC_REVIEWER_USERS_COUNT" "$ETROC_REVIEWER_USERS_SHA256"
 
@@ -989,8 +1067,8 @@ PY
 )"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="/data/comments.sqlite3.before-dashboard-${STAMP}.bak"
+validate_backup_directory "$BACKUP_DIR"
 measure_dashboard_headroom
-install -d -m 700 "$BACKUP_DIR"
 LOCAL_BACKUP="${BACKUP_DIR}/$(basename "$BACKUP")"
 RELEASE_STATE="${BACKUP_DIR}/dashboard-release-${STAMP}.env"
 OLD_DEPLOYMENT_FILE="${BACKUP_DIR}/deployment-before-dashboard-${STAMP}.json"
@@ -1191,7 +1269,6 @@ done < "${DATASET_DIR}/SHA256SUMS"
   cd "$ETROC_DATASET_REL"
   sha256sum -c SHA256SUMS
 )
-validate_operator_review_inputs "${DATASET_DIR}/chips.json"
 (
   cd "${BUILD_CONTEXT}/runtime"
   printf '%s  %s\n' "$SERVER_PY_SHA256" server.py > SHA256SUMS
@@ -1217,8 +1294,8 @@ BUILD_CONTEXT_SHA256="$(tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --gro
 [[ "$BUILD_CONTEXT_SHA256" =~ ^[0-9a-f]{64}$ ]]
 
 cp "$LOCAL_BACKUP" "$CANDIDATE_DB"
-CANDIDATE_DB="$CANDIDATE_DB" CANDIDATE_RUNTIME="${BUILD_CONTEXT}/runtime" BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python3 -I - <<'PY'
-import hashlib, json, os, sqlite3, sys
+CANDIDATE_DB="$CANDIDATE_DB" CANDIDATE_HTTP_ACQUISITION_FILE="$CANDIDATE_HTTP_ACQUISITION_FILE" CANDIDATE_RUNTIME="${BUILD_CONTEXT}/runtime" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python3 -I - <<'PY'
+import hashlib, json, os, sqlite3, sys, uuid
 from pathlib import Path
 
 candidate = Path(os.environ['CANDIDATE_DB'])
@@ -1263,9 +1340,78 @@ with sqlite3.connect(candidate) as db:
         raise SystemExit('arbitrary ETROC attached object bypassed schema validation')
     db.execute('DROP INDEX etroc_review_unapproved_attachment')
     etroc_reviews.validate_schema(db)
+evidence=etroc_reviews.load_evidence(Path(os.environ['CANDIDATE_STATIC_ROOT']))
+record=evidence.by_acquisition[sorted(evidence.by_acquisition)[0]]
+with sqlite3.connect(candidate) as db:
+    db.execute('DROP TRIGGER etroc_review_no_delete')
+    db.execute('DELETE FROM etroc_review_events WHERE acquisition_id=?', (record.acquisition_id,))
+etroc_reviews.init_schema(candidate)
+with sqlite3.connect(candidate) as db:
+    etroc_reviews.validate_schema(db)
+    empty_history_events = db.execute('SELECT COUNT(*) FROM etroc_review_events').fetchone()[0]
+
+event_fields=(*etroc_reviews.KEY_FIELDS, 'state', 'note', 'mutation_id')
+request1={field: getattr(record, field) for field in etroc_reviews.KEY_FIELDS}
+request1.update({'state': 'reviewed_no_optical_concern', 'note': 'disposable local empty-history event', 'expected_current_event_id': None, 'mutation_id': str(uuid.uuid4())})
+created1=etroc_reviews.append(candidate, evidence, request1, 'candidate@cern.ch', 'candidate@cern.ch')
+if created1.status != 201 or created1.payload.get('ok') is not True or created1.payload.get('idempotent_replay') is not False:
+    raise SystemExit('local empty-history append response is invalid')
+event1=created1.payload.get('event')
+current1=created1.payload.get('current')
+if not isinstance(event1, dict) or any(event1.get(field) != request1[field] for field in event_fields) or event1.get('author') != 'candidate@cern.ch' or event1.get('author_display') != 'candidate@cern.ch' or not isinstance(event1.get('created_at'), int) or event1['created_at'] <= 0 or event1.get('supersedes_event_id') is not None or not isinstance(event1.get('event_id'), int) or event1['event_id'] <= 0 or not isinstance(current1, dict) or current1.get('current_event_id') != event1['event_id']:
+    raise SystemExit('local empty-history exact append readback mismatch')
+history1=etroc_reviews.history(candidate, evidence, record.acquisition_id)
+audit1=etroc_reviews.audit(candidate, record.acquisition_id, evidence)
+matching1=[chain for chain in audit1.payload.get('chains', []) if chain.get('evidence') == record.as_dict()]
+if history1.status != 200 or audit1.status != 200 or history1.payload.get('evidence') != record.as_dict() or history1.payload.get('current') != event1 or history1.payload.get('history') != [event1] or len(matching1) != 1 or matching1[0].get('current_event') != event1 or matching1[0].get('history') != [event1]:
+    raise SystemExit('local empty-history history/audit exactness mismatch')
+replay1=etroc_reviews.append(candidate, evidence, request1, 'candidate@cern.ch', 'candidate@cern.ch')
+stale1=etroc_reviews.append(candidate, evidence, {**request1, 'mutation_id': str(uuid.uuid4())}, 'candidate@cern.ch', 'candidate@cern.ch')
+with sqlite3.connect(candidate) as db:
+    after_empty_replay_events = db.execute('SELECT COUNT(*) FROM etroc_review_events').fetchone()[0]
+if replay1.status != 200 or replay1.payload.get('idempotent_replay') is not True or replay1.payload.get('event') != event1 or replay1.payload.get('current') != current1 or stale1.status != 409 or stale1.payload.get('error', {}).get('code') != 'stale_current' or after_empty_replay_events != empty_history_events + 1:
+    raise SystemExit('local empty-history replay/stale conflict changed event count')
+
+request2={field: getattr(record, field) for field in etroc_reviews.KEY_FIELDS}
+request2.update({'state': 'follow_up_required', 'note': 'disposable local existing-history supersession', 'expected_current_event_id': event1['event_id'], 'mutation_id': str(uuid.uuid4())})
+created2=etroc_reviews.append(candidate, evidence, request2, 'candidate@cern.ch', 'candidate@cern.ch')
+if created2.status != 201 or created2.payload.get('ok') is not True or created2.payload.get('idempotent_replay') is not False:
+    raise SystemExit('local existing-history supersession response is invalid')
+event2=created2.payload.get('event')
+current2=created2.payload.get('current')
+if not isinstance(event2, dict) or any(event2.get(field) != request2[field] for field in event_fields) or event2.get('author') != 'candidate@cern.ch' or event2.get('author_display') != 'candidate@cern.ch' or not isinstance(event2.get('created_at'), int) or event2['created_at'] <= 0 or event2.get('supersedes_event_id') != event1['event_id'] or not isinstance(event2.get('event_id'), int) or event2['event_id'] <= event1['event_id'] or not isinstance(current2, dict) or current2.get('current_event_id') != event2['event_id']:
+    raise SystemExit('local existing-history exact append readback mismatch')
+history2=etroc_reviews.history(candidate, evidence, record.acquisition_id)
+audit2=etroc_reviews.audit(candidate, record.acquisition_id, evidence)
+matching2=[chain for chain in audit2.payload.get('chains', []) if chain.get('evidence') == record.as_dict()]
+if history2.status != 200 or audit2.status != 200 or history2.payload.get('evidence') != record.as_dict() or history2.payload.get('current') != event2 or history2.payload.get('history') != [event2, event1] or len(matching2) != 1 or matching2[0].get('current_event') != event2 or matching2[0].get('history') != [event2, event1]:
+    raise SystemExit('local existing-history history/audit exactness mismatch')
+replay2=etroc_reviews.append(candidate, evidence, request2, 'candidate@cern.ch', 'candidate@cern.ch')
+stale2=etroc_reviews.append(candidate, evidence, {**request2, 'mutation_id': str(uuid.uuid4())}, 'candidate@cern.ch', 'candidate@cern.ch')
+with sqlite3.connect(candidate) as db:
+    after_existing_replay_events = db.execute('SELECT COUNT(*) FROM etroc_review_events').fetchone()[0]
+if replay2.status != 200 or replay2.payload.get('idempotent_replay') is not True or replay2.payload.get('event') != event2 or replay2.payload.get('current') != current2 or stale2.status != 409 or stale2.payload.get('error', {}).get('code') != 'stale_current' or after_existing_replay_events != empty_history_events + 2:
+    raise SystemExit('local existing-history replay/stale conflict changed event count; local deterministic mutation count is not +2')
+
+with sqlite3.connect(candidate) as db:
+    db.execute('DROP TRIGGER etroc_review_no_delete')
+    db.execute('DELETE FROM etroc_review_events WHERE acquisition_id=?', (record.acquisition_id,))
+etroc_reviews.init_schema(candidate)
+seed_request={field: getattr(record, field) for field in etroc_reviews.KEY_FIELDS}
+seed_request.update({'state': 'reviewed_no_optical_concern', 'note': 'disposable HTTP existing-history seed', 'expected_current_event_id': None, 'mutation_id': str(uuid.uuid4())})
+seed=etroc_reviews.append(candidate, evidence, seed_request, 'candidate@cern.ch', 'candidate@cern.ch')
+seed_event=seed.payload.get('event')
+if seed.status != 201 or not isinstance(seed_event, dict) or seed_event.get('supersedes_event_id') is not None:
+    raise SystemExit('candidate HTTP seed event is invalid')
+Path(os.environ['CANDIDATE_HTTP_ACQUISITION_FILE']).write_text(record.acquisition_id + '\n', encoding='utf-8')
+with sqlite3.connect(candidate) as db:
+    if db.execute('SELECT COUNT(*) FROM comments').fetchone()[0] != before_comments:
+        raise SystemExit('candidate migrated DB Hybrid comments changed during mutation verification')
+    etroc_reviews.validate_schema(db)
+    if db.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
+        raise SystemExit('candidate deterministic mutation schema/integrity verification failed')
 print('CANDIDATE_ETROC_SCHEMA PASS')
 PY
-assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$(snapshot_etroc_review_events "$CANDIDATE_DB")"
 COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
 import http.client, importlib.util, json, os, threading, uuid
 from http.server import ThreadingHTTPServer
@@ -1312,7 +1458,7 @@ PY
   declare -p SOURCE_REVISION ETROC_DATASET_REL ETROC_MANIFEST_SHA256 API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
   declare -p DEPLOYMENT_MANIFEST_SHA256 SERVICE_MANIFEST_SHA256 ROUTE_MANIFEST_SHA256
   declare -p ETROC_REVIEWER_USERS_COUNT ETROC_REVIEWER_USERS_SHA256
-  declare -p DEPLOYMENT_UID SERVICE_UID ROUTE_UID OLD_WEB_IMAGE OLD_RUNTIME_SERVER_SHA256 OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256 BACKUP_HYBRID_SCHEMA_SHA256
+  declare -p DEPLOYMENT_UID SERVICE_UID ROUTE_UID OLD_WEB_IMAGE OLD_RUNTIME_SERVER_SHA256 OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP BACKUP_DIR DURABLE_STORAGE_TYPE DURABLE_STORAGE_CAPACITY_KIB DURABLE_STORAGE_USED_KIB DURABLE_STORAGE_FREE_KIB LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256 BACKUP_HYBRID_SCHEMA_SHA256
   declare -p DEPLOYMENT_RESOURCE_VERSION SERVICE_RESOURCE_VERSION ROUTE_RESOURCE_VERSION CAPTURED_DEPLOYMENT_FILE CAPTURED_DEPLOYMENT_SHA256 CAPTURED_SERVICE_FILE CAPTURED_SERVICE_SHA256 CAPTURED_ROUTE_FILE CAPTURED_ROUTE_SHA256
   declare -p BUILDCONFIG_FILE BUILDCONFIG_SHA256 BUILDCONFIG_UID BUILDCONFIG_RESOURCE_VERSION
   declare -p OLD_DEPLOYMENT_FILE OLD_DEPLOYMENT_SHA256 OLD_SERVICE_FILE OLD_SERVICE_SHA256 OLD_ROUTE_FILE OLD_ROUTE_SHA256 FORWARD_DEPLOYMENT_FILE FORWARD_SERVICE_FILE FORWARD_ROUTE_FILE BUILD_CONTEXT_SHA256
@@ -1360,10 +1506,8 @@ ETROC_REVIEWER_TEST_USER="${ETROC_REVIEWER_USERS_NORMALIZED%%,*}"
 if ! oc -n "$PROJECT" run "$CANDIDATE_PROBE_POD" --restart=Never --image="$NEW_WEB_IMAGE" --output=json \
   --overrides='{"spec":{"volumes":[{"name":"data","emptyDir":{}}],"containers":[{"name":"'"$CANDIDATE_PROBE_POD"'","volumeMounts":[{"name":"data","mountPath":"/data"}],"env":[{"name":"HOST","value":"127.0.0.1"},{"name":"ETROC_REVIEWER_USERS","value":"'"$ETROC_REVIEWER_USERS_NORMALIZED"'"}]}]}}' \
   --command -- sleep 300 > "$CANDIDATE_PROBE_CREATE_RESPONSE"; then
-  if ! oc -n "$PROJECT" get pod/"$CANDIDATE_PROBE_POD" -o json > "$CANDIDATE_PROBE_CREATE_RESPONSE"; then
-    printf '%s\n' 'candidate probe creation failed and no exact pod could be reconciled' >&2
-    false
-  fi
+  printf '%s\n' 'candidate probe creation failed; refusing same-name pod reconciliation' >&2
+  false
 fi
 CANDIDATE_PROBE_POD_UID="$(CANDIDATE_PROBE_CREATE_RESPONSE="$CANDIDATE_PROBE_CREATE_RESPONSE" CANDIDATE_PROBE_POD="$CANDIDATE_PROBE_POD" PROJECT="$PROJECT" NEW_WEB_IMAGE="$NEW_WEB_IMAGE" ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY'
 import json, os, re
@@ -1392,22 +1536,84 @@ PY
 )"
 CANDIDATE_PROBE_POD_OWNED=1
 oc -n "$PROJECT" wait --for=condition=Ready pod/"$CANDIDATE_PROBE_POD" --timeout=120s
-oc -n "$PROJECT" cp "$LOCAL_BACKUP" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3"
+oc -n "$PROJECT" cp "$CANDIDATE_DB" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3"
+oc -n "$PROJECT" cp "$CANDIDATE_HTTP_ACQUISITION_FILE" "$CANDIDATE_PROBE_POD:/tmp/candidate-http-acquisition-id"
 oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- sh -c 'python /app/static/server.py >/tmp/candidate-entrypoint.log 2>&1 &'
 for candidate_attempt in $(seq 1 24); do
-  if oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" python - <<'PY'
-import hashlib, json, os
+  if oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" CANDIDATE_HTTP_ACQUISITION_FILE=/tmp/candidate-http-acquisition-id python - <<'PY'
+import hashlib, json, os, sqlite3, urllib.error, uuid
+from pathlib import Path
+from urllib.parse import quote
 from urllib.request import Request, urlopen
-request=Request('http://127.0.0.1:8080/api/etroc-reviews?dataset_id=ETROC_OI_2608', headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']})
-with urlopen(request, timeout=5) as response:
-    summary=json.loads(response.read())
+
+base='http://127.0.0.1:8080'
+headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']}
+def read_json(path, request_headers=headers):
+    with urlopen(Request(base + path, headers=request_headers), timeout=5) as response:
+        if response.status != 200 or response.headers.get('Cache-Control') != 'no-store':
+            raise SystemExit('candidate review read response is invalid')
+        return json.loads(response.read())
+
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    before_comments=db.execute('SELECT COUNT(*) FROM comments').fetchone()[0]
+    before_events=db.execute('SELECT COUNT(*) FROM etroc_review_events').fetchone()[0]
+summary=read_json('/api/etroc-reviews?dataset_id=ETROC_OI_2608')
 if summary.get('record_count') != 36 or not isinstance(summary.get('evidence'), dict) or len(summary['evidence']) != 36:
     raise SystemExit('candidate evidence loader did not return exact cohort')
-record=next(iter(summary['evidence'].values()))
+acquisition_id=Path(os.environ['CANDIDATE_HTTP_ACQUISITION_FILE']).read_text(encoding='utf-8').strip()
+if not acquisition_id or acquisition_id not in summary['evidence']:
+    raise SystemExit('candidate HTTP acquisition seed is invalid')
+record=summary['evidence'][acquisition_id]
 with urlopen('http://127.0.0.1:8080/' + record['montage_uri'], timeout=5) as response:
     montage=response.read()
 if hashlib.sha256(montage).hexdigest() != record['montage_sha256']:
     raise SystemExit('candidate served montage bytes mismatch')
+before_history=read_json('/api/etroc-reviews/history?acquisition_id=' + quote(acquisition_id, safe=''))
+prior_event=before_history.get('current')
+prior_event_id=prior_event.get('event_id') if isinstance(prior_event, dict) else None
+if before_history.get('evidence') != record or before_history.get('history') != [prior_event] or not isinstance(prior_event_id, int):
+    raise SystemExit('candidate HTTP existing-history seed readback is invalid')
+payload={field: record[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')}
+payload.update({'state': 'follow_up_required', 'note': 'disposable candidate HTTP existing-history supersession', 'expected_current_event_id': prior_event_id, 'mutation_id': str(uuid.uuid4())})
+encoded=json.dumps(payload, separators=(',', ':')).encode()
+append_headers={**headers, 'Content-Type': 'application/json', 'Origin': 'https://etl-hybrid-bbqc.app.cern.ch'}
+def append(body):
+    try:
+        with urlopen(Request(base + '/api/etroc-reviews', data=body, headers=append_headers, method='POST'), timeout=5) as response:
+            return response.status, json.loads(response.read())
+    except urllib.error.HTTPError as error:
+        return error.code, json.loads(error.read())
+
+created_status, created=append(encoded)
+if created_status != 201 or created.get('ok') is not True or created.get('idempotent_replay') is not False:
+    raise SystemExit('candidate HTTP existing-history supersession response is invalid')
+event=created.get('event')
+current=created.get('current')
+event_fields=('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256','state','note','mutation_id')
+if not isinstance(event, dict) or any(event.get(field) != payload[field] for field in event_fields) or event.get('supersedes_event_id') != prior_event_id or not isinstance(event.get('event_id'), int) or event['event_id'] <= prior_event_id or not isinstance(event.get('author'), str) or not event['author'] or not isinstance(event.get('author_display'), str) or not event['author_display'] or not isinstance(current, dict) or current.get('current_event_id') != event['event_id']:
+    raise SystemExit('candidate HTTP existing-history exact readback mismatch')
+replay_status, replay=append(encoded)
+if replay_status != 200 or replay.get('ok') is not True or replay.get('idempotent_replay') is not True or replay.get('event') != event or replay.get('current') != current:
+    raise SystemExit('candidate idempotent replay mismatch')
+stale={**payload, 'mutation_id': str(uuid.uuid4())}
+stale_status, stale_response=append(json.dumps(stale, separators=(',', ':')).encode())
+if stale_status != 409 or stale_response.get('error', {}).get('code') != 'stale_current':
+    raise SystemExit('candidate stale_current conflict was not returned')
+history=read_json('/api/etroc-reviews/history?acquisition_id=' + quote(acquisition_id, safe=''))
+audit=read_json('/api/etroc-reviews/audit?acquisition_id=' + quote(acquisition_id, safe=''))
+if history.get('evidence') != record or history.get('current') != event or history.get('history') != [event, prior_event]:
+    raise SystemExit('candidate history/audit exactness mismatch')
+matching=[chain for chain in audit.get('chains', []) if chain.get('evidence') == {field: payload[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')}]
+if audit.get('acquisition_id') != acquisition_id or len(matching) != 1 or matching[0].get('current_publication') is not True or matching[0].get('current_event') != event or matching[0].get('history') != history['history']:
+    raise SystemExit('candidate history/audit exactness mismatch')
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    after_comments=db.execute('SELECT COUNT(*) FROM comments').fetchone()[0]
+    after_events=db.execute('SELECT COUNT(*) FROM etroc_review_events').fetchone()[0]
+if after_comments != before_comments:
+    raise SystemExit('candidate Hybrid comments changed during review mutation verification')
+if after_events != before_events + 1:
+    raise SystemExit('candidate HTTP replay/stale conflict changed event count; candidate HTTP mutation count is not +1')
+print('CANDIDATE_REVIEW_MUTATION PASS')
 PY
   then
     break
@@ -1498,7 +1704,7 @@ CHIPS_PUBLICATION_SHA256="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum "/a
 [[ "$CHIPS_PUBLICATION_SHA256" =~ ^[0-9a-f]{64}$ ]]
 oc -n "$PROJECT" exec -i "$POD" -c web -- env \
   ETROC_DATASET_REL="$ETROC_DATASET_REL" CHIPS_PUBLICATION_SHA256="$CHIPS_PUBLICATION_SHA256" python - <<'PY'
-import hashlib, json, os
+import hashlib, json, os, urllib.error
 from pathlib import Path, PurePosixPath
 root=Path('/app/static') / os.environ['ETROC_DATASET_REL']
 payload=json.loads((root / 'chips.json').read_text(encoding='utf-8'))
@@ -1589,6 +1795,7 @@ oc -n "$PROJECT" exec -i "$POD" -c web -- env ETROC_REVIEWER_USERS="$ETROC_REVIE
   ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" python - <<'PY'
 import hashlib, json, os
 from pathlib import Path, PurePosixPath
+from urllib.parse import quote
 import urllib.request
 base='http://127.0.0.1:8080/'
 request=urllib.request.Request(
@@ -1631,6 +1838,30 @@ for acquisition_id, expected in expected_evidence.items():
     actual=evidence.get(acquisition_id)
     if actual != expected:
         raise SystemExit('API evidence identity/URI mismatch')
+acquisition_id=sorted(expected_evidence)[0]
+history_request=urllib.request.Request(
+    base + '/api/etroc-reviews/history?acquisition_id=' + quote(acquisition_id, safe=''),
+    headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']},
+)
+with urllib.request.urlopen(history_request, timeout=10) as response:
+    if response.status != 200 or response.headers.get('Cache-Control') != 'no-store':
+        raise SystemExit('ETROC review history runtime response headers/status mismatch')
+    history=json.loads(response.read())
+audit_request=urllib.request.Request(
+    base + '/api/etroc-reviews/audit?acquisition_id=' + quote(acquisition_id, safe=''),
+    headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']},
+)
+try:
+    with urllib.request.urlopen(audit_request, timeout=10) as response:
+        if response.status != 200 or response.headers.get('Cache-Control') != 'no-store':
+            raise SystemExit('ETROC review audit runtime response headers/status mismatch')
+        audit=json.loads(response.read())
+except urllib.error.HTTPError as error:
+    if error.code != 404 or json.loads(error.read()).get('error', {}).get('code') != 'audit_not_found':
+        raise
+    audit={'acquisition_id': acquisition_id, 'chains': []}
+if history.get('evidence') != expected_evidence[acquisition_id] or not isinstance(history.get('history'), list) or not isinstance(history.get('current'), (dict, type(None))) or audit.get('acquisition_id') != acquisition_id or not isinstance(audit.get('chains'), list):
+    raise SystemExit('ETROC review history/audit read-only schema mismatch')
 if summary.get('viewer', {}).get('can_append_review') is not True:
     raise SystemExit('internal proxy-derived allowlisted identity was not accepted')
 print(f"ETROC_REVIEW_RUNTIME_CONTRACT PASS records={len(evidence)}")
@@ -1739,263 +1970,16 @@ printf 'SSO_PROXY_GATE PASS status=%s location=%s\n' "$HTTP_STATUS" "$LOCATION"
 SPOOF_STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
   --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
   'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
-SPOOF_APPEND_STATUS="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
-  --request POST --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
-  --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
-  --data '{}' 'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
-if [[ "$SPOOF_STATUS" =~ ^2[0-9][0-9]$ ]] || [[ "$SPOOF_APPEND_STATUS" =~ ^2[0-9][0-9]$ ]]; then
-  printf '%s\n' 'external trusted-header spoof manufactured append capability' >&2
-  false
-fi
-if test "$SPOOF_STATUS" = 200; then
+if test "$SPOOF_STATUS" != 302; then
   printf '%s\n' 'external trusted-header spoof was accepted' >&2
   false
 fi
 INTERNAL_STATUS="$(oc -n "$PROJECT" exec "$POD" -c web -- sh -c \
   "curl --silent --output /dev/null --write-out '%{http_code}' --header 'X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}' 'http://127.0.0.1:8080/api/etroc-reviews?dataset_id=ETROC_OI_2608'")"
 test "$INTERNAL_STATUS" = 200
-validate_cookie_jar_inputs() {
-  local authenticated="$1" non_allowlisted="$2" mode parent parent_mode
-  for jar in "$authenticated" "$non_allowlisted"; do
-    if ! test -f "$jar" || test -L "$jar" || ! test -O "$jar"; then
-      printf '%s\n' 'authenticated cookie jar is not a safe regular file' >&2
-      return 1
-    fi
-    mode="$(stat -c '%a' "$jar")"
-    if test "$mode" != 400 && test "$mode" != 600; then
-      printf '%s\n' 'authenticated cookie jar has unsafe permissions' >&2
-      return 1
-    fi
-    parent="$(dirname "$jar")"
-    if ! test -d "$parent" || test -L "$parent" || ! test -O "$parent"; then
-      printf '%s\n' 'authenticated cookie jar parent is unsafe' >&2
-      return 1
-    fi
-    parent_mode="$(stat -c '%a' "$parent")"
-    if (( (8#$parent_mode & 8#022) != 0 )); then
-      printf '%s\n' 'authenticated cookie jar parent is writable by others' >&2
-      return 1
-    fi
-  done
-  if test "$authenticated" = "$non_allowlisted" || test "$authenticated" -ef "$non_allowlisted"; then
-    printf '%s\n' 'authenticated cookie jars must be distinct inputs' >&2
-    return 1
-  fi
-}
-AUTHENTICATED_SESSION_COOKIE_JAR="${ETROC_AUTHENTICATED_SESSION_COOKIE_JAR:-}"
-if test -z "$AUTHENTICATED_SESSION_COOKIE_JAR" || ! test -r "$AUTHENTICATED_SESSION_COOKIE_JAR"; then
-  printf '%s\n' 'authenticated conflicting-header proof unavailable' >&2
-  false
-fi
-NON_ALLOWLISTED_SESSION_COOKIE_JAR="${ETROC_NON_ALLOWLISTED_SESSION_COOKIE_JAR:-}"
-if test -z "$NON_ALLOWLISTED_SESSION_COOKIE_JAR" || ! test -r "$NON_ALLOWLISTED_SESSION_COOKIE_JAR"; then
-  printf '%s\n' 'non-allowlisted authenticated spoof proof unavailable' >&2
-  false
-fi
-validate_cookie_jar_inputs "$AUTHENTICATED_SESSION_COOKIE_JAR" "$NON_ALLOWLISTED_SESSION_COOKIE_JAR"
-NON_ALLOWLISTED_SPOOF_SUMMARY="$(curl --fail --silent --show-error --cookie "$NON_ALLOWLISTED_SESSION_COOKIE_JAR" \
-  --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
-  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
-NON_ALLOWLISTED_SPOOF_APPEND_STATUS="$(curl --silent --show-error --cookie "$NON_ALLOWLISTED_SESSION_COOKIE_JAR" \
-  --request POST --header "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}" \
-  --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
-  --data '{}' --output /dev/null --write-out '%{http_code}' 'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
-NON_ALLOWLISTED_SPOOF_SUMMARY="$NON_ALLOWLISTED_SPOOF_SUMMARY" NON_ALLOWLISTED_SPOOF_APPEND_STATUS="$NON_ALLOWLISTED_SPOOF_APPEND_STATUS" python3 -I - <<'PY'
-import json, os
-summary=json.loads(os.environ['NON_ALLOWLISTED_SPOOF_SUMMARY'])
-if summary.get('viewer', {}).get('can_append_review') is not False:
-    raise SystemExit('non-allowlisted session spoof manufactured append capability')
-if os.environ['NON_ALLOWLISTED_SPOOF_APPEND_STATUS'] != '403':
-    raise SystemExit('non-allowlisted session spoof append was not forbidden')
-if not isinstance(summary.get('viewer', {}).get('identity_display'), str) or not summary['viewer']['identity_display']:
-    raise SystemExit('non-allowlisted session identity was not preserved')
-PY
-AUTHENTICATED_SUMMARY="$(curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
-CONFLICTING_HEADER_SUMMARY="$(curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  --header 'X-Forwarded-Email: attacker@cern.ch' \
-  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608')"
-AUTHENTICATED_SUMMARY="$AUTHENTICATED_SUMMARY" CONFLICTING_HEADER_SUMMARY="$CONFLICTING_HEADER_SUMMARY" python3 -I - <<'PY'
-import json, os
-baseline=json.loads(os.environ['AUTHENTICATED_SUMMARY'])
-conflicted=json.loads(os.environ['CONFLICTING_HEADER_SUMMARY'])
-if baseline.get('viewer', {}).get('can_append_review') is not True:
-    raise SystemExit('authenticated conflicting-header identity mismatch')
-if baseline.get('viewer') != conflicted.get('viewer'):
-    raise SystemExit('allowlisted session identity was not preserved against attacker header')
-print('AUTHENTICATED_CONFLICTING_IDENTITY_GATE PASS')
-PY
-REVIEW_SUMMARY_HEADERS="${WORK_DIR}/review-summary-headers"
-REVIEW_SUMMARY="${WORK_DIR}/review-summary.json"
-REVIEW_REQUEST="${WORK_DIR}/review-request.json"
-REVIEW_EXPECTED="${WORK_DIR}/review-expected.json"
-REVIEW_CREATED_HEADERS="${WORK_DIR}/review-created-headers"
-REVIEW_CREATED="${WORK_DIR}/review-created.json"
-REVIEW_REPLAY_HEADERS="${WORK_DIR}/review-replay-headers"
-REVIEW_REPLAY="${WORK_DIR}/review-replay.json"
-REVIEW_HISTORY_HEADERS="${WORK_DIR}/review-history-headers"
-REVIEW_HISTORY="${WORK_DIR}/review-history.json"
-REVIEW_AUDIT_HEADERS="${WORK_DIR}/review-audit-headers"
-REVIEW_AUDIT="${WORK_DIR}/review-audit.json"
-REVIEW_STALE_HEADERS="${WORK_DIR}/review-stale-headers"
-REVIEW_STALE="${WORK_DIR}/review-stale.json"
-curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  --dump-header "$REVIEW_SUMMARY_HEADERS" --output "$REVIEW_SUMMARY" \
-  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews?dataset_id=ETROC_OI_2608'
-ETROC_REVIEW_ACQUISITION_ID="$ETROC_REVIEW_ACQUISITION_ID" \
-  ETROC_REVIEW_STATE="$ETROC_REVIEW_STATE" ETROC_REVIEW_NOTE="$ETROC_REVIEW_NOTE" \
-  REVIEW_SUMMARY="$REVIEW_SUMMARY" REVIEW_SUMMARY_HEADERS="$REVIEW_SUMMARY_HEADERS" \
-  REVIEW_REQUEST="$REVIEW_REQUEST" REVIEW_EXPECTED="$REVIEW_EXPECTED" python3 -I - <<'PY'
-import json, os, uuid
-
-def headers(path):
-    parsed = {}
-    for line in open(path, encoding='iso-8859-1'):
-        if ':' in line:
-            name, value = line.split(':', 1)
-            parsed[name.strip().lower()] = value.strip()
-    return parsed
-
-summary=json.load(open(os.environ['REVIEW_SUMMARY'], encoding='utf-8'))
-response_headers=headers(os.environ['REVIEW_SUMMARY_HEADERS'])
-if response_headers.get('cache-control') != 'no-store' or not response_headers.get('content-type', '').startswith('application/json'):
-    raise SystemExit('authenticated review summary response headers are invalid')
-viewer=summary.get('viewer')
-if not isinstance(viewer, dict) or viewer.get('can_append_review') is not True or not isinstance(viewer.get('identity_display'), str) or not viewer['identity_display']:
-    raise SystemExit('authenticated proxy reviewer capability is invalid')
-evidence=summary.get('evidence')
-acquisition_id=os.environ['ETROC_REVIEW_ACQUISITION_ID']
-record=evidence.get(acquisition_id) if isinstance(evidence, dict) else None
-fields=('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')
-if not isinstance(record, dict) or any(not isinstance(record.get(field), str) or not record[field] for field in fields):
-    raise SystemExit('operator review acquisition is not canonical current publication evidence')
-if record['acquisition_id'] != acquisition_id:
-    raise SystemExit('operator review acquisition identity mismatch')
-review=summary.get('reviews', {}).get(acquisition_id)
-expected=review.get('current_event_id') if isinstance(review, dict) else None
-if expected is not None and (type(expected) is not int or expected <= 0):
-    raise SystemExit('current review event identity is invalid')
-request={field: record[field] for field in fields}
-request.update({
-    'state': os.environ['ETROC_REVIEW_STATE'], 'note': os.environ['ETROC_REVIEW_NOTE'],
-    'expected_current_event_id': expected, 'mutation_id': str(uuid.uuid4()),
-})
-json.dump(request, open(os.environ['REVIEW_REQUEST'], 'w', encoding='utf-8'), separators=(',', ':'))
-json.dump({'evidence': record, 'history_count': review.get('history_count', 0) if isinstance(review, dict) else 0}, open(os.environ['REVIEW_EXPECTED'], 'w', encoding='utf-8'), separators=(',', ':'))
-PY
-printf '%s\n' 'FORWARD_RELEASE_COMMITTED before irreversible ETROC review verification' >> "$RELEASE_STATE"
-ROLLOUT_MUTATED=0
-REVIEW_CREATED_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  --request POST --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
-  --data-binary "@${REVIEW_REQUEST}" --dump-header "$REVIEW_CREATED_HEADERS" --output "$REVIEW_CREATED" --write-out '%{http_code}' \
-  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
-test "$REVIEW_CREATED_STATUS" = 201
-REVIEW_REPLAY_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  --request POST --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
-  --data-binary "@${REVIEW_REQUEST}" --dump-header "$REVIEW_REPLAY_HEADERS" --output "$REVIEW_REPLAY" --write-out '%{http_code}' \
-  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
-test "$REVIEW_REPLAY_STATUS" = 200
-REVIEW_HISTORY_URL="$(ETROC_REVIEW_ACQUISITION_ID="$ETROC_REVIEW_ACQUISITION_ID" python3 -I - <<'PY'
-import os
-from urllib.parse import quote
-print('https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews/history?acquisition_id=' + quote(os.environ['ETROC_REVIEW_ACQUISITION_ID'], safe=''))
-PY
-)"
-REVIEW_HISTORY_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  --dump-header "$REVIEW_HISTORY_HEADERS" --output "$REVIEW_HISTORY" --write-out '%{http_code}' \
-  "$REVIEW_HISTORY_URL")"
-test "$REVIEW_HISTORY_STATUS" = 200
-REVIEW_AUDIT_URL="$(ETROC_REVIEW_ACQUISITION_ID="$ETROC_REVIEW_ACQUISITION_ID" python3 -I - <<'PY'
-import os
-from urllib.parse import quote
-print('https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews/audit?acquisition_id=' + quote(os.environ['ETROC_REVIEW_ACQUISITION_ID'], safe=''))
-PY
-)"
-REVIEW_AUDIT_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  --dump-header "$REVIEW_AUDIT_HEADERS" --output "$REVIEW_AUDIT" --write-out '%{http_code}' "$REVIEW_AUDIT_URL")"
-test "$REVIEW_AUDIT_STATUS" = 200
-REVIEW_STALE_REQUEST="${WORK_DIR}/review-stale-request.json"
-REVIEW_REQUEST="$REVIEW_REQUEST" REVIEW_STALE_REQUEST="$REVIEW_STALE_REQUEST" python3 -I - <<'PY'
-import json, os, uuid
-request=json.load(open(os.environ['REVIEW_REQUEST'], encoding='utf-8'))
-request['mutation_id']=str(uuid.uuid4())
-json.dump(request, open(os.environ['REVIEW_STALE_REQUEST'], 'w', encoding='utf-8'), separators=(',', ':'))
-PY
-REVIEW_STALE_STATUS="$(curl --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" \
-  --request POST --header 'Content-Type: application/json' --header 'Origin: https://etl-hybrid-bbqc.app.cern.ch' \
-  --data-binary "@${REVIEW_STALE_REQUEST}" --dump-header "$REVIEW_STALE_HEADERS" --output "$REVIEW_STALE" --write-out '%{http_code}' \
-  'https://etl-hybrid-bbqc.app.cern.ch/api/etroc-reviews')"
-test "$REVIEW_STALE_STATUS" = 409
-REVIEW_HISTORY_AFTER="${WORK_DIR}/review-history-after-stale.json"
-curl --fail --silent --show-error --cookie "$AUTHENTICATED_SESSION_COOKIE_JAR" --output "$REVIEW_HISTORY_AFTER" \
-  "$REVIEW_HISTORY_URL"
-REVIEW_EXPECTED="$REVIEW_EXPECTED" REVIEW_REQUEST="$REVIEW_REQUEST" REVIEW_CREATED="$REVIEW_CREATED" \
-  REVIEW_CREATED_HEADERS="$REVIEW_CREATED_HEADERS" REVIEW_REPLAY="$REVIEW_REPLAY" REVIEW_REPLAY_HEADERS="$REVIEW_REPLAY_HEADERS" \
-  REVIEW_HISTORY="$REVIEW_HISTORY" REVIEW_HISTORY_HEADERS="$REVIEW_HISTORY_HEADERS" REVIEW_AUDIT="$REVIEW_AUDIT" \
-  REVIEW_AUDIT_HEADERS="$REVIEW_AUDIT_HEADERS" REVIEW_STALE="$REVIEW_STALE" REVIEW_STALE_HEADERS="$REVIEW_STALE_HEADERS" \
-  REVIEW_HISTORY_AFTER="$REVIEW_HISTORY_AFTER" python3 -I - <<'PY'
-import json, os
-
-def load(name):
-    return json.load(open(os.environ[name], encoding='utf-8'))
-
-def headers(name):
-    parsed = {}
-    for line in open(os.environ[name], encoding='iso-8859-1'):
-        if ':' in line:
-            key, value = line.split(':', 1)
-            parsed[key.strip().lower()] = value.strip()
-    if parsed.get('cache-control') != 'no-store' or not parsed.get('content-type', '').startswith('application/json'):
-        raise SystemExit(f'{name} response headers are invalid')
-
-for name in ('REVIEW_CREATED_HEADERS','REVIEW_REPLAY_HEADERS','REVIEW_HISTORY_HEADERS','REVIEW_AUDIT_HEADERS','REVIEW_STALE_HEADERS'):
-    headers(name)
-expected, request, created, replay, history, audit, stale, history_after = (load(name) for name in ('REVIEW_EXPECTED','REVIEW_REQUEST','REVIEW_CREATED','REVIEW_REPLAY','REVIEW_HISTORY','REVIEW_AUDIT','REVIEW_STALE','REVIEW_HISTORY_AFTER'))
-event=created.get('event')
-if created.get('ok') is not True or created.get('idempotent_replay') is not False or not isinstance(event, dict):
-    raise SystemExit('authorized review append response is invalid')
-if any(event.get(field) != request[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256','state','note','mutation_id')) or not isinstance(event.get('event_id'), int) or event['event_id'] <= 0 or not isinstance(event.get('author'), str) or not event['author'] or not isinstance(event.get('author_display'), str) or not event['author_display']:
-    raise SystemExit('authorized review append identity/content readback mismatch')
-current=created.get('current')
-if not isinstance(current, dict) or current.get('current_event_id') != event['event_id'] or current.get('history_count') != expected['history_count'] + 1 or any(current.get(field) != event[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256','state','note','author','author_display')):
-    raise SystemExit('authorized review current readback mismatch')
-if replay.get('ok') is not True or replay.get('idempotent_replay') is not True or replay.get('event') != event or replay.get('current') != current:
-    raise SystemExit('lost-response idempotent replay mismatch')
-if history.get('evidence') != expected['evidence'] or history.get('current') != event or history.get('history', [None])[0] != event or len(history.get('history', [])) != expected['history_count'] + 1:
-    raise SystemExit('review history exactness mismatch')
-if len(history_after.get('history', [])) != len(history.get('history', [])):
-    raise SystemExit('history count changed after stale conflict')
-if stale.get('error', {}).get('code') != 'stale_current':
-    raise SystemExit('stale review conflict was not returned')
-if len(history.get('history', [])) != expected['history_count'] + 1:
-    raise SystemExit('history count changed after idempotent replay')
-chains=audit.get('chains')
-matching=[chain for chain in chains if chain.get('evidence') == {field: request[field] for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')}]
-if audit.get('acquisition_id') != request['acquisition_id'] or len(matching) != 1 or matching[0].get('current_publication') is not True or matching[0].get('current_event') != event or matching[0].get('history') != history['history']:
-    raise SystemExit('historical audit exactness mismatch')
-print('ETROC_REVIEW_PROXY_FLOW PASS')
-PY
-ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
-import json, sqlite3
-with sqlite3.connect('/data/comments.sqlite3') as db:
-    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
-    if not exists:
-        print('{"present":false}')
-    else:
-        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM etroc_review_events ORDER BY id').fetchall()
-        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
-PY
-)"
-ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK="$ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK" REVIEW_CREATED="$REVIEW_CREATED" python3 -I - <<'PY'
-import json, os
-snapshot=json.loads(os.environ['ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK'])
-created=json.load(open(os.environ['REVIEW_CREATED'], encoding='utf-8'))
-event=created.get('event', {})
-if not snapshot.get('present') or not isinstance(snapshot.get('identity_chain'), list) or not any(row[0] == event.get('event_id') for row in snapshot['identity_chain']):
-    raise SystemExit('post-append ETROC rollback snapshot is missing the authorized event')
-PY
-declare -p ETROC_EVENT_SNAPSHOT_EXPECTED_ROLLBACK >> "$RELEASE_STATE"
-printf 'ETROC_PROXY_IDENTITY_GATE PASS spoof=%s spoof_append=%s internal=%s\n' "$SPOOF_STATUS" "$SPOOF_APPEND_STATUS" "$INTERNAL_STATUS"
+printf 'ETROC_PROXY_IDENTITY_GATE PASS spoof=%s internal=%s\n' "$SPOOF_STATUS" "$INTERNAL_STATUS"
+printf '%s\n' 'AUTHENTICATED_BROWSER_QA PENDING: verify CERN SSO session behavior separately.'
+printf '%s\n' 'FORWARD_RELEASE_COMMITTED after mandatory read-only post-rollout gates' >> "$RELEASE_STATE"
 ln -sfn "$(basename "$RELEASE_STATE")" "$CURRENT_RELEASE_STATE"
 ROLLOUT_MUTATED=0
 printf 'DEPLOYMENT PASS source=%s build=%s image=%s comments_before=%s release_state=%s\n' \
