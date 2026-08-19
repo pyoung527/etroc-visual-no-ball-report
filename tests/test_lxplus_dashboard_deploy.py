@@ -178,6 +178,8 @@ class LxplusDashboardDeployTests(unittest.TestCase):
                 f"route-before-dashboard-{complete_stamp}.json",
                 f"buildconfig-captured-dashboard-{complete_stamp}.json",
                 f"comments.sqlite3.before-dashboard-{incomplete_stamp}.bak",
+                f"deploy-dashboard-{'a' * 40}.sh",
+                f"bbqc-etroc-{complete_stamp}.log",
             ):
                 (root / name).touch()
             counted = subprocess.run(
@@ -187,7 +189,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
                 text=True,
                 env={**os.environ, "BACKUP_DIR": str(root)},
             )
-            (root / "dashboard-unknown-artifact").touch()
+            (root / "deploy-dashboard-short-sha.sh").touch()
             unknown = subprocess.run(
                 ["python3", "-I", "-c", retention],
                 check=False,

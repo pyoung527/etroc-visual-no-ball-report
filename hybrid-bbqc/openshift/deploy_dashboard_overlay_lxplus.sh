@@ -461,6 +461,10 @@ known=(
     r'(?:deployment|service|route)-(?:before|captured|forward)-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.json',
     r'buildconfig-captured-dashboard-(?P<stamp>\d{8}T\d{6}Z)\.json',
 )
+operational=(
+    r'deploy-dashboard-[0-9a-f]{40}\.sh',
+    r'bbqc-etroc-\d{8}T\d{6}Z\.log',
+)
 stamps=set()
 for entry in root.iterdir():
     if not entry.is_file() or entry.is_symlink():
@@ -468,6 +472,8 @@ for entry in root.iterdir():
     match=next((re.fullmatch(pattern, entry.name) for pattern in known if re.fullmatch(pattern, entry.name)), None)
     if match is not None:
         stamps.add(match['stamp'])
+    elif any(re.fullmatch(pattern, entry.name) for pattern in operational):
+        continue
     elif 'dashboard' in entry.name or entry.name.startswith('comments.sqlite3.before-dashboard-'):
         raise SystemExit('unknown dashboard release artifact; refusing retention estimate')
 print(len(stamps))
