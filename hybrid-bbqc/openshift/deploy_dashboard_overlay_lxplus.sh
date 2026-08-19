@@ -1557,8 +1557,19 @@ if not isinstance(event2, dict) or any(event2.get(field) != request2[field] for 
 history2=etroc_reviews.history(candidate, evidence, record.acquisition_id)
 audit2=etroc_reviews.audit(candidate, record.acquisition_id, evidence)
 matching2=[chain for chain in audit2.payload.get('chains', []) if chain.get('evidence') == audit_record_key]
-if history2.status != 200 or audit2.status != 200 or history2.payload.get('evidence') != record.as_dict() or history2.payload.get('current') != event2 or history2.payload.get('history') != [event2, event1] or len(matching2) != 1 or matching2[0].get('current_event') != event2 or matching2[0].get('history') != [event2, event1]:
-    raise SystemExit('local existing-history history/audit exactness mismatch')
+existing_history_checks={
+    'history_status': history2.status == 200,
+    'audit_status': audit2.status == 200,
+    'history_evidence': history2.payload.get('evidence') == record.as_dict(),
+    'history_current': history2.payload.get('current') == event2,
+    'history_chain': history2.payload.get('history') == [event2, event1],
+    'audit_chain_count': len(matching2) == 1,
+    'audit_current': len(matching2) == 1 and matching2[0].get('current_event') == event2,
+    'audit_history': len(matching2) == 1 and matching2[0].get('history') == [event2, event1],
+}
+failed=','.join(name for name, passed in existing_history_checks.items() if not passed)
+if failed:
+    raise SystemExit(f'local existing-history history/audit exactness mismatch failed={failed}')
 replay2=etroc_reviews.append(candidate, evidence, request2, 'candidate@cern.ch', 'candidate@cern.ch')
 stale2=etroc_reviews.append(candidate, evidence, {**request2, 'mutation_id': str(uuid.uuid4())}, 'candidate@cern.ch', 'candidate@cern.ch')
 with sqlite3.connect(candidate) as db:

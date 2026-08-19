@@ -1645,6 +1645,19 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         )
         self.assertEqual(local_gate.count("chain.get('evidence') == audit_record_key"), 2)
         self.assertNotIn("chain.get('evidence') == record.as_dict()", local_gate)
+        for diagnostic in (
+            "existing_history_checks={",
+            "history_status",
+            "audit_status",
+            "history_evidence",
+            "history_current",
+            "history_chain",
+            "audit_chain_count",
+            "audit_current",
+            "audit_history",
+            "failed=",
+        ):
+            self.assertIn(diagnostic, local_gate)
         for required in (
             'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
             'CANDIDATE_HTTP_ACQUISITION_FILE',
