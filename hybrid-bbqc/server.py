@@ -4,10 +4,18 @@ import json
 import os
 import re
 import sqlite3
+import sys
+import threading
 import time
 import urllib.parse
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
+
+MODULE_ROOT = Path(__file__).resolve().parent
+if str(MODULE_ROOT) not in sys.path:
+    sys.path.insert(0, str(MODULE_ROOT))
+
+import etroc_reviews
 
 ROOT = Path(os.environ.get("STATIC_ROOT", "/app/static")).resolve()
 PRODUCTION_STATIC_ROOT = ROOT
@@ -22,6 +30,30 @@ ADMIN_USERS = {
     for x in os.environ.get("COMMENTS_ADMIN_USERS", "").split(",")
     if x.strip()
 }
+CERN_PRINCIPAL_RE = re.compile(
+    r"^[a-z](?:[a-z0-9]|[._-](?=[a-z0-9])){0,63}(?:@cern\.ch)?$"
+)
+
+
+def canonical_cern_principal(value: str) -> str | None:
+    normalized = value.lower()
+    if CERN_PRINCIPAL_RE.fullmatch(normalized) is None:
+        return None
+    return normalized
+
+
+def etroc_reviewer_allowlist(raw: str) -> frozenset[str]:
+    normalized = [canonical_cern_principal(value) for value in raw.split(",")]
+    if not raw or any(value is None for value in normalized):
+        return frozenset()
+    return frozenset(value for value in normalized if value is not None)
+
+
+ETROC_REVIEWER_USERS = etroc_reviewer_allowlist(
+    os.environ.get("ETROC_REVIEWER_USERS", "")
+)
+_ETROC_EVIDENCE_CACHE_LOCK = threading.Lock()
+_ETROC_EVIDENCE_CACHE: tuple[tuple[str, tuple[int, int, int, int], tuple[int, int, int, int] | None], etroc_reviews.EvidenceSet] | None = None
 MAX_BODY = int(os.environ.get("COMMENTS_MAX_BODY", "2000"))
 HOST = os.environ.get("HOST", "127.0.0.1")
 APP_ORIGIN = os.environ.get("APP_ORIGIN", "https://etl-hybrid-bbqc.app.cern.ch").rstrip(
@@ -678,18 +710,19 @@ def init_db(
             raise ValueError(f"database integrity check failed: {integrity_rows}")
         db.execute("PRAGMA user_version=2")
         db.commit()
+    review_publication = static_root / "data/etroc-optical/ETROC_OI_2608/chips.json"
+    if review_publication.is_file():
+        init_etroc_review_schema(db_path)
 
 
 def identity(headers) -> dict | None:
     value = headers.get(IDENTITY_HEADER)
-    if value and "," not in value:
-        raw = value.strip()
-        if raw:
-            user = raw.lower()
-            display = raw.split("@")[0]
+    if isinstance(value, str):
+        user = canonical_cern_principal(value)
+        if user is not None:
             return {
                 "user": user,
-                "display": display,
+                "display": value.split("@", 1)[0],
                 "is_admin": user in ADMIN_USERS,
             }
     if ALLOW_ANON:
@@ -725,7 +758,10 @@ def mutation_request_error(
 
 
 def read_json(handler) -> dict:
-    length = int(handler.headers.get("Content-Length", "0") or "0")
+    content_length = handler.headers.get("Content-Length")
+    if not isinstance(content_length, str) or re.fullmatch(r"[0-9]+", content_length) is None:
+        raise ValueError("invalid Content-Length")
+    length = int(content_length)
     if length > 10000:
         raise ValueError("request too large")
     raw = handler.rfile.read(length) if length else b"{}"
@@ -733,6 +769,109 @@ def read_json(handler) -> dict:
     if not isinstance(data, dict):
         raise TypeError("JSON object required")
     return data
+
+
+def _etroc_evidence_identity(static_root: Path) -> tuple[str, tuple[int, int, int, int], tuple[int, int, int, int] | None]:
+    root = Path(static_root).resolve()
+    publication = root / "data/etroc-optical" / etroc_reviews.DATASET_ID / "chips.json"
+    manifest = publication.with_name("SHA256SUMS")
+    try:
+        publication_stat = publication.stat()
+    except FileNotFoundError as exc:
+        raise ValueError("ETROC review evidence is unavailable") from exc
+    try:
+        manifest_stat = manifest.stat()
+    except FileNotFoundError:
+        manifest_stat = None
+    except OSError as exc:
+        raise ValueError("ETROC review evidence is unavailable") from exc
+    return (
+        str(root),
+        (publication_stat.st_dev, publication_stat.st_ino, publication_stat.st_size, publication_stat.st_mtime_ns),
+        None if manifest_stat is None else (manifest_stat.st_dev, manifest_stat.st_ino, manifest_stat.st_size, manifest_stat.st_mtime_ns),
+    )
+
+
+def reset_etroc_review_evidence_cache() -> None:
+    global _ETROC_EVIDENCE_CACHE
+    with _ETROC_EVIDENCE_CACHE_LOCK:
+        _ETROC_EVIDENCE_CACHE = None
+
+
+def load_etroc_review_evidence(
+    static_root: Path, *, force_revalidate: bool = False
+) -> etroc_reviews.EvidenceSet:
+    global _ETROC_EVIDENCE_CACHE
+    identity = _etroc_evidence_identity(static_root)
+    with _ETROC_EVIDENCE_CACHE_LOCK:
+        if (
+            not force_revalidate
+            and _ETROC_EVIDENCE_CACHE is not None
+            and _ETROC_EVIDENCE_CACHE[0] == identity
+        ):
+            return _ETROC_EVIDENCE_CACHE[1]
+        _ETROC_EVIDENCE_CACHE = None
+        evidence = etroc_reviews.load_evidence(static_root)
+        if _etroc_evidence_identity(static_root) != identity:
+            _ETROC_EVIDENCE_CACHE = None
+            raise ValueError("ETROC review evidence changed while loading")
+        _ETROC_EVIDENCE_CACHE = (identity, evidence)
+        return evidence
+
+
+def init_etroc_review_schema(db_path: Path) -> None:
+    etroc_reviews.init_schema(db_path)
+
+
+def initialize_store(
+    db_path: Path = DB_PATH,
+    static_root: Path = ROOT,
+    *,
+    require_additional_tests: bool | None = None,
+) -> None:
+    static_root = Path(static_root)
+    bundle = static_root / "data" / "etroc-optical" / etroc_reviews.DATASET_ID
+    if bundle.exists():
+        if not bundle.is_dir():
+            raise ValueError("ETROC review evidence bundle is invalid")
+        load_etroc_review_evidence(static_root, force_revalidate=True)
+    init_db(
+        db_path=db_path,
+        static_root=static_root,
+        require_additional_tests=require_additional_tests,
+    )
+
+
+def append_etroc_review(
+    db_path: Path, evidence, request: dict, author: str, author_display: str
+):
+    return etroc_reviews.append(db_path, evidence, request, author, author_display)
+
+
+def etroc_error(code: str, message: str, **extra) -> dict:
+    return {"error": {"code": code, "message": message, **extra}}
+
+
+def etroc_query(query: str, allowed: set[str]) -> dict[str, str]:
+    if re.search(r"%(?![0-9A-Fa-f]{2})", query):
+        raise ValueError("invalid query encoding")
+    pairs = urllib.parse.parse_qsl(query, keep_blank_values=True, strict_parsing=True, encoding="utf-8", errors="strict")
+    if len(pairs) != len(allowed) or {key for key, _value in pairs} != allowed:
+        raise ValueError("invalid query fields")
+    result = dict(pairs)
+    if any(not value or len(value) > 500 or not value.isprintable() for value in result.values()):
+        raise ValueError("invalid query value")
+    return result
+
+
+def etroc_viewer(headers) -> tuple[str, bool, str | None]:
+    if not headers.get(IDENTITY_HEADER):
+        return "", False, None
+    user = identity(headers)
+    if not user:
+        return "", False, None
+    normalized = user["user"].strip().lower()
+    return user["display"], normalized in ETROC_REVIEWER_USERS, normalized
 
 
 def normalize_target(value: str) -> str:
@@ -972,6 +1111,54 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith("/api/etroc-reviews"):
+            display, allowed, user = etroc_viewer(self.headers)
+            if user is None:
+                return json_response(self, 401, etroc_error("authentication_required", "CERN SSO login is required."))
+            if parsed.path == "/api/etroc-reviews/audit":
+                try:
+                    acquisition_id = etroc_query(parsed.query, {"acquisition_id"})["acquisition_id"]
+                except ValueError:
+                    return json_response(self, 400, etroc_error("invalid_query", "The query is invalid."))
+                try:
+                    evidence = load_etroc_review_evidence(ROOT)
+                except (OSError, ValueError):
+                    return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC review evidence is unavailable."))
+                try:
+                    result = etroc_reviews.audit(DB_PATH, acquisition_id, evidence)
+                except sqlite3.DatabaseError:
+                    return json_response(self, 503, etroc_error("review_store_unavailable", "The review store is unavailable."))
+                return json_response(self, result.status, result.payload)
+            if parsed.path == "/api/etroc-reviews":
+                try:
+                    dataset_id = etroc_query(parsed.query, {"dataset_id"})["dataset_id"]
+                except ValueError:
+                    return json_response(self, 400, etroc_error("invalid_query", "The query is invalid."))
+                try:
+                    evidence = load_etroc_review_evidence(ROOT)
+                except (OSError, ValueError):
+                    return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC review evidence is unavailable."))
+                if dataset_id != evidence.dataset_id:
+                    return json_response(self, 404, etroc_error("dataset_not_found", "The dataset is not available."))
+                try:
+                    return json_response(self, 200, etroc_reviews.summary(DB_PATH, evidence, display, allowed))
+                except sqlite3.DatabaseError:
+                    return json_response(self, 503, etroc_error("review_store_unavailable", "The review store is unavailable."))
+            if parsed.path == "/api/etroc-reviews/history":
+                try:
+                    acquisition_id = etroc_query(parsed.query, {"acquisition_id"})["acquisition_id"]
+                except ValueError:
+                    return json_response(self, 400, etroc_error("invalid_query", "The query is invalid."))
+                try:
+                    evidence = load_etroc_review_evidence(ROOT)
+                except (OSError, ValueError):
+                    return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC review evidence is unavailable."))
+                try:
+                    result = etroc_reviews.history(DB_PATH, evidence, acquisition_id)
+                except sqlite3.DatabaseError:
+                    return json_response(self, 503, etroc_error("review_store_unavailable", "The review store is unavailable."))
+                return json_response(self, result.status, result.payload)
+            return json_response(self, 404, etroc_error("acquisition_not_found", "The ETROC review endpoint is not available."))
         if parsed.path == "/api/health":
             return json_response(self, 200, {"ok": True})
         if parsed.path == "/api/me":
@@ -1012,11 +1199,11 @@ class Handler(SimpleHTTPRequestHandler):
                     for target, item in resolved.items()
                     if item["hybrid_registry_id"] is None
                 ]
-                registry_summary = {
+                registry_summary: dict = {
                     registry_id: {"count": 0, "latest": None}
                     for registry_id in registry_ids
                 }
-                plain_summary = {
+                plain_summary: dict = {
                     target: {"count": 0, "latest": None} for target in plain_targets
                 }
                 if registry_ids:
@@ -1089,7 +1276,8 @@ class Handler(SimpleHTTPRequestHandler):
                     if registry_id is not None
                     else plain_summary[requested]
                 )
-                latest = dict(source["latest"]) if source["latest"] else None
+                latest_value = source["latest"]
+                latest = latest_value.copy() if isinstance(latest_value, dict) else None
                 if latest is not None and registry_id is not None:
                     latest["target"] = resolution["canonical_target"]
                 summary[requested] = {"count": source["count"], "latest": latest}
@@ -1152,6 +1340,32 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/api/etroc-reviews":
+            display, allowed, user = etroc_viewer(self.headers)
+            if user is None:
+                return json_response(self, 401, etroc_error("authentication_required", "CERN SSO login is required."))
+            if not allowed:
+                return json_response(self, 403, etroc_error("review_not_authorized", "This identity cannot append ETROC reviews."))
+            origin = self.headers.get("Origin") or ""
+            if origin != APP_ORIGIN:
+                return json_response(self, 403, etroc_error("same_origin_required", "A same-origin request is required."))
+            content_type = (self.headers.get("Content-Type") or "").split(";", 1)[0].strip().lower()
+            if content_type != "application/json":
+                return json_response(self, 415, etroc_error("json_required", "An application/json request is required."))
+            try:
+                request = read_json(self)
+            except (TypeError, ValueError, json.JSONDecodeError):
+                return json_response(self, 400, etroc_error("invalid_json", "The request body must be a JSON object."))
+            request_error = etroc_reviews.validate_request(request)
+            if request_error is not None:
+                return json_response(self, request_error.status, request_error.payload)
+            try:
+                result = etroc_reviews.append(DB_PATH, lambda: load_etroc_review_evidence(ROOT, force_revalidate=True), request, user, display)
+            except (OSError, ValueError):
+                return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC review evidence is unavailable."))
+            except sqlite3.DatabaseError:
+                return json_response(self, 503, etroc_error("review_store_unavailable", "The review store is unavailable."))
+            return json_response(self, result.status, result.payload)
         if parsed.path == "/api/hybrids/bind":
             user = identity(self.headers)
             if not user:
@@ -1337,7 +1551,7 @@ class Handler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
-    init_db()
+    initialize_store()
     port = int(os.environ.get("PORT", "8080"))
     print(
         f"BBQC_STARTUP_OK root={ROOT} host={HOST} port={port} "

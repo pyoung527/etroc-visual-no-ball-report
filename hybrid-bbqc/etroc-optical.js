@@ -32,7 +32,13 @@
   const status = document.querySelector("[data-etroc-optical-status]");
   const statsRoot = document.querySelector("#etroc-optical-analytics");
   const statsStatus = document.querySelector("[data-etroc-analytics-state]");
-  globalThis.ETROCOpticalContract = Object.freeze({ validate, summarize, selectRecords, summarizeProvenance });
+  async function parseVerifiedPublication(bytes) {
+    const publicationSha256 = await crypto.subtle.digest("SHA-256", bytes).then((digest) => [...new Uint8Array(digest)].map((value) => value.toString(16).padStart(2, "0")).join(""));
+    const payload = JSON.parse(new TextDecoder().decode(bytes));
+    return { payload, records: validate(payload), publicationSha256 };
+  }
+
+  globalThis.ETROCOpticalContract = Object.freeze({ validate, summarize, selectRecords, summarizeProvenance, parseVerifiedPublication });
   if (!root || !status) return;
 
   function element(tag, className, text) {
@@ -44,7 +50,7 @@
 
   function safeAssetUri(uri, role) {
     const pattern = role === "montage"
-      ? /^montages\/[A-Z0-9]+-[0-9]+\.jpg$/
+      ? /^montages\/sha256\/[0-9a-f]{64}\.jpg$/
       : /^previews\/[A-Z0-9]+-[0-9]+\.jpg$/;
     if (typeof uri !== "string" || !pattern.test(uri)) {
       throw new Error(`invalid ${role} URI`);
@@ -115,7 +121,7 @@
         throw new Error("candidate category partition does not total 256");
       }
       if (record.optical_no_ball_candidate_count > record.red_candidate_count) throw new Error("invalid no-ball/red relationship");
-      if (record.montage_uri !== `montages/${record.etroc_serial}.jpg` || record.preview_uri !== `previews/${record.etroc_serial}.jpg`) {
+      if (!record.montage_uri.startsWith("montages/sha256/") || record.preview_uri !== `previews/${record.etroc_serial}.jpg`) {
         throw new Error("asset identity mismatch");
       }
       const expectedSourceRevision = SUPPLEMENT_SERIALS.has(record.etroc_serial) ? "supplement-re" : "base";
@@ -544,12 +550,13 @@
   fetch(DATA_URL, { credentials: "same-origin", headers: { Accept: "application/json" } })
     .then((response) => {
       if (!response.ok) throw new Error(`dataset request failed: ${response.status}`);
-      return response.json();
+      return response.arrayBuffer();
     })
-    .then((payload) => {
-      const records = validate(payload);
+    .then(async (bytes) => {
+      const { payload, records, publicationSha256 } = await parseVerifiedPublication(bytes);
       render(records);
       initStatistics(records, payload);
+      globalThis.dispatchEvent(new CustomEvent("etroc-optical-publication", { detail: { bytes, records, publicationSha256 } }));
     })
     .catch((error) => {
       root.replaceChildren();

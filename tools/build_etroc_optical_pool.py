@@ -246,12 +246,17 @@ def build_pool(analysis_dir: Path, app_dir: Path, complete_manifest_path: Path) 
         records = []
         for row in sorted(rows, key=lambda item: (item["wafer"], int(item["chip"]))):
             serial = row["etroc_serial"]
-            montage_uri = f"montages/{serial}.jpg"
-            preview_uri = f"previews/{serial}.jpg"
-            full_path = resolve_under(staged, montage_uri)
-            preview_path = resolve_under(staged, preview_uri)
-            assets = render_jpegs(sources[serial], full_path, preview_path)
             source_revision = row["acquisition_id"].rsplit(":", 1)[-1]
+            staged_montage_path = resolve_under(staged, f"montages/{serial}.jpg")
+            preview_uri = f"previews/{serial}.jpg"
+            staged_montage_path.parent.mkdir(parents=True, exist_ok=True)
+            preview_path = resolve_under(staged, preview_uri)
+            assets = render_jpegs(sources[serial], staged_montage_path, preview_path)
+            montage_uri = f"montages/sha256/{assets['montage_sha256']}.jpg"
+            full_path = resolve_under(staged, montage_uri)
+            full_path.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(staged_montage_path, full_path)
+            staged_montage_path.unlink()
             record = {
                 "etroc_serial": serial,
                 "wafer": row["wafer"],

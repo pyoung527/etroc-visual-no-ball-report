@@ -32,6 +32,8 @@ spec:
               value: "false"
             - name: COMMENTS_ADMIN_USERS
               value: "ypark,ypark@cern.ch"
+            - name: ETROC_REVIEWER_USERS
+              value: "ypark,ypark@cern.ch"
             - name: HOST
               value: "127.0.0.1"
             - name: APP_ORIGIN
@@ -77,6 +79,7 @@ spec:
           ports:
             - name: oauth
               containerPort: 4180
+              protocol: TCP
           env:
             - name: OAUTH2_PROXY_CLIENT_ID
               valueFrom:

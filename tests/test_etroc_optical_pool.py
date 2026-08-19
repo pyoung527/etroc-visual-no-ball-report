@@ -154,6 +154,17 @@ class EtrocOpticalPoolTests(unittest.TestCase):
                     expected_size = (2400, 2176) if prefix == "montage" else (720, 653)
                     self.assertEqual(image.size, expected_size)
 
+    def test_montage_uris_are_content_addressed_and_publish_only_digests(self):
+        payload = self.load_pool()
+        for row in payload["records"]:
+            montage_uri = row["montage_uri"]
+            self.assertTrue(montage_uri.startswith("montages/sha256/"), montage_uri)
+            self.assertFalse(montage_uri.startswith("montages/" + row["etroc_serial"]), montage_uri)
+            self.assertEqual(Path(montage_uri).name, f"{row['montage_sha256']}.jpg")
+            montage = DATASET / montage_uri
+            self.assertTrue(montage.is_file(), montage)
+            self.assertEqual(hashlib.sha256(montage.read_bytes()).hexdigest(), row["montage_sha256"])
+
     def test_dataset_checksum_manifest_is_complete_and_exact(self):
         entries = {}
         for line in CHECKSUMS.read_text(encoding="utf-8").splitlines():

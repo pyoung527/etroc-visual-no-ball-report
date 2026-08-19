@@ -9,5 +9,6 @@ spec:
     app: etl-hybrid-bbqc
   ports:
     - name: oauth
-      port: 8080
+      port: 4180
       targetPort: oauth
+      protocol: TCP
