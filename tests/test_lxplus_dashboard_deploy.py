@@ -1199,6 +1199,65 @@ printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
         self.assertIn("BASELINE_DEPLOYMENT_FILE", script)
         self.assertNotIn("'spec': source['spec']", forward)
 
+    def test_forward_renderer_normalizes_only_the_exact_reviewed_legacy_deltas(self):
+        # Given: the captured legacy objects differ from the pinned target only in the
+        # reviewed APP_ORIGIN, proxy-args, Service-port, and immutable web-image fields.
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("import copy, json, os, sys", script.index("render_forward_object() {"))
+        renderer = script[start : script.index("\nPY\n", start)]
+        target_origin = "https://etl-hybrid-bbqc.app.cern.ch"
+        common_args = ["--provider=oidc", "--http-address=0.0.0.0:4180", "--upstream=http://127.0.0.1:8080", "--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback", "--email-domain=*", "--reverse-proxy=true", "--pass-host-header=true", "--pass-user-headers=true"]
+        legacy_args = common_args + ["--set-xauthrequest=true", "--skip-provider-button=true", "--cookie-secure=true", "--cookie-samesite=lax"]
+        target_args = common_args + ["--skip-auth-strip-headers=false", "--skip-provider-button=true", "--cookie-secure=true", "--cookie-samesite=lax"]
+        baseline_deployment = {
+            "apiVersion": "apps/v1", "kind": "Deployment",
+            "metadata": {"name": "etl-hybrid-bbqc", "labels": {"app": "etl-hybrid-bbqc"}, "annotations": {}},
+            "spec": {"template": {"spec": {"containers": [
+                {"name": "web", "image": "baseline-web", "env": [{"name": "HOST", "value": "127.0.0.1"}, {"name": "APP_ORIGIN", "value": target_origin}]},
+                {"name": "oauth2-proxy", "image": "old-proxy", "args": target_args},
+            ]}}},
+        }
+        baseline_service = {
+            "apiVersion": "v1", "kind": "Service",
+            "metadata": {"name": "etl-hybrid-bbqc", "labels": {"app": "etl-hybrid-bbqc"}, "annotations": {}},
+            "spec": {"selector": {"app": "etl-hybrid-bbqc"}, "ports": [{"name": "oauth", "protocol": "TCP", "port": 4180, "targetPort": "oauth"}]},
+        }
+
+        # When: each exact legacy capture is rendered against the target baseline.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            captured_deployment = json.loads(json.dumps(baseline_deployment))
+            captured_deployment["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "deployment-uid", "resourceVersion": "1"}
+            captured_deployment["spec"]["template"]["spec"]["containers"][0]["image"] = "old-web"
+            captured_deployment["spec"]["template"]["spec"]["containers"][0]["env"].pop()
+            captured_deployment["spec"]["template"]["spec"]["containers"][1]["args"] = legacy_args
+            captured_service = json.loads(json.dumps(baseline_service))
+            captured_service["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "service-uid", "resourceVersion": "1"}
+            captured_service["spec"]["ports"] = [{"name": "oauth", "protocol": "TCP", "port": 8080, "targetPort": "oauth"}]
+            for kind, baseline, captured in (("Deployment", baseline_deployment, captured_deployment), ("Service", baseline_service, captured_service)):
+                baseline_file, captured_file = root / f"{kind}-baseline.json", root / f"{kind}-captured.json"
+                baseline_file.write_text(json.dumps(baseline), encoding="utf-8")
+                captured_file.write_text(json.dumps(captured), encoding="utf-8")
+                environment = os.environ | {"RELEASE_KIND": kind, "BASELINE_OBJECT_FILE": str(baseline_file), "CAPTURED_OBJECT_FILE": str(captured_file), "NEW_WEB_IMAGE": "new-web", "OLD_WEB_IMAGE": "old-web", "OLD_PROXY_IMAGE": "old-proxy", "OLD_TOPOLOGY_MODE": "legacy", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch"}
+                result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
+                self.assertEqual(result.returncode, 0, result.stderr)
+                rendered = json.loads(result.stdout)
+                if kind == "Deployment":
+                    self.assertEqual(rendered["spec"]["template"]["spec"]["containers"][0]["env"][1], {"name": "APP_ORIGIN", "value": target_origin})
+                else:
+                    self.assertEqual(rendered["spec"]["ports"], baseline_service["spec"]["ports"])
+
+            # Then: a legacy-shaped drift outside those deltas remains release-blocking.
+            captured_deployment["spec"]["template"]["spec"]["containers"][0]["env"][0]["value"] = "0.0.0.0"
+            captured_file = root / "Deployment-captured-drift.json"
+            captured_file.write_text(json.dumps(captured_deployment), encoding="utf-8")
+            environment["RELEASE_KIND"] = "Deployment"
+            environment["BASELINE_OBJECT_FILE"] = str(root / "Deployment-baseline.json")
+            environment["CAPTURED_OBJECT_FILE"] = str(captured_file)
+            drift = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
+        self.assertNotEqual(drift.returncode, 0)
+        self.assertIn("spec differs from pinned baseline", drift.stderr)
+
     def test_forward_renderer_preserves_only_baseline_approved_annotations(self):
         # Given: a captured object has exactly the pinned annotations plus generated noise.
         script = SCRIPT.read_text(encoding="utf-8")
@@ -1220,7 +1279,7 @@ printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
             captured_file.write_text(json.dumps(captured), encoding="utf-8")
             environment = os.environ | {
                 "RELEASE_KIND": "Route", "BASELINE_OBJECT_FILE": str(baseline_file), "CAPTURED_OBJECT_FILE": str(captured_file),
-                "NEW_WEB_IMAGE": "unused", "OLD_WEB_IMAGE": "unused", "OLD_PROXY_IMAGE": "unused", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch",
+                "NEW_WEB_IMAGE": "unused", "OLD_WEB_IMAGE": "unused", "OLD_PROXY_IMAGE": "unused", "OLD_TOPOLOGY_MODE": "target", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch",
             }
             result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
         self.assertEqual(result.returncode, 0, result.stderr)
@@ -1246,7 +1305,7 @@ printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
                 baseline_file, captured_file = Path(directory) / "baseline.json", Path(directory) / "captured.json"
                 baseline_file.write_text(json.dumps(baseline), encoding="utf-8")
                 captured_file.write_text(json.dumps(captured), encoding="utf-8")
-                environment = os.environ | {"RELEASE_KIND": kind, "BASELINE_OBJECT_FILE": str(baseline_file), "CAPTURED_OBJECT_FILE": str(captured_file), "NEW_WEB_IMAGE": "new-web", "OLD_WEB_IMAGE": "old-web", "OLD_PROXY_IMAGE": "old-proxy", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch"}
+                environment = os.environ | {"RELEASE_KIND": kind, "BASELINE_OBJECT_FILE": str(baseline_file), "CAPTURED_OBJECT_FILE": str(captured_file), "NEW_WEB_IMAGE": "new-web", "OLD_WEB_IMAGE": "old-web", "OLD_PROXY_IMAGE": "old-proxy", "OLD_TOPOLOGY_MODE": "target", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch"}
                 result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
                 self.assertEqual(result.returncode != 0, bool(expected_failure), result.stderr)
                 if expected_failure:
@@ -1269,6 +1328,8 @@ PROJECT=project
 WORK_DIR="$(mktemp -d)"
 CANDIDATE_PROBE_POD=probe
 CANDIDATE_PROBE_POD_UID=original
+CANDIDATE_PROBE_POD_OWNED=0
+cleanup_candidate_probe_pod
 CANDIDATE_PROBE_POD_OWNED=1
 mock_uid=original
 deletes=0
@@ -1312,8 +1373,8 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
             "rollback target UID changed",
             "replace --save-config=false --dry-run=server -f \"$service_rendered\"",
             "replace --save-config=false --dry-run=server -f \"$route_rendered\"",
-            "validate_manifest_topology rollback",
-            "validate_oauth2_proxy_topology rollback \"$OLD_PROXY_IMAGE\"",
+            "validate_manifest_topology rollback \"$deployment_topology\" \"$service_topology\" \"$route_topology\" \"$OLD_TOPOLOGY_MODE\"",
+            "validate_oauth2_proxy_topology rollback \"$OLD_PROXY_IMAGE\" \"$OLD_TOPOLOGY_MODE\"",
         ):
             self.assertIn(required, rollback)
 
@@ -1438,7 +1499,7 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         # Then: it derives the live template labels, inventories all Routes, and rejects
         # both the direct web Service and any additional Route to a selected Service.
         topology = script[
-            script.index("validate_oauth2_proxy_topology() {") : script.index(
+            script.index("validate_oauth2_proxy_topology_files() {") : script.index(
                 "snapshot_etroc_review_events() {"
             )
         ]
@@ -1459,14 +1520,140 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
 
         # Then: the image must equal the captured immutable digest at both boundaries.
         topology = script[
-            script.index("validate_oauth2_proxy_topology() {") : script.index(
+            script.index("validate_oauth2_proxy_topology_files() {") : script.index(
                 "snapshot_etroc_review_events() {"
             )
         ]
         self.assertIn("EXPECTED_PROXY_IMAGE", topology)
         self.assertIn("oauth2-proxy image differs from captured reviewed digest", topology)
-        self.assertIn('validate_oauth2_proxy_topology captured-pre-rollout "$OLD_PROXY_IMAGE"', script)
+        self.assertIn('validate_oauth2_proxy_topology preflight \'\' either', script)
+        self.assertIn('validate_captured_oauth2_proxy_topology "$CAPTURED_DEPLOYMENT_FILE" "$CAPTURED_SERVICE_FILE" "$CAPTURED_ROUTE_FILE" "$OLD_PROXY_IMAGE" either "$OLD_WEB_IMAGE"', script)
+        self.assertIn('validate_oauth2_proxy_topology captured-bind "$OLD_PROXY_IMAGE" "$OLD_TOPOLOGY_MODE" "$OLD_WEB_IMAGE"', script)
+        self.assertIn('validate_oauth2_proxy_topology pre-mutation "$OLD_PROXY_IMAGE" "$OLD_TOPOLOGY_MODE" "$OLD_WEB_IMAGE"', script)
         self.assertIn('validate_oauth2_proxy_topology post-rollout "$OLD_PROXY_IMAGE"', script)
+
+    def test_preflight_accepts_exact_legacy_target_and_rejects_hybrids(self):
+        # Given: the live release can be either the exact legacy or target contract.
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("validate_oauth2_proxy_topology_files() {")
+        topology_end = script.index("\n}\n", script.index("validate_oauth2_proxy_topology() {")) + 3
+        topology = script[start:topology_end]
+        digest = "registry.example/proxy@sha256:" + "a" * 64
+        common = ["--provider=oidc", "--http-address=0.0.0.0:4180", "--upstream=http://127.0.0.1:8080", "--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback", "--email-domain=*", "--reverse-proxy=true", "--pass-host-header=true", "--pass-user-headers=true"]
+        legacy_args = common + ["--set-xauthrequest=true", "--skip-provider-button=true", "--cookie-secure=true", "--cookie-samesite=lax"]
+        target_args = common + ["--skip-auth-strip-headers=false", "--skip-provider-button=true", "--cookie-secure=true", "--cookie-samesite=lax"]
+
+        def deployment(origin: bool, args: list[str]):
+            env = [{"name": "HOST", "value": "127.0.0.1"}]
+            if origin:
+                env.append({"name": "APP_ORIGIN", "value": "https://etl-hybrid-bbqc.app.cern.ch"})
+            return {"kind": "Deployment", "spec": {"template": {"metadata": {"labels": {"app": "etl-hybrid-bbqc"}}, "spec": {"containers": [{"name": "web", "image": "registry.example/web@sha256:" + "b" * 64, "env": env}, {"name": "oauth2-proxy", "image": digest, "ports": [{"name": "oauth", "containerPort": 4180, "protocol": "TCP"}], "args": args}]}}}}
+
+        cases = (("legacy", deployment(False, legacy_args), 8080, "legacy", False), ("target", deployment(True, target_args), 4180, "target", False), ("origin legacy args", deployment(True, legacy_args), 8080, "", True), ("legacy service target deployment", deployment(True, target_args), 8080, "", True), ("xauth and no strip", deployment(True, common + ["--set-xauthrequest=true", "--skip-auth-strip-headers=false", "--skip-provider-button=true", "--cookie-secure=true", "--cookie-samesite=lax"]), 4180, "", True))
+        invalid_origins = (
+            ("valueFrom", {"name": "APP_ORIGIN", "valueFrom": {"fieldRef": {"fieldPath": "metadata.name"}}}),
+            ("null", {"name": "APP_ORIGIN", "value": None}),
+            ("duplicate", {"name": "APP_ORIGIN", "value": "https://etl-hybrid-bbqc.app.cern.ch"}),
+        )
+        for name, extra_origin in invalid_origins:
+            invalid = deployment(True, target_args)
+            if name == "duplicate":
+                invalid["spec"]["template"]["spec"]["containers"][0]["env"].append(extra_origin)
+            else:
+                invalid["spec"]["template"]["spec"]["containers"][0]["env"][-1] = extra_origin
+            cases += ((f"target APP_ORIGIN {name}", invalid, 4180, "", True),)
+        legacy_value_from = deployment(False, legacy_args)
+        legacy_value_from["spec"]["template"]["spec"]["containers"][0]["env"].append(invalid_origins[0][1])
+        cases += (("legacy APP_ORIGIN valueFrom", legacy_value_from, 8080, "", True),)
+        route = {"items": [{"metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"host": "etl-hybrid-bbqc.app.cern.ch", "to": {"kind": "Service", "name": "etl-hybrid-bbqc"}, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}}}]}
+        for name, deployment_object, service_port, mode, rejected in cases:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                (root / "bin").mkdir()
+                service = {"items": [{"metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"selector": {"app": "etl-hybrid-bbqc"}, "ports": [{"name": "oauth", "protocol": "TCP", "port": service_port, "targetPort": "oauth"}]}}]}
+                for filename, value in (("deployment.json", deployment_object), ("services.json", service), ("routes.json", route)):
+                    (root / filename).write_text(json.dumps(value), encoding="utf-8")
+                fake_oc = root / "bin" / "oc"
+                fake_oc.write_text("#!/usr/bin/env bash\ncase \"$*\" in\n  *'get deployment/'*) cat \"$FAKE_TOPOLOGY_DIR/deployment.json\" ;;\n  *'get services '*) cat \"$FAKE_TOPOLOGY_DIR/services.json\" ;;\n  *'get routes '*) cat \"$FAKE_TOPOLOGY_DIR/routes.json\" ;;\n  *) exit 64 ;;\nesac\n", encoding="utf-8")
+                fake_oc.chmod(0o755)
+                harness = f'''set -Eeuo pipefail
+{topology}
+WORK_DIR={shlex.quote(str(root / "work"))}
+PROJECT=project
+DEPLOYMENT=etl-hybrid-bbqc
+mkdir -p "$WORK_DIR"
+OLD_TOPOLOGY_MODE="$(validate_oauth2_proxy_topology captured-pre-rollout {shlex.quote(digest)} either)"
+printf 'OLD_TOPOLOGY_MODE=%s\\n' "$OLD_TOPOLOGY_MODE"
+'''
+                result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True, env=os.environ | {"PATH": f"{root / 'bin'}:{os.environ['PATH']}", "FAKE_TOPOLOGY_DIR": str(root)})
+                self.assertEqual(result.returncode != 0, rejected, result.stderr)
+                if not rejected:
+                    self.assertEqual(result.stdout, f"OLD_TOPOLOGY_MODE={mode}\n")
+
+    def test_captured_topology_classification_binds_legacy_rollback_before_live_refetch(self):
+        # Given: an earlier preflight could observe target while the durable capture is legacy.
+        script = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("validate_captured_oauth2_proxy_topology", script)
+        capture_start = script.index('oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$CAPTURED_DEPLOYMENT_FILE"')
+        mode_assignment = script.index('OLD_TOPOLOGY_MODE="$(validate_captured_oauth2_proxy_topology')
+        self.assertLess(capture_start, mode_assignment)
+        self.assertNotIn('OLD_TOPOLOGY_MODE="$(validate_oauth2_proxy_topology captured-pre-rollout', script)
+
+        # When: the capture-bound classifier is used for the durable rollback objects.
+        start = script.index("validate_captured_oauth2_proxy_topology() {")
+        classifier = script[start : script.index("\n}\n", start) + 3]
+        harness = f'''set -Eeuo pipefail
+{classifier}
+validate_oauth2_proxy_topology_files() {{ printf '%s' legacy; }}
+mode="$(validate_captured_oauth2_proxy_topology deployment service route proxy legacy web)"
+test "$mode" = legacy
+'''
+        result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True)
+
+        # Then: rollback mode comes from the captured files, not a live preflight value.
+        self.assertEqual(result.returncode, 0, result.stderr)
+
+    def test_rendered_manifest_rejects_nonliteral_or_duplicate_app_origin(self):
+        # Given: rendered target manifests must carry exactly one literal APP_ORIGIN.
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("validate_manifest_topology() {")
+        validator = script[start : script.index("\n}\n", start) + 3]
+        origin = "https://etl-hybrid-bbqc.app.cern.ch"
+        args = ["--provider=oidc", "--http-address=0.0.0.0:4180", "--upstream=http://127.0.0.1:8080", "--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback", "--email-domain=*", "--reverse-proxy=true", "--pass-host-header=true", "--pass-user-headers=true", "--skip-auth-strip-headers=false", "--skip-provider-button=true", "--cookie-secure=true", "--cookie-samesite=lax"]
+        deployment = {"kind": "Deployment", "metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"template": {"spec": {"containers": [{"name": "web", "env": [{"name": "HOST", "value": "127.0.0.1"}, {"name": "APP_ORIGIN", "value": origin}]}, {"name": "oauth2-proxy", "ports": [{"name": "oauth", "containerPort": 4180, "protocol": "TCP"}], "args": args}]}}}}
+        service = {"kind": "Service", "metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"selector": {"app": "etl-hybrid-bbqc"}, "ports": [{"name": "oauth", "protocol": "TCP", "port": 4180, "targetPort": "oauth"}]}}
+        route = {"kind": "Route", "metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"host": "etl-hybrid-bbqc.app.cern.ch", "to": {"kind": "Service", "name": "etl-hybrid-bbqc"}, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}}}
+        invalid_origins = (
+            {"name": "APP_ORIGIN", "valueFrom": {"fieldRef": {"fieldPath": "metadata.name"}}},
+            {"name": "APP_ORIGIN", "value": None},
+            {"name": "APP_ORIGIN", "value": origin},
+        )
+
+        # When: a literal entry is replaced or duplicated in otherwise exact manifests.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for index, invalid_origin in enumerate(invalid_origins):
+                invalid = json.loads(json.dumps(deployment))
+                environment = invalid["spec"]["template"]["spec"]["containers"][0]["env"]
+                if index == 2:
+                    environment.append(invalid_origin)
+                else:
+                    environment[-1] = invalid_origin
+                deployment_file, service_file, route_file = root / f"deployment-{index}.json", root / "service.json", root / "route.json"
+                deployment_file.write_text(json.dumps(invalid), encoding="utf-8")
+                service_file.write_text(json.dumps(service), encoding="utf-8")
+                route_file.write_text(json.dumps(route), encoding="utf-8")
+                harness = f'''set -Eeuo pipefail
+{validator}
+WORK_DIR={shlex.quote(str(root / f"work-{index}"))}
+mkdir -p "$WORK_DIR"
+oc() {{ local argument; for argument in "$@"; do :; done; cat "$argument"; }}
+validate_manifest_topology target {shlex.quote(str(deployment_file))} {shlex.quote(str(service_file))} {shlex.quote(str(route_file))}
+'''
+                result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True)
+
+                # Then: every non-exact APP_ORIGIN form is release-blocking.
+                self.assertNotEqual(result.returncode, 0, result.stderr)
 
     def test_event_snapshot_is_ordered_and_captures_mutable_review_fields(self):
         # Given: an event's state, note, and timestamp are all audit data.
@@ -1749,8 +1936,9 @@ printf 'sha=%s\\n' "$OLD_RUNTIME_SERVER_SHA256"
         rollback = script[script.index("rollback_deployment() {") : script.index("attempt_rollback() {")]
 
         # When: either the Deployment or Service replacement fails in an executable oc fixture.
+        topology_mode = "legacy"
         for failure in ("deployment-rollback.json", "service-rollback.json"):
-            with self.subTest(failure=failure), tempfile.TemporaryDirectory() as directory:
+            with self.subTest(topology_mode=topology_mode, failure=failure), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
                 for kind, uid in (("Deployment", "deployment-uid"), ("Service", "service-uid"), ("Route", "route-uid")):
                     metadata = {"name": "etl-hybrid-bbqc", "namespace": "project", "uid": uid, "resourceVersion": "1", "labels": {}, "annotations": {}}
@@ -1780,9 +1968,11 @@ FORWARD_DEPLOYMENT_SHA256=$(sha256sum "$FORWARD_DEPLOYMENT_FILE" | cut -d' ' -f1
 FORWARD_SERVICE_SHA256=$(sha256sum "$FORWARD_SERVICE_FILE" | cut -d' ' -f1)
 FORWARD_ROUTE_SHA256=$(sha256sum "$FORWARD_ROUTE_FILE" | cut -d' ' -f1)
 OLD_PROXY_IMAGE=proxy
-verify_context() {{ :; }}
-validate_manifest_topology() {{ :; }}
-validate_oauth2_proxy_topology() {{ :; }}
+OLD_WEB_IMAGE=web
+    OLD_TOPOLOGY_MODE={topology_mode}
+    verify_context() {{ :; }}
+    validate_manifest_topology() {{ test "$5" = "$OLD_TOPOLOGY_MODE"; }}
+    validate_oauth2_proxy_topology() {{ test "$3" = "$OLD_TOPOLOGY_MODE"; }}
 oc() {{
   if [[ "$*" == *" get deployment/"* ]]; then cat "$FORWARD_DEPLOYMENT_FILE"; return; fi
   if [[ "$*" == *" get service/"* ]]; then cat "$FORWARD_SERVICE_FILE"; return; fi

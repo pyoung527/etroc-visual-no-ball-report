@@ -113,7 +113,7 @@ cleanup() {
 cleanup_candidate_probe_pod() {
   local current_uid delete_options encoded_project encoded_pod status
   if test "$CANDIDATE_PROBE_POD_OWNED" != 1; then
-    return
+    return 0
   fi
   if test -z "$CANDIDATE_PROBE_POD" || test -z "$CANDIDATE_PROBE_POD_UID"; then
     printf '%s\n' 'WARNING candidate probe ownership lacks an exact UID; refusing deletion' >&2
@@ -469,26 +469,44 @@ print(normalized, len(values), hashlib.sha256(normalized.encode('utf-8')).hexdig
 PY
 }
 
-validate_oauth2_proxy_topology() {
-  local phase expected_proxy_image deployment_file services_file routes_file
-  phase="$1"
-  expected_proxy_image="${2:-}"
-  deployment_file="${WORK_DIR}/topology-${phase}-deployment.json"
-  services_file="${WORK_DIR}/topology-${phase}-services.json"
-  routes_file="${WORK_DIR}/topology-${phase}-routes.json"
-  oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$deployment_file"
-  oc -n "$PROJECT" get services -o json > "$services_file"
-  oc -n "$PROJECT" get routes -o json > "$routes_file"
-  EXPECTED_PROXY_IMAGE="$expected_proxy_image" python3 -I - "$deployment_file" "$services_file" "$routes_file" <<'PY'
+validate_oauth2_proxy_topology_files() {
+  local deployment_file services_file routes_file expected_proxy_image expected_mode expected_web_image
+  deployment_file="$1"
+  services_file="$2"
+  routes_file="$3"
+  expected_proxy_image="${4:-}"
+  expected_mode="${5:-target}"
+  expected_web_image="${6:-}"
+EXPECTED_PROXY_IMAGE="$expected_proxy_image" EXPECTED_TOPOLOGY_MODE="$expected_mode" EXPECTED_WEB_IMAGE="$expected_web_image" python3 -I - "$deployment_file" "$services_file" "$routes_file" <<'PY'
 import json, os, re, sys
-deployment, services, routes = (json.load(open(path, encoding='utf-8')) for path in sys.argv[1:])
-containers = {item.get('name'): item for item in deployment.get('spec', {}).get('template', {}).get('spec', {}).get('containers', [])}
+deployment, services_source, routes_source = (json.load(open(path, encoding='utf-8')) for path in sys.argv[1:])
+if deployment.get('kind') != 'Deployment':
+    raise SystemExit('BBQC proxy Deployment topology is malformed')
+services = services_source.get('items') if isinstance(services_source.get('items'), list) else [services_source] if services_source.get('kind') == 'Service' else None
+routes = routes_source.get('items') if isinstance(routes_source.get('items'), list) else [routes_source] if routes_source.get('kind') == 'Route' else None
+if services is None or routes is None:
+    raise SystemExit('BBQC proxy Service or Route topology is malformed')
+container_items = deployment.get('spec', {}).get('template', {}).get('spec', {}).get('containers')
+if not isinstance(container_items, list) or any(not isinstance(item, dict) or not isinstance(item.get('name'), str) for item in container_items):
+    raise SystemExit('BBQC proxy topology containers are malformed')
+containers = {item['name']: item for item in container_items}
+if len(containers) != len(container_items):
+    raise SystemExit('BBQC proxy topology containers are duplicated')
 web, proxy = containers.get('web'), containers.get('oauth2-proxy')
 if not isinstance(web, dict) or not isinstance(proxy, dict):
     raise SystemExit('BBQC proxy topology containers are incomplete')
-web_env = {item.get('name'): item.get('value') for item in web.get('env', [])}
-if web_env.get('HOST') != '127.0.0.1' or web_env.get('APP_ORIGIN') != 'https://etl-hybrid-bbqc.app.cern.ch':
+web_env_items = web.get('env', [])
+if not isinstance(web_env_items, list) or any(not isinstance(item, dict) or not isinstance(item.get('name'), str) for item in web_env_items):
+    raise SystemExit('web environment topology is malformed')
+web_env = {item['name']: item.get('value') for item in web_env_items}
+if len(web_env) != len(web_env_items) or web_env.get('HOST') != '127.0.0.1':
     raise SystemExit('web loopback topology mismatch')
+app_origins = [item for item in web_env_items if item['name'] == 'APP_ORIGIN']
+web_image = web.get('image')
+if not isinstance(web_image, str) or re.fullmatch(r'.+@sha256:[0-9a-f]{64}', web_image) is None:
+    raise SystemExit('web image is not digest pinned')
+if os.environ['EXPECTED_WEB_IMAGE'] and web_image != os.environ['EXPECTED_WEB_IMAGE']:
+    raise SystemExit('web image differs from live immutable image')
 if proxy.get('ports') != [{'name': 'oauth', 'containerPort': 4180, 'protocol': 'TCP'}]:
     raise SystemExit('oauth2-proxy listen ports mismatch')
 image = proxy.get('image')
@@ -496,21 +514,28 @@ if not isinstance(image, str) or re.fullmatch(r'.+@sha256:[0-9a-f]{64}', image) 
     raise SystemExit('oauth2-proxy image is not digest pinned')
 if os.environ['EXPECTED_PROXY_IMAGE'] and image != os.environ['EXPECTED_PROXY_IMAGE']:
     raise SystemExit('oauth2-proxy image differs from captured reviewed digest')
-expected_args = [
+legacy_args = [
+    '--provider=oidc', '--http-address=0.0.0.0:4180', '--upstream=http://127.0.0.1:8080',
+    '--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback', '--email-domain=*',
+    '--reverse-proxy=true', '--pass-host-header=true', '--pass-user-headers=true',
+    '--set-xauthrequest=true', '--skip-provider-button=true', '--cookie-secure=true',
+    '--cookie-samesite=lax',
+]
+target_args = [
     '--provider=oidc', '--http-address=0.0.0.0:4180', '--upstream=http://127.0.0.1:8080',
     '--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback', '--email-domain=*',
     '--reverse-proxy=true', '--pass-host-header=true', '--pass-user-headers=true',
     '--skip-auth-strip-headers=false', '--skip-provider-button=true', '--cookie-secure=true',
     '--cookie-samesite=lax',
 ]
-if proxy.get('args') != expected_args:
+if proxy.get('args') not in (legacy_args, target_args):
     raise SystemExit('exact oauth2-proxy args mismatch')
 expected_service = 'etl-hybrid-bbqc'
 template_labels = deployment.get('spec', {}).get('template', {}).get('metadata', {}).get('labels', {})
 if not isinstance(template_labels, dict) or not template_labels:
     raise SystemExit('live pod-template labels are incomplete')
 selected_services = []
-for service in services.get('items', []):
+for service in services:
     selector = service.get('spec', {}).get('selector', {})
     ports = service.get('spec', {}).get('ports', [])
     selects_live_pod = isinstance(selector, dict) and bool(selector) and all(template_labels.get(key) == value for key, value in selector.items())
@@ -520,15 +545,11 @@ for service in services.get('items', []):
     name = service.get('metadata', {}).get('name')
     if name != expected_service:
         raise SystemExit('additional Service selects live web pod')
-    if any(port.get('targetPort') in ('web', 8080) or port.get('port') == 8080 for port in ports):
-        raise SystemExit('selected Service exposes backend web')
 if len(selected_services) != 1 or selected_services[0].get('metadata', {}).get('name') != expected_service:
     raise SystemExit('oauth2-proxy Service topology mismatch')
 ports = selected_services[0].get('spec', {}).get('ports', [])
-if ports != [{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]:
-    raise SystemExit('oauth2-proxy Service ports mismatch')
 matching_routes = []
-for route in routes.get('items', []):
+for route in routes:
     route_spec = route.get('spec', {})
     target = route_spec.get('to', {})
     if target.get('kind') == 'Service' and target.get('name') == expected_service:
@@ -542,24 +563,59 @@ if route_spec.get('to') != {'kind': 'Service', 'name': expected_service} or rout
     raise SystemExit('BBQC Route must target only the oauth2-proxy Service')
 if route_spec.get('tls') != {'termination': 'edge', 'insecureEdgeTerminationPolicy': 'Redirect'}:
     raise SystemExit('BBQC Route TLS topology mismatch')
-print('BBQC_OAUTH2_PROXY_TOPOLOGY PASS')
+legacy = not app_origins and proxy.get('args') == legacy_args and ports == [{'name': 'oauth', 'protocol': 'TCP', 'port': 8080, 'targetPort': 'oauth'}]
+target = app_origins == [{'name': 'APP_ORIGIN', 'value': 'https://etl-hybrid-bbqc.app.cern.ch'}] and proxy.get('args') == target_args and ports == [{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]
+if legacy == target:
+    raise SystemExit('BBQC proxy topology is neither exact legacy nor exact target')
+mode = 'legacy' if legacy else 'target'
+expected = os.environ['EXPECTED_TOPOLOGY_MODE']
+if expected not in {'either', mode}:
+    raise SystemExit(f'BBQC proxy topology mode mismatch: expected {expected}, got {mode}')
+print(mode)
 PY
 }
 
+validate_oauth2_proxy_topology() {
+  local phase expected_proxy_image expected_mode expected_web_image deployment_file services_file routes_file
+  phase="$1"
+  expected_proxy_image="${2:-}"
+  expected_mode="${3:-target}"
+  expected_web_image="${4:-}"
+  deployment_file="${WORK_DIR}/topology-${phase}-deployment.json"
+  services_file="${WORK_DIR}/topology-${phase}-services.json"
+  routes_file="${WORK_DIR}/topology-${phase}-routes.json"
+  oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$deployment_file"
+  oc -n "$PROJECT" get services -o json > "$services_file"
+  oc -n "$PROJECT" get routes -o json > "$routes_file"
+  validate_oauth2_proxy_topology_files "$deployment_file" "$services_file" "$routes_file" "$expected_proxy_image" "$expected_mode" "$expected_web_image"
+}
+
+validate_captured_oauth2_proxy_topology() {
+  local deployment_file service_file route_file expected_proxy_image expected_mode expected_web_image
+  deployment_file="$1"
+  service_file="$2"
+  route_file="$3"
+  expected_proxy_image="$4"
+  expected_mode="${5:-either}"
+  expected_web_image="$6"
+  validate_oauth2_proxy_topology_files "$deployment_file" "$service_file" "$route_file" "$expected_proxy_image" "$expected_mode" "$expected_web_image"
+}
+
 validate_manifest_topology() {
-  local phase deployment_manifest service_manifest route_manifest deployment_file service_file route_file
+  local phase deployment_manifest service_manifest route_manifest expected_mode deployment_file service_file route_file
   phase="$1"
   deployment_manifest="$2"
   service_manifest="$3"
   route_manifest="$4"
+  expected_mode="${5:-target}"
   deployment_file="${WORK_DIR}/rendered-${phase}-deployment.json"
   service_file="${WORK_DIR}/rendered-${phase}-service.json"
   route_file="${WORK_DIR}/rendered-${phase}-route.json"
   oc create --dry-run=client -o json -f "$deployment_manifest" > "$deployment_file"
   oc create --dry-run=client -o json -f "$service_manifest" > "$service_file"
   oc create --dry-run=client -o json -f "$route_manifest" > "$route_file"
-  python3 -I - "$deployment_file" "$service_file" "$route_file" <<'PY'
-import json, sys
+  EXPECTED_TOPOLOGY_MODE="$expected_mode" python3 -I - "$deployment_file" "$service_file" "$route_file" <<'PY'
+import json, os, re, sys
 deployment, service, route = (json.load(open(path, encoding='utf-8')) for path in sys.argv[1:])
 if [deployment.get('kind'), service.get('kind'), route.get('kind')] != ['Deployment', 'Service', 'Route']:
     raise SystemExit('unexpected canonical manifest kinds')
@@ -572,13 +628,15 @@ containers={item.get('name'): item for item in deployment.get('spec', {}).get('t
 web, proxy=containers.get('web'), containers.get('oauth2-proxy')
 if not isinstance(web, dict) or not isinstance(proxy, dict):
     raise SystemExit('canonical Deployment proxy topology is incomplete')
-web_env={item.get('name'): item.get('value') for item in web.get('env', [])}
-if web_env.get('HOST') != '127.0.0.1' or web_env.get('APP_ORIGIN') != 'https://etl-hybrid-bbqc.app.cern.ch':
+web_env_items=web.get('env', [])
+if not isinstance(web_env_items, list) or any(not isinstance(item, dict) or not isinstance(item.get('name'), str) for item in web_env_items):
+    raise SystemExit('canonical Deployment web environment topology is malformed')
+web_env={item['name']: item.get('value') for item in web_env_items}
+if len(web_env) != len(web_env_items) or web_env.get('HOST') != '127.0.0.1':
     raise SystemExit('canonical Deployment web loopback topology mismatch')
+app_origins=[item for item in web_env_items if item['name'] == 'APP_ORIGIN']
 if proxy.get('ports') != [{'name': 'oauth', 'containerPort': 4180, 'protocol': 'TCP'}]:
     raise SystemExit('canonical Deployment oauth2-proxy listen ports mismatch')
-if service.get('spec', {}).get('ports') != [{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]:
-    raise SystemExit('canonical Service must expose only oauth port 4180')
 if service.get('spec', {}).get('selector') != {'app': name}:
     raise SystemExit('canonical Service selector mismatch')
 route_spec=route.get('spec', {})
@@ -588,7 +646,18 @@ if route_spec.get('to') != {'kind': 'Service', 'name': name} or route_spec.get('
     raise SystemExit('canonical Route must target only the oauth Service port')
 if route_spec.get('tls') != {'termination': 'edge', 'insecureEdgeTerminationPolicy': 'Redirect'}:
     raise SystemExit('canonical Route TLS topology mismatch')
-print('BBQC_RENDERED_OAUTH2_PROXY_TOPOLOGY PASS')
+legacy_args=['--provider=oidc','--http-address=0.0.0.0:4180','--upstream=http://127.0.0.1:8080','--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback','--email-domain=*','--reverse-proxy=true','--pass-host-header=true','--pass-user-headers=true','--set-xauthrequest=true','--skip-provider-button=true','--cookie-secure=true','--cookie-samesite=lax']
+target_args=['--provider=oidc','--http-address=0.0.0.0:4180','--upstream=http://127.0.0.1:8080','--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback','--email-domain=*','--reverse-proxy=true','--pass-host-header=true','--pass-user-headers=true','--skip-auth-strip-headers=false','--skip-provider-button=true','--cookie-secure=true','--cookie-samesite=lax']
+if proxy.get('args') not in (legacy_args, target_args):
+    raise SystemExit('exact oauth2-proxy args mismatch')
+legacy=not app_origins and proxy.get('args') == legacy_args and service.get('spec', {}).get('ports') == [{'name': 'oauth', 'protocol': 'TCP', 'port': 8080, 'targetPort': 'oauth'}]
+target=app_origins == [{'name': 'APP_ORIGIN', 'value': 'https://etl-hybrid-bbqc.app.cern.ch'}] and proxy.get('args') == target_args and service.get('spec', {}).get('ports') == [{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]
+if legacy == target:
+    raise SystemExit('rendered proxy topology is neither exact legacy nor exact target')
+mode='legacy' if legacy else 'target'
+if os.environ['EXPECTED_TOPOLOGY_MODE'] != mode:
+    raise SystemExit(f'rendered proxy topology mode mismatch: expected {os.environ["EXPECTED_TOPOLOGY_MODE"]}, got {mode}')
+print(f'BBQC_RENDERED_OAUTH2_PROXY_TOPOLOGY PASS mode={mode}')
 PY
 }
 
@@ -691,6 +760,7 @@ render_forward_object() {
   local kind="$1" baseline_file="$2" captured_file="$3" forward_file="$4"
   RELEASE_KIND="$kind" BASELINE_OBJECT_FILE="$baseline_file" CAPTURED_OBJECT_FILE="$captured_file" \
     NEW_WEB_IMAGE="$NEW_WEB_IMAGE" OLD_WEB_IMAGE="$OLD_WEB_IMAGE" OLD_PROXY_IMAGE="$OLD_PROXY_IMAGE" \
+    OLD_TOPOLOGY_MODE="$OLD_TOPOLOGY_MODE" \
     SOURCE_REVISION="$SOURCE_REVISION" BUILD_CONTEXT_SHA256="$BUILD_CONTEXT_SHA256" BUILD_NAME="$BUILD_NAME" \
     ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY' > "$forward_file"
 import copy, json, os, sys
@@ -719,16 +789,59 @@ if normalized_annotations(captured_metadata) != baseline_annotations:
     raise SystemExit(f'captured {kind} annotations differ from pinned baseline')
 baseline_spec=copy.deepcopy(baseline.get('spec'))
 captured_spec=copy.deepcopy(captured.get('spec'))
+old_topology_mode=os.environ['OLD_TOPOLOGY_MODE']
+if old_topology_mode not in {'legacy', 'target'}:
+    raise SystemExit('captured topology mode is invalid')
+legacy_args=[
+    '--provider=oidc', '--http-address=0.0.0.0:4180', '--upstream=http://127.0.0.1:8080',
+    '--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback', '--email-domain=*',
+    '--reverse-proxy=true', '--pass-host-header=true', '--pass-user-headers=true',
+    '--set-xauthrequest=true', '--skip-provider-button=true', '--cookie-secure=true',
+    '--cookie-samesite=lax',
+]
+target_args=[
+    '--provider=oidc', '--http-address=0.0.0.0:4180', '--upstream=http://127.0.0.1:8080',
+    '--redirect-url=https://etl-hybrid-bbqc.app.cern.ch/oauth2/callback', '--email-domain=*',
+    '--reverse-proxy=true', '--pass-host-header=true', '--pass-user-headers=true',
+    '--skip-auth-strip-headers=false', '--skip-provider-button=true', '--cookie-secure=true',
+    '--cookie-samesite=lax',
+]
 if kind == 'Deployment':
     baseline_containers={item.get('name'): item for item in baseline_spec.get('template', {}).get('spec', {}).get('containers', [])}
     captured_containers={item.get('name'): item for item in captured_spec.get('template', {}).get('spec', {}).get('containers', [])}
     if set(baseline_containers) != set(captured_containers) or captured_containers.get('web', {}).get('image') != os.environ['OLD_WEB_IMAGE'] or captured_containers.get('oauth2-proxy', {}).get('image') != os.environ['OLD_PROXY_IMAGE']:
         raise SystemExit('captured Deployment image identity differs from reviewed pre-release digests')
     captured_containers['web']['image']=baseline_containers['web']['image']
+    if old_topology_mode == 'legacy':
+        baseline_web=baseline_containers.get('web')
+        captured_web=captured_containers.get('web')
+        baseline_proxy=baseline_containers.get('oauth2-proxy')
+        captured_proxy=captured_containers.get('oauth2-proxy')
+        if not all(isinstance(item, dict) for item in (baseline_web, captured_web, baseline_proxy, captured_proxy)):
+            raise SystemExit('captured Deployment topology containers are malformed')
+        baseline_env=baseline_web.get('env')
+        captured_env=captured_web.get('env')
+        if not isinstance(baseline_env, list) or not isinstance(captured_env, list) or any(not isinstance(item, dict) or not isinstance(item.get('name'), str) for item in baseline_env + captured_env):
+            raise SystemExit('captured Deployment web environment is malformed')
+        baseline_origins=[(index, item) for index, item in enumerate(baseline_env) if item['name'] == 'APP_ORIGIN']
+        if len(baseline_origins) != 1 or baseline_origins[0][1] != {'name': 'APP_ORIGIN', 'value': 'https://etl-hybrid-bbqc.app.cern.ch'}:
+            raise SystemExit('pinned Deployment APP_ORIGIN topology is invalid')
+        if any(item['name'] == 'APP_ORIGIN' for item in captured_env):
+            raise SystemExit('captured legacy Deployment APP_ORIGIN is present')
+        captured_env.insert(baseline_origins[0][0], copy.deepcopy(baseline_origins[0][1]))
+        if captured_proxy.get('args') != legacy_args or baseline_proxy.get('args') != target_args:
+            raise SystemExit('captured legacy Deployment proxy args are not the reviewed delta')
+        captured_proxy['args']=copy.deepcopy(baseline_proxy['args'])
 if kind == 'Service':
     for field in ('clusterIP', 'clusterIPs', 'ipFamilies', 'ipFamilyPolicy', 'healthCheckNodePort'):
         if field in captured_spec:
             baseline_spec[field]=captured_spec[field]
+    if old_topology_mode == 'legacy':
+        legacy_ports=[{'name': 'oauth', 'protocol': 'TCP', 'port': 8080, 'targetPort': 'oauth'}]
+        target_ports=[{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]
+        if captured_spec.get('ports') != legacy_ports or baseline_spec.get('ports') != target_ports:
+            raise SystemExit('captured legacy Service port is not the reviewed delta')
+        captured_spec['ports']=copy.deepcopy(baseline_spec['ports'])
 if captured_spec != baseline_spec:
     raise SystemExit(f'captured {kind} spec differs from pinned baseline')
 uid=captured_metadata.get('uid')
@@ -912,8 +1025,8 @@ rollback_deployment() {
   if test "$(cat "$route_action")" = restore; then
     if ! oc -n "$PROJECT" replace --save-config=false -f "$route_rendered"; then rollback_failures=$((rollback_failures + 1)); fi
   fi
-  if ! validate_manifest_topology rollback "$deployment_topology" "$service_topology" "$route_topology"; then rollback_failures=$((rollback_failures + 1)); fi
-  if ! validate_oauth2_proxy_topology rollback "$OLD_PROXY_IMAGE"; then rollback_failures=$((rollback_failures + 1)); fi
+  if ! validate_manifest_topology rollback "$deployment_topology" "$service_topology" "$route_topology" "$OLD_TOPOLOGY_MODE"; then rollback_failures=$((rollback_failures + 1)); fi
+  if ! validate_oauth2_proxy_topology rollback "$OLD_PROXY_IMAGE" "$OLD_TOPOLOGY_MODE" "$OLD_WEB_IMAGE"; then rollback_failures=$((rollback_failures + 1)); fi
   if ! oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o json > "$deployment_current"; then rollback_failures=$((rollback_failures + 1)); fi
   if ! oc -n "$PROJECT" get service/"$DEPLOYMENT" -o json > "$service_current"; then rollback_failures=$((rollback_failures + 1)); fi
   if ! oc -n "$PROJECT" get route/"$DEPLOYMENT" -o json > "$route_current"; then rollback_failures=$((rollback_failures + 1)); fi
@@ -1035,7 +1148,7 @@ oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s
 DEPLOYMENT_UID="$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.uid}')"
 [[ "$DEPLOYMENT_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
 verify_context
-validate_oauth2_proxy_topology preflight
+validate_oauth2_proxy_topology preflight '' either
 
 download "${RAW_ROOT}/hybrid-bbqc/openshift/select_single_app_pod.py" "$SELECTOR"
 printf '%s  %s\n' "$SELECTOR_SHA256" "$SELECTOR" | sha256sum -c -
@@ -1049,8 +1162,6 @@ extract_previous_runtime_server
 RAW_OLD_PROXY_IMAGE="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{.status.containerStatuses[?(@.name=="oauth2-proxy")].imageID}')"
 OLD_PROXY_IMAGE="${RAW_OLD_PROXY_IMAGE#docker-pullable://}"
 case "$OLD_PROXY_IMAGE" in *@sha256:*) ;; *) printf '%s\n' 'Current proxy image is not immutable.' >&2; false;; esac
-validate_oauth2_proxy_topology captured-pre-rollout "$OLD_PROXY_IMAGE"
-
 BEFORE_COMMENTS="$(oc -n "$PROJECT" exec "$POD" -c web -- python -c \
   "import sqlite3; print(sqlite3.connect('/data/comments.sqlite3').execute('SELECT COUNT(*) FROM comments').fetchone()[0])")"
 [[ "$BEFORE_COMMENTS" =~ ^[0-9]+$ ]]
@@ -1138,6 +1249,13 @@ PY
 [[ "$SERVICE_RESOURCE_VERSION" =~ ^[A-Za-z0-9._:-]+$ ]]
 [[ "$ROUTE_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
 [[ "$ROUTE_RESOURCE_VERSION" =~ ^[A-Za-z0-9._:-]+$ ]]
+OLD_TOPOLOGY_MODE="$(validate_captured_oauth2_proxy_topology "$CAPTURED_DEPLOYMENT_FILE" "$CAPTURED_SERVICE_FILE" "$CAPTURED_ROUTE_FILE" "$OLD_PROXY_IMAGE" either "$OLD_WEB_IMAGE")"
+case "$OLD_TOPOLOGY_MODE" in legacy|target) ;; *) printf 'Unexpected captured topology mode: %s\n' "$OLD_TOPOLOGY_MODE" >&2; false;; esac
+validate_oauth2_proxy_topology captured-bind "$OLD_PROXY_IMAGE" "$OLD_TOPOLOGY_MODE" "$OLD_WEB_IMAGE" >/dev/null
+test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$DEPLOYMENT_RESOURCE_VERSION"
+test "$(oc -n "$PROJECT" get service/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$SERVICE_RESOURCE_VERSION"
+test "$(oc -n "$PROJECT" get route/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$ROUTE_RESOURCE_VERSION"
+printf 'OLD_TOPOLOGY_MODE=%s\n' "$OLD_TOPOLOGY_MODE"
 read -r BUILDCONFIG_UID BUILDCONFIG_RESOURCE_VERSION < <(python3 -I - "$BUILDCONFIG_FILE" <<'PY'
 import json, sys
 source=json.load(open(sys.argv[1], encoding='utf-8'))
@@ -1458,7 +1576,7 @@ PY
   declare -p SOURCE_REVISION ETROC_DATASET_REL ETROC_MANIFEST_SHA256 API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
   declare -p DEPLOYMENT_MANIFEST_SHA256 SERVICE_MANIFEST_SHA256 ROUTE_MANIFEST_SHA256
   declare -p ETROC_REVIEWER_USERS_COUNT ETROC_REVIEWER_USERS_SHA256
-  declare -p DEPLOYMENT_UID SERVICE_UID ROUTE_UID OLD_WEB_IMAGE OLD_RUNTIME_SERVER_SHA256 OLD_PROXY_IMAGE BEFORE_COMMENTS STAMP BACKUP BACKUP_DIR DURABLE_STORAGE_TYPE DURABLE_STORAGE_CAPACITY_KIB DURABLE_STORAGE_USED_KIB DURABLE_STORAGE_FREE_KIB LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256 BACKUP_HYBRID_SCHEMA_SHA256
+  declare -p DEPLOYMENT_UID SERVICE_UID ROUTE_UID OLD_WEB_IMAGE OLD_RUNTIME_SERVER_SHA256 OLD_PROXY_IMAGE OLD_TOPOLOGY_MODE BEFORE_COMMENTS STAMP BACKUP BACKUP_DIR DURABLE_STORAGE_TYPE DURABLE_STORAGE_CAPACITY_KIB DURABLE_STORAGE_USED_KIB DURABLE_STORAGE_FREE_KIB LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256 BACKUP_HYBRID_SCHEMA_SHA256
   declare -p DEPLOYMENT_RESOURCE_VERSION SERVICE_RESOURCE_VERSION ROUTE_RESOURCE_VERSION CAPTURED_DEPLOYMENT_FILE CAPTURED_DEPLOYMENT_SHA256 CAPTURED_SERVICE_FILE CAPTURED_SERVICE_SHA256 CAPTURED_ROUTE_FILE CAPTURED_ROUTE_SHA256
   declare -p BUILDCONFIG_FILE BUILDCONFIG_SHA256 BUILDCONFIG_UID BUILDCONFIG_RESOURCE_VERSION
   declare -p OLD_DEPLOYMENT_FILE OLD_DEPLOYMENT_SHA256 OLD_SERVICE_FILE OLD_SERVICE_SHA256 OLD_ROUTE_FILE OLD_ROUTE_SHA256 FORWARD_DEPLOYMENT_FILE FORWARD_SERVICE_FILE FORWARD_ROUTE_FILE BUILD_CONTEXT_SHA256
@@ -1626,6 +1744,7 @@ cleanup_candidate_probe_pod
 printf 'CANDIDATE_IMAGE_STARTUP PASS image=%s\n' "$NEW_WEB_IMAGE"
 
 verify_context
+validate_oauth2_proxy_topology pre-mutation "$OLD_PROXY_IMAGE" "$OLD_TOPOLOGY_MODE" "$OLD_WEB_IMAGE" >/dev/null
 test "$(oc -n "$PROJECT" get deployment/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$DEPLOYMENT_RESOURCE_VERSION"
 test "$(oc -n "$PROJECT" get service/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$SERVICE_RESOURCE_VERSION"
 test "$(oc -n "$PROJECT" get route/"$DEPLOYMENT" -o jsonpath='{.metadata.resourceVersion}')" = "$ROUTE_RESOURCE_VERSION"
@@ -1650,7 +1769,7 @@ oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_ROUTE_FILE"
 oc -n "$PROJECT" replace --save-config=false -f "$FORWARD_DEPLOYMENT_FILE"
 oc -n "$PROJECT" rollout status deployment/"$DEPLOYMENT" --timeout=300s
 verify_context
-validate_oauth2_proxy_topology post-rollout "$OLD_PROXY_IMAGE"
+validate_oauth2_proxy_topology post-rollout "$OLD_PROXY_IMAGE" target "$NEW_WEB_IMAGE" >/dev/null
 POD="$(select_single_app_pod)"
 RAW_POD_WEB_IMAGE="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{.status.containerStatuses[?(@.name=="web")].imageID}')"
 POD_WEB_IMAGE="${RAW_POD_WEB_IMAGE#docker-pullable://}"
