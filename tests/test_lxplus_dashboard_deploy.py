@@ -1631,6 +1631,14 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
             "candidate HTTP seed event is invalid",
         ):
             self.assertIn(required, local_gate)
+        resets = local_gate.split("db.execute('DROP TRIGGER etroc_review_no_delete')")[1:]
+        self.assertEqual(len(resets), 2)
+        for reset in resets:
+            delete = reset.index("DELETE FROM etroc_review_events WHERE acquisition_id=?")
+            restore = reset.index("db.execute(etroc_reviews.DDL[7])")
+            validate = reset.index("etroc_reviews.init_schema(candidate)")
+            self.assertLess(delete, restore)
+            self.assertLess(restore, validate)
         for required in (
             'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
             'CANDIDATE_HTTP_ACQUISITION_FILE',

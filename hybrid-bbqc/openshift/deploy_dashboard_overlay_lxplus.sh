@@ -1516,6 +1516,7 @@ record=evidence.by_acquisition[sorted(evidence.by_acquisition)[0]]
 with sqlite3.connect(candidate) as db:
     db.execute('DROP TRIGGER etroc_review_no_delete')
     db.execute('DELETE FROM etroc_review_events WHERE acquisition_id=?', (record.acquisition_id,))
+    db.execute(etroc_reviews.DDL[7])
 etroc_reviews.init_schema(candidate)
 with sqlite3.connect(candidate) as db:
     etroc_reviews.validate_schema(db)
@@ -1567,6 +1568,7 @@ if replay2.status != 200 or replay2.payload.get('idempotent_replay') is not True
 with sqlite3.connect(candidate) as db:
     db.execute('DROP TRIGGER etroc_review_no_delete')
     db.execute('DELETE FROM etroc_review_events WHERE acquisition_id=?', (record.acquisition_id,))
+    db.execute(etroc_reviews.DDL[7])
 etroc_reviews.init_schema(candidate)
 seed_request={field: getattr(record, field) for field in etroc_reviews.KEY_FIELDS}
 seed_request.update({'state': 'reviewed_no_optical_concern', 'note': 'disposable HTTP existing-history seed', 'expected_current_event_id': None, 'mutation_id': str(uuid.uuid4())})
