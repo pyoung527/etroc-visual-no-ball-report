@@ -1287,6 +1287,75 @@ printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
         self.assertEqual(annotations["haproxy.router.openshift.io/ip_whitelist"], "10.0.0.0/8")
         self.assertNotIn("kubectl.kubernetes.io/last-applied-configuration", annotations)
 
+    def test_forward_renderer_normalizes_only_reviewed_route_server_defaults(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("import copy, json, os, sys", script.index("render_forward_object() {"))
+        renderer = script[start : script.index("\nPY\n", start)]
+        baseline = {
+            "apiVersion": "route.openshift.io/v1", "kind": "Route",
+            "metadata": {"name": "etl-hybrid-bbqc", "labels": {"app": "etl-hybrid-bbqc"}, "annotations": {}},
+            "spec": {"host": "etl-hybrid-bbqc.app.cern.ch", "to": {"kind": "Service", "name": "etl-hybrid-bbqc"}, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}},
+        }
+        captures = (
+            ("weight and wildcard server defaults", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100}, None, {"wildcardPolicy": "None"}, {}, False),
+            ("pinned wildcard policy remains", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100}, None, {"wildcardPolicy": "None"}, {"wildcardPolicy": "None"}, False),
+            ("captured omission differs from pinned wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {}, {"wildcardPolicy": "None"}, True),
+            ("null weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": None}, None, {}, {}, True),
+            ("zero weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 0}, None, {}, {}, True),
+            ("other weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 99}, None, {}, {}, True),
+            ("string weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": "100"}, None, {}, {}, True),
+            ("extra to key", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100, "unexpected": True}, None, {}, {}, True),
+            ("empty wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": ""}, {}, True),
+            ("subdomain wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": "Subdomain"}, {}, True),
+            ("null wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": None}, {}, True),
+            ("other wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": "Wildcard"}, {}, True),
+            ("extra route key", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"unexpected": True}, {}, True),
+            ("explicit empty alternate backends", {"kind": "Service", "name": "etl-hybrid-bbqc"}, [], {}, {}, True),
+            ("alternate backend", {"kind": "Service", "name": "etl-hybrid-bbqc"}, [{"kind": "Service", "name": "other", "weight": 1}], {}, {}, True),
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for index, (case, route_to, alternate_backends, captured_fields, baseline_fields, rejected) in enumerate(captures):
+                pinned = json.loads(json.dumps(baseline))
+                pinned["spec"].update(baseline_fields)
+                baseline_file = root / f"baseline-{index}.json"
+                baseline_file.write_text(json.dumps(pinned), encoding="utf-8")
+                captured = json.loads(json.dumps(baseline))
+                captured["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "route-uid", "resourceVersion": "9"}
+                captured["spec"]["to"] = route_to
+                captured["spec"].update(captured_fields)
+                if alternate_backends is not None:
+                    captured["spec"]["alternateBackends"] = alternate_backends
+                captured_file = root / f"captured-{index}.json"
+                captured_file.write_text(json.dumps(captured), encoding="utf-8")
+                environment = os.environ | {"RELEASE_KIND": "Route", "BASELINE_OBJECT_FILE": str(baseline_file), "CAPTURED_OBJECT_FILE": str(captured_file), "NEW_WEB_IMAGE": "unused", "OLD_WEB_IMAGE": "unused", "OLD_PROXY_IMAGE": "unused", "OLD_TOPOLOGY_MODE": "target", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch"}
+                result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
+                self.assertEqual(result.returncode != 0, rejected, f"{case}: {result.stderr}")
+                if not rejected:
+                    self.assertEqual(json.loads(result.stdout)["spec"], pinned["spec"])
+
+    def test_captured_rollback_renderer_preserves_route_wildcard_policy(self):
+        # Given: the captured Route has OpenShift's explicit server-default policy.
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("import copy, json, os", script.index("render_captured_rollback_object() {"))
+        renderer = script[start : script.index("\nPY\n", start)]
+        captured = {
+            "apiVersion": "route.openshift.io/v1", "kind": "Route",
+            "metadata": {"name": "etl-hybrid-bbqc", "namespace": "etroc-solder-inspection", "uid": "route-uid"},
+            "spec": {"host": "etl-hybrid-bbqc.app.cern.ch", "to": {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100}, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}, "wildcardPolicy": "None"},
+        }
+
+        # When: rollback is rendered from the captured Route.
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            captured_file, rollback_file = root / "captured.json", root / "rollback.json"
+            captured_file.write_text(json.dumps(captured), encoding="utf-8")
+            result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=os.environ | {"CAPTURED_OBJECT_FILE": str(captured_file), "ROLLBACK_OBJECT_FILE": str(rollback_file)})
+
+            # Then: the rollback artifact accepts and retains the captured server default.
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(rollback_file.read_text(encoding="utf-8"))["spec"]["wildcardPolicy"], "None")
+
     def test_forward_renderer_rejects_annotation_drift_except_known_generated_values(self):
         # Given: generated annotations are tolerated but policy and unknown annotations are not.
         script = SCRIPT.read_text(encoding="utf-8")
@@ -1565,18 +1634,37 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         legacy_value_from = deployment(False, legacy_args)
         legacy_value_from["spec"]["template"]["spec"]["containers"][0]["env"].append(invalid_origins[0][1])
         cases += (("legacy APP_ORIGIN valueFrom", legacy_value_from, 8080, "", True),)
-        route = {"items": [{"metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"host": "etl-hybrid-bbqc.app.cern.ch", "to": {"kind": "Service", "name": "etl-hybrid-bbqc"}, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}}}]}
+        route_forms = (
+            ("source omission", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {}, False),
+            ("weight and wildcard server defaults", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100}, None, {"wildcardPolicy": "None"}, False),
+            ("null weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": None}, None, {}, True),
+            ("zero weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 0}, None, {}, True),
+            ("other weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 99}, None, {}, True),
+            ("string weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": "100"}, None, {}, True),
+            ("extra to key", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100, "unexpected": True}, None, {}, True),
+            ("empty wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": ""}, True),
+            ("subdomain wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": "Subdomain"}, True),
+            ("null wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": None}, True),
+            ("other wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": "Wildcard"}, True),
+            ("extra route key", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"unexpected": True}, True),
+            ("explicit empty alternate backends", {"kind": "Service", "name": "etl-hybrid-bbqc"}, [], {}, True),
+            ("alternate backend", {"kind": "Service", "name": "etl-hybrid-bbqc"}, [{"kind": "Service", "name": "other", "weight": 1}], {}, True),
+            ("malformed alternate backends", {"kind": "Service", "name": "etl-hybrid-bbqc"}, {"name": "other"}, {}, True),
+        )
         for name, deployment_object, service_port, mode, rejected in cases:
-            with self.subTest(name=name), tempfile.TemporaryDirectory() as directory:
-                root = Path(directory)
-                (root / "bin").mkdir()
-                service = {"items": [{"metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"selector": {"app": "etl-hybrid-bbqc"}, "ports": [{"name": "oauth", "protocol": "TCP", "port": service_port, "targetPort": "oauth"}]}}]}
-                for filename, value in (("deployment.json", deployment_object), ("services.json", service), ("routes.json", route)):
-                    (root / filename).write_text(json.dumps(value), encoding="utf-8")
-                fake_oc = root / "bin" / "oc"
-                fake_oc.write_text("#!/usr/bin/env bash\ncase \"$*\" in\n  *'get deployment/'*) cat \"$FAKE_TOPOLOGY_DIR/deployment.json\" ;;\n  *'get services '*) cat \"$FAKE_TOPOLOGY_DIR/services.json\" ;;\n  *'get routes '*) cat \"$FAKE_TOPOLOGY_DIR/routes.json\" ;;\n  *) exit 64 ;;\nesac\n", encoding="utf-8")
-                fake_oc.chmod(0o755)
-                harness = f'''set -Eeuo pipefail
+            for route_name, route_to, alternate_backends, route_fields, route_rejected in route_forms:
+                with self.subTest(name=name, route=route_name), tempfile.TemporaryDirectory() as directory:
+                    root = Path(directory)
+                    (root / "bin").mkdir()
+                    service = {"items": [{"metadata": {"name": "etl-hybrid-bbqc"}, "spec": {"selector": {"app": "etl-hybrid-bbqc"}, "ports": [{"name": "oauth", "protocol": "TCP", "port": service_port, "targetPort": "oauth"}]}}]}
+                    route_spec = {"host": "etl-hybrid-bbqc.app.cern.ch", "to": route_to, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}, **route_fields, **({"alternateBackends": alternate_backends} if alternate_backends is not None else {})}
+                    route = {"items": [{"metadata": {"name": "etl-hybrid-bbqc"}, "spec": route_spec}]}
+                    for filename, value in (("deployment.json", deployment_object), ("services.json", service), ("routes.json", route)):
+                        (root / filename).write_text(json.dumps(value), encoding="utf-8")
+                    fake_oc = root / "bin" / "oc"
+                    fake_oc.write_text("#!/usr/bin/env bash\ncase \"$*\" in\n  *'get deployment/'*) cat \"$FAKE_TOPOLOGY_DIR/deployment.json\" ;;\n  *'get services '*) cat \"$FAKE_TOPOLOGY_DIR/services.json\" ;;\n  *'get routes '*) cat \"$FAKE_TOPOLOGY_DIR/routes.json\" ;;\n  *) exit 64 ;;\nesac\n", encoding="utf-8")
+                    fake_oc.chmod(0o755)
+                    harness = f'''set -Eeuo pipefail
 {topology}
 WORK_DIR={shlex.quote(str(root / "work"))}
 PROJECT=project
@@ -1585,10 +1673,10 @@ mkdir -p "$WORK_DIR"
 OLD_TOPOLOGY_MODE="$(validate_oauth2_proxy_topology captured-pre-rollout {shlex.quote(digest)} either)"
 printf 'OLD_TOPOLOGY_MODE=%s\\n' "$OLD_TOPOLOGY_MODE"
 '''
-                result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True, env=os.environ | {"PATH": f"{root / 'bin'}:{os.environ['PATH']}", "FAKE_TOPOLOGY_DIR": str(root)})
-                self.assertEqual(result.returncode != 0, rejected, result.stderr)
-                if not rejected:
-                    self.assertEqual(result.stdout, f"OLD_TOPOLOGY_MODE={mode}\n")
+                    result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True, env=os.environ | {"PATH": f"{root / 'bin'}:{os.environ['PATH']}", "FAKE_TOPOLOGY_DIR": str(root)})
+                    self.assertEqual(result.returncode != 0, rejected or route_rejected, result.stderr)
+                    if not rejected and not route_rejected:
+                        self.assertEqual(result.stdout, f"OLD_TOPOLOGY_MODE={mode}\n")
 
     def test_captured_topology_classification_binds_legacy_rollback_before_live_refetch(self):
         # Given: an earlier preflight could observe target while the durable capture is legacy.
@@ -1654,6 +1742,38 @@ validate_manifest_topology target {shlex.quote(str(deployment_file))} {shlex.quo
 
                 # Then: every non-exact APP_ORIGIN form is release-blocking.
                 self.assertNotEqual(result.returncode, 0, result.stderr)
+
+            route_forms = (
+                ("source omission", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {}, "target", False),
+                ("legacy weight and wildcard server defaults", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100}, None, {"wildcardPolicy": "None"}, "legacy", False),
+                ("target weight and wildcard server defaults", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100}, None, {"wildcardPolicy": "None"}, "target", False),
+                ("null weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": None}, None, {}, "target", True),
+                ("zero weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 0}, None, {}, "target", True),
+                ("other weight", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 99}, None, {}, "target", True),
+                ("extra to key", {"kind": "Service", "name": "etl-hybrid-bbqc", "weight": 100, "unexpected": True}, None, {}, "target", True),
+                ("empty wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": ""}, "target", True),
+                ("subdomain wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": "Subdomain"}, "target", True),
+                ("null wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": None}, "target", True),
+                ("other wildcard policy", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"wildcardPolicy": "Wildcard"}, "target", True),
+                ("extra route key", {"kind": "Service", "name": "etl-hybrid-bbqc"}, None, {"unexpected": True}, "target", True),
+                ("explicit empty alternate backends", {"kind": "Service", "name": "etl-hybrid-bbqc"}, [], {}, "target", True),
+                ("alternate backend", {"kind": "Service", "name": "etl-hybrid-bbqc"}, [{"kind": "Service", "name": "other", "weight": 1}], {}, "target", True),
+            )
+            for index, (case, route_to, alternate_backends, route_fields, mode, rejected) in enumerate(route_forms):
+                route_spec = {"host": "etl-hybrid-bbqc.app.cern.ch", "to": route_to, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}, **route_fields, **({"alternateBackends": alternate_backends} if alternate_backends is not None else {})}
+                route_file = root / f"route-weight-{index}.json"
+                route_file.write_text(json.dumps({"kind": "Route", "metadata": {"name": "etl-hybrid-bbqc"}, "spec": route_spec}), encoding="utf-8")
+                deployment_file = root / f"deployment-weight-{index}.json"
+                deployment_file.write_text(json.dumps(deployment), encoding="utf-8")
+                harness = f'''set -Eeuo pipefail
+{validator}
+WORK_DIR={shlex.quote(str(root / f"weight-work-{index}"))}
+mkdir -p "$WORK_DIR"
+oc() {{ local argument; for argument in "$@"; do :; done; cat "$argument"; }}
+validate_manifest_topology {mode} {shlex.quote(str(deployment_file))} {shlex.quote(str(service_file))} {shlex.quote(str(route_file))}
+'''
+                result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True)
+                self.assertEqual(result.returncode != 0, rejected, f"{case}: {result.stderr}")
 
     def test_event_snapshot_is_ordered_and_captures_mutable_review_fields(self):
         # Given: an event's state, note, and timestamp are all audit data.

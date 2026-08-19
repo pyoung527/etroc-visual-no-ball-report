@@ -559,7 +559,9 @@ if len(matching_routes) != 1 or matching_routes[0].get('metadata', {}).get('name
 route_spec = matching_routes[0].get('spec', {})
 if route_spec.get('host') != 'etl-hybrid-bbqc.app.cern.ch':
     raise SystemExit('route host topology mismatch')
-if route_spec.get('to') != {'kind': 'Service', 'name': expected_service} or route_spec.get('port') != {'targetPort': 'oauth'}:
+canonical_to = {'kind': 'Service', 'name': expected_service}
+server_defaulted_to = {'kind': 'Service', 'name': expected_service, 'weight': 100}
+if route_spec.get('to') not in (canonical_to, server_defaulted_to) or 'alternateBackends' in route_spec or route_spec.get('wildcardPolicy', 'None') != 'None' or set(route_spec) - {'host', 'to', 'port', 'tls', 'wildcardPolicy'} or route_spec.get('port') != {'targetPort': 'oauth'}:
     raise SystemExit('BBQC Route must target only the oauth2-proxy Service')
 if route_spec.get('tls') != {'termination': 'edge', 'insecureEdgeTerminationPolicy': 'Redirect'}:
     raise SystemExit('BBQC Route TLS topology mismatch')
@@ -642,7 +644,9 @@ if service.get('spec', {}).get('selector') != {'app': name}:
 route_spec=route.get('spec', {})
 if route_spec.get('host') != 'etl-hybrid-bbqc.app.cern.ch':
     raise SystemExit('canonical Route host mismatch')
-if route_spec.get('to') != {'kind': 'Service', 'name': name} or route_spec.get('port') != {'targetPort': 'oauth'}:
+canonical_to={'kind': 'Service', 'name': name}
+server_defaulted_to={'kind': 'Service', 'name': name, 'weight': 100}
+if route_spec.get('to') not in (canonical_to, server_defaulted_to) or 'alternateBackends' in route_spec or route_spec.get('wildcardPolicy', 'None') != 'None' or set(route_spec) - {'host', 'to', 'port', 'tls', 'wildcardPolicy'} or route_spec.get('port') != {'targetPort': 'oauth'}:
     raise SystemExit('canonical Route must target only the oauth Service port')
 if route_spec.get('tls') != {'termination': 'edge', 'insecureEdgeTerminationPolicy': 'Redirect'}:
     raise SystemExit('canonical Route TLS topology mismatch')
@@ -842,6 +846,10 @@ if kind == 'Service':
         if captured_spec.get('ports') != legacy_ports or baseline_spec.get('ports') != target_ports:
             raise SystemExit('captured legacy Service port is not the reviewed delta')
         captured_spec['ports']=copy.deepcopy(baseline_spec['ports'])
+if kind == 'Route' and baseline_spec.get('to') == {'kind': 'Service', 'name': 'etl-hybrid-bbqc'} and captured_spec.get('to') == {'kind': 'Service', 'name': 'etl-hybrid-bbqc', 'weight': 100}:
+    captured_spec['to']=copy.deepcopy(baseline_spec['to'])
+if kind == 'Route' and 'wildcardPolicy' not in baseline_spec and captured_spec.get('wildcardPolicy') == 'None':
+    captured_spec.pop('wildcardPolicy')
 if captured_spec != baseline_spec:
     raise SystemExit(f'captured {kind} spec differs from pinned baseline')
 uid=captured_metadata.get('uid')
