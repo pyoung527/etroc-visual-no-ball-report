@@ -494,6 +494,30 @@ measure_dashboard_headroom
         self.assertLess(script.index('validate_backup_directory "$BACKUP_DIR"'), gate + len('validate_backup_directory "$BACKUP_DIR"'))
         self.assertNotIn("rm -f \"$BACKUP_DIR", script)
 
+    def test_candidate_host_rehearsal_uses_the_pod_compatible_python_before_backup(self):
+        # Given: LXPLUS python3 is 3.9 while the immutable production runtime is Python 3.12.
+        script = SCRIPT.read_text(encoding="utf-8")
+
+        # Then: the helper pins and validates Python 3.12 before auth/backup, and only the
+        # host-side candidate-module rehearsal uses that interpreter.
+        self.assertIn("CANDIDATE_HOST_PYTHON='/usr/bin/python3.12'", script)
+        gate = script.index("verify_candidate_host_python\n")
+        self.assertLess(gate, script.index("ensure_authenticated\n"))
+        self.assertLess(gate, script.index('BACKUP="/data/comments.sqlite3.before-dashboard-'))
+        self.assertIn('candidate_python_version="$("$CANDIDATE_HOST_PYTHON" -I -c', script)
+        self.assertIn('test "$candidate_python_version" = 3.12.13', script)
+        self.assertIn('"$CANDIDATE_HOST_PYTHON" -I -c \'from dataclasses import make_dataclass;', script)
+        candidate_rehearsal = script.index('CANDIDATE_RUNTIME="${BUILD_CONTEXT}/runtime"')
+        candidate_command = script[candidate_rehearsal : script.index("<<'PY'", candidate_rehearsal)]
+        self.assertIn('"$CANDIDATE_HOST_PYTHON" -I -', candidate_command)
+        self.assertNotIn('python3 -I -', candidate_command)
+        candidate_version_gate = script.index(
+            'test "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- python --version 2>&1)" = "Python 3.12.13"'
+        )
+        self.assertGreater(candidate_version_gate, script.index('wait --for=condition=Ready pod/"$CANDIDATE_PROBE_POD"'))
+        self.assertLess(candidate_version_gate, script.index('cp "$CANDIDATE_DB" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3"'))
+        self.assertLess(candidate_version_gate, script.index("python /app/static/server.py"))
+
     def test_helper_has_valid_bash_syntax(self):
         result = subprocess.run(
             ["bash", "-n", str(SCRIPT)],

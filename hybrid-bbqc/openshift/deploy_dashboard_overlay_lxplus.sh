@@ -2,6 +2,7 @@
 set -Eeuo pipefail
 umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
+CANDIDATE_HOST_PYTHON='/usr/bin/python3.12'
 
 SOURCE_REVISION='041fbb0f63a8d2a1ec86be7ede2a28e8534e0f8c'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
@@ -236,6 +237,15 @@ if u.path.rstrip('/') or u.query or u.fragment:
     raise SystemExit('unexpected API path, query, or fragment')
 print('https://api.paas.okd.cern.ch:443')
 PY
+}
+
+verify_candidate_host_python() {
+  local candidate_python_version
+  test -x "$CANDIDATE_HOST_PYTHON"
+  candidate_python_version="$("$CANDIDATE_HOST_PYTHON" -I -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')"
+  test "$candidate_python_version" = 3.12.13
+  "$CANDIDATE_HOST_PYTHON" -I -c 'from dataclasses import make_dataclass; make_dataclass("Probe", [("value", int)], frozen=True, slots=True)'
+  printf 'CANDIDATE_HOST_PYTHON PASS path=%s version=%s\n' "$CANDIDATE_HOST_PYTHON" "$candidate_python_version"
 }
 
 download() {
@@ -1153,6 +1163,7 @@ trap 'on_signal TERM 143' TERM
 for command in oc curl python3 sha256sum tar fs find wc; do
   command -v "$command" >/dev/null
  done
+verify_candidate_host_python
 ensure_authenticated
 oc project "$PROJECT" >/dev/null
 verify_context
@@ -1454,7 +1465,7 @@ BUILD_CONTEXT_SHA256="$(tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --gro
 [[ "$BUILD_CONTEXT_SHA256" =~ ^[0-9a-f]{64}$ ]]
 
 cp "$LOCAL_BACKUP" "$CANDIDATE_DB"
-CANDIDATE_DB="$CANDIDATE_DB" CANDIDATE_HTTP_ACQUISITION_FILE="$CANDIDATE_HTTP_ACQUISITION_FILE" CANDIDATE_RUNTIME="${BUILD_CONTEXT}/runtime" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python3 -I - <<'PY'
+CANDIDATE_DB="$CANDIDATE_DB" CANDIDATE_HTTP_ACQUISITION_FILE="$CANDIDATE_HTTP_ACQUISITION_FILE" CANDIDATE_RUNTIME="${BUILD_CONTEXT}/runtime" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" "$CANDIDATE_HOST_PYTHON" -I - <<'PY'
 import hashlib, json, os, sqlite3, sys, uuid
 from pathlib import Path
 
@@ -1696,6 +1707,7 @@ PY
 )"
 CANDIDATE_PROBE_POD_OWNED=1
 oc -n "$PROJECT" wait --for=condition=Ready pod/"$CANDIDATE_PROBE_POD" --timeout=120s
+test "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- python --version 2>&1)" = "Python 3.12.13"
 oc -n "$PROJECT" cp "$CANDIDATE_DB" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3"
 oc -n "$PROJECT" cp "$CANDIDATE_HTTP_ACQUISITION_FILE" "$CANDIDATE_PROBE_POD:/tmp/candidate-http-acquisition-id"
 oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- sh -c 'python /app/static/server.py >/tmp/candidate-entrypoint.log 2>&1 &'

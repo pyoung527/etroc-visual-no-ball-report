@@ -9,7 +9,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/make_candidate_contact_sheet.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_make_candidate_contact_sheet_py",
-      "community": 20,
+      "community": 21,
       "norm_label": "make_candidate_contact_sheet.py"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L1",
       "id": "tools_build_etroc_optical_pool_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "build_etroc_optical_pool.py"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L42",
       "id": "build_etroc_optical_pool_sha256",
-      "community": 5,
+      "community": 6,
       "norm_label": "sha256()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L50",
       "id": "build_etroc_optical_pool_int_field",
-      "community": 5,
+      "community": 6,
       "norm_label": "int_field()"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L57",
       "id": "build_etroc_optical_pool_resolve_under",
-      "community": 5,
+      "community": 6,
       "norm_label": "resolve_under()"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L72",
       "id": "build_etroc_optical_pool_validate_summary_rows",
-      "community": 5,
+      "community": 6,
       "norm_label": "validate_summary_rows()"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L110",
       "id": "build_etroc_optical_pool_validate_position_results",
-      "community": 5,
+      "community": 6,
       "norm_label": "validate_position_results()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L150",
       "id": "build_etroc_optical_pool_validate_source_montages",
-      "community": 5,
+      "community": 6,
       "norm_label": "validate_source_montages()"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L166",
       "id": "build_etroc_optical_pool_render_jpegs",
-      "community": 5,
+      "community": 6,
       "norm_label": "render_jpegs()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L188",
       "id": "build_etroc_optical_pool_verify_bundle",
-      "community": 5,
+      "community": 6,
       "norm_label": "verify_bundle()"
     },
     {
@@ -621,7 +621,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L209",
       "id": "build_etroc_optical_pool_atomic_replace_directory",
-      "community": 5,
+      "community": 6,
       "norm_label": "atomic_replace_directory()"
     },
     {
@@ -630,7 +630,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L226",
       "id": "build_etroc_optical_pool_build_pool",
-      "community": 5,
+      "community": 6,
       "norm_label": "build_pool()"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L328",
       "id": "build_etroc_optical_pool_main",
-      "community": 5,
+      "community": 6,
       "norm_label": "main()"
     },
     {
@@ -1134,7 +1134,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L20",
       "id": "etroc_review_sha256",
-      "community": 5,
+      "community": 6,
       "norm_label": "sha256()"
     },
     {
@@ -1143,7 +1143,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L25",
       "id": "etroc_review_parsepublication",
-      "community": 5,
+      "community": 6,
       "norm_label": "parsepublication()"
     },
     {
@@ -1404,7 +1404,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L191",
       "id": "etroc_review_montagecontroller",
-      "community": 1,
+      "community": 5,
       "norm_label": "montagecontroller"
     },
     {
@@ -1413,7 +1413,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L192",
       "id": "etroc_review_montagecontroller_constructor",
-      "community": 1,
+      "community": 5,
       "norm_label": ".constructor()"
     },
     {
@@ -1422,7 +1422,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L193",
       "id": "etroc_review_montagecontroller_revoke",
-      "community": 1,
+      "community": 5,
       "norm_label": ".revoke()"
     },
     {
@@ -1431,7 +1431,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L194",
       "id": "etroc_review_montagecontroller_close",
-      "community": 1,
+      "community": 5,
       "norm_label": ".close()"
     },
     {
@@ -1440,7 +1440,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L195",
       "id": "etroc_review_montagecontroller_load",
-      "community": 1,
+      "community": 5,
       "norm_label": ".load()"
     },
     {
@@ -1809,7 +1809,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L81",
       "id": "server_discover_canonical_pairs",
-      "community": 2,
+      "community": 7,
       "norm_label": "discover_canonical_pairs()"
     },
     {
@@ -1818,7 +1818,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L94",
       "id": "server_discover_redirect_aliases",
-      "community": 2,
+      "community": 7,
       "norm_label": "discover_redirect_aliases()"
     },
     {
@@ -2025,7 +2025,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1035",
       "id": "server_list_hybrids",
-      "community": 7,
+      "community": 2,
       "norm_label": "list_hybrids()"
     },
     {
@@ -2070,7 +2070,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1112",
       "id": "server_handler_do_get",
-      "community": 7,
+      "community": 4,
       "norm_label": ".do_get()"
     },
     {
@@ -2331,7 +2331,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_validate_build_provenance_py",
-      "community": 6,
+      "community": 5,
       "norm_label": "validate_build_provenance.py"
     },
     {
@@ -2340,7 +2340,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L24",
       "id": "validate_build_provenance_fail",
-      "community": 6,
+      "community": 5,
       "norm_label": "fail()"
     },
     {
@@ -2349,7 +2349,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L28",
       "id": "validate_build_provenance_load_object",
-      "community": 6,
+      "community": 5,
       "norm_label": "load_object()"
     },
     {
@@ -2358,7 +2358,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L38",
       "id": "validate_build_provenance_require_mapping",
-      "community": 6,
+      "community": 5,
       "norm_label": "require_mapping()"
     },
     {
@@ -2367,7 +2367,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L44",
       "id": "validate_build_provenance_require_int",
-      "community": 6,
+      "community": 5,
       "norm_label": "require_int()"
     },
     {
@@ -2376,7 +2376,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L50",
       "id": "validate_build_provenance_compact",
-      "community": 6,
+      "community": 5,
       "norm_label": "compact()"
     },
     {
@@ -2385,7 +2385,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L60",
       "id": "validate_build_provenance_validate",
-      "community": 6,
+      "community": 5,
       "norm_label": "validate()"
     },
     {
@@ -2394,7 +2394,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L204",
       "id": "validate_build_provenance_parse_args",
-      "community": 6,
+      "community": 5,
       "norm_label": "parse_args()"
     },
     {
@@ -2403,7 +2403,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L214",
       "id": "validate_build_provenance_main",
-      "community": 6,
+      "community": 5,
       "norm_label": "main()"
     },
     {
@@ -2411,7 +2411,7 @@
       "file_type": "rationale",
       "source_file": "hybrid-bbqc/openshift/validate_build_provenance.py",
       "source_location": "L51",
-      "community": 6,
+      "community": 5,
       "norm_label": "normalize api-defaulted empty containers without hiding non-empty drift.",
       "id": "validate_build_provenance_rationale_51"
     },
@@ -2421,7 +2421,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_select_single_app_pod_py",
-      "community": 6,
+      "community": 5,
       "norm_label": "select_single_app_pod.py"
     },
     {
@@ -2430,7 +2430,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L9",
       "id": "select_single_app_pod_owner_matches",
-      "community": 6,
+      "community": 5,
       "norm_label": "owner_matches()"
     },
     {
@@ -2439,7 +2439,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L21",
       "id": "select_single_app_pod_exact_owned_replica_sets",
-      "community": 6,
+      "community": 5,
       "norm_label": "exact_owned_replica_sets()"
     },
     {
@@ -2448,7 +2448,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L37",
       "id": "select_single_app_pod_pod_uses_pvc",
-      "community": 6,
+      "community": 5,
       "norm_label": "pod_uses_pvc()"
     },
     {
@@ -2457,7 +2457,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L44",
       "id": "select_single_app_pod_pod_owned_by_replica_set",
-      "community": 6,
+      "community": 5,
       "norm_label": "pod_owned_by_replica_set()"
     },
     {
@@ -2466,7 +2466,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L52",
       "id": "select_single_app_pod_validate_all_pvc_pods",
-      "community": 6,
+      "community": 5,
       "norm_label": "validate_all_pvc_pods()"
     },
     {
@@ -2475,7 +2475,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L66",
       "id": "select_single_app_pod_select_single_app_pod",
-      "community": 6,
+      "community": 5,
       "norm_label": "select_single_app_pod()"
     },
     {
@@ -2484,7 +2484,7 @@
       "source_file": "hybrid-bbqc/openshift/select_single_app_pod.py",
       "source_location": "L136",
       "id": "select_single_app_pod_main",
-      "community": 6,
+      "community": 5,
       "norm_label": "main()"
     },
     {
@@ -2493,7 +2493,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_openshift_validate_pvc_controllers_py",
-      "community": 6,
+      "community": 5,
       "norm_label": "validate_pvc_controllers.py"
     },
     {
@@ -2502,7 +2502,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L9",
       "id": "validate_pvc_controllers_owner_matches",
-      "community": 6,
+      "community": 5,
       "norm_label": "owner_matches()"
     },
     {
@@ -2511,7 +2511,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L21",
       "id": "validate_pvc_controllers_pod_template_spec",
-      "community": 6,
+      "community": 5,
       "norm_label": "pod_template_spec()"
     },
     {
@@ -2520,7 +2520,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L30",
       "id": "validate_pvc_controllers_uses_pvc",
-      "community": 6,
+      "community": 5,
       "norm_label": "uses_pvc()"
     },
     {
@@ -2529,7 +2529,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L37",
       "id": "validate_pvc_controllers_validate_pvc_controllers",
-      "community": 6,
+      "community": 5,
       "norm_label": "validate_pvc_controllers()"
     },
     {
@@ -2538,7 +2538,7 @@
       "source_file": "hybrid-bbqc/openshift/validate_pvc_controllers.py",
       "source_location": "L107",
       "id": "validate_pvc_controllers_main",
-      "community": 6,
+      "community": 5,
       "norm_label": "main()"
     },
     {
@@ -2736,7 +2736,7 @@
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L74",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_backup_dir_is_strictly_below_only_the_current_users_home_or_eos_root",
-      "community": 6,
+      "community": 5,
       "norm_label": ".test_backup_dir_is_strictly_below_only_the_current_users_home_or_eos_root()"
     },
     {
@@ -2848,10 +2848,19 @@
       "norm_label": ".test_dashboard_headroom_gate_precedes_backup_and_release_artifact_writes()"
     },
     {
-      "label": ".test_helper_has_valid_bash_syntax()",
+      "label": ".test_candidate_host_rehearsal_uses_the_pod_compatible_python_before_backup()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
       "source_location": "L497",
+      "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_host_rehearsal_uses_the_pod_compatible_python_before_backup",
+      "community": 0,
+      "norm_label": ".test_candidate_host_rehearsal_uses_the_pod_compatible_python_before_backup()"
+    },
+    {
+      "label": ".test_helper_has_valid_bash_syntax()",
+      "file_type": "code",
+      "source_file": "tests/test_lxplus_dashboard_deploy.py",
+      "source_location": "L521",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_valid_bash_syntax",
       "community": 0,
       "norm_label": ".test_helper_has_valid_bash_syntax()"
@@ -2860,7 +2869,7 @@
       "label": ".test_helper_retries_transient_asset_downloads()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L506",
+      "source_location": "L530",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_retries_transient_asset_downloads",
       "community": 0,
       "norm_label": ".test_helper_retries_transient_asset_downloads()"
@@ -2869,7 +2878,7 @@
       "label": ".test_helper_fails_after_permanent_or_exhausted_download_errors()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L557",
+      "source_location": "L581",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_after_permanent_or_exhausted_download_errors",
       "community": 0,
       "norm_label": ".test_helper_fails_after_permanent_or_exhausted_download_errors()"
@@ -2878,7 +2887,7 @@
       "label": ".test_helper_pins_release_and_download_checksums()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L610",
+      "source_location": "L634",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_release_and_download_checksums",
       "community": 0,
       "norm_label": ".test_helper_pins_release_and_download_checksums()"
@@ -2887,7 +2896,7 @@
       "label": ".test_helper_pins_complete_etroc_dataset_and_runtime_verification()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L637",
+      "source_location": "L661",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_complete_etroc_dataset_and_runtime_verification",
       "community": 0,
       "norm_label": ".test_helper_pins_complete_etroc_dataset_and_runtime_verification()"
@@ -2896,7 +2905,7 @@
       "label": ".test_helper_fails_closed_on_context_and_permissions()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L652",
+      "source_location": "L676",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_closed_on_context_and_permissions",
       "community": 0,
       "norm_label": ".test_helper_fails_closed_on_context_and_permissions()"
@@ -2905,7 +2914,7 @@
       "label": ".test_helper_uses_immutable_overlay_build_with_allowlisted_context()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L670",
+      "source_location": "L694",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_uses_immutable_overlay_build_with_allowlisted_context",
       "community": 0,
       "norm_label": ".test_helper_uses_immutable_overlay_build_with_allowlisted_context()"
@@ -2914,7 +2923,7 @@
       "label": ".test_helper_packages_pinned_review_frontend_and_backend_runtime()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L683",
+      "source_location": "L707",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_packages_pinned_review_frontend_and_backend_runtime",
       "community": 0,
       "norm_label": ".test_helper_packages_pinned_review_frontend_and_backend_runtime()"
@@ -2923,7 +2932,7 @@
       "label": ".test_helper_probes_content_addressed_montage_from_publication()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L711",
+      "source_location": "L735",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_probes_content_addressed_montage_from_publication",
       "community": 0,
       "norm_label": ".test_helper_probes_content_addressed_montage_from_publication()"
@@ -2932,7 +2941,7 @@
       "label": ".test_helper_preflights_candidate_review_migration_and_legacy_comments_before_rollout()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L726",
+      "source_location": "L750",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_preflights_candidate_review_migration_and_legacy_comments_before_rollout",
       "community": 0,
       "norm_label": ".test_helper_preflights_candidate_review_migration_and_legacy_comments_before_rollout()"
@@ -2941,7 +2950,7 @@
       "label": ".test_helper_verifies_backup_and_preserves_rollback_coordinates()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L752",
+      "source_location": "L776",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_verifies_backup_and_preserves_rollback_coordinates",
       "community": 0,
       "norm_label": ".test_helper_verifies_backup_and_preserves_rollback_coordinates()"
@@ -2950,7 +2959,7 @@
       "label": ".test_helper_pins_and_verifies_rollout_and_static_files()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L779",
+      "source_location": "L803",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_and_verifies_rollout_and_static_files",
       "community": 0,
       "norm_label": ".test_helper_pins_and_verifies_rollout_and_static_files()"
@@ -2959,7 +2968,7 @@
       "label": ".test_helper_bootstraps_official_device_flow_without_printing_tokens()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L809",
+      "source_location": "L833",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_bootstraps_official_device_flow_without_printing_tokens",
       "community": 0,
       "norm_label": ".test_helper_bootstraps_official_device_flow_without_printing_tokens()"
@@ -2968,7 +2977,7 @@
       "label": ".test_helper_handles_interrupts_and_preserves_full_replace_metadata()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L824",
+      "source_location": "L848",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_handles_interrupts_and_preserves_full_replace_metadata",
       "community": 0,
       "norm_label": ".test_helper_handles_interrupts_and_preserves_full_replace_metadata()"
@@ -2977,7 +2986,7 @@
       "label": ".test_rollback_renderer_rejects_same_name_with_new_uid()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L842",
+      "source_location": "L866",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_renderer_rejects_same_name_with_new_uid",
       "community": 0,
       "norm_label": ".test_rollback_renderer_rejects_same_name_with_new_uid()"
@@ -2986,7 +2995,7 @@
       "label": ".test_rollback_renderer_recovers_each_partial_forward_state()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L909",
+      "source_location": "L933",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_renderer_recovers_each_partial_forward_state",
       "community": 0,
       "norm_label": ".test_rollback_renderer_recovers_each_partial_forward_state()"
@@ -2995,7 +3004,7 @@
       "label": ".test_rollback_replaces_only_restore_marked_objects()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L970",
+      "source_location": "L994",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_replaces_only_restore_marked_objects",
       "community": 0,
       "norm_label": ".test_rollback_replaces_only_restore_marked_objects()"
@@ -3004,7 +3013,7 @@
       "label": ".test_helper_runs_pinned_executable_build_provenance_validator()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L983",
+      "source_location": "L1007",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_runs_pinned_executable_build_provenance_validator",
       "community": 0,
       "norm_label": ".test_helper_runs_pinned_executable_build_provenance_validator()"
@@ -3013,7 +3022,7 @@
       "label": ".test_helper_exercises_etroc_assets_through_runtime_http()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1003",
+      "source_location": "L1027",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_exercises_etroc_assets_through_runtime_http",
       "community": 0,
       "norm_label": ".test_helper_exercises_etroc_assets_through_runtime_http()"
@@ -3022,7 +3031,7 @@
       "label": ".test_canonical_manifests_define_one_verified_oauth_exposure_boundary()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1023",
+      "source_location": "L1047",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_canonical_manifests_define_one_verified_oauth_exposure_boundary",
       "community": 0,
       "norm_label": ".test_canonical_manifests_define_one_verified_oauth_exposure_boundary()"
@@ -3031,7 +3040,7 @@
       "label": ".test_helper_preflights_normalized_reviewer_allowlist_without_logging_values()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1054",
+      "source_location": "L1078",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_preflights_normalized_reviewer_allowlist_without_logging_values",
       "community": 0,
       "norm_label": ".test_helper_preflights_normalized_reviewer_allowlist_without_logging_values()"
@@ -3040,7 +3049,7 @@
       "label": ".test_helper_gates_content_addressed_montages_and_publication_hash()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1068",
+      "source_location": "L1092",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_gates_content_addressed_montages_and_publication_hash",
       "community": 0,
       "norm_label": ".test_helper_gates_content_addressed_montages_and_publication_hash()"
@@ -3049,7 +3058,7 @@
       "label": ".test_helper_gates_exact_review_runtime_contract_and_identity_boundary()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1082",
+      "source_location": "L1106",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_gates_exact_review_runtime_contract_and_identity_boundary",
       "community": 0,
       "norm_label": ".test_helper_gates_exact_review_runtime_contract_and_identity_boundary()"
@@ -3058,7 +3067,7 @@
       "label": ".test_deployment_declares_the_exact_loopback_oauth2_proxy_boundary()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1100",
+      "source_location": "L1124",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_deployment_declares_the_exact_loopback_oauth2_proxy_boundary",
       "community": 0,
       "norm_label": ".test_deployment_declares_the_exact_loopback_oauth2_proxy_boundary()"
@@ -3067,7 +3076,7 @@
       "label": ".test_helper_packages_applies_and_validates_all_three_canonical_manifests()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1120",
+      "source_location": "L1144",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_packages_applies_and_validates_all_three_canonical_manifests",
       "community": 0,
       "norm_label": ".test_helper_packages_applies_and_validates_all_three_canonical_manifests()"
@@ -3076,7 +3085,7 @@
       "label": ".test_helper_refetches_and_validates_exact_oauth_topology_before_and_after_rollout()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1145",
+      "source_location": "L1169",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_refetches_and_validates_exact_oauth_topology_before_and_after_rollout",
       "community": 0,
       "norm_label": ".test_helper_refetches_and_validates_exact_oauth_topology_before_and_after_rollout()"
@@ -3085,7 +3094,7 @@
       "label": ".test_helper_compares_the_full_api_evidence_map_to_locally_validated_publication()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1166",
+      "source_location": "L1190",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_compares_the_full_api_evidence_map_to_locally_validated_publication",
       "community": 0,
       "norm_label": ".test_helper_compares_the_full_api_evidence_map_to_locally_validated_publication()"
@@ -3094,7 +3103,7 @@
       "label": ".test_helper_probes_exact_schema_and_rejects_attached_object_drift()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1185",
+      "source_location": "L1209",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_probes_exact_schema_and_rejects_attached_object_drift",
       "community": 0,
       "norm_label": ".test_helper_probes_exact_schema_and_rejects_attached_object_drift()"
@@ -3103,7 +3112,7 @@
       "label": ".test_helper_proves_unauthenticated_spoofed_identity_headers_cannot_bypass_sso()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1205",
+      "source_location": "L1229",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_proves_unauthenticated_spoofed_identity_headers_cannot_bypass_sso",
       "community": 0,
       "norm_label": ".test_helper_proves_unauthenticated_spoofed_identity_headers_cannot_bypass_sso()"
@@ -3112,7 +3121,7 @@
       "label": ".test_helper_preserves_etroc_events_and_identity_chain_across_release_boundaries()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1222",
+      "source_location": "L1246",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_preserves_etroc_events_and_identity_chain_across_release_boundaries",
       "community": 0,
       "norm_label": ".test_helper_preserves_etroc_events_and_identity_chain_across_release_boundaries()"
@@ -3121,7 +3130,7 @@
       "label": ".test_forward_render_uses_pinned_baseline_and_rejects_live_spec_drift()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1240",
+      "source_location": "L1264",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_render_uses_pinned_baseline_and_rejects_live_spec_drift",
       "community": 0,
       "norm_label": ".test_forward_render_uses_pinned_baseline_and_rejects_live_spec_drift()"
@@ -3130,7 +3139,7 @@
       "label": ".test_forward_renderer_normalizes_only_the_exact_reviewed_legacy_deltas()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1263",
+      "source_location": "L1287",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_normalizes_only_the_exact_reviewed_legacy_deltas",
       "community": 0,
       "norm_label": ".test_forward_renderer_normalizes_only_the_exact_reviewed_legacy_deltas()"
@@ -3139,7 +3148,7 @@
       "label": ".test_forward_renderer_preserves_only_baseline_approved_annotations()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1322",
+      "source_location": "L1346",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_preserves_only_baseline_approved_annotations",
       "community": 0,
       "norm_label": ".test_forward_renderer_preserves_only_baseline_approved_annotations()"
@@ -3148,7 +3157,7 @@
       "label": ".test_forward_renderer_normalizes_only_reviewed_route_server_defaults()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1351",
+      "source_location": "L1375",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_normalizes_only_reviewed_route_server_defaults",
       "community": 0,
       "norm_label": ".test_forward_renderer_normalizes_only_reviewed_route_server_defaults()"
@@ -3157,7 +3166,7 @@
       "label": ".test_captured_rollback_renderer_preserves_route_wildcard_policy()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1398",
+      "source_location": "L1422",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_captured_rollback_renderer_preserves_route_wildcard_policy",
       "community": 0,
       "norm_label": ".test_captured_rollback_renderer_preserves_route_wildcard_policy()"
@@ -3166,7 +3175,7 @@
       "label": ".test_forward_renderer_rejects_annotation_drift_except_known_generated_values()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1420",
+      "source_location": "L1444",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_rejects_annotation_drift_except_known_generated_values",
       "community": 0,
       "norm_label": ".test_forward_renderer_rejects_annotation_drift_except_known_generated_values()"
@@ -3175,7 +3184,7 @@
       "label": ".test_candidate_probe_cleanup_is_uid_guarded_and_owned_before_possible_failures()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1444",
+      "source_location": "L1468",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_probe_cleanup_is_uid_guarded_and_owned_before_possible_failures",
       "community": 0,
       "norm_label": ".test_candidate_probe_cleanup_is_uid_guarded_and_owned_before_possible_failures()"
@@ -3184,7 +3193,7 @@
       "label": ".test_rollback_scope_captures_and_restores_service_and_route_fail_closed()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1485",
+      "source_location": "L1509",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_scope_captures_and_restores_service_and_route_fail_closed",
       "community": 0,
       "norm_label": ".test_rollback_scope_captures_and_restores_service_and_route_fail_closed()"
@@ -3193,7 +3202,7 @@
       "label": ".test_rollback_keeps_pre_rollout_etroc_snapshot_as_the_invariant()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1511",
+      "source_location": "L1535",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_keeps_pre_rollout_etroc_snapshot_as_the_invariant",
       "community": 0,
       "norm_label": ".test_rollback_keeps_pre_rollout_etroc_snapshot_as_the_invariant()"
@@ -3202,7 +3211,7 @@
       "label": ".test_helper_never_accepts_operator_scientific_review_inputs()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1542",
+      "source_location": "L1566",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_never_accepts_operator_scientific_review_inputs",
       "community": 0,
       "norm_label": ".test_helper_never_accepts_operator_scientific_review_inputs()"
@@ -3211,7 +3220,7 @@
       "label": ".test_helper_exercises_review_mutation_only_on_disposable_candidate_copies()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1559",
+      "source_location": "L1583",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_exercises_review_mutation_only_on_disposable_candidate_copies",
       "community": 0,
       "norm_label": ".test_helper_exercises_review_mutation_only_on_disposable_candidate_copies()"
@@ -3220,7 +3229,7 @@
       "label": ".test_helper_makes_disposable_empty_and_existing_review_history_gates_deterministic()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1584",
+      "source_location": "L1608",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_makes_disposable_empty_and_existing_review_history_gates_deterministic",
       "community": 0,
       "norm_label": ".test_helper_makes_disposable_empty_and_existing_review_history_gates_deterministic()"
@@ -3229,7 +3238,7 @@
       "label": ".test_topology_inventory_covers_every_service_and_route_selecting_live_pods()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1622",
+      "source_location": "L1646",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_topology_inventory_covers_every_service_and_route_selecting_live_pods",
       "community": 0,
       "norm_label": ".test_topology_inventory_covers_every_service_and_route_selecting_live_pods()"
@@ -3238,7 +3247,7 @@
       "label": ".test_topology_pins_oauth_proxy_to_captured_digest_not_merely_a_digest()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1645",
+      "source_location": "L1669",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_topology_pins_oauth_proxy_to_captured_digest_not_merely_a_digest",
       "community": 0,
       "norm_label": ".test_topology_pins_oauth_proxy_to_captured_digest_not_merely_a_digest()"
@@ -3247,7 +3256,7 @@
       "label": ".test_preflight_accepts_exact_legacy_target_and_rejects_hybrids()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1665",
+      "source_location": "L1689",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_preflight_accepts_exact_legacy_target_and_rejects_hybrids",
       "community": 4,
       "norm_label": ".test_preflight_accepts_exact_legacy_target_and_rejects_hybrids()"
@@ -3256,7 +3265,7 @@
       "label": ".test_captured_topology_classification_binds_legacy_rollback_before_live_refetch()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1742",
+      "source_location": "L1766",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_captured_topology_classification_binds_legacy_rollback_before_live_refetch",
       "community": 0,
       "norm_label": ".test_captured_topology_classification_binds_legacy_rollback_before_live_refetch()"
@@ -3265,7 +3274,7 @@
       "label": ".test_rendered_manifest_rejects_nonliteral_or_duplicate_app_origin()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1765",
+      "source_location": "L1789",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rendered_manifest_rejects_nonliteral_or_duplicate_app_origin",
       "community": 4,
       "norm_label": ".test_rendered_manifest_rejects_nonliteral_or_duplicate_app_origin()"
@@ -3274,7 +3283,7 @@
       "label": ".test_event_snapshot_is_ordered_and_captures_mutable_review_fields()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1839",
+      "source_location": "L1863",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_event_snapshot_is_ordered_and_captures_mutable_review_fields",
       "community": 0,
       "norm_label": ".test_event_snapshot_is_ordered_and_captures_mutable_review_fields()"
@@ -3283,7 +3292,7 @@
       "label": ".test_post_migration_compares_the_complete_existing_hybrid_schema()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1853",
+      "source_location": "L1877",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_post_migration_compares_the_complete_existing_hybrid_schema",
       "community": 0,
       "norm_label": ".test_post_migration_compares_the_complete_existing_hybrid_schema()"
@@ -3292,7 +3301,7 @@
       "label": ".test_candidate_image_entrypoint_and_evidence_loader_run_before_deployment_mutation()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1874",
+      "source_location": "L1898",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_image_entrypoint_and_evidence_loader_run_before_deployment_mutation",
       "community": 0,
       "norm_label": ".test_candidate_image_entrypoint_and_evidence_loader_run_before_deployment_mutation()"
@@ -3301,7 +3310,7 @@
       "label": ".test_helper_has_no_cookie_export_or_production_review_post_workflow()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1897",
+      "source_location": "L1921",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_no_cookie_export_or_production_review_post_workflow",
       "community": 0,
       "norm_label": ".test_helper_has_no_cookie_export_or_production_review_post_workflow()"
@@ -3310,7 +3319,7 @@
       "label": ".test_runtime_http_montage_bytes_equal_the_published_digest()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1916",
+      "source_location": "L1940",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_runtime_http_montage_bytes_equal_the_published_digest",
       "community": 0,
       "norm_label": ".test_runtime_http_montage_bytes_equal_the_published_digest()"
@@ -3319,7 +3328,7 @@
       "label": ".test_candidate_creation_captures_uid_from_create_response_and_uses_uid_precondition()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1927",
+      "source_location": "L1951",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_creation_captures_uid_from_create_response_and_uses_uid_precondition",
       "community": 0,
       "norm_label": ".test_candidate_creation_captures_uid_from_create_response_and_uses_uid_precondition()"
@@ -3328,7 +3337,7 @@
       "label": ".test_old_runtime_server_extraction_is_digest_pinned_and_rejects_bad_output()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1944",
+      "source_location": "L1968",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_old_runtime_server_extraction_is_digest_pinned_and_rejects_bad_output",
       "community": 0,
       "norm_label": ".test_old_runtime_server_extraction_is_digest_pinned_and_rejects_bad_output()"
@@ -3337,7 +3346,7 @@
       "label": ".test_legacy_compatibility_is_local_and_never_copies_a_candidate_db_to_production()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2137",
+      "source_location": "L2161",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_legacy_compatibility_is_local_and_never_copies_a_candidate_db_to_production",
       "community": 0,
       "norm_label": ".test_legacy_compatibility_is_local_and_never_copies_a_candidate_db_to_production()"
@@ -3346,7 +3355,7 @@
       "label": ".test_authenticated_browser_qa_is_explicitly_deferred()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2152",
+      "source_location": "L2176",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_authenticated_browser_qa_is_explicitly_deferred",
       "community": 0,
       "norm_label": ".test_authenticated_browser_qa_is_explicitly_deferred()"
@@ -3355,7 +3364,7 @@
       "label": ".test_headroom_counts_wal_and_shm_and_retention_rejects_unknown_artifacts()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2163",
+      "source_location": "L2187",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_headroom_counts_wal_and_shm_and_retention_rejects_unknown_artifacts",
       "community": 0,
       "norm_label": ".test_headroom_counts_wal_and_shm_and_retention_rejects_unknown_artifacts()"
@@ -3364,7 +3373,7 @@
       "label": ".test_rollback_attempts_remaining_objects_after_restore_failure()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2176",
+      "source_location": "L2200",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_attempts_remaining_objects_after_restore_failure",
       "community": 0,
       "norm_label": ".test_rollback_attempts_remaining_objects_after_restore_failure()"
@@ -3373,7 +3382,7 @@
       "label": ".test_rollback_fixture_attempts_later_restores_after_first_or_second_failure()",
       "file_type": "code",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2189",
+      "source_location": "L2213",
       "id": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_fixture_attempts_later_restores_after_first_or_second_failure",
       "community": 0,
       "norm_label": ".test_rollback_fixture_attempts_later_restores_after_first_or_second_failure()"
@@ -3537,7 +3546,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L1",
       "id": "tests_test_etroc_optical_pool_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "test_etroc_optical_pool.py"
     },
     {
@@ -3546,7 +3555,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L32",
       "id": "test_etroc_optical_pool_etrocopticalpooltests",
-      "community": 5,
+      "community": 6,
       "norm_label": "etrocopticalpooltests"
     },
     {
@@ -3555,7 +3564,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L34",
       "id": "test_etroc_optical_pool_valid_summary_rows",
-      "community": 5,
+      "community": 6,
       "norm_label": "valid_summary_rows()"
     },
     {
@@ -3564,7 +3573,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L53",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_builder_rejects_unapproved_or_inconsistent_etroc_identity",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_builder_rejects_unapproved_or_inconsistent_etroc_identity()"
     },
     {
@@ -3573,7 +3582,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L69",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_atomic_directory_swap_restores_previous_bundle_on_failure",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_atomic_directory_swap_restores_previous_bundle_on_failure()"
     },
     {
@@ -3582,7 +3591,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L94",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_builder_rejects_absolute_and_traversing_source_paths",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_builder_rejects_absolute_and_traversing_source_paths()"
     },
     {
@@ -3591,7 +3600,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L102",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_builder_rejects_mismatched_complete_manifest_before_output",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_builder_rejects_mismatched_complete_manifest_before_output()"
     },
     {
@@ -3600,7 +3609,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L119",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_load_pool",
-      "community": 5,
+      "community": 6,
       "norm_label": ".load_pool()"
     },
     {
@@ -3609,7 +3618,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L122",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_has_exact_complete_unbonded_etroc_inventory",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_has_exact_complete_unbonded_etroc_inventory()"
     },
     {
@@ -3618,7 +3627,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L136",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_assets_are_relative_integrity_checked_web_files",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_assets_are_relative_integrity_checked_web_files()"
     },
     {
@@ -3627,7 +3636,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L157",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_montage_uris_are_content_addressed_and_publish_only_digests",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_montage_uris_are_content_addressed_and_publish_only_digests()"
     },
     {
@@ -3636,7 +3645,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L168",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_dataset_checksum_manifest_is_complete_and_exact",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_dataset_checksum_manifest_is_complete_and_exact()"
     },
     {
@@ -3645,7 +3654,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L184",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_provenance_identity_and_web_size_budget",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_provenance_identity_and_web_size_budget()"
     },
     {
@@ -3654,7 +3663,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L201",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_optical_tab_loads_pool_without_changing_hybrid_inventory",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_optical_tab_loads_pool_without_changing_hybrid_inventory()"
     },
     {
@@ -3663,7 +3672,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L212",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_browser_contract_rejects_malformed_scientific_payloads",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_browser_contract_rejects_malformed_scientific_payloads()"
     },
     {
@@ -3672,7 +3681,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L260",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_statistics_contract_reconciles_exact_dataset_and_wafer_totals",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_statistics_contract_reconciles_exact_dataset_and_wafer_totals()"
     },
     {
@@ -3681,7 +3690,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L306",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_renderer_is_safe_accessible_and_fail_visible",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_renderer_is_safe_accessible_and_fail_visible()"
     },
     {
@@ -4077,7 +4086,7 @@
       "source_file": "tests/test_etroc_reviews.py",
       "source_location": "L570",
       "id": "test_etroc_reviews_reviewapitests_test_read_json_rejects_invalid_content_length_before_reading",
-      "community": 3,
+      "community": 7,
       "norm_label": ".test_read_json_rejects_invalid_content_length_before_reading()"
     },
     {
@@ -4257,7 +4266,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L1",
       "id": "tests_test_hybrid_pair_correction_py",
-      "community": 19,
+      "community": 20,
       "norm_label": "test_hybrid_pair_correction.py"
     },
     {
@@ -4266,7 +4275,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L12",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests",
-      "community": 19,
+      "community": 20,
       "norm_label": "hybridpaircorrectiontests"
     },
     {
@@ -4275,7 +4284,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L13",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_manifest_preserves_w04f2_34_and_corrects_w04f2_81",
-      "community": 19,
+      "community": 20,
       "norm_label": ".test_manifest_preserves_w04f2_34_and_corrects_w04f2_81()"
     },
     {
@@ -4284,7 +4293,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L21",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_dashboard_uses_only_the_corrected_w04f2_81_slug",
-      "community": 19,
+      "community": 20,
       "norm_label": ".test_dashboard_uses_only_the_corrected_w04f2_81_slug()"
     },
     {
@@ -4293,7 +4302,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L28",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_corrected_detail_page_keeps_an_old_url_redirect",
-      "community": 19,
+      "community": 20,
       "norm_label": ".test_corrected_detail_page_keeps_an_old_url_redirect()"
     },
     {
@@ -4302,7 +4311,7 @@
       "source_file": "tests/test_hybrid_pair_correction.py",
       "source_location": "L43",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_concordance_snapshot_uses_the_corrected_comment_target",
-      "community": 19,
+      "community": 20,
       "norm_label": ".test_concordance_snapshot_uses_the_corrected_comment_target()"
     },
     {
@@ -4338,7 +4347,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L108",
       "id": "test_hybrid_registry_additionaltestmanifesttests_test_manifest_preserves_exact_memberships_and_canonical_crosswalks",
-      "community": 5,
+      "community": 2,
       "norm_label": ".test_manifest_preserves_exact_memberships_and_canonical_crosswalks()"
     },
     {
@@ -4347,7 +4356,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L163",
       "id": "test_hybrid_registry_canonical_pairs",
-      "community": 5,
+      "community": 2,
       "norm_label": "_canonical_pairs()"
     },
     {
@@ -4581,7 +4590,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L952",
       "id": "test_hybrid_registry_hybridregistryhttptests",
-      "community": 2,
+      "community": 19,
       "norm_label": "hybridregistryhttptests"
     },
     {
@@ -4599,7 +4608,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L977",
       "id": "test_hybrid_registry_hybridregistryhttptests_stop_server",
-      "community": 2,
+      "community": 19,
       "norm_label": "._stop_server()"
     },
     {
@@ -4608,7 +4617,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L982",
       "id": "test_hybrid_registry_hybridregistryhttptests_request",
-      "community": 2,
+      "community": 19,
       "norm_label": ".request()"
     },
     {
@@ -4617,7 +4626,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1011",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_registry_read_and_admin_bind_api",
-      "community": 2,
+      "community": 19,
       "norm_label": ".test_registry_read_and_admin_bind_api()"
     },
     {
@@ -4626,7 +4635,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1040",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads",
-      "community": 2,
+      "community": 19,
       "norm_label": ".test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads()"
     },
     {
@@ -4635,7 +4644,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1102",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_legacy_comment_target_reads_and_writes_canonical_registry",
-      "community": 2,
+      "community": 19,
       "norm_label": ".test_legacy_comment_target_reads_and_writes_canonical_registry()"
     },
     {
@@ -4644,7 +4653,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1145",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_summary_targets_parameter_preserves_non_hybrid_behavior",
-      "community": 2,
+      "community": 19,
       "norm_label": ".test_summary_targets_parameter_preserves_non_hybrid_behavior()"
     },
     {
@@ -4716,7 +4725,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1512",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests",
-      "community": 6,
+      "community": 5,
       "norm_label": "hybridregistrydeploymenttests"
     },
     {
@@ -4725,7 +4734,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1513",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_manifest_isolates_backend_and_prevents_overlapping_sqlite_writers",
-      "community": 6,
+      "community": 5,
       "norm_label": ".test_manifest_isolates_backend_and_prevents_overlapping_sqlite_writers()"
     },
     {
@@ -4734,7 +4743,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1539",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_single_app_pod_selector_is_owner_ready_pvc_and_cardinality_aware",
-      "community": 6,
+      "community": 5,
       "norm_label": ".test_single_app_pod_selector_is_owner_ready_pvc_and_cardinality_aware()"
     },
     {
@@ -4743,7 +4752,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1677",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_pvc_controller_inventory_is_uid_and_scale_aware",
-      "community": 6,
+      "community": 5,
       "norm_label": ".test_pvc_controller_inventory_is_uid_and_scale_aware()"
     },
     {
@@ -4752,7 +4761,7 @@
       "source_file": "tests/test_hybrid_registry.py",
       "source_location": "L1793",
       "id": "test_hybrid_registry_hybridregistrydeploymenttests_test_runbook_release_and_restore_steps_fail_closed",
-      "community": 6,
+      "community": 5,
       "norm_label": ".test_runbook_release_and_restore_steps_fail_closed()"
     },
     {
@@ -14055,6 +14064,18 @@
       "source_location": "L497",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
+      "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_host_rehearsal_uses_the_pod_compatible_python_before_backup",
+      "source": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
+      "target": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_host_rehearsal_uses_the_pod_compatible_python_before_backup",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "method",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_lxplus_dashboard_deploy.py",
+      "source_location": "L521",
+      "weight": 1.0,
+      "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_valid_bash_syntax",
       "source": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "target": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_valid_bash_syntax",
@@ -14064,7 +14085,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L506",
+      "source_location": "L530",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_retries_transient_asset_downloads",
@@ -14076,7 +14097,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L557",
+      "source_location": "L581",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_after_permanent_or_exhausted_download_errors",
@@ -14088,7 +14109,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L610",
+      "source_location": "L634",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_release_and_download_checksums",
@@ -14100,7 +14121,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L637",
+      "source_location": "L661",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_complete_etroc_dataset_and_runtime_verification",
@@ -14112,7 +14133,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L652",
+      "source_location": "L676",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_fails_closed_on_context_and_permissions",
@@ -14124,7 +14145,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L670",
+      "source_location": "L694",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_uses_immutable_overlay_build_with_allowlisted_context",
@@ -14136,7 +14157,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L683",
+      "source_location": "L707",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_packages_pinned_review_frontend_and_backend_runtime",
@@ -14148,7 +14169,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L711",
+      "source_location": "L735",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_probes_content_addressed_montage_from_publication",
@@ -14160,7 +14181,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L726",
+      "source_location": "L750",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_preflights_candidate_review_migration_and_legacy_comments_before_rollout",
@@ -14172,7 +14193,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L752",
+      "source_location": "L776",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_verifies_backup_and_preserves_rollback_coordinates",
@@ -14184,7 +14205,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L779",
+      "source_location": "L803",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_pins_and_verifies_rollout_and_static_files",
@@ -14196,7 +14217,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L809",
+      "source_location": "L833",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_bootstraps_official_device_flow_without_printing_tokens",
@@ -14208,7 +14229,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L824",
+      "source_location": "L848",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_handles_interrupts_and_preserves_full_replace_metadata",
@@ -14220,7 +14241,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L842",
+      "source_location": "L866",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_renderer_rejects_same_name_with_new_uid",
@@ -14232,7 +14253,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L909",
+      "source_location": "L933",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_renderer_recovers_each_partial_forward_state",
@@ -14244,7 +14265,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L970",
+      "source_location": "L994",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_replaces_only_restore_marked_objects",
@@ -14256,7 +14277,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L983",
+      "source_location": "L1007",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_runs_pinned_executable_build_provenance_validator",
@@ -14268,7 +14289,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1003",
+      "source_location": "L1027",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_exercises_etroc_assets_through_runtime_http",
@@ -14280,7 +14301,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1023",
+      "source_location": "L1047",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_canonical_manifests_define_one_verified_oauth_exposure_boundary",
@@ -14292,7 +14313,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1054",
+      "source_location": "L1078",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_preflights_normalized_reviewer_allowlist_without_logging_values",
@@ -14304,7 +14325,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1068",
+      "source_location": "L1092",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_gates_content_addressed_montages_and_publication_hash",
@@ -14316,7 +14337,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1082",
+      "source_location": "L1106",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_gates_exact_review_runtime_contract_and_identity_boundary",
@@ -14328,7 +14349,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1100",
+      "source_location": "L1124",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_deployment_declares_the_exact_loopback_oauth2_proxy_boundary",
@@ -14340,7 +14361,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1120",
+      "source_location": "L1144",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_packages_applies_and_validates_all_three_canonical_manifests",
@@ -14352,7 +14373,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1145",
+      "source_location": "L1169",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_refetches_and_validates_exact_oauth_topology_before_and_after_rollout",
@@ -14364,7 +14385,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1166",
+      "source_location": "L1190",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_compares_the_full_api_evidence_map_to_locally_validated_publication",
@@ -14376,7 +14397,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1185",
+      "source_location": "L1209",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_probes_exact_schema_and_rejects_attached_object_drift",
@@ -14388,7 +14409,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1205",
+      "source_location": "L1229",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_proves_unauthenticated_spoofed_identity_headers_cannot_bypass_sso",
@@ -14400,7 +14421,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1222",
+      "source_location": "L1246",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_preserves_etroc_events_and_identity_chain_across_release_boundaries",
@@ -14412,7 +14433,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1240",
+      "source_location": "L1264",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_render_uses_pinned_baseline_and_rejects_live_spec_drift",
@@ -14424,7 +14445,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1263",
+      "source_location": "L1287",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_normalizes_only_the_exact_reviewed_legacy_deltas",
@@ -14436,7 +14457,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1322",
+      "source_location": "L1346",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_preserves_only_baseline_approved_annotations",
@@ -14448,7 +14469,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1351",
+      "source_location": "L1375",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_normalizes_only_reviewed_route_server_defaults",
@@ -14460,7 +14481,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1398",
+      "source_location": "L1422",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_captured_rollback_renderer_preserves_route_wildcard_policy",
@@ -14472,7 +14493,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1420",
+      "source_location": "L1444",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_forward_renderer_rejects_annotation_drift_except_known_generated_values",
@@ -14484,7 +14505,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1444",
+      "source_location": "L1468",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_probe_cleanup_is_uid_guarded_and_owned_before_possible_failures",
@@ -14496,7 +14517,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1485",
+      "source_location": "L1509",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_scope_captures_and_restores_service_and_route_fail_closed",
@@ -14508,7 +14529,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1511",
+      "source_location": "L1535",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_keeps_pre_rollout_etroc_snapshot_as_the_invariant",
@@ -14520,7 +14541,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1542",
+      "source_location": "L1566",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_never_accepts_operator_scientific_review_inputs",
@@ -14532,7 +14553,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1559",
+      "source_location": "L1583",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_exercises_review_mutation_only_on_disposable_candidate_copies",
@@ -14544,7 +14565,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1584",
+      "source_location": "L1608",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_makes_disposable_empty_and_existing_review_history_gates_deterministic",
@@ -14556,7 +14577,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1622",
+      "source_location": "L1646",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_topology_inventory_covers_every_service_and_route_selecting_live_pods",
@@ -14568,7 +14589,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1645",
+      "source_location": "L1669",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_topology_pins_oauth_proxy_to_captured_digest_not_merely_a_digest",
@@ -14580,7 +14601,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1665",
+      "source_location": "L1689",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_preflight_accepts_exact_legacy_target_and_rejects_hybrids",
@@ -14592,7 +14613,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1742",
+      "source_location": "L1766",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_captured_topology_classification_binds_legacy_rollback_before_live_refetch",
@@ -14604,7 +14625,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1765",
+      "source_location": "L1789",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rendered_manifest_rejects_nonliteral_or_duplicate_app_origin",
@@ -14616,7 +14637,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1839",
+      "source_location": "L1863",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_event_snapshot_is_ordered_and_captures_mutable_review_fields",
@@ -14628,7 +14649,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1853",
+      "source_location": "L1877",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_post_migration_compares_the_complete_existing_hybrid_schema",
@@ -14640,7 +14661,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1874",
+      "source_location": "L1898",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_image_entrypoint_and_evidence_loader_run_before_deployment_mutation",
@@ -14652,7 +14673,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1897",
+      "source_location": "L1921",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_helper_has_no_cookie_export_or_production_review_post_workflow",
@@ -14664,7 +14685,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1916",
+      "source_location": "L1940",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_runtime_http_montage_bytes_equal_the_published_digest",
@@ -14676,7 +14697,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1927",
+      "source_location": "L1951",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_candidate_creation_captures_uid_from_create_response_and_uses_uid_precondition",
@@ -14688,7 +14709,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L1944",
+      "source_location": "L1968",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_old_runtime_server_extraction_is_digest_pinned_and_rejects_bad_output",
@@ -14700,7 +14721,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2137",
+      "source_location": "L2161",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_legacy_compatibility_is_local_and_never_copies_a_candidate_db_to_production",
@@ -14712,7 +14733,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2152",
+      "source_location": "L2176",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_authenticated_browser_qa_is_explicitly_deferred",
@@ -14724,7 +14745,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2163",
+      "source_location": "L2187",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_headroom_counts_wal_and_shm_and_retention_rejects_unknown_artifacts",
@@ -14736,7 +14757,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2176",
+      "source_location": "L2200",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_attempts_remaining_objects_after_restore_failure",
@@ -14748,7 +14769,7 @@
       "relation": "method",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_lxplus_dashboard_deploy.py",
-      "source_location": "L2189",
+      "source_location": "L2213",
       "weight": 1.0,
       "_src": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests",
       "_tgt": "test_lxplus_dashboard_deploy_lxplusdashboarddeploytests_test_rollback_fixture_attempts_later_restores_after_first_or_second_failure",
