@@ -413,7 +413,7 @@ PY
 
 measure_dashboard_headroom() {
   local db_bytes pvc_available_kib retained_artifact_sets remote_measurement trailing
-  remote_measurement="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
+  remote_measurement="$(oc -n "$PROJECT" exec -i "$POD" -c web -- python - <<'PY'
 import os, stat
 database = '/data/comments.sqlite3'
 total = 0
@@ -437,7 +437,7 @@ PY
 )"
   remote_measurement="$(printf '%s' "$remote_measurement" | python3 -I -c '
 import re, sys
-match=re.fullmatch(r"([0-9]+) ([0-9]+)\\n?", sys.stdin.read())
+match=re.fullmatch(r"([0-9]+) ([0-9]+)", sys.stdin.read())
 if match is None:
     raise SystemExit("invalid numeric headroom measurement: malformed web-container DB/PVC output")
 print(*match.groups())
@@ -1082,7 +1082,7 @@ rollback_deployment() {
   test "$proxy" = "$OLD_PROXY_IMAGE"
   comments="$(oc -n "$PROJECT" exec "$pod" -c web -- python -c "import sqlite3; print(sqlite3.connect('/data/comments.sqlite3').execute('SELECT COUNT(*) FROM comments').fetchone()[0])")"
   test "$comments" = "$BEFORE_COMMENTS"
-  ETROC_EVENT_SNAPSHOT_ROLLBACK="$(oc -n "$PROJECT" exec "$pod" -c web -- python - <<'PY'
+  ETROC_EVENT_SNAPSHOT_ROLLBACK="$(oc -n "$PROJECT" exec -i "$pod" -c web -- python - <<'PY'
 import json, sqlite3
 with sqlite3.connect('/data/comments.sqlite3') as db:
     exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
@@ -1201,7 +1201,7 @@ case "$OLD_PROXY_IMAGE" in *@sha256:*) ;; *) printf '%s\n' 'Current proxy image 
 BEFORE_COMMENTS="$(oc -n "$PROJECT" exec "$POD" -c web -- python -c \
   "import sqlite3; print(sqlite3.connect('/data/comments.sqlite3').execute('SELECT COUNT(*) FROM comments').fetchone()[0])")"
 [[ "$BEFORE_COMMENTS" =~ ^[0-9]+$ ]]
-ETROC_EVENT_SNAPSHOT_BEFORE="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
+ETROC_EVENT_SNAPSHOT_BEFORE="$(oc -n "$PROJECT" exec -i "$POD" -c web -- python - <<'PY'
 import json, sqlite3
 with sqlite3.connect('/data/comments.sqlite3') as db:
     exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()
@@ -1694,7 +1694,7 @@ oc -n "$PROJECT" cp "$CANDIDATE_DB" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3
 oc -n "$PROJECT" cp "$CANDIDATE_HTTP_ACQUISITION_FILE" "$CANDIDATE_PROBE_POD:/tmp/candidate-http-acquisition-id"
 oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- sh -c 'python /app/static/server.py >/tmp/candidate-entrypoint.log 2>&1 &'
 for candidate_attempt in $(seq 1 24); do
-  if oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" CANDIDATE_HTTP_ACQUISITION_FILE=/tmp/candidate-http-acquisition-id python - <<'PY'
+  if oc -n "$PROJECT" exec -i "$CANDIDATE_PROBE_POD" -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" CANDIDATE_HTTP_ACQUISITION_FILE=/tmp/candidate-http-acquisition-id python - <<'PY'
 import hashlib, json, os, sqlite3, urllib.error, uuid
 from pathlib import Path
 from urllib.parse import quote
@@ -2078,7 +2078,7 @@ if integrity != 'ok':
     raise SystemExit(f'runtime database integrity check failed: {integrity}')
 print({'schema_sha256': runtime_schema_sha256, 'comments': comments, 'integrity': integrity, 'review_objects': len(review_objects), 'schema': 'POST_ROLLOUT_ETROC_SCHEMA PASS'})
 PY
-ETROC_EVENT_SNAPSHOT_POST_ROLLOUT="$(oc -n "$PROJECT" exec "$POD" -c web -- python - <<'PY'
+ETROC_EVENT_SNAPSHOT_POST_ROLLOUT="$(oc -n "$PROJECT" exec -i "$POD" -c web -- python - <<'PY'
 import json, sqlite3
 with sqlite3.connect('/data/comments.sqlite3') as db:
     exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='etroc_review_events'").fetchone()

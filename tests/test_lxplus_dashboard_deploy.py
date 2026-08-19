@@ -398,6 +398,64 @@ printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("malformed web-container DB/PVC output", result.stderr)
 
+    def test_dashboard_headroom_probe_forwards_heredoc_stdin_to_the_container(self):
+        # Given: a fake oc client that returns measurements only when stdin forwarding is enabled.
+        script = SCRIPT.read_text(encoding="utf-8")
+        gate = script[
+            script.index("PVC_BACKUP_SAFETY_KIB=") : script.index("verify_context() {")
+        ]
+        with tempfile.TemporaryDirectory() as backup_dir:
+            command = f"""
+set -Eeuo pipefail
+{gate}
+PROJECT=fixture
+POD=fixture
+BACKUP_DIR={shlex.quote(backup_dir)}
+oc() {{
+  case " $* " in
+    *" exec -i fixture -c web -- python - "*) printf '1024 999999\\n' ;;
+    *) return 64 ;;
+  esac
+}}
+measure_durable_storage() {{ printf 'df 5000000 1 4999999\\n'; }}
+validate_dashboard_headroom() {{ printf 'HEADROOM_ARGS=%s\\n' "$*"; }}
+measure_dashboard_headroom
+"""
+
+            # When: the real headroom probe executes its remote Python heredoc.
+            result = subprocess.run(
+                ["bash", "-c", command],
+                check=False,
+                capture_output=True,
+                text=True,
+            )
+
+        # Then: oc receives -i and the strict numeric measurements reach the gate.
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("HEADROOM_ARGS=1024 999999 df 5000000 1 4999999 0", result.stdout)
+
+    def test_every_oc_exec_heredoc_forwards_stdin_without_a_tty(self):
+        # Given: every remote Python/shell heredoc in the production helper, including multiline commands.
+        script = SCRIPT.read_text(encoding="utf-8")
+        call_blocks = re.findall(
+            r'oc -n "\$PROJECT" exec'
+            r'(?:(?!oc -n "\$PROJECT" exec).)*?'
+            r'(?:python -|sh -s) <<\'(?:PY|SH)\'',
+            script,
+            flags=re.DOTALL,
+        )
+
+        # Then: the exact closed set forwards stdin and none allocates a TTY.
+        self.assertEqual(len(call_blocks), 11, f"unexpected heredoc oc exec call set: {call_blocks}")
+        missing_stdin = [block for block in call_blocks if re.search(r"\bexec\s+-i(?:\s|$)", block) is None]
+        tty_calls = [
+            block
+            for block in call_blocks
+            if re.search(r"(?<!\S)-(?:t|it|ti)(?!\S)", block) is not None
+        ]
+        self.assertEqual(missing_stdin, [], f"heredoc oc exec calls missing -i: {missing_stdin}")
+        self.assertEqual(tty_calls, [], f"machine-readable oc exec calls must not allocate a TTY: {tty_calls}")
+
     def test_dashboard_headroom_gate_rejects_retention_cap_without_deleting_evidence(self):
         # Given: the configured count of release evidence sets already exists.
         script = SCRIPT.read_text(encoding="utf-8")
