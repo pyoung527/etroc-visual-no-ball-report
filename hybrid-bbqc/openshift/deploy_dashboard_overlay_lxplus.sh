@@ -1693,7 +1693,7 @@ declare -p BUILD_NAME BUILD_OUTPUT_DIGEST NEW_WEB_IMAGE >> "$RELEASE_STATE"
 CANDIDATE_PROBE_POD="${DEPLOYMENT}-candidate-startup-probe-${RANDOM}${RANDOM}"
 ETROC_REVIEWER_TEST_USER="${ETROC_REVIEWER_USERS_NORMALIZED%%,*}"
 if ! oc -n "$PROJECT" run "$CANDIDATE_PROBE_POD" --restart=Never --image="$NEW_WEB_IMAGE" --output=json \
-  --overrides='{"spec":{"volumes":[{"name":"data","emptyDir":{}}],"containers":[{"name":"'"$CANDIDATE_PROBE_POD"'","volumeMounts":[{"name":"data","mountPath":"/data"}],"env":[{"name":"HOST","value":"127.0.0.1"},{"name":"ETROC_REVIEWER_USERS","value":"'"$ETROC_REVIEWER_USERS_NORMALIZED"'"}]}]}}' \
+  --overrides='{"spec":{"volumes":[{"name":"data","emptyDir":{}}],"containers":[{"name":"'"$CANDIDATE_PROBE_POD"'","image":"'"$NEW_WEB_IMAGE"'","volumeMounts":[{"name":"data","mountPath":"/data"}],"env":[{"name":"HOST","value":"127.0.0.1"},{"name":"ETROC_REVIEWER_USERS","value":"'"$ETROC_REVIEWER_USERS_NORMALIZED"'"}]}]}}' \
   --command -- sleep 300 > "$CANDIDATE_PROBE_CREATE_RESPONSE"; then
   printf '%s\n' 'candidate probe creation failed; refusing same-name pod reconciliation' >&2
   false

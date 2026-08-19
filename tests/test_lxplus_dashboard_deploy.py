@@ -1983,10 +1983,12 @@ validate_manifest_topology {mode} {shlex.quote(str(deployment_file))} {shlex.quo
         candidate = script[script.index('CANDIDATE_PROBE_POD="${DEPLOYMENT}') : script.index("CANDIDATE_IMAGE_STARTUP PASS")]
         cleanup = script[script.index("cleanup_candidate_probe_pod() {") : script.index("\n}\n", script.index("cleanup_candidate_probe_pod() {")) + 3]
 
-        # Then: ownership comes from the create response and delete is UID-preconditioned.
+        # Then: ownership comes from the create response, the replacement-prone override
+        # retains the exact immutable image, and delete is UID-preconditioned.
         self.assertIn("--output=json", candidate)
         self.assertIn("CANDIDATE_PROBE_CREATE_RESPONSE", candidate)
         self.assertIn("candidate probe create response", candidate)
+        self.assertIn("\"image\":\"'\"$NEW_WEB_IMAGE\"'\"", candidate)
         self.assertIn('--raw="/api/v1/namespaces/', cleanup)
         self.assertIn("preconditions", cleanup)
         self.assertIn("uid", cleanup)
