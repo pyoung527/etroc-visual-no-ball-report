@@ -512,10 +512,10 @@ measure_dashboard_headroom
         self.assertIn('"$CANDIDATE_HOST_PYTHON" -I -', candidate_command)
         self.assertNotIn('python3 -I -', candidate_command)
         candidate_version_gate = script.index(
-            'test "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- python --version 2>&1)" = "Python 3.12.13"'
+            'test "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" sh -ec \'test "$POD_UID" = "$EXPECTED_POD_UID"; exec python --version\' 2>&1)" = "Python 3.12.13"'
         )
         self.assertGreater(candidate_version_gate, script.index('wait --for=condition=Ready pod/"$CANDIDATE_PROBE_POD"'))
-        self.assertLess(candidate_version_gate, script.index('cp "$CANDIDATE_DB" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3"'))
+        self.assertLess(candidate_version_gate, script.index('cat > /data/comments.sqlite3'))
         self.assertLess(candidate_version_gate, script.index("python /app/static/server.py"))
 
     def test_helper_has_valid_bash_syntax(self):
@@ -1470,14 +1470,25 @@ measure_dashboard_headroom
         script = SCRIPT.read_text(encoding="utf-8")
         candidate_start = script.index('oc -n "$PROJECT" run "$CANDIDATE_PROBE_POD"')
         ownership = script.index("CANDIDATE_PROBE_POD_OWNED=1", candidate_start)
-        for later in ('oc -n "$PROJECT" wait', 'oc -n "$PROJECT" cp', 'oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- sh -c'):
-            self.assertLess(ownership, script.index(later, candidate_start))
+        self.assertIn("verify_candidate_probe_identity() {", script)
+        identity_start = script.index("verify_candidate_probe_identity() {")
+        identity = script[identity_start : script.index("\n}\n", identity_start) + 3]
+        for later in (
+            'oc -n "$PROJECT" wait',
+            'cat > /data/comments.sqlite3',
+            'cat > /tmp/candidate-http-acquisition-id',
+            'python /app/static/server.py',
+        ):
+            later_position = script.index(later, candidate_start)
+            self.assertGreater(script.rfind("verify_candidate_probe_identity", candidate_start, later_position), candidate_start)
+            self.assertLess(ownership, later_position)
         cleanup_start = script.index("cleanup_candidate_probe_pod() {")
         cleanup = script[cleanup_start : script.index("\n}\n", cleanup_start) + 3]
 
         # When: cleanup sees the original UID twice, then sees a recreated UID.
         harness = f'''set -Eeuo pipefail
 {cleanup}
+{identity}
 PROJECT=project
 WORK_DIR="$(mktemp -d)"
 CANDIDATE_PROBE_POD=probe
@@ -1492,6 +1503,10 @@ oc() {{
   if [[ "$*" == *delete* ]]; then deletes=$((deletes + 1)); return 0; fi
   return 1
 }}
+verify_candidate_probe_identity
+mock_uid=recreated
+if verify_candidate_probe_identity; then exit 1; fi
+mock_uid=original
 cleanup_candidate_probe_pod
 cleanup_candidate_probe_pod
 CANDIDATE_PROBE_POD_OWNED=1
@@ -1592,7 +1607,7 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         # Hybrid-comments invariants entirely before the production mutation.
         for required in (
             "emptyDir",
-            'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
+            'cat > /data/comments.sqlite3',
             "candidate HTTP existing-history supersession response is invalid",
             "idempotent_replay",
             "stale_current",
@@ -1659,7 +1674,7 @@ printf 'deletes=%s owned=%s\\n' "$deletes" "$CANDIDATE_PROBE_POD_OWNED"
         ):
             self.assertIn(diagnostic, local_gate)
         for required in (
-            'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
+            'cat > /data/comments.sqlite3',
             'CANDIDATE_HTTP_ACQUISITION_FILE',
             "candidate HTTP existing-history supersession response is invalid",
             "candidate HTTP replay/stale conflict changed event count",
@@ -1936,7 +1951,7 @@ validate_manifest_topology {mode} {shlex.quote(str(deployment_file))} {shlex.quo
         self.assertLess(script.index("CANDIDATE_IMAGE_STARTUP PASS"), mutation)
         for required in (
             "candidate-startup-probe",
-            'oc -n "$PROJECT" cp "$CANDIDATE_DB"',
+            'cat > /data/comments.sqlite3',
             "python /app/static/server.py",
             "/api/etroc-reviews?dataset_id=ETROC_OI_2608",
             "candidate evidence loader did not return exact cohort",
@@ -1989,10 +2004,91 @@ validate_manifest_topology {mode} {shlex.quote(str(deployment_file))} {shlex.quo
         self.assertIn("CANDIDATE_PROBE_CREATE_RESPONSE", candidate)
         self.assertIn("candidate probe create response", candidate)
         self.assertIn("\"image\":\"'\"$NEW_WEB_IMAGE\"'\"", candidate)
+        self.assertIn('"command":["sleep","300"]', candidate)
+        self.assertIn('"fieldPath":"metadata.uid"', candidate)
+        self.assertNotIn('oc -n "$PROJECT" cp ', candidate)
+        self.assertGreaterEqual(candidate.count('EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID"'), 4)
+        self.assertLess(
+            candidate.index("CANDIDATE_PROBE_POD_OWNED=1"),
+            candidate.index("candidate probe create response spec mismatch"),
+        )
         self.assertIn('--raw="/api/v1/namespaces/', cleanup)
         self.assertIn("preconditions", cleanup)
         self.assertIn("uid", cleanup)
         self.assertNotIn('delete pod/"$CANDIDATE_PROBE_POD"', cleanup)
+
+    def test_invalid_created_candidate_spec_triggers_uid_preconditioned_cleanup(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        cleanup_start = script.index("cleanup_candidate_probe_pod() {")
+        cleanup = script[cleanup_start : script.index("\n}\n", cleanup_start) + 3]
+        candidate_start = script.index('oc -n "$PROJECT" run "$CANDIDATE_PROBE_POD"')
+        validation_start = script.index('CANDIDATE_PROBE_POD_UID="$(CANDIDATE_PROBE_CREATE_RESPONSE=', candidate_start)
+        validation_end = script.index("\nverify_candidate_probe_identity\n", validation_start)
+        capture_and_validate = script[validation_start:validation_end]
+
+        with tempfile.TemporaryDirectory() as directory:
+            work = Path(directory)
+            response = work / "candidate-probe-create.json"
+            marker = work / "deleted"
+            response.write_text(
+                json.dumps(
+                    {
+                        "apiVersion": "v1",
+                        "kind": "Pod",
+                        "metadata": {"name": "probe", "namespace": "project", "uid": "original"},
+                        "spec": {
+                            "restartPolicy": "Never",
+                            "containers": [
+                                {
+                                    "name": "probe",
+                                    "image": "immutable-image",
+                                    "command": ["wrong-command"],
+                                    "volumeMounts": [{"name": "data", "mountPath": "/data"}],
+                                    "env": [
+                                        {"name": "HOST", "value": "127.0.0.1"},
+                                        {"name": "ETROC_REVIEWER_USERS", "value": "ypark"},
+                                        {
+                                            "name": "POD_UID",
+                                            "valueFrom": {
+                                                "fieldRef": {"apiVersion": "v1", "fieldPath": "metadata.uid"}
+                                            },
+                                        },
+                                    ],
+                                }
+                            ],
+                            "volumes": [{"name": "data", "emptyDir": {}}],
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            harness = f'''set -Eeuo pipefail
+{cleanup}
+PROJECT=project
+WORK_DIR={shlex.quote(str(work))}
+CANDIDATE_PROBE_POD=probe
+CANDIDATE_PROBE_POD_UID=''
+CANDIDATE_PROBE_POD_OWNED=0
+CANDIDATE_PROBE_CREATE_RESPONSE={shlex.quote(str(response))}
+NEW_WEB_IMAGE=immutable-image
+ETROC_REVIEWER_USERS_NORMALIZED=ypark
+DELETE_MARKER={shlex.quote(str(marker))}
+oc() {{
+  if [[ "$*" == *get* ]]; then printf original; return 0; fi
+  if [[ "$*" == *"delete --raw="* ]]; then printf deleted > "$DELETE_MARKER"; return 0; fi
+  return 1
+}}
+trap cleanup_candidate_probe_pod EXIT
+{capture_and_validate}
+'''
+            result = subprocess.run(["bash", "-c", harness], check=False, capture_output=True, text=True)
+            delete_options = json.loads((work / "candidate-probe-delete-options.json").read_text(encoding="utf-8"))
+            marker_value = marker.read_text(encoding="utf-8")
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("candidate probe create response spec mismatch", result.stderr)
+        self.assertEqual(marker_value, "deleted")
+        self.assertEqual(delete_options["preconditions"], {"uid": "original"})
 
     def test_old_runtime_server_extraction_is_digest_pinned_and_rejects_bad_output(self):
         # Given: a fake `oc` records authenticated public-registry extraction calls.

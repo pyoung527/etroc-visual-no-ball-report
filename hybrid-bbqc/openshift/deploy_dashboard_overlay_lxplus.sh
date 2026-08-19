@@ -157,6 +157,22 @@ PY
   CANDIDATE_PROBE_POD_OWNED=0
 }
 
+verify_candidate_probe_identity() {
+  local current_uid
+  if test "$CANDIDATE_PROBE_POD_OWNED" != 1 || test -z "$CANDIDATE_PROBE_POD" || test -z "$CANDIDATE_PROBE_POD_UID"; then
+    printf '%s\n' 'candidate probe exact ownership is unavailable' >&2
+    return 1
+  fi
+  if ! current_uid="$(oc -n "$PROJECT" get pod/"$CANDIDATE_PROBE_POD" -o jsonpath='{.metadata.uid}')"; then
+    printf '%s\n' 'candidate probe is no longer resolvable' >&2
+    return 1
+  fi
+  if test "$current_uid" != "$CANDIDATE_PROBE_POD_UID"; then
+    printf '%s\n' 'candidate probe UID changed; refusing name-based operation' >&2
+    return 1
+  fi
+}
+
 extract_previous_runtime_server() {
   local internal_prefix='image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:'
   local image_digest public_image registry_auth
@@ -1693,13 +1709,28 @@ declare -p BUILD_NAME BUILD_OUTPUT_DIGEST NEW_WEB_IMAGE >> "$RELEASE_STATE"
 CANDIDATE_PROBE_POD="${DEPLOYMENT}-candidate-startup-probe-${RANDOM}${RANDOM}"
 ETROC_REVIEWER_TEST_USER="${ETROC_REVIEWER_USERS_NORMALIZED%%,*}"
 if ! oc -n "$PROJECT" run "$CANDIDATE_PROBE_POD" --restart=Never --image="$NEW_WEB_IMAGE" --output=json \
-  --overrides='{"spec":{"volumes":[{"name":"data","emptyDir":{}}],"containers":[{"name":"'"$CANDIDATE_PROBE_POD"'","image":"'"$NEW_WEB_IMAGE"'","volumeMounts":[{"name":"data","mountPath":"/data"}],"env":[{"name":"HOST","value":"127.0.0.1"},{"name":"ETROC_REVIEWER_USERS","value":"'"$ETROC_REVIEWER_USERS_NORMALIZED"'"}]}]}}' \
+  --overrides='{"spec":{"volumes":[{"name":"data","emptyDir":{}}],"containers":[{"name":"'"$CANDIDATE_PROBE_POD"'","image":"'"$NEW_WEB_IMAGE"'","command":["sleep","300"],"volumeMounts":[{"name":"data","mountPath":"/data"}],"env":[{"name":"HOST","value":"127.0.0.1"},{"name":"ETROC_REVIEWER_USERS","value":"'"$ETROC_REVIEWER_USERS_NORMALIZED"'"},{"name":"POD_UID","valueFrom":{"fieldRef":{"apiVersion":"v1","fieldPath":"metadata.uid"}}}]}]}}' \
   --command -- sleep 300 > "$CANDIDATE_PROBE_CREATE_RESPONSE"; then
   printf '%s\n' 'candidate probe creation failed; refusing same-name pod reconciliation' >&2
   false
 fi
-CANDIDATE_PROBE_POD_UID="$(CANDIDATE_PROBE_CREATE_RESPONSE="$CANDIDATE_PROBE_CREATE_RESPONSE" CANDIDATE_PROBE_POD="$CANDIDATE_PROBE_POD" PROJECT="$PROJECT" NEW_WEB_IMAGE="$NEW_WEB_IMAGE" ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY'
+CANDIDATE_PROBE_POD_UID="$(CANDIDATE_PROBE_CREATE_RESPONSE="$CANDIDATE_PROBE_CREATE_RESPONSE" CANDIDATE_PROBE_POD="$CANDIDATE_PROBE_POD" PROJECT="$PROJECT" python3 -I - <<'PY'
 import json, os, re
+pod=json.load(open(os.environ['CANDIDATE_PROBE_CREATE_RESPONSE'], encoding='utf-8'))
+metadata=pod.get('metadata', {})
+if pod.get('apiVersion') != 'v1' or pod.get('kind') != 'Pod':
+    raise SystemExit('candidate probe create response is not a Pod')
+if metadata.get('name') != os.environ['CANDIDATE_PROBE_POD'] or metadata.get('namespace') != os.environ['PROJECT']:
+    raise SystemExit('candidate probe create response identity mismatch')
+uid=metadata.get('uid')
+if not isinstance(uid, str) or re.fullmatch(r'[A-Za-z0-9._:-]+', uid) is None:
+    raise SystemExit('candidate probe create response UID is invalid')
+print(uid)
+PY
+)"
+CANDIDATE_PROBE_POD_OWNED=1
+CANDIDATE_PROBE_CREATE_RESPONSE="$CANDIDATE_PROBE_CREATE_RESPONSE" CANDIDATE_PROBE_POD="$CANDIDATE_PROBE_POD" PROJECT="$PROJECT" NEW_WEB_IMAGE="$NEW_WEB_IMAGE" ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY'
+import json, os
 pod=json.load(open(os.environ['CANDIDATE_PROBE_CREATE_RESPONSE'], encoding='utf-8'))
 metadata=pod.get('metadata', {})
 spec=pod.get('spec', {})
@@ -1708,34 +1739,39 @@ if pod.get('apiVersion') != 'v1' or pod.get('kind') != 'Pod':
     raise SystemExit('candidate probe create response is not a Pod')
 if metadata.get('name') != os.environ['CANDIDATE_PROBE_POD'] or metadata.get('namespace') != os.environ['PROJECT']:
     raise SystemExit('candidate probe create response identity mismatch')
-uid=metadata.get('uid')
-if not isinstance(uid, str) or re.fullmatch(r'[A-Za-z0-9._:-]+', uid) is None:
-    raise SystemExit('candidate probe create response UID is invalid')
 if spec.get('restartPolicy') != 'Never' or not isinstance(containers, list) or len(containers) != 1:
     raise SystemExit('candidate probe create response spec mismatch')
 container=containers[0]
-expected_env={'HOST': '127.0.0.1', 'ETROC_REVIEWER_USERS': os.environ['ETROC_REVIEWER_USERS_NORMALIZED']}
-actual_env={entry.get('name'): entry.get('value') for entry in container.get('env', []) if isinstance(entry, dict)}
-if container.get('name') != os.environ['CANDIDATE_PROBE_POD'] or container.get('image') != os.environ['NEW_WEB_IMAGE'] or actual_env != expected_env:
+expected_env=[
+    {'name': 'HOST', 'value': '127.0.0.1'},
+    {'name': 'ETROC_REVIEWER_USERS', 'value': os.environ['ETROC_REVIEWER_USERS_NORMALIZED']},
+    {'name': 'POD_UID', 'valueFrom': {'fieldRef': {'apiVersion': 'v1', 'fieldPath': 'metadata.uid'}}},
+]
+if container.get('name') != os.environ['CANDIDATE_PROBE_POD'] or container.get('image') != os.environ['NEW_WEB_IMAGE'] or container.get('env') != expected_env:
     raise SystemExit('candidate probe create response container mismatch')
 if container.get('command') != ['sleep', '300'] or container.get('volumeMounts') != [{'name': 'data', 'mountPath': '/data'}] or spec.get('volumes') != [{'name': 'data', 'emptyDir': {}}]:
     raise SystemExit('candidate probe create response spec mismatch')
-print(uid)
 PY
-)"
-CANDIDATE_PROBE_POD_OWNED=1
+verify_candidate_probe_identity
 oc -n "$PROJECT" wait --for=condition=Ready pod/"$CANDIDATE_PROBE_POD" --timeout=120s
-test "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- python --version 2>&1)" = "Python 3.12.13"
-oc -n "$PROJECT" cp "$CANDIDATE_DB" "$CANDIDATE_PROBE_POD:/data/comments.sqlite3"
-oc -n "$PROJECT" cp "$CANDIDATE_HTTP_ACQUISITION_FILE" "$CANDIDATE_PROBE_POD:/tmp/candidate-http-acquisition-id"
-oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- sh -c 'python /app/static/server.py >/tmp/candidate-entrypoint.log 2>&1 &'
+verify_candidate_probe_identity
+test "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" sh -ec 'test "$POD_UID" = "$EXPECTED_POD_UID"; exec python --version' 2>&1)" = "Python 3.12.13"
+verify_candidate_probe_identity
+oc -n "$PROJECT" exec -i "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" sh -ec 'test "$POD_UID" = "$EXPECTED_POD_UID"; umask 077; cat > /data/comments.sqlite3' < "$CANDIDATE_DB"
+verify_candidate_probe_identity
+oc -n "$PROJECT" exec -i "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" sh -ec 'test "$POD_UID" = "$EXPECTED_POD_UID"; umask 077; cat > /tmp/candidate-http-acquisition-id' < "$CANDIDATE_HTTP_ACQUISITION_FILE"
+verify_candidate_probe_identity
+oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" sh -ec 'test "$POD_UID" = "$EXPECTED_POD_UID"; python /app/static/server.py >/tmp/candidate-entrypoint.log 2>&1 &'
 for candidate_attempt in $(seq 1 24); do
-  if oc -n "$PROJECT" exec -i "$CANDIDATE_PROBE_POD" -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" CANDIDATE_HTTP_ACQUISITION_FILE=/tmp/candidate-http-acquisition-id python - <<'PY'
+  verify_candidate_probe_identity
+  if oc -n "$PROJECT" exec -i "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" CANDIDATE_HTTP_ACQUISITION_FILE=/tmp/candidate-http-acquisition-id python - <<'PY'
 import hashlib, json, os, sqlite3, urllib.error, uuid
 from pathlib import Path
 from urllib.parse import quote
 from urllib.request import Request, urlopen
 
+if os.environ.get('POD_UID') != os.environ.get('EXPECTED_POD_UID'):
+    raise SystemExit('candidate probe self UID mismatch')
 base='http://127.0.0.1:8080'
 headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']}
 def read_json(path, request_headers=headers):
@@ -1811,6 +1847,7 @@ PY
   test "$candidate_attempt" -lt 24
   sleep 5
 done
+verify_candidate_probe_identity
 grep -q 'BBQC_STARTUP_OK' <<< "$(oc -n "$PROJECT" logs "$CANDIDATE_PROBE_POD")"
 cleanup_candidate_probe_pod
 printf 'CANDIDATE_IMAGE_STARTUP PASS image=%s\n' "$NEW_WEB_IMAGE"
