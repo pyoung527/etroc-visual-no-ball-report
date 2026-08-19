@@ -65,10 +65,10 @@ class LxplusDashboardDeployTests(unittest.TestCase):
         selected = subprocess.run(
             ["bash", "-c", f"{assignment}; printf '%s' \"$BACKUP_DIR\""],
             check=False, capture_output=True, text=True,
-            env={"HOME": "/home/default", "BBQC_BACKUP_DIR": "/eos/user/y/ypark/bbqc-production-backups"},
+            env={"HOME": "/home/default", "BBQC_BACKUP_DIR": "/eos/home-y/ypark/bbqc-production-backups"},
         )
         self.assertEqual(selected.returncode, 0, selected.stderr)
-        self.assertEqual(selected.stdout, "/eos/user/y/ypark/bbqc-production-backups")
+        self.assertEqual(selected.stdout, "/eos/home-y/ypark/bbqc-production-backups")
 
     def test_backup_dir_is_strictly_below_only_the_current_users_home_or_eos_root(self):
         # Given: durable backup evidence must stay under the current user's canonical roots.
@@ -85,12 +85,12 @@ class LxplusDashboardDeployTests(unittest.TestCase):
         # qualify; roots themselves, other users, transient filesystems, traversal, and
         # symlinks do not.
         self.assertIn("pwd.getpwnam(username).pw_dir", validator)
-        self.assertIn("PurePath('/eos/user', username[0], username)", validator)
+        self.assertIn("PurePath('/eos', f'home-{username[0]}', username)", validator)
         self.assertIn("path != root and root in path.parents", validator)
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             home = root / "home"
-            eos_root = root / "eos" / "user" / "y" / "young-park"
+            eos_root = root / "eos" / "home-y" / "young-park"
             home.mkdir()
             eos_root.mkdir(parents=True)
             home.chmod(0o700)
@@ -101,7 +101,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
                 "home = PurePath(pwd.getpwnam(username).pw_dir)",
                 "home = PurePath(os.environ['TEST_HOME'])",
             ).replace(
-                "eos_root = PurePath('/eos/user', username[0], username)",
+                "eos_root = PurePath('/eos', f'home-{username[0]}', username)",
                 "eos_root = PurePath(os.environ['TEST_EOS_ROOT'])",
             ).replace(
                 "for index in range(1, len(path.parts) - 1):\n    directory_status(PurePath(*path.parts[:index + 1]))",
@@ -134,7 +134,7 @@ class LxplusDashboardDeployTests(unittest.TestCase):
             rejected = (
                 validate(home),
                 validate(eos_root),
-                validate(root / "eos" / "user" / "y" / "another-user" / "backups"),
+                validate(root / "eos" / "home-y" / "another-user" / "backups"),
                 validate(root / "run" / "user" / "1000" / "backups"),
                 validate(root / "data" / "backups"),
                 validate(home / ".." / "escape"),
@@ -247,7 +247,7 @@ printf 'ROLLOUT_REACHED\\n' >> {shlex.quote(str(commands))}
             check=False, capture_output=True, text=True,
         )
         eos = subprocess.run(
-            ["bash", "-c", f"{helpers}\nBACKUP_DIR=/eos/user/y/ypark/bbqc-production-backups; df() {{ printf 'Filesystem 1024-blocks Used Available Capacity Mounted on\\neos 6000000 1000000 4900000 17%% /eos\\n'; }}; measure_durable_storage"],
+            ["bash", "-c", f"{helpers}\nBACKUP_DIR=/eos/home-y/ypark/bbqc-production-backups; df() {{ printf 'Filesystem 1024-blocks Used Available Capacity Mounted on\\neos 6000000 1000000 4900000 17%% /eos\\n'; }}; measure_durable_storage"],
             check=False, capture_output=True, text=True,
         )
         malformed_fs = subprocess.run(

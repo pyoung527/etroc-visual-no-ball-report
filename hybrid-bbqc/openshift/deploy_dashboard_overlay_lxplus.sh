@@ -236,7 +236,7 @@ username = pwd.getpwuid(os.geteuid()).pw_name
 home = PurePath(pwd.getpwnam(username).pw_dir)
 if os.environ.get('HOME') != str(home) or not home.is_absolute() or os.path.realpath(home) != str(home):
     raise SystemExit('canonical HOME is invalid')
-eos_root = PurePath('/eos/user', username[0], username)
+eos_root = PurePath('/eos', f'home-{username[0]}', username)
 if not any(path != root and root in path.parents for root in (home, eos_root)):
     raise SystemExit('backup directory must be below the current user home or EOS root')
 
