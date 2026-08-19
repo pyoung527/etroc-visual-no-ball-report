@@ -78,6 +78,7 @@ OLD_SERVICE_SHA256=''
 OLD_ROUTE_FILE=''
 OLD_ROUTE_SHA256=''
 OLD_WEB_IMAGE=''
+OLD_RELEASE_ANNOTATIONS_JSON='{}'
 OLD_RUNTIME_SERVER_SHA256=''
 OLD_PROXY_IMAGE=''
 DEPLOYMENT_UID=''
@@ -820,17 +821,89 @@ select_single_app_pod() {
   printf '%s\n' "$selected"
 }
 
+validate_previous_release_annotations() {
+  CAPTURED_DEPLOYMENT_FILE="$CAPTURED_DEPLOYMENT_FILE" OLD_WEB_IMAGE="$OLD_WEB_IMAGE" \
+    PROJECT="$PROJECT" BUILDCONFIG="$BUILDCONFIG" BUILDCONFIG_UID="$BUILDCONFIG_UID" python3 -I - <<'PY'
+import json, os, re, subprocess
+
+captured=json.load(open(os.environ['CAPTURED_DEPLOYMENT_FILE'], encoding='utf-8'))
+annotations=captured.get('metadata', {}).get('annotations', {})
+if not isinstance(annotations, dict):
+    raise SystemExit('captured Deployment annotations are invalid')
+annotations=dict(annotations)
+annotations.pop('deployment.kubernetes.io/revision', None)
+annotations.pop('kubectl.kubernetes.io/last-applied-configuration', None)
+if not annotations:
+    print('{}')
+    raise SystemExit(0)
+keys={
+    'bbqc.cern.ch/source-revision',
+    'bbqc.cern.ch/build-context-sha256',
+    'bbqc.cern.ch/build-name',
+    'bbqc.cern.ch/release-mode',
+}
+if set(annotations) != keys:
+    raise SystemExit('previous release annotations contain unknown or incomplete keys')
+if re.fullmatch(r'[0-9a-f]{40}', annotations['bbqc.cern.ch/source-revision']) is None:
+    raise SystemExit('previous release source revision is invalid')
+if re.fullmatch(r'[0-9a-f]{64}', annotations['bbqc.cern.ch/build-context-sha256']) is None:
+    raise SystemExit('previous release build context digest is invalid')
+if annotations['bbqc.cern.ch/release-mode'] != 'immutable-overlay':
+    raise SystemExit('previous release mode is invalid')
+buildconfig=os.environ['BUILDCONFIG']
+match=re.fullmatch(r'build\.build\.openshift\.io/(' + re.escape(buildconfig) + r'-(0|[1-9][0-9]*))', annotations['bbqc.cern.ch/build-name'])
+if match is None:
+    raise SystemExit('previous release Build reference is invalid')
+build_name=match.group(1)
+build_number=build_name.rsplit('-', 1)[1]
+result=subprocess.run(
+    ['oc', '-n', os.environ['PROJECT'], 'get', 'build/' + build_name, '-o', 'json'],
+    check=False, capture_output=True, text=True,
+)
+if result.returncode != 0:
+    raise SystemExit('previous release Build is unavailable')
+build=json.loads(result.stdout)
+metadata=build.get('metadata', {})
+status=build.get('status', {})
+if metadata.get('name') != build_name or metadata.get('namespace') != os.environ['PROJECT']:
+    raise SystemExit('previous release Build identity changed')
+expected_owner=[{
+    'apiVersion': 'build.openshift.io/v1',
+    'controller': True,
+    'kind': 'BuildConfig',
+    'name': buildconfig,
+    'uid': os.environ['BUILDCONFIG_UID'],
+}]
+if metadata.get('ownerReferences') != expected_owner:
+    raise SystemExit('previous release Build controller ownerReference is invalid')
+if metadata.get('labels', {}).get('buildconfig') != buildconfig or metadata.get('annotations', {}).get('openshift.io/build-config.name') != buildconfig or metadata.get('annotations', {}).get('openshift.io/build.number') != build_number:
+    raise SystemExit('previous release Build ownership is invalid')
+if status.get('phase') != 'Complete':
+    raise SystemExit('previous release Build is not complete')
+# Required provenance contract: status.output.to.imageDigest
+build_digest=status.get('output', {}).get('to', {}).get('imageDigest')
+old_image=os.environ['OLD_WEB_IMAGE']
+old_digest=old_image.rsplit('@', 1)[1] if '@' in old_image else ''
+if re.fullmatch(r'sha256:[0-9a-f]{64}', build_digest or '') is None or build_digest != old_digest:
+    raise SystemExit('previous release Build digest differs from deployed old image')
+print(json.dumps(annotations, sort_keys=True, separators=(',', ':')))
+PY
+}
+
 render_forward_object() {
   local kind="$1" baseline_file="$2" captured_file="$3" forward_file="$4"
   RELEASE_KIND="$kind" BASELINE_OBJECT_FILE="$baseline_file" CAPTURED_OBJECT_FILE="$captured_file" \
     NEW_WEB_IMAGE="$NEW_WEB_IMAGE" OLD_WEB_IMAGE="$OLD_WEB_IMAGE" OLD_PROXY_IMAGE="$OLD_PROXY_IMAGE" \
-    OLD_TOPOLOGY_MODE="$OLD_TOPOLOGY_MODE" \
+    OLD_TOPOLOGY_MODE="$OLD_TOPOLOGY_MODE" OLD_RELEASE_ANNOTATIONS_JSON="$OLD_RELEASE_ANNOTATIONS_JSON" \
     SOURCE_REVISION="$SOURCE_REVISION" BUILD_CONTEXT_SHA256="$BUILD_CONTEXT_SHA256" BUILD_NAME="$BUILD_NAME" \
     ETROC_REVIEWER_USERS_NORMALIZED="$ETROC_REVIEWER_USERS_NORMALIZED" python3 -I - <<'PY' > "$forward_file"
 import copy, json, os, sys
 baseline=json.load(open(os.environ['BASELINE_OBJECT_FILE'], encoding='utf-8'))
 captured=json.load(open(os.environ['CAPTURED_OBJECT_FILE'], encoding='utf-8'))
 kind=os.environ['RELEASE_KIND']
+validated_previous_release_annotations=json.loads(os.environ.get('OLD_RELEASE_ANNOTATIONS_JSON', '{}'))
+if not isinstance(validated_previous_release_annotations, dict):
+    raise SystemExit('validated previous release annotations are invalid')
 if baseline.get('kind') != kind or captured.get('kind') != kind:
     raise SystemExit('baseline/captured object kind mismatch')
 baseline_metadata=baseline.get('metadata', {})
@@ -847,6 +920,11 @@ def normalized_annotations(metadata):
     result.pop('kubectl.kubernetes.io/last-applied-configuration', None)
     if kind == 'Deployment':
         result.pop('deployment.kubernetes.io/revision', None)
+        for key, expected_value in validated_previous_release_annotations.items():
+            if key in result:
+                if result[key] != expected_value:
+                    raise SystemExit('captured Deployment previous release annotation changed after validation')
+                result.pop(key)
     return result
 baseline_annotations=normalized_annotations(baseline_metadata)
 if normalized_annotations(captured_metadata) != baseline_annotations:
@@ -1348,6 +1426,8 @@ PY
 )
 [[ "$BUILDCONFIG_UID" =~ ^[A-Za-z0-9._:-]+$ ]]
 [[ "$BUILDCONFIG_RESOURCE_VERSION" =~ ^[A-Za-z0-9._:-]+$ ]]
+OLD_RELEASE_ANNOTATIONS_JSON="$(validate_previous_release_annotations)"
+printf '%s\n' 'PREVIOUS_RELEASE_PROVENANCE PASS'
 
 render_captured_rollback_object "$CAPTURED_DEPLOYMENT_FILE" "$OLD_DEPLOYMENT_FILE"
 render_captured_rollback_object "$CAPTURED_SERVICE_FILE" "$OLD_SERVICE_FILE"

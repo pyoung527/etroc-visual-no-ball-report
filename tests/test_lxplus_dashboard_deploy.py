@@ -1465,6 +1465,88 @@ measure_dashboard_headroom
                 if expected_failure:
                     self.assertIn("annotations differ from pinned baseline", result.stderr)
 
+    def test_previous_release_annotations_are_bound_to_completed_build_digest(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        self.assertIn("validate_previous_release_annotations() {", script)
+        validator = script[
+            script.index("validate_previous_release_annotations() {") : script.index(
+                "render_forward_object() {", script.index("validate_previous_release_annotations() {")
+            )
+        ]
+        for required in (
+            "bbqc.cern.ch/source-revision",
+            "bbqc.cern.ch/build-context-sha256",
+            "bbqc.cern.ch/build-name",
+            "bbqc.cern.ch/release-mode",
+            "status.output.to.imageDigest",
+            "BUILDCONFIG_UID",
+            "ownerReferences",
+            "previous release Build controller ownerReference is invalid",
+            "previous release Build is not complete",
+            "previous release Build digest differs from deployed old image",
+        ):
+            self.assertIn(required, validator)
+        forward = script[script.index("render_forward_object() {") : script.index("render_captured_rollback_object() {")]
+        self.assertIn("OLD_RELEASE_ANNOTATIONS_JSON", forward)
+        self.assertIn("validated_previous_release_annotations", forward)
+
+    def test_previous_release_build_owner_reference_rejection_is_executable(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        function_start = script.index("validate_previous_release_annotations() {")
+        python_start = script.index("import json, os, re, subprocess", function_start)
+        validator = script[python_start : script.index("\nPY\n}\n\nrender_forward_object()", python_start)]
+        annotations = {
+            "bbqc.cern.ch/source-revision": "a" * 40,
+            "bbqc.cern.ch/build-context-sha256": "b" * 64,
+            "bbqc.cern.ch/build-name": "build.build.openshift.io/etl-hybrid-bbqc-39",
+            "bbqc.cern.ch/release-mode": "immutable-overlay",
+        }
+        buildconfig_uid = "c79ed76a-20fe-4798-9194-b30a617a3590"
+        digest = "sha256:" + "c" * 64
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            captured = root / "deployment.json"
+            captured.write_text(json.dumps({"metadata": {"annotations": annotations}}), encoding="utf-8")
+            fake_build = root / "build.json"
+            fake_oc = root / "oc"
+            fake_oc.write_text("#!/bin/sh\ncat \"$FAKE_BUILD_JSON\"\n", encoding="utf-8")
+            fake_oc.chmod(0o700)
+            base_build = {
+                "metadata": {
+                    "name": "etl-hybrid-bbqc-39",
+                    "namespace": "etroc-solder-inspection",
+                    "labels": {"buildconfig": "etl-hybrid-bbqc"},
+                    "annotations": {
+                        "openshift.io/build-config.name": "etl-hybrid-bbqc",
+                        "openshift.io/build.number": "39",
+                    },
+                },
+                "status": {"phase": "Complete", "output": {"to": {"imageDigest": digest}}},
+            }
+            environment = os.environ | {
+                "PATH": str(root) + os.pathsep + os.environ["PATH"],
+                "FAKE_BUILD_JSON": str(fake_build),
+                "CAPTURED_DEPLOYMENT_FILE": str(captured),
+                "OLD_WEB_IMAGE": "registry.example/etl-hybrid-bbqc@" + digest,
+                "PROJECT": "etroc-solder-inspection",
+                "BUILDCONFIG": "etl-hybrid-bbqc",
+                "BUILDCONFIG_UID": buildconfig_uid,
+            }
+            cases = (
+                ("valid", [{"apiVersion": "build.openshift.io/v1", "controller": True, "kind": "BuildConfig", "name": "etl-hybrid-bbqc", "uid": buildconfig_uid}], 0),
+                ("missing", [], 1),
+                ("wrong", [{"apiVersion": "build.openshift.io/v1", "controller": True, "kind": "BuildConfig", "name": "etl-hybrid-bbqc", "uid": "wrong-uid"}], 1),
+            )
+            for label, owners, expected_failure in cases:
+                with self.subTest(label=label):
+                    payload = json.loads(json.dumps(base_build))
+                    payload["metadata"]["ownerReferences"] = owners
+                    fake_build.write_text(json.dumps(payload), encoding="utf-8")
+                    result = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+                    self.assertEqual(result.returncode != 0, bool(expected_failure), result.stderr)
+                    if expected_failure:
+                        self.assertIn("controller ownerReference is invalid", result.stderr)
+
     def test_candidate_probe_cleanup_is_uid_guarded_and_owned_before_possible_failures(self):
         # Given: candidate creation succeeded and later wait, copy, or startup can fail.
         script = SCRIPT.read_text(encoding="utf-8")
