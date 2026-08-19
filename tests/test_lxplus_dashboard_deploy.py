@@ -2191,9 +2191,25 @@ printf 'sha=%s\\n' "$OLD_RUNTIME_SERVER_SHA256"
 
         # When: the old runtime compatibility gate is assembled.
 
-        # Then: it uses only the extracted absolute source and no production candidate DB path.
-        self.assertIn('COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I', script)
+        # Then: it uses only the extracted absolute source and the immutable candidate overlay,
+        # never a production candidate DB path.
+        self.assertIn(
+            'COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" python3 -I',
+            script,
+        )
         self.assertIn("source = Path(os.environ['OLD_RUNTIME_SERVER'])", script)
+        self.assertIn("candidate_static_root = Path(os.environ['CANDIDATE_STATIC_ROOT'])", script)
+        compatibility = script[
+            script.index('COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER"') :
+            script.index("CANDIDATE_LEGACY_COMMENTS_COMPAT PASS")
+        ]
+        self.assertIn("server.ROOT = candidate_static_root", compatibility)
+        self.assertIn("server.init_db(static_root=candidate_static_root)", compatibility)
+        self.assertNotIn("server.init_db()", compatibility)
+        self.assertLess(
+            compatibility.index("server.ROOT = candidate_static_root"),
+            compatibility.index("server.init_db(static_root=candidate_static_root)"),
+        )
         self.assertNotIn("source = Path('/app/static/server.py')", script)
         self.assertNotIn("CANDIDATE_REMOTE_DB", script)
         self.assertNotIn("cleanup_production_candidate_db", script)

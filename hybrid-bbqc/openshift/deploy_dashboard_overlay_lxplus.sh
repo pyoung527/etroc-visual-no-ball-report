@@ -1597,18 +1597,22 @@ with sqlite3.connect(candidate) as db:
         raise SystemExit('candidate deterministic mutation schema/integrity verification failed')
 print('CANDIDATE_ETROC_SCHEMA PASS')
 PY
-COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
+COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" python3 -I - <<'PY'
 import http.client, importlib.util, json, os, threading, uuid
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 source = Path(os.environ['OLD_RUNTIME_SERVER'])
+candidate_static_root = Path(os.environ['CANDIDATE_STATIC_ROOT']).resolve()
+if not candidate_static_root.is_dir() or not (candidate_static_root / 'index.html').is_file():
+    raise SystemExit('candidate static root is unavailable for previous-binary compatibility')
 spec = importlib.util.spec_from_file_location('previous_binary_server', source)
 if spec is None or spec.loader is None:
     raise SystemExit('previous-binary comments server is unavailable')
 server = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(server)
-server.init_db()
+server.ROOT = candidate_static_root
+server.init_db(static_root=candidate_static_root)
 httpd = ThreadingHTTPServer(('127.0.0.1', 0), server.Handler)
 thread = threading.Thread(target=httpd.serve_forever, daemon=True)
 thread.start()
