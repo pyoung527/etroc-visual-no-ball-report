@@ -383,6 +383,14 @@ class ReviewApiTests(unittest.TestCase):
         return handler.status, response_headers, json.loads(handler.wfile.getvalue())
 
     def test_summary_history_audit_and_strict_mutation_boundary(self):
+        # Given: the audit query groups canonical identities portably across SQLite versions.
+        review_source = (STATIC_ROOT / "etroc_reviews.py").read_text(encoding="utf-8")
+        self.assertIn(
+            "GROUP BY dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256 ORDER BY MIN(id)",
+            review_source,
+        )
+        self.assertNotIn("SELECT DISTINCT dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256", review_source)
+
         # Given: the live Handler has a trusted allowlisted reviewer identity.
         headers = {"X-Forwarded-Email": "Reviewer@CERN.CH"}
 
@@ -419,7 +427,21 @@ class ReviewApiTests(unittest.TestCase):
         self.assertEqual(history["current"]["event_id"], created["event"]["event_id"])
         status, _, audit = self.request(f"/api/etroc-reviews/audit?acquisition_id={encoded}", headers=headers)
         self.assertEqual(status, 200)
+        self.assertEqual(len(audit["chains"]), 1)
         self.assertEqual(audit["chains"][0]["history"][0], created["event"])
+        successor_request = {
+            **request,
+            "state": "follow_up_required",
+            "note": "portable audit-chain grouping",
+            "expected_current_event_id": created["event"]["event_id"],
+            "mutation_id": str(uuid.uuid4()),
+        }
+        status, _, successor = self.request("/api/etroc-reviews", "POST", successor_request, post_headers)
+        self.assertEqual(status, 201)
+        status, _, audit = self.request(f"/api/etroc-reviews/audit?acquisition_id={encoded}", headers=headers)
+        self.assertEqual(status, 200)
+        self.assertEqual(len(audit["chains"]), 1)
+        self.assertEqual(audit["chains"][0]["history"], [successor["event"], created["event"]])
         status, _, invalid = self.request("/api/etroc-reviews?dataset_id=ETROC_OI_2608&extra=1", headers=headers)
         self.assertEqual(status, 400)
         self.assertEqual(invalid["error"]["code"], "invalid_query")

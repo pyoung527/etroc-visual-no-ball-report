@@ -280,7 +280,7 @@ def history(db_path: Path, evidence: EvidenceSet, acquisition_id: str) -> Servic
 def audit(db_path: Path, acquisition_id: str, evidence: EvidenceSet | None) -> ServiceResult:
     with sqlite3.connect(Path(db_path)) as db:
         db.row_factory = sqlite3.Row
-        rows = db.execute("SELECT DISTINCT dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256 FROM etroc_review_events WHERE acquisition_id=? ORDER BY id", (acquisition_id,)).fetchall()
+        rows = db.execute("SELECT dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256 FROM etroc_review_events WHERE acquisition_id=? GROUP BY dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256 ORDER BY MIN(id)", (acquisition_id,)).fetchall()
         chains = []
         for row in rows:
             record = EvidenceRecord(
