@@ -1336,6 +1336,11 @@ measure_dashboard_headroom
             captured_service = json.loads(json.dumps(baseline_service))
             captured_service["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "service-uid", "resourceVersion": "1"}
             captured_service["spec"]["ports"] = [{"name": "oauth", "protocol": "TCP", "port": 8080, "targetPort": "oauth"}]
+            captured_service["spec"] |= {
+                "clusterIP": "172.30.14.70", "clusterIPs": ["172.30.14.70"],
+                "ipFamilies": ["IPv4"], "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster", "sessionAffinity": "None", "type": "ClusterIP",
+            }
             for kind, baseline, captured in (("Deployment", baseline_deployment, captured_deployment), ("Service", baseline_service, captured_service)):
                 baseline_file, captured_file = root / f"{kind}-baseline.json", root / f"{kind}-captured.json"
                 baseline_file.write_text(json.dumps(baseline), encoding="utf-8")
@@ -1357,6 +1362,17 @@ measure_dashboard_headroom
                     self.assertEqual(rendered["spec"]["progressDeadlineSeconds"], 600)
                 else:
                     self.assertEqual(rendered["spec"]["ports"], baseline_service["spec"]["ports"])
+
+            invalid_service = json.loads(json.dumps(captured_service))
+            invalid_service["spec"]["type"] = "NodePort"
+            invalid_service_file = root / "Service-captured-invalid-default.json"
+            invalid_service_file.write_text(json.dumps(invalid_service), encoding="utf-8")
+            environment["RELEASE_KIND"] = "Service"
+            environment["BASELINE_OBJECT_FILE"] = str(root / "Service-baseline.json")
+            environment["CAPTURED_OBJECT_FILE"] = str(invalid_service_file)
+            invalid_service_result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
+            self.assertNotEqual(invalid_service_result.returncode, 0)
+            self.assertIn("Service server default is not the reviewed value", invalid_service_result.stderr)
 
             # Then: an invalid calendar/timezone value and unrelated legacy drift remain blocking.
             for invalid_value in ("2026-99-99T99:99:99+99:99", "2026-07-29T09:00:57+00:60"):

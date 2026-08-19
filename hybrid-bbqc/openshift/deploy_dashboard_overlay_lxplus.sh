@@ -1162,6 +1162,11 @@ if kind == 'Service':
     for field in ('clusterIP', 'clusterIPs', 'ipFamilies', 'ipFamilyPolicy', 'healthCheckNodePort'):
         if field in captured_spec:
             baseline_spec[field]=captured_spec[field]
+    for field, expected in (('internalTrafficPolicy', 'Cluster'), ('sessionAffinity', 'None'), ('type', 'ClusterIP')):
+        if field in captured_spec and field not in baseline_spec:
+            if captured_spec[field] != expected:
+                raise SystemExit('captured Service server default is not the reviewed value')
+            baseline_spec[field]=expected
     if old_topology_mode == 'legacy':
         legacy_ports=[{'name': 'oauth', 'protocol': 'TCP', 'port': 8080, 'targetPort': 'oauth'}]
         target_ports=[{'name': 'oauth', 'protocol': 'TCP', 'port': 4180, 'targetPort': 'oauth'}]
