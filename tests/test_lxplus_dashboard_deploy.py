@@ -634,7 +634,7 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='041fbb0f63a8d2a1ec86be7ede2a28e8534e0f8c'",
+            "SOURCE_REVISION='87b24144c6ccee50c845768b12c36932ff0e11fb'",
             script,
         )
         expected = {
@@ -647,7 +647,7 @@ measure_dashboard_headroom
             "lgad-optical-stats.js": "e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02",
             "ETROC_MANIFEST_SHA256": "616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29",
             "SERVER_PY_SHA256": "45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e",
-            "ETROC_REVIEWS_PY_SHA256": "0da4caf6bc275941c00bda485daf1bdc9475646e1c1528af0a941cfea0b35984",
+            "ETROC_REVIEWS_PY_SHA256": "d2338ff8ea37c7d4d26f5246c32075dee68534f2d725a9fc28e427073ed12ebc",
             "DEPLOYMENT_MANIFEST_SHA256": "658c6db56b9dd4f85eec18900462951d1c00de65c1273d2f7a33a21804ca61fb",
             "SERVICE_MANIFEST_SHA256": "84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c",
             "ROUTE_MANIFEST_SHA256": "23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43",
