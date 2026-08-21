@@ -945,16 +945,19 @@ else:
             raise SystemExit('retained successful Build number is invalid')
         number=int(number_text)
         if number <= historical_number:
-            continue
+            raise SystemExit('retained successful Build is not newer than historical release')
         if retained_metadata.get('name') != buildconfig + '-' + number_text or retained_metadata.get('namespace') != os.environ['PROJECT'] or retained_metadata.get('ownerReferences') != expected_retained_owner:
             raise SystemExit('retained successful Build identity or owner is invalid')
         if retained_metadata.get('labels', {}).get('buildconfig') != buildconfig or retained_annotations.get('openshift.io/build-config.name') != buildconfig:
             raise SystemExit('retained successful Build ownership is invalid')
         retained_completed=parse_timestamp(retained_status.get('completionTimestamp'), 'retained successful Build completion')
         newer_completed.append((number, retained_completed))
-    newer_numbers={number for number, _created in newer_completed}
-    required_newer_numbers=set(range(historical_number + 1, historical_number + history_limit + 1))
-    if not required_newer_numbers.issubset(newer_numbers) or max(newer_numbers, default=historical_number) > last_version:
+    newer_numbers={number for number, _completed in newer_completed}
+    ordered_newer_numbers=sorted(newer_numbers)
+    if (len(ordered_newer_numbers) < history_limit
+            or ordered_newer_numbers != list(range(ordered_newer_numbers[0], ordered_newer_numbers[-1] + 1))
+            or ordered_newer_numbers[0] <= historical_number
+            or ordered_newer_numbers[-1] > last_version):
         raise SystemExit('missing previous release Build is not explained by successful-Build retention')
     isi_name=buildconfig + '@' + old_digest
     isi_result=subprocess.run(
@@ -979,8 +982,8 @@ else:
     image_created=parse_timestamp(image_metadata.get('creationTimestamp'), 'previous release image creation')
     if image_created <= buildconfig_created:
         raise SystemExit('previous release image predates current BuildConfig UID')
-    first_newer_completed=min(completed for number, completed in newer_completed if number == historical_number + 1)
-    if image_created >= first_newer_completed:
+    earliest_retained_completed=min(completed for _number, completed in newer_completed)
+    if image_created >= earliest_retained_completed:
         raise SystemExit('previous release image creation is inconsistent with retained Build completion sequence')
     if openshift_build_labels != required_image_labels or image_annotations.get('openshift.io/image.managed') != 'true' or image_annotations.get('image.openshift.io/manifestBlobStored') != 'true':
         raise SystemExit('previous release ImageStreamImage provenance is invalid')

@@ -1714,6 +1714,23 @@ measure_dashboard_headroom
             self.assertIn("image predates current BuildConfig UID", recreated_result.stderr)
             buildconfig.write_text(json.dumps(valid_buildconfig), encoding="utf-8")
             valid_builds = json.loads(builds_file.read_text(encoding="utf-8"))
+            older_retained = json.loads(json.dumps(valid_builds))
+            older_item = json.loads(json.dumps(older_retained["items"][0]))
+            older_item["metadata"]["name"] = "etl-hybrid-bbqc-38"
+            older_item["metadata"]["annotations"]["openshift.io/build.number"] = "38"
+            older_item["status"]["completionTimestamp"] = "2026-08-19T15:38:00Z"
+            older_retained["items"].append(older_item)
+            builds_file.write_text(json.dumps(older_retained), encoding="utf-8")
+            older_result = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(older_result.returncode, 0)
+            self.assertIn("not newer than historical release", older_result.stderr)
+            out_of_order = json.loads(json.dumps(valid_builds))
+            out_of_order["items"][1]["status"]["completionTimestamp"] = "2026-08-18T12:00:00Z"
+            builds_file.write_text(json.dumps(out_of_order), encoding="utf-8")
+            chronology_result = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(chronology_result.returncode, 0)
+            self.assertIn("completion sequence", chronology_result.stderr)
+            builds_file.write_text(json.dumps(valid_builds), encoding="utf-8")
             insufficient_builds = json.loads(json.dumps(valid_builds))
             insufficient_builds["items"] = insufficient_builds["items"][:4]
             builds_file.write_text(json.dumps(insufficient_builds), encoding="utf-8")
@@ -1729,6 +1746,16 @@ measure_dashboard_headroom
             gapped = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
             self.assertNotEqual(gapped.returncode, 0)
             self.assertIn("not explained by successful-Build retention", gapped.stderr)
+            shifted_builds = json.loads(json.dumps(valid_builds))
+            for item in shifted_builds["items"]:
+                old_number = int(item["metadata"]["annotations"]["openshift.io/build.number"])
+                new_number = old_number + 1
+                item["metadata"]["name"] = f"etl-hybrid-bbqc-{new_number}"
+                item["metadata"]["annotations"]["openshift.io/build.number"] = str(new_number)
+                item["status"]["completionTimestamp"] = f"2026-08-19T14:{new_number}:00Z"
+            builds_file.write_text(json.dumps(shifted_builds), encoding="utf-8")
+            shifted = subprocess.run([sys.executable, "-I", "-c", validator], capture_output=True, text=True, env=environment)
+            self.assertEqual(shifted.returncode, 0, shifted.stderr)
             builds_file.write_text(json.dumps(valid_builds), encoding="utf-8")
             invalid_stream = json.loads(json.dumps(valid_stream))
             invalid_stream["status"]["tags"][0]["items"] = []
