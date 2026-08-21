@@ -4,7 +4,7 @@ umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 CANDIDATE_HOST_PYTHON='/usr/bin/python3.12'
 
-SOURCE_REVISION='87b24144c6ccee50c845768b12c36932ff0e11fb'
+SOURCE_REVISION='128f5abdfba09e051938062fa46074035cf4a0ca'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
 INDEX_SHA256='af5dbe0db30b41bb231be3248a4c9a1aebd831988759d839aece1c07c996e2ae'
 CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
@@ -16,7 +16,7 @@ LGAD_STATS_JS_SHA256='e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36
 ETROC_MANIFEST_SHA256='616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29'
 SERVER_PY_SHA256='45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e'
 ETROC_REVIEWS_PY_SHA256='d2338ff8ea37c7d4d26f5246c32075dee68534f2d725a9fc28e427073ed12ebc'
-DEPLOYMENT_MANIFEST_SHA256='658c6db56b9dd4f85eec18900462951d1c00de65c1273d2f7a33a21804ca61fb'
+DEPLOYMENT_MANIFEST_SHA256='6f1bbc7e0e573f58d9e4dda4efa9c85b10ed6012ced2475e43be77476087ac05'
 SERVICE_MANIFEST_SHA256='84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c'
 ROUTE_MANIFEST_SHA256='23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43'
 ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'
@@ -1037,11 +1037,11 @@ def normalized_annotations(metadata):
     result.pop('kubectl.kubernetes.io/last-applied-configuration', None)
     if kind == 'Deployment':
         result.pop('deployment.kubernetes.io/revision', None)
-        for key, expected_value in validated_previous_release_annotations.items():
-            if key in result:
-                if result[key] != expected_value:
-                    raise SystemExit('captured Deployment previous release annotation changed after validation')
-                result.pop(key)
+    for key, expected_value in validated_previous_release_annotations.items():
+        if key in result:
+            if result[key] != expected_value:
+                raise SystemExit('captured previous release annotation changed after validation')
+            result.pop(key)
     return result
 if kind == 'Route':
     captured_route_annotations=captured_metadata.get('annotations', {})
@@ -2259,13 +2259,14 @@ payload=json.loads((root / 'chips.json').read_text(encoding='utf-8'))
 if hashlib.sha256((root / 'chips.json').read_bytes()).hexdigest() != os.environ['CHIPS_PUBLICATION_SHA256']:
     raise SystemExit('runtime chips.json publication hash mismatch')
 records=payload.get('records')
+dataset_id=payload.get('dataset_id')
 if not isinstance(records, list) or len(records) != 36:
     raise SystemExit('runtime ETROC review evidence cardinality mismatch')
 evidence={}
 keys=set()
 for record in records:
     acquisition_id=record.get('acquisition_id')
-    key=tuple(record.get(field) for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256'))
+    key=(dataset_id,) + tuple(record.get(field) for field in ('etroc_serial','acquisition_id','analysis_run_id','montage_sha256'))
     if acquisition_id in evidence:
         raise SystemExit('duplicate ETROC acquisition_id')
     if key in keys or not all(isinstance(value, str) and value for value in key):
@@ -2366,6 +2367,7 @@ raw=(root / 'chips.json').read_bytes()
 if hashlib.sha256(raw).hexdigest() != os.environ['CHIPS_PUBLICATION_SHA256']:
     raise SystemExit('locally validated publication hash mismatch')
 publication=json.loads(raw)
+publication_dataset_id=publication.get('dataset_id')
 expected_evidence={}
 for record in publication.get('records', []):
     key=record.get('acquisition_id')
@@ -2375,7 +2377,8 @@ for record in publication.get('records', []):
     if not isinstance(key, str) or not isinstance(digest, str) or path is None or path != PurePosixPath('montages/sha256') / f'{digest}.jpg':
         raise SystemExit('locally validated publication evidence is invalid')
     expected_evidence[key]={
-        field: record.get(field) for field in ('dataset_id','etroc_serial','acquisition_id','analysis_run_id','montage_sha256')
+        'dataset_id': publication_dataset_id,
+        **{field: record.get(field) for field in ('etroc_serial','acquisition_id','analysis_run_id','montage_sha256')},
     }
     expected_evidence[key]['montage_uri']=(PurePosixPath('data/etroc-optical/ETROC_OI_2608') / path).as_posix()
 if len(expected_evidence) != 36:
@@ -2522,8 +2525,17 @@ if test "$SPOOF_STATUS" != 302; then
   printf '%s\n' 'external trusted-header spoof was accepted' >&2
   false
 fi
-INTERNAL_STATUS="$(oc -n "$PROJECT" exec "$POD" -c web -- sh -c \
-  "curl --silent --output /dev/null --write-out '%{http_code}' --header 'X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}' 'http://127.0.0.1:8080/api/etroc-reviews?dataset_id=ETROC_OI_2608'")"
+INTERNAL_STATUS="$(oc -n "$PROJECT" exec -i "$POD" -c web -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" python - <<'PY'
+import os
+import urllib.request
+request=urllib.request.Request(
+    'http://127.0.0.1:8080/api/etroc-reviews?dataset_id=ETROC_OI_2608',
+    headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']},
+)
+with urllib.request.urlopen(request, timeout=10) as response:
+    print(response.status)
+PY
+)"
 test "$INTERNAL_STATUS" = 200
 printf 'ETROC_PROXY_IDENTITY_GATE PASS spoof=%s internal=%s\n' "$SPOOF_STATUS" "$INTERNAL_STATUS"
 printf '%s\n' 'AUTHENTICATED_BROWSER_QA PENDING: verify CERN SSO session behavior separately.'

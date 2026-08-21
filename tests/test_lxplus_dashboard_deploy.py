@@ -448,7 +448,7 @@ measure_dashboard_headroom
         )
 
         # Then: the exact closed set forwards stdin and none allocates a TTY.
-        self.assertEqual(len(call_blocks), 11, f"unexpected heredoc oc exec call set: {call_blocks}")
+        self.assertEqual(len(call_blocks), 12, f"unexpected heredoc oc exec call set: {call_blocks}")
         missing_stdin = [block for block in call_blocks if re.search(r"\bexec\s+-i(?:\s|$)", block) is None]
         tty_calls = [
             block
@@ -634,7 +634,7 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='87b24144c6ccee50c845768b12c36932ff0e11fb'",
+            "SOURCE_REVISION='128f5abdfba09e051938062fa46074035cf4a0ca'",
             script,
         )
         expected = {
@@ -648,7 +648,7 @@ measure_dashboard_headroom
             "ETROC_MANIFEST_SHA256": "616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29",
             "SERVER_PY_SHA256": "45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e",
             "ETROC_REVIEWS_PY_SHA256": "d2338ff8ea37c7d4d26f5246c32075dee68534f2d725a9fc28e427073ed12ebc",
-            "DEPLOYMENT_MANIFEST_SHA256": "658c6db56b9dd4f85eec18900462951d1c00de65c1273d2f7a33a21804ca61fb",
+            "DEPLOYMENT_MANIFEST_SHA256": "6f1bbc7e0e573f58d9e4dda4efa9c85b10ed6012ced2475e43be77476087ac05",
             "SERVICE_MANIFEST_SHA256": "84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c",
             "ROUTE_MANIFEST_SHA256": "23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43",
         }
@@ -1100,8 +1100,11 @@ measure_dashboard_headroom
             "len(evidence) != 36",
             "duplicate ETROC acquisition_id",
             "duplicate canonical ETROC evidence key",
+            "dataset_id=payload.get('dataset_id')",
+            "key=(dataset_id,) + tuple(record.get(field) for field in ('etroc_serial','acquisition_id','analysis_run_id','montage_sha256'))",
         ):
             self.assertIn(required, script)
+        self.assertNotIn("tuple(record.get(field) for field in ('dataset_id','etroc_serial'", script)
 
     def test_helper_gates_exact_review_runtime_contract_and_identity_boundary(self):
         script = SCRIPT.read_text(encoding="utf-8")
@@ -1111,14 +1114,18 @@ measure_dashboard_headroom
             "record_count') != 36",
             "len(evidence) != 36",
             "publication_sha256') != os.environ['CHIPS_PUBLICATION_SHA256']",
+            "publication_dataset_id=publication.get('dataset_id')",
+            "'dataset_id': publication_dataset_id",
             "etroc_review_schema",
             "etroc_review_events",
             "external trusted-header spoof was accepted",
             "internal proxy-derived allowlisted identity was not accepted",
             "X-Forwarded-Email: ${ETROC_REVIEWER_TEST_USER}",
             "ETROC review history/audit read-only schema mismatch",
+            "INTERNAL_STATUS=\"$(oc -n \"$PROJECT\" exec -i \"$POD\" -c web -- env ETROC_REVIEWER_TEST_USER=\"$ETROC_REVIEWER_TEST_USER\" python - <<'PY'",
         ):
             self.assertIn(required, script)
+        self.assertNotIn('exec "$POD" -c web -- sh -c \\\n  "curl --silent', script)
         self.assertNotIn("X-ETROC-Author", script)
 
     def test_deployment_declares_the_exact_loopback_oauth2_proxy_boundary(self):
@@ -1304,7 +1311,7 @@ measure_dashboard_headroom
                     {"name": "COMMENTS_ADMIN_USERS", "value": "user@cern.ch"},
                     {"name": "ETROC_REVIEWER_USERS", "value": "user@cern.ch"},
                     {"name": "APP_ORIGIN", "value": target_origin},
-                ], "readinessProbe": {"exec": {"command": ["probe"]}, "periodSeconds": 10}, "livenessProbe": {"exec": {"command": ["probe"]}, "periodSeconds": 20}},
+                ], "readinessProbe": {"exec": {"command": ["probe"]}, "periodSeconds": 10, "timeoutSeconds": 3}, "livenessProbe": {"exec": {"command": ["probe"]}, "periodSeconds": 20, "timeoutSeconds": 3}},
                 {"name": "oauth2-proxy", "image": "baseline-proxy", "args": target_args},
             ]}}},
         }
@@ -1357,8 +1364,8 @@ measure_dashboard_headroom
                     self.assertEqual(rendered_env["COMMENTS_ADMIN_USERS"], "user@cern.ch")
                     self.assertEqual(rendered_env["ETROC_REVIEWER_USERS"], "user@cern.ch")
                     self.assertEqual(rendered_proxy["image"], "old-proxy")
-                    self.assertNotIn("timeoutSeconds", rendered_web["readinessProbe"])
-                    self.assertNotIn("timeoutSeconds", rendered_web["livenessProbe"])
+                    self.assertEqual(rendered_web["readinessProbe"]["timeoutSeconds"], 3)
+                    self.assertEqual(rendered_web["livenessProbe"]["timeoutSeconds"], 3)
                     self.assertEqual(rendered["spec"]["progressDeadlineSeconds"], 600)
                 else:
                     self.assertEqual(rendered["spec"]["ports"], baseline_service["spec"]["ports"])
@@ -1595,6 +1602,50 @@ measure_dashboard_headroom
                         self.assertIn("Route reviewed annotations are incomplete or invalid", result.stderr)
                     else:
                         self.assertIn("annotations differ from pinned baseline", result.stderr)
+
+    def test_forward_renderer_accepts_exact_validated_release_annotations_on_all_objects(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("import copy, json, os, re, sys", script.index("render_forward_object() {"))
+        renderer = script[start : script.index("\nPY\n", start)]
+        release = {
+            "bbqc.cern.ch/source-revision": "a" * 40,
+            "bbqc.cern.ch/build-context-sha256": "b" * 64,
+            "bbqc.cern.ch/build-name": "build.build.openshift.io/etl-hybrid-bbqc-47",
+            "bbqc.cern.ch/release-mode": "immutable-overlay",
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            for kind, spec in (
+                ("Service", {"selector": {"app": "etl-hybrid-bbqc"}}),
+                ("Route", {"host": "etl-hybrid-bbqc.app.cern.ch"}),
+            ):
+                baseline = {"apiVersion": "v1", "kind": kind, "metadata": {"name": "etl-hybrid-bbqc", "labels": {"app": "etl-hybrid-bbqc"}, "annotations": {}}, "spec": spec}
+                captured = {**baseline, "metadata": {**baseline["metadata"], "namespace": "etroc-solder-inspection", "uid": f"{kind.lower()}-uid", "resourceVersion": "9", "annotations": release}}
+                baseline_file, captured_file = root / f"{kind}-baseline.json", root / f"{kind}-captured.json"
+                baseline_file.write_text(json.dumps(baseline), encoding="utf-8")
+                captured_file.write_text(json.dumps(captured), encoding="utf-8")
+                environment = os.environ | {
+                    "RELEASE_KIND": kind, "BASELINE_OBJECT_FILE": str(baseline_file), "CAPTURED_OBJECT_FILE": str(captured_file),
+                    "NEW_WEB_IMAGE": "unused", "OLD_WEB_IMAGE": "unused", "OLD_PROXY_IMAGE": "unused", "OLD_TOPOLOGY_MODE": "target",
+                    "OLD_RELEASE_ANNOTATIONS_JSON": json.dumps(release), "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context",
+                    "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch",
+                }
+                valid = subprocess.run([sys.executable, "-I", "-c", renderer], capture_output=True, text=True, env=environment)
+                self.assertEqual(valid.returncode, 0, f"{kind}: {valid.stderr}")
+                drifted = json.loads(json.dumps(captured))
+                drifted["metadata"]["annotations"]["bbqc.cern.ch/source-revision"] = "c" * 40
+                captured_file.write_text(json.dumps(drifted), encoding="utf-8")
+                invalid = subprocess.run([sys.executable, "-I", "-c", renderer], capture_output=True, text=True, env=environment)
+                self.assertNotEqual(invalid.returncode, 0)
+                self.assertIn("previous release annotation changed after validation", invalid.stderr)
+
+    def test_deployment_pins_web_probe_timeout_above_internal_http_timeout(self):
+        manifest = yaml.safe_load((ROOT / "hybrid-bbqc" / "openshift" / "deployment.yaml").read_text(encoding="utf-8"))
+        web = next(item for item in manifest["spec"]["template"]["spec"]["containers"] if item["name"] == "web")
+        for probe_name in ("readinessProbe", "livenessProbe"):
+            probe = web[probe_name]
+            self.assertEqual(probe.get("timeoutSeconds"), 3, probe_name)
+            self.assertIn("timeout=2", probe["exec"]["command"][-1])
 
     def test_buildconfig_manifest_pins_build_history_retention(self):
         manifest = yaml.safe_load((ROOT / "hybrid-bbqc" / "openshift" / "buildconfig.yaml").read_text(encoding="utf-8"))
