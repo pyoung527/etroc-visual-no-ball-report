@@ -1043,6 +1043,52 @@ def normalized_annotations(metadata):
                     raise SystemExit('captured Deployment previous release annotation changed after validation')
                 result.pop(key)
     return result
+if kind == 'Route':
+    captured_route_annotations=captured_metadata.get('annotations', {})
+    whitelist_key='haproxy.router.openshift.io/ip_whitelist'
+    external_dns_key='external-dns.alpha.kubernetes.io/target'
+    whitelist=captured_route_annotations.get(whitelist_key)
+    external_dns_target=captured_route_annotations.get(external_dns_key)
+    pinned_route_annotations=baseline_metadata.get('annotations', {})
+    needs_reviewed_live_delta=(
+        (whitelist is not None and whitelist_key not in pinned_route_annotations)
+        or (external_dns_target is not None and external_dns_key not in pinned_route_annotations)
+    )
+    if needs_reviewed_live_delta:
+        if whitelist != '0.0.0.0/0 ::/0' or not isinstance(external_dns_target, str):
+            raise SystemExit('captured Route reviewed annotations are incomplete or invalid')
+        topology_mode=os.environ['OLD_TOPOLOGY_MODE']
+        if topology_mode == 'legacy':
+            last_applied=captured_route_annotations.get('kubectl.kubernetes.io/last-applied-configuration')
+            try:
+                last_applied_object=json.loads(last_applied)
+            except (TypeError, ValueError):
+                raise SystemExit('captured Route whitelist lacks legacy apply evidence') from None
+            if last_applied_object.get('metadata', {}).get('annotations', {}).get(whitelist_key) != whitelist:
+                raise SystemExit('captured Route whitelist differs from legacy apply evidence')
+        elif topology_mode != 'target':
+            raise SystemExit('captured topology mode is invalid')
+        ingress=captured.get('status', {}).get('ingress')
+        if not isinstance(ingress, list) or len(ingress) != 1:
+            raise SystemExit('captured Route admitted ingress topology is invalid')
+        admitted=ingress[0]
+        conditions=admitted.get('conditions')
+        if not isinstance(conditions, list) or len(conditions) != 1 or conditions[0].get('type') != 'Admitted' or conditions[0].get('status') != 'True':
+            raise SystemExit('captured Route is not uniquely admitted')
+        router_name=admitted.get('routerName')
+        match=re.fullmatch(r'apps-shard-([1-9][0-9]*)', router_name or '')
+        if match is None:
+            raise SystemExit('captured Route admitted router name is invalid')
+        shard=match.group(1)
+        expected_dns_target=f'paas-apps-shard-{shard}.cern.ch'
+        expected_canonical=f'router-apps-shard-{shard}.{expected_dns_target}'
+        if (external_dns_target != expected_dns_target
+                or admitted.get('routerCanonicalHostname') != expected_canonical
+                or admitted.get('host') != captured.get('spec', {}).get('host')
+                or admitted.get('wildcardPolicy') != captured.get('spec', {}).get('wildcardPolicy')):
+            raise SystemExit('captured Route external DNS target differs from admitted router shard')
+        baseline_metadata.setdefault('annotations', {})[whitelist_key]=whitelist
+        baseline_metadata.setdefault('annotations', {})[external_dns_key]=external_dns_target
 baseline_annotations=normalized_annotations(baseline_metadata)
 if normalized_annotations(captured_metadata) != baseline_annotations:
     raise SystemExit(f'captured {kind} annotations differ from pinned baseline')

@@ -1484,6 +1484,69 @@ measure_dashboard_headroom
                 if not rejected:
                     self.assertEqual(json.loads(result.stdout)["spec"], pinned["spec"])
 
+    def test_forward_renderer_preserves_only_attested_cern_route_annotations(self):
+        script = SCRIPT.read_text(encoding="utf-8")
+        start = script.index("import copy, json, os, re, sys", script.index("render_forward_object() {"))
+        renderer = script[start : script.index("\nPY\n", start)]
+        baseline = {
+            "apiVersion": "route.openshift.io/v1", "kind": "Route",
+            "metadata": {"name": "etl-hybrid-bbqc", "labels": {"app": "etl-hybrid-bbqc"}, "annotations": {}},
+            "spec": {"host": "etl-hybrid-bbqc.app.cern.ch", "to": {"kind": "Service", "name": "etl-hybrid-bbqc"}, "port": {"targetPort": "oauth"}, "tls": {"termination": "edge", "insecureEdgeTerminationPolicy": "Redirect"}},
+        }
+        whitelist = "0.0.0.0/0 ::/0"
+        last_applied = json.dumps({"metadata": {"annotations": {"haproxy.router.openshift.io/ip_whitelist": whitelist}}})
+        captured = json.loads(json.dumps(baseline))
+        captured["metadata"] |= {
+            "namespace": "etroc-solder-inspection", "uid": "route-uid", "resourceVersion": "9",
+            "annotations": {
+                "haproxy.router.openshift.io/ip_whitelist": whitelist,
+                "external-dns.alpha.kubernetes.io/target": "paas-apps-shard-4.cern.ch",
+                "kubectl.kubernetes.io/last-applied-configuration": last_applied,
+            },
+        }
+        captured["spec"]["to"]["weight"] = 100
+        captured["spec"]["wildcardPolicy"] = "None"
+        captured["status"] = {"ingress": [{
+            "host": "etl-hybrid-bbqc.app.cern.ch", "routerName": "apps-shard-4",
+            "routerCanonicalHostname": "router-apps-shard-4.paas-apps-shard-4.cern.ch",
+            "wildcardPolicy": "None", "conditions": [{"type": "Admitted", "status": "True"}],
+        }]}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            baseline_file = root / "baseline.json"
+            captured_file = root / "captured.json"
+            baseline_file.write_text(json.dumps(baseline), encoding="utf-8")
+            environment = os.environ | {
+                "RELEASE_KIND": "Route", "BASELINE_OBJECT_FILE": str(baseline_file), "CAPTURED_OBJECT_FILE": str(captured_file),
+                "NEW_WEB_IMAGE": "unused", "OLD_WEB_IMAGE": "unused", "OLD_PROXY_IMAGE": "unused", "OLD_TOPOLOGY_MODE": "legacy",
+                "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch",
+            }
+            captured_file.write_text(json.dumps(captured), encoding="utf-8")
+            valid = subprocess.run([sys.executable, "-I", "-c", renderer], capture_output=True, text=True, env=environment)
+            self.assertEqual(valid.returncode, 0, valid.stderr)
+            annotations = json.loads(valid.stdout)["metadata"]["annotations"]
+            self.assertEqual(annotations["haproxy.router.openshift.io/ip_whitelist"], whitelist)
+            self.assertEqual(annotations["external-dns.alpha.kubernetes.io/target"], "paas-apps-shard-4.cern.ch")
+            self.assertNotIn("kubectl.kubernetes.io/last-applied-configuration", annotations)
+            target_capture = json.loads(json.dumps(captured))
+            target_capture["metadata"]["annotations"].pop("kubectl.kubernetes.io/last-applied-configuration")
+            captured_file.write_text(json.dumps(target_capture), encoding="utf-8")
+            environment["OLD_TOPOLOGY_MODE"] = "target"
+            target = subprocess.run([sys.executable, "-I", "-c", renderer], capture_output=True, text=True, env=environment)
+            self.assertEqual(target.returncode, 0, target.stderr)
+            mismatched = json.loads(json.dumps(target_capture))
+            mismatched["metadata"]["annotations"]["external-dns.alpha.kubernetes.io/target"] = "paas-apps-shard-5.cern.ch"
+            captured_file.write_text(json.dumps(mismatched), encoding="utf-8")
+            mismatch = subprocess.run([sys.executable, "-I", "-c", renderer], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(mismatch.returncode, 0)
+            self.assertIn("external DNS target differs from admitted router shard", mismatch.stderr)
+            unknown = json.loads(json.dumps(target_capture))
+            unknown["metadata"]["annotations"]["unreviewed.example/policy"] = "enabled"
+            captured_file.write_text(json.dumps(unknown), encoding="utf-8")
+            unknown_result = subprocess.run([sys.executable, "-I", "-c", renderer], capture_output=True, text=True, env=environment)
+            self.assertNotEqual(unknown_result.returncode, 0)
+            self.assertIn("annotations differ from pinned baseline", unknown_result.stderr)
+
     def test_captured_rollback_renderer_preserves_route_wildcard_policy(self):
         # Given: the captured Route has OpenShift's explicit server-default policy.
         script = SCRIPT.read_text(encoding="utf-8")
@@ -1528,7 +1591,10 @@ measure_dashboard_headroom
                 result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=environment)
                 self.assertEqual(result.returncode != 0, bool(expected_failure), result.stderr)
                 if expected_failure:
-                    self.assertIn("annotations differ from pinned baseline", result.stderr)
+                    if name == "route whitelist value":
+                        self.assertIn("Route reviewed annotations are incomplete or invalid", result.stderr)
+                    else:
+                        self.assertIn("annotations differ from pinned baseline", result.stderr)
 
     def test_buildconfig_manifest_pins_build_history_retention(self):
         manifest = yaml.safe_load((ROOT / "hybrid-bbqc" / "openshift" / "buildconfig.yaml").read_text(encoding="utf-8"))
