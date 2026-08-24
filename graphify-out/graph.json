@@ -16524,8 +16524,8 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L279",
       "weight": 1.0,
-      "_src": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews",
-      "_tgt": "etroc_position_reviews_init_schema",
+      "_src": "etroc_position_reviews_init_schema",
+      "_tgt": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews",
       "source": "etroc_position_reviews_init_schema",
       "target": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews"
     },
@@ -16644,8 +16644,8 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L280",
       "weight": 1.0,
-      "_src": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews",
-      "_tgt": "etroc_position_reviews_completion_summary",
+      "_src": "etroc_position_reviews_completion_summary",
+      "_tgt": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews",
       "source": "etroc_position_reviews_completion_summary",
       "target": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews"
     },
@@ -16824,8 +16824,8 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L296",
       "weight": 1.0,
-      "_src": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews",
-      "_tgt": "etroc_position_reviews_append",
+      "_src": "etroc_position_reviews_append",
+      "_tgt": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews",
       "source": "etroc_position_reviews_append",
       "target": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews"
     },

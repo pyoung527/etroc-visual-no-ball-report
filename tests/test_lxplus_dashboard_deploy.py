@@ -634,21 +634,21 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='50517e9e36e09f766972443700999674b2ab3395'",
+            "SOURCE_REVISION='58e6cf3283169e3e515b8b397fb2d728a9355a05'",
             script,
         )
         expected = {
-            "index.html": "37c7702345089150823340e242de698510a72c99dc83bb07f902a2465fa1e4b1",
+            "index.html": "75db811ce0dfbe3ea8bc7056672072c8db9d5a312f1c605edabdb5d48953827d",
             "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
             "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
-            "etroc-optical.css": "b5fa95983a9b85ad72b9c8c4c93573aa4d7e7961bf6356fd11e7ddc8a43d8c3c",
-            "etroc-optical.js": "c565469f4b750018548db7a439018109414c7a107b1d3194a485208498652b5d",
-            "etroc-review.js": "c616b8887e68044e747415ca9c088ce65a296bac107924600c3415cbbfb0bce9",
+            "etroc-optical.css": "91ad0bbb50dd31f73925d3ae8d10a1c6033b442149f2fe115df0420ad5a33aa9",
+            "etroc-optical.js": "ac5107a94416e68730d5ba635235eeee1ffcde232fd4fa5eb79dd1446ca85ded",
+            "etroc-review.js": "d289d45617b14005f89f9a27f976576ba278e3c16889649be2707e50c055c263",
             "lgad-optical-stats.js": "e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02",
-            "ETROC_MANIFEST_SHA256": "e3c74d49cf8aea3e7dc960c92937298a653cefa7ec72a3a5a3f4177183fa9471",
-            "SERVER_PY_SHA256": "b5bb6c91d7eb46eabdeedacc43abb76696cd24ff724eb0023366c313df26e55d",
-            "ETROC_REVIEWS_PY_SHA256": "65819646c5dde06f62efbfbe73bad224e27e9b8b6ae9c1c6808e162801dbc454",
-            "ETROC_POSITION_REVIEWS_PY_SHA256": "16d7c1b90fc34984b454167c50bd57e18638c201a2eb400b489f02a55498ae32",
+            "ETROC_MANIFEST_SHA256": "4860c04dbd5c2fd4a750150443dcab7385aa71067d68f86b1cf6b30f3f62b50b",
+            "SERVER_PY_SHA256": "948ed1eeced31c533fe5d794911f2b9bc97290e22bf07b02e27376a534c3378e",
+            "ETROC_REVIEWS_PY_SHA256": "1bbe25926481d38350e9138d509bf7fdc68b09874ce88d5bcc2ee534e15a1fa3",
+            "ETROC_POSITION_REVIEWS_PY_SHA256": "f8fd0c88777dd845f32e7c0c33fe7ff3cb7570703277076dff975bfce6fc7132",
             "DEPLOYMENT_MANIFEST_SHA256": "45a3a2266bcb4d18dcdb9949e5b55a00ed85f4f1e7494cebb87500b84bdbae30",
             "SERVICE_MANIFEST_SHA256": "84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c",
             "ROUTE_MANIFEST_SHA256": "23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43",
