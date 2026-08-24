@@ -1252,9 +1252,26 @@ if kind == 'Deployment':
                 if len(mapped) != len(items):
                     raise SystemExit('captured target Deployment web environment contains duplicate names')
                 return mapped
-            if env_map(captured_env) != env_map(baseline_env):
-                raise SystemExit('captured target Deployment web environment differs from pinned baseline')
-            captured_containers['web']['env']=copy.deepcopy(baseline_env)
+            captured_map=env_map(captured_env)
+            baseline_map=env_map(baseline_env)
+            if captured_map != baseline_map:
+                captured_reviewer=captured_map.pop('ETROC_REVIEWER_USERS', None)
+                baseline_reviewer=baseline_map.pop('ETROC_REVIEWER_USERS', None)
+                requested_reviewer=os.environ['ETROC_REVIEWER_USERS_NORMALIZED']
+                def normalized_reviewer(entry):
+                    if not isinstance(entry, dict) or set(entry) != {'name', 'value'} or entry.get('name') != 'ETROC_REVIEWER_USERS' or not isinstance(entry.get('value'), str):
+                        raise SystemExit('captured target Deployment reviewer environment is malformed')
+                    values=entry['value'].split(',')
+                    if not values or any(not value or value != value.strip() or value.lower() != value for value in values) or len(set(values)) != len(values):
+                        raise SystemExit('captured target Deployment reviewer environment is malformed')
+                    return ','.join(sorted(values))
+                if (captured_map != baseline_map
+                        or normalized_reviewer(baseline_reviewer) != requested_reviewer
+                        or normalized_reviewer(captured_reviewer) != 'ypark,ypark@cern.ch'):
+                    raise SystemExit('captured target Deployment web environment differs from pinned baseline')
+                captured_env[:]=copy.deepcopy(baseline_env)
+            else:
+                captured_containers['web']['env']=copy.deepcopy(baseline_env)
 if kind == 'Service':
     for field in ('clusterIP', 'clusterIPs', 'ipFamilies', 'ipFamilyPolicy', 'healthCheckNodePort'):
         if field in captured_spec:

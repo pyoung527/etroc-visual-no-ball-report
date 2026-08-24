@@ -1396,6 +1396,27 @@ measure_dashboard_headroom
             target_environment = os.environ | {"RELEASE_KIND": "Deployment", "BASELINE_OBJECT_FILE": str(root / "Deployment-baseline.json"), "CAPTURED_OBJECT_FILE": str(target_capture_file), "NEW_WEB_IMAGE": "new-web", "OLD_WEB_IMAGE": "old-web", "OLD_PROXY_IMAGE": "old-proxy", "OLD_TOPOLOGY_MODE": "target", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch"}
             target_result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=target_environment)
             self.assertEqual(target_result.returncode, 0, target_result.stderr)
+
+            release_baseline = json.loads(json.dumps(baseline_deployment))
+            release_baseline["spec"]["template"]["spec"]["containers"][0]["env"][2]["value"] = "ypark,ypark@cern.ch,young.park@cern.ch"
+            release_baseline_file = root / "Deployment-baseline-reviewer-transition.json"
+            release_baseline_file.write_text(json.dumps(release_baseline), encoding="utf-8")
+            release_capture = json.loads(json.dumps(release_baseline))
+            release_capture["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "deployment-uid", "resourceVersion": "3"}
+            release_capture["spec"]["template"]["spec"]["containers"][0]["image"] = "old-web"
+            release_capture["spec"]["template"]["spec"]["containers"][1]["image"] = "old-proxy"
+            release_capture["spec"]["template"]["spec"]["containers"][0]["env"][2]["value"] = "ypark,ypark@cern.ch"
+            release_capture_file = root / "Deployment-captured-reviewer-transition.json"
+            release_capture_file.write_text(json.dumps(release_capture), encoding="utf-8")
+            release_environment = target_environment | {"BASELINE_OBJECT_FILE": str(release_baseline_file), "CAPTURED_OBJECT_FILE": str(release_capture_file), "ETROC_REVIEWER_USERS_NORMALIZED": "young.park@cern.ch,ypark,ypark@cern.ch"}
+            release_result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=release_environment)
+            self.assertEqual(release_result.returncode, 0, release_result.stderr)
+            release_capture["spec"]["template"]["spec"]["containers"][0]["env"][2]["value"] = "other@cern.ch"
+            release_capture_file.write_text(json.dumps(release_capture), encoding="utf-8")
+            reviewer_drift = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=release_environment)
+            self.assertNotEqual(reviewer_drift.returncode, 0)
+            self.assertIn("environment differs from pinned baseline", reviewer_drift.stderr)
+
             target_capture["spec"]["template"]["spec"]["containers"][0]["env"][0]["value"] = "drift"
             target_capture_file.write_text(json.dumps(target_capture), encoding="utf-8")
             target_drift = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=target_environment)
