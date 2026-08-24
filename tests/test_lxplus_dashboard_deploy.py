@@ -781,6 +781,7 @@ measure_dashboard_headroom
             '"$CANDIDATE_HOST_PYTHON" -I - <<\'PY\'',
             "--path \"/app/static/server.py:${OLD_RUNTIME_DIR}\"",
             "--path \"/app/static/etroc_reviews.py:${OLD_RUNTIME_DIR}\"",
+            "--path \"/app/static/etroc_position_reviews.py:${OLD_RUNTIME_DIR}\"",
             "previous-binary comments",
         ):
             self.assertIn(required, script)
@@ -2569,15 +2570,16 @@ case \"$1 $2\" in
     test \"$4\" = \"$FAKE_PUBLIC_IMAGE\"
     test \"$5\" = --path
     test \"$7\" = --path
+    test \"$9\" = --path
     test \"$(stat -c '%a' \"$FAKE_AUTH_PATH\")\" = 600
     test \"$(stat -c '%h' \"$FAKE_AUTH_PATH\")\" = 1
     test -s \"$FAKE_AUTH_PATH\"
     case \"$FAKE_OC_MODE\" in
-      success) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\" ;;
-      symlink) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; ln -s \"$FAKE_SERVER\" \"${6#*:}/server.py\" ;;
-      extra) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; : > \"${6#*:}/unexpected.py\" ;;
-      empty) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; : > \"${6#*:}/server.py\" ;;
-      malformed) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; printf 'not valid python =\\n' > \"${6#*:}/server.py\" ;;
+      success) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; cp \"$FAKE_ETROC_POSITION_REVIEWS\" \"${10#*:}/etroc_position_reviews.py\" ;;
+      symlink) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; cp \"$FAKE_ETROC_POSITION_REVIEWS\" \"${10#*:}/etroc_position_reviews.py\"; ln -s \"$FAKE_SERVER\" \"${6#*:}/server.py\" ;;
+      extra) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; cp \"$FAKE_ETROC_POSITION_REVIEWS\" \"${10#*:}/etroc_position_reviews.py\"; : > \"${6#*:}/unexpected.py\" ;;
+      empty) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; cp \"$FAKE_ETROC_POSITION_REVIEWS\" \"${10#*:}/etroc_position_reviews.py\"; : > \"${6#*:}/server.py\" ;;
+      malformed) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; cp \"$FAKE_ETROC_POSITION_REVIEWS\" \"${10#*:}/etroc_position_reviews.py\"; printf 'not valid python =\\n' > \"${6#*:}/server.py\" ;;
       failure) exit 42 ;;
     esac ;;
   *) exit 99 ;;
@@ -2592,6 +2594,7 @@ esac
 import os
 import sqlite3
 import etroc_reviews
+import etroc_position_reviews
 from http.server import BaseHTTPRequestHandler
 
 APP_ORIGIN = 'http://127.0.0.1:8080'
@@ -2627,12 +2630,16 @@ class Handler(BaseHTTPRequestHandler):
             dependency = root / "etroc_reviews.py"
             dependency.write_text("# previous runtime dependency\n", encoding="utf-8")
             dependency.chmod(0o600)
+            position_dependency = root / "etroc_position_reviews.py"
+            position_dependency.write_text("# previous position runtime dependency\n", encoding="utf-8")
+            position_dependency.chmod(0o600)
             candidate_db = root / "candidate.sqlite3"
             environment = os.environ | {
                 "PATH": f"{fake_bin}:{os.environ['PATH']}",
                 "FAKE_OC_ARGS": str(root / "oc-args"),
                 "FAKE_SERVER": str(source),
                 "FAKE_ETROC_REVIEWS": str(dependency),
+                "FAKE_ETROC_POSITION_REVIEWS": str(position_dependency),
                 "CANDIDATE_DB": str(candidate_db),
                 "FAKE_AUTH_CONTENT": "registry-token-must-not-escape",
             }
@@ -2643,6 +2650,7 @@ mkdir -p "$WORK_DIR"
 OLD_RUNTIME_DIR="$WORK_DIR/previous-runtime"
 OLD_RUNTIME_SERVER="$OLD_RUNTIME_DIR/server.py"
 OLD_RUNTIME_ETROC_REVIEWS="$OLD_RUNTIME_DIR/etroc_reviews.py"
+OLD_RUNTIME_ETROC_POSITION_REVIEWS="$OLD_RUNTIME_DIR/etroc_position_reviews.py"
 OLD_WEB_IMAGE="${{TEST_OLD_WEB_IMAGE:-image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}}}"
 FAKE_AUTH_PATH="$WORK_DIR/registry-auth.json"
 FAKE_PUBLIC_IMAGE="registry.paas.cern.ch/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}"
@@ -2698,6 +2706,7 @@ printf 'sha=%s\\n' "$OLD_RUNTIME_SERVER_SHA256"
                     f"registry.paas.cern.ch/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}",
                     "--path", f"/app/static/server.py:{root / 'work' / 'previous-runtime'}",
                     "--path", f"/app/static/etroc_reviews.py:{root / 'work' / 'previous-runtime'}",
+                    "--path", f"/app/static/etroc_position_reviews.py:{root / 'work' / 'previous-runtime'}",
                 ],
             )
             self.assertFalse((root / "work" / "registry-auth.json").exists())

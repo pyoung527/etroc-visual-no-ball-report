@@ -52,6 +52,7 @@ CANDIDATE_HTTP_ACQUISITION_FILE="${WORK_DIR}/candidate-http-acquisition-id"
 OLD_RUNTIME_DIR="${WORK_DIR}/previous-runtime"
 OLD_RUNTIME_SERVER="${OLD_RUNTIME_DIR}/server.py"
 OLD_RUNTIME_ETROC_REVIEWS="${OLD_RUNTIME_DIR}/etroc_reviews.py"
+OLD_RUNTIME_ETROC_POSITION_REVIEWS="${OLD_RUNTIME_DIR}/etroc_position_reviews.py"
 MANIFESTS_DIR="${WORK_DIR}/manifests"
 SERVICE_MANIFEST_FILE="${MANIFESTS_DIR}/service.yaml"
 ROUTE_MANIFEST_FILE="${MANIFESTS_DIR}/route.yaml"
@@ -209,25 +210,27 @@ PY
   fi
   oc image extract --registry-config="$registry_auth" "$public_image" \
     --path "/app/static/server.py:${OLD_RUNTIME_DIR}" \
-    --path "/app/static/etroc_reviews.py:${OLD_RUNTIME_DIR}" || return 1
+    --path "/app/static/etroc_reviews.py:${OLD_RUNTIME_DIR}" \
+    --path "/app/static/etroc_position_reviews.py:${OLD_RUNTIME_DIR}" || return 1
   rm -f -- "$registry_auth"
   trap - RETURN
-  if ! OLD_RUNTIME_SERVER_SHA256="$(OLD_RUNTIME_DIR="$OLD_RUNTIME_DIR" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" OLD_RUNTIME_ETROC_REVIEWS="$OLD_RUNTIME_ETROC_REVIEWS" python3 -I - <<'PY'
+  if ! OLD_RUNTIME_SERVER_SHA256="$(OLD_RUNTIME_DIR="$OLD_RUNTIME_DIR" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" OLD_RUNTIME_ETROC_REVIEWS="$OLD_RUNTIME_ETROC_REVIEWS" OLD_RUNTIME_ETROC_POSITION_REVIEWS="$OLD_RUNTIME_ETROC_POSITION_REVIEWS" python3 -I - <<'PY'
 import os, stat
 from pathlib import Path
 
 root = Path(os.environ['OLD_RUNTIME_DIR'])
 source = Path(os.environ['OLD_RUNTIME_SERVER'])
 dependency = Path(os.environ['OLD_RUNTIME_ETROC_REVIEWS'])
+position_dependency = Path(os.environ['OLD_RUNTIME_ETROC_POSITION_REVIEWS'])
 root_status = root.lstat()
 if stat.S_ISLNK(root_status.st_mode) or not stat.S_ISDIR(root_status.st_mode):
     raise SystemExit('previous runtime extraction directory is unsafe')
 if root_status.st_uid != os.geteuid() or root_status.st_mode & 0o077:
     raise SystemExit('previous runtime extraction directory ownership or mode is unsafe')
 entries = set(root.iterdir())
-if entries != {source, dependency}:
+if entries != {source, dependency, position_dependency}:
     raise SystemExit('previous runtime extraction produced unexpected files')
-for candidate in (source, dependency):
+for candidate in (source, dependency, position_dependency):
     candidate_status = candidate.lstat()
     if stat.S_ISLNK(candidate_status.st_mode) or not stat.S_ISREG(candidate_status.st_mode) or candidate_status.st_nlink != 1:
         raise SystemExit('previous runtime source is not a regular non-symlink file')
