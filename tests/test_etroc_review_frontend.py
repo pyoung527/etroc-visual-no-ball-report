@@ -35,7 +35,7 @@ const c=global.ETROCReviewContract; if(!c.POSITION_KEY_FIELDS.includes("position
  const summary={dataset_id:"ETROC_OI_2608",publication_sha256:"c".repeat(64),acquisition_id:record.acquisition_id,etroc_serial:record.etroc_serial,analysis_run_id:record.analysis_run_id,labelled_montage_sha256:record.montage_sha256,clean_montage_sha256:record.clean_montage_sha256,clean_montage_uri:`data/etroc-optical/ETROC_OI_2608/${record.clean_montage_uri}`,position_publication_sha256:record.position_publication_sha256,position_publication_uri:`data/etroc-optical/ETROC_OI_2608/${record.position_publication_uri}`,geometry_version:"etroc-grid-16x16-v1",position_count:256,target_count:parsed.targetCount,viewer:{identity_display:"reviewer",can_append_review:true},evidence,reviews:{}};
  const reconciled=c.reconcilePositionEvidence(record,parsed,summary,summary.publication_sha256); if(reconciled.size!==256) process.exit(102);
  const queue=c.makePositionQueue(parsed.positions,{}); if(queue.length!==parsed.targetCount || queue.some(position=>!position.review_target)) process.exit(103);
- const reviews={[String(queue[0].position)]:{state:"reviewed_no_optical_concern"}}; if(c.makePositionQueue(parsed.positions,reviews).length!==queue.length-1) process.exit(104);
+ const reviews={[String(queue[0].position)]:{label:"GREEN"}}; if(c.makePositionQueue(parsed.positions,reviews).length!==queue.length-1) process.exit(104);
  for(const mutate of [()=>{const x=structuredClone(summary);x.publication_sha256="d".repeat(64);return x},()=>{const x=structuredClone(summary);x.target_count++;return x},()=>{const x=structuredClone(summary);x.evidence["0"].source_image_sha256="b".repeat(64);return x},()=>{const x=structuredClone(summary);delete x.evidence["255"];return x}]){let rejected=false;try{c.reconcilePositionEvidence(record,parsed,mutate(),summary.publication_sha256)}catch(_){rejected=true}if(!rejected)process.exit(105)}
 })().catch(error=>{console.error(error);process.exit(106)});
 '''
@@ -65,7 +65,7 @@ const records = Array.from({length: 36}, (_, index) => ({
   const reconciled = c.reconcileEvidence(publication, summary);
   if (reconciled.size !== 36) process.exit(11);
   const queue = c.makeQueue(records, {}, {state:"unreviewed", wafer:"", serial:"", candidate:"all", order:"candidate"});
-  if (queue.length !== 2 || queue[0].acquisition_id !== records[0].acquisition_id || queue[1].acquisition_id !== records[1].acquisition_id) process.exit(12);
+  if (queue.length !== 36 || queue[0].acquisition_id !== records[0].acquisition_id || queue.at(-1).acquisition_id !== records[35].acquisition_id) process.exit(12);
   for (const mutate of [
     () => { const broken = structuredClone(summary); broken.publication_sha256 = digest; return broken; },
     () => { const broken = structuredClone(summary); delete broken.evidence[records[0].acquisition_id]; return broken; },
@@ -158,8 +158,8 @@ const records = [
 const reviews = {reviewed:{state:"reviewed_no_optical_concern"}};
 const filters = {wafer:"", serial:"", candidate:"all", order:"candidate"};
 const ordered = c.makeQueue(records, reviews, {...filters, state:""}).map(record => record.acquisition_id).join(",");
-if (ordered !== "no-ball,red,needs,candidate,reviewed") process.exit(70);
-for (const [candidate, expected] of [["all", 5], ["no_ball", 2], ["red", 2], ["needs_inspection", 4], ["review_candidate", 4]]) {
+if (ordered !== "no-ball,red,needs,candidate,serial-a,serial-b,reviewed") process.exit(70);
+for (const [candidate, expected] of [["all", 7], ["no_ball", 2], ["red", 2], ["needs_inspection", 4], ["review_candidate", 4]]) {
   if (c.makeQueue(records, reviews, {...filters, state:"", candidate}).length !== expected) process.exit(71);
 }
 const nextReviews = {reviewed:{state:"reviewed_no_optical_concern"}, "no-ball":{state:"reviewed_no_optical_concern"}, red:{state:"reviewed_concern_observed"}};
@@ -282,20 +282,47 @@ for (const broken of [{}, { optical_no_ball_candidate_count: -1, red_candidate_c
         result = self.node(program)
         self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
 
+    def test_position_human_label_and_target_only_mode_contract(self):
+        program = r'''
+global.document={querySelector:()=>null}; require(process.argv[1]); const c=global.ETROCReviewContract;
+if (JSON.stringify([...c.HUMAN_LABELS]) !== JSON.stringify(["GREEN","BLUE","YELLOW","RED"])) process.exit(110);
+for (const label of c.HUMAN_LABELS) {
+  const draft=c.validatePositionDraft({label,note:"",expected_current_event_id:null});
+  if (draft.label !== label || draft.note !== "") process.exit(111);
+}
+for (const label of ["NEED_INSPECT","reviewed_no_optical_concern","",null]) {
+  let rejected=false; try { c.validatePositionDraft({label,note:"",expected_current_event_id:null}); } catch (_) { rejected=true; }
+  if (!rejected) process.exit(112);
+}
+if (c.positionOpenMode({review_target:true},null) !== "queue") process.exit(113);
+if (c.positionOpenMode({review_target:true},{label:"RED"}) !== "correction") process.exit(114);
+if (c.positionOpenMode({review_target:false},null) !== "inspection") process.exit(115);
+'''
+        result = self.node(program)
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+
     def test_workspace_markup_and_safe_dom_contract(self):
         html = INDEX.read_text(encoding="utf-8")
+        workspace = html[html.index('<section id="etroc-review-workspace"'):html.index('<h2 class="etroc-legacy-boundary"')]
         script = SCRIPT.read_text(encoding="utf-8") if SCRIPT.exists() else ""
         for required in (
             'role="dialog"', 'aria-modal="true"', 'aria-labelledby="etroc-review-title"',
-            'data-etroc-review-status', 'name="etroc-review-state"', 'data-etroc-review-note',
-            'data-etroc-review-save', 'data-etroc-review-save-next', 'data-etroc-review-close',
+            'data-etroc-review-status', 'data-etroc-review-close',
             'data-etroc-position-section', 'data-etroc-position-mode="clean"', 'data-etroc-position-mode="analysis"',
             'data-etroc-position-algorithm-overlay', 'data-etroc-position-human-overlay',
             'data-etroc-position-progress', 'data-etroc-position-grid', 'role="grid"',
-            'data-etroc-position-context', 'name="etroc-position-state"', 'data-etroc-position-note',
+            'data-etroc-position-context', 'name="etroc-position-label"', 'data-etroc-position-note',
             'data-etroc-position-history', 'data-etroc-position-save', 'data-etroc-position-save-next', 'data-etroc-position-reapply',
         ):
-            self.assertIn(required, html)
+            self.assertIn(required, workspace)
+        for removed in (
+            'name="etroc-review-state"', 'data-etroc-review-note', 'data-etroc-review-save',
+            'data-etroc-review-save-next', 'Reviewed: no optical concern',
+            'Reviewed: concern observed', 'Follow-up required', 'name="etroc-position-state"',
+        ):
+            self.assertNotIn(removed, workspace)
+        for label in ("GREEN", "BLUE", "YELLOW", "RED"):
+            self.assertIn(f'name="etroc-position-label" value="{label}"', workspace)
         self.assertIn('src="etroc-review.js', html)
         self.assertLess(html.index('src="etroc-review.js'), html.index('src="etroc-optical.js'))
         self.assertNotIn("innerHTML", script)
@@ -317,9 +344,8 @@ for (const broken of [{}, { optical_no_ball_candidate_count: -1, red_candidate_c
         self.assertIn('scientificCandidateCounts(record)', script)
         self.assertIn('original.href = montage.objectUrl', script)
         self.assertNotIn('original.href = `${DATA_BASE}${record.montage_uri}`', script)
-        self.assertIn('Promise.allSettled([fetchHistory(record), montage.load(record)])', script)
         self.assertIn('inspectionControlsEnabled(true)', script)
-        self.assertIn('Review history unavailable; read-only inspection.', script)
+        self.assertIn('Verified clean evidence. Select a NEED_INSPECT target or start the queue.', script)
         switch_start = script.index("async function switchPositionMontage")
         switch_end = script.index("const montage = new MontageController", switch_start)
         self.assertLess(script.index('state.position.cleanVerified = "";', switch_start, switch_end), script.index("await montage.load(record)", switch_start, switch_end))

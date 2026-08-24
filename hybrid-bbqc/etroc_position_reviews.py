@@ -14,7 +14,7 @@ from typing import Callable, Final, Mapping
 
 DATASET_ID: Final = "ETROC_OI_2608"
 GEOMETRY_VERSION: Final = "etroc-grid-16x16-v1"
-REVIEW_STATES: Final = frozenset({"reviewed_no_optical_concern", "reviewed_concern_observed", "follow_up_required"})
+HUMAN_LABELS: Final = frozenset({"GREEN", "BLUE", "YELLOW", "RED"})
 POSITION_CATEGORIES: Final = frozenset({"GREEN", "BLUE", "YELLOW", "RED", "NEED_INSPECT"})
 POSITION_KEY_FIELDS: Final = (
     "dataset_id", "etroc_serial", "acquisition_id", "analysis_run_id",
@@ -22,12 +22,12 @@ POSITION_KEY_FIELDS: Final = (
     "source_image_sha256", "geometry_version",
 )
 EVENT_FIELDS: Final = (
-    "event_id", *POSITION_KEY_FIELDS, "state", "note", "author", "author_display",
+    "event_id", *POSITION_KEY_FIELDS, "label", "note", "author", "author_display",
     "created_at", "mutation_id", "supersedes_event_id",
 )
-REQUEST_FIELDS: Final = frozenset((*POSITION_KEY_FIELDS, "state", "note", "expected_current_event_id", "mutation_id"))
+REQUEST_FIELDS: Final = frozenset((*POSITION_KEY_FIELDS, "label", "note", "expected_current_event_id", "mutation_id"))
 CHECKSUM_LINE: Final = re.compile(r"([0-9a-f]{64})  ([^\s]+)")
-DDL: Final = (
+V1_DDL: Final = (
     "CREATE TABLE position_review_schema (singleton INTEGER PRIMARY KEY CHECK (singleton = 1), version INTEGER NOT NULL CHECK (version = 1), applied_at INTEGER NOT NULL) WITHOUT ROWID",
     "CREATE TABLE position_review_events (id INTEGER PRIMARY KEY AUTOINCREMENT, dataset_id TEXT NOT NULL, etroc_serial TEXT NOT NULL, acquisition_id TEXT NOT NULL, analysis_run_id TEXT NOT NULL, labelled_montage_sha256 TEXT NOT NULL, clean_montage_sha256 TEXT NOT NULL, position_publication_sha256 TEXT NOT NULL, position INTEGER NOT NULL CHECK (position BETWEEN 0 AND 255), source_image_sha256 TEXT NOT NULL, geometry_version TEXT NOT NULL CHECK (geometry_version = 'etroc-grid-16x16-v1'), state TEXT NOT NULL CHECK (state IN ('reviewed_no_optical_concern', 'reviewed_concern_observed', 'follow_up_required')), note TEXT NOT NULL DEFAULT '' CHECK (length(note) <= 2000 AND (state = 'reviewed_no_optical_concern' OR length(trim(note)) > 0)), author TEXT NOT NULL, author_display TEXT NOT NULL, created_at INTEGER NOT NULL, mutation_id TEXT NOT NULL, supersedes_event_id INTEGER, FOREIGN KEY (supersedes_event_id) REFERENCES position_review_events(id) ON DELETE RESTRICT)",
     "CREATE UNIQUE INDEX idx_position_review_one_root ON position_review_events(dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version) WHERE supersedes_event_id IS NULL",
@@ -37,6 +37,11 @@ DDL: Final = (
     "CREATE TRIGGER position_review_no_update BEFORE UPDATE ON position_review_events BEGIN SELECT RAISE(ABORT, 'ETROC position review events are append-only'); END",
     "CREATE TRIGGER position_review_no_delete BEFORE DELETE ON position_review_events BEGIN SELECT RAISE(ABORT, 'ETROC position review events are append-only'); END",
     "CREATE TRIGGER position_review_same_evidence_successor BEFORE INSERT ON position_review_events WHEN NEW.supersedes_event_id IS NOT NULL BEGIN SELECT CASE WHEN NOT EXISTS (SELECT 1 FROM position_review_events AS previous WHERE previous.id = NEW.supersedes_event_id AND previous.dataset_id = NEW.dataset_id AND previous.etroc_serial = NEW.etroc_serial AND previous.acquisition_id = NEW.acquisition_id AND previous.analysis_run_id = NEW.analysis_run_id AND previous.labelled_montage_sha256 = NEW.labelled_montage_sha256 AND previous.clean_montage_sha256 = NEW.clean_montage_sha256 AND previous.position_publication_sha256 = NEW.position_publication_sha256 AND previous.position = NEW.position AND previous.source_image_sha256 = NEW.source_image_sha256 AND previous.geometry_version = NEW.geometry_version) THEN RAISE(ABORT, 'invalid ETROC position review supersession') END; END",
+)
+DDL: Final = (
+    "CREATE TABLE position_review_schema (singleton INTEGER PRIMARY KEY CHECK (singleton = 1), version INTEGER NOT NULL CHECK (version = 2), applied_at INTEGER NOT NULL) WITHOUT ROWID",
+    "CREATE TABLE position_review_events (id INTEGER PRIMARY KEY AUTOINCREMENT, dataset_id TEXT NOT NULL, etroc_serial TEXT NOT NULL, acquisition_id TEXT NOT NULL, analysis_run_id TEXT NOT NULL, labelled_montage_sha256 TEXT NOT NULL, clean_montage_sha256 TEXT NOT NULL, position_publication_sha256 TEXT NOT NULL, position INTEGER NOT NULL CHECK (position BETWEEN 0 AND 255), source_image_sha256 TEXT NOT NULL, geometry_version TEXT NOT NULL CHECK (geometry_version = 'etroc-grid-16x16-v1'), label TEXT NOT NULL CHECK (label IN ('GREEN', 'BLUE', 'YELLOW', 'RED')), note TEXT NOT NULL DEFAULT '' CHECK (length(note) <= 2000), author TEXT NOT NULL, author_display TEXT NOT NULL, created_at INTEGER NOT NULL, mutation_id TEXT NOT NULL, supersedes_event_id INTEGER, FOREIGN KEY (supersedes_event_id) REFERENCES position_review_events(id) ON DELETE RESTRICT)",
+    *V1_DDL[2:],
 )
 OBJECT_NAMES: Final = frozenset({
     "position_review_schema", "position_review_events",
@@ -344,7 +349,12 @@ def _index_details(db: sqlite3.Connection) -> dict[str, tuple[int, str, int, tup
     return details
 
 
-def validate_schema(db: sqlite3.Connection) -> None:
+def _validate_schema_contract(
+    db: sqlite3.Connection,
+    ddl: tuple[str, ...],
+    version: int,
+    value_field: str,
+) -> None:
     objects = _managed_objects(db)
     if set(objects) != OBJECT_NAMES:
         raise ValueError("unsupported ETROC position review schema objects")
@@ -354,11 +364,11 @@ def validate_schema(db: sqlite3.Connection) -> None:
         "idx_position_review_author_mutation", "idx_position_review_current_lookup",
         "position_review_no_update", "position_review_no_delete",
         "position_review_same_evidence_successor",
-    ), DDL)}
+    ), ddl)}
     if any(_normalized_sql(objects[name]) != sql for name, sql in expected.items()):
         raise ValueError("unsupported ETROC position review schema definition")
     metadata = db.execute("SELECT singleton,version,applied_at FROM position_review_schema").fetchall()
-    if len(metadata) != 1 or metadata[0][0] != 1 or metadata[0][1] != 1 or type(metadata[0][2]) is not int:
+    if len(metadata) != 1 or metadata[0][0] != 1 or metadata[0][1] != version or type(metadata[0][2]) is not int:
         raise ValueError("unsupported ETROC position review schema metadata")
     columns = [(row[1], row[2].upper(), row[3]) for row in db.execute("PRAGMA table_info(position_review_events)")]
     expected_columns = [
@@ -366,7 +376,7 @@ def validate_schema(db: sqlite3.Connection) -> None:
         ("acquisition_id", "TEXT", 1), ("analysis_run_id", "TEXT", 1),
         ("labelled_montage_sha256", "TEXT", 1), ("clean_montage_sha256", "TEXT", 1),
         ("position_publication_sha256", "TEXT", 1), ("position", "INTEGER", 1), ("source_image_sha256", "TEXT", 1),
-        ("geometry_version", "TEXT", 1), ("state", "TEXT", 1), ("note", "TEXT", 1),
+        ("geometry_version", "TEXT", 1), (value_field, "TEXT", 1), ("note", "TEXT", 1),
         ("author", "TEXT", 1), ("author_display", "TEXT", 1), ("created_at", "INTEGER", 1),
         ("mutation_id", "TEXT", 1), ("supersedes_event_id", "INTEGER", 0),
     ]
@@ -388,6 +398,35 @@ def validate_schema(db: sqlite3.Connection) -> None:
         raise ValueError("unsupported ETROC position review schema integrity")
 
 
+def validate_schema(db: sqlite3.Connection) -> None:
+    _validate_schema_contract(db, DDL, 2, "label")
+
+
+def _drop_position_schema(db: sqlite3.Connection) -> None:
+    for kind, name in (
+        ("TRIGGER", "position_review_same_evidence_successor"),
+        ("TRIGGER", "position_review_no_delete"),
+        ("TRIGGER", "position_review_no_update"),
+        ("INDEX", "idx_position_review_current_lookup"),
+        ("INDEX", "idx_position_review_author_mutation"),
+        ("INDEX", "idx_position_review_one_successor"),
+        ("INDEX", "idx_position_review_one_root"),
+        ("TABLE", "position_review_events"),
+        ("TABLE", "position_review_schema"),
+    ):
+        db.execute(f"DROP {kind} {name}")
+
+
+def _migrate_empty_v1(db: sqlite3.Connection) -> None:
+    _validate_schema_contract(db, V1_DDL, 1, "state")
+    if db.execute("SELECT count(*) FROM position_review_events").fetchone()[0] != 0:
+        raise ValueError("deployed v1 ETROC position review events cannot be mapped to colour labels")
+    _drop_position_schema(db)
+    for statement in DDL:
+        db.execute(statement)
+    db.execute("INSERT INTO position_review_schema(singleton,version,applied_at) VALUES(1,2,?)", (int(time.time()),))
+
+
 def init_schema(db_path: Path) -> None:
     with sqlite3.connect(Path(db_path), isolation_level=None) as db:
         db.execute("PRAGMA foreign_keys=ON")
@@ -398,9 +437,12 @@ def init_schema(db_path: Path) -> None:
             if not objects:
                 for statement in DDL:
                     db.execute(statement)
-                db.execute("INSERT INTO position_review_schema(singleton,version,applied_at) VALUES(1,1,?)", (int(time.time()),))
+                db.execute("INSERT INTO position_review_schema(singleton,version,applied_at) VALUES(1,2,?)", (int(time.time()),))
             else:
-                validate_schema(db)
+                try:
+                    validate_schema(db)
+                except ValueError:
+                    _migrate_empty_v1(db)
             validate_schema(db)
         except (sqlite3.DatabaseError, ValueError):
             db.rollback()
@@ -426,7 +468,7 @@ def _current(db: sqlite3.Connection, evidence: PositionEvidenceRecord) -> dict[s
     return {
         "current_event_id": row["id"],
         **{field: row[field] for field in POSITION_KEY_FIELDS},
-        "state": row["state"], "note": row["note"], "author": row["author"],
+        "label": row["label"], "note": row["note"], "author": row["author"],
         "author_display": row["author_display"], "created_at": row["created_at"],
         "history_count": row["history_count"],
     }
@@ -523,10 +565,10 @@ def validate_request(request: dict[str, object]) -> ServiceResult | None:
         return ServiceResult(400, {"error": {"code": "unknown_field", "message": "The request contains an unknown field."}})
     if keys != REQUEST_FIELDS:
         return ServiceResult(400, {"error": {"code": "invalid_request_shape", "message": "The request fields do not match the position review contract."}})
-    state, note, expected, mutation_id = request["state"], request["note"], request["expected_current_event_id"], request["mutation_id"]
-    if not isinstance(state, str) or state not in REVIEW_STATES:
-        return ServiceResult(422, {"error": {"code": "invalid_state", "message": "The review state is invalid."}})
-    if not isinstance(note, str) or len(note) > 2000 or (state != "reviewed_no_optical_concern" and not note.strip()):
+    label, note, expected, mutation_id = request["label"], request["note"], request["expected_current_event_id"], request["mutation_id"]
+    if not isinstance(label, str) or label not in HUMAN_LABELS:
+        return ServiceResult(422, {"error": {"code": "invalid_label", "message": "The human position label is invalid."}})
+    if not isinstance(note, str) or len(note) > 2000:
         return ServiceResult(422, {"error": {"code": "invalid_note", "message": "The review note is invalid."}})
     if (type(expected) is not int and expected is not None) or (type(expected) is int and expected <= 0):
         return ServiceResult(422, {"error": {"code": "invalid_event_id", "message": "The expected current event ID is invalid."}})
@@ -560,7 +602,7 @@ def append(
         return error
     acquisition_id = str(request["acquisition_id"])
     position = int(request["position"])
-    state = str(request["state"])
+    label = str(request["label"])
     note = str(request["note"])
     mutation_id = str(request["mutation_id"])
     expected = request["expected_current_event_id"]
@@ -570,7 +612,7 @@ def append(
         db.execute("BEGIN IMMEDIATE")
         existing = db.execute("SELECT * FROM position_review_events WHERE author=? AND mutation_id=?", (author, mutation_id)).fetchone()
         if existing is not None:
-            identical = all(existing[field] == request[field] for field in (*POSITION_KEY_FIELDS, "state", "note")) and existing["supersedes_event_id"] == expected
+            identical = all(existing[field] == request[field] for field in (*POSITION_KEY_FIELDS, "label", "note")) and existing["supersedes_event_id"] == expected
             if not identical:
                 db.commit()
                 return ServiceResult(409, {"error": {"code": "mutation_id_conflict", "message": "This mutation ID was already used for a different position review.", "existing_event_id": existing["id"]}})
@@ -585,20 +627,22 @@ def append(
         current_evidence = evidence if isinstance(evidence, PositionEvidenceSet) else evidence()
         acquisition = current_evidence.by_acquisition.get(acquisition_id)
         record = acquisition.positions.get(position) if acquisition is not None else None
-        canonical = record is not None and all(request[field] == getattr(record, field) for field in POSITION_KEY_FIELDS)
-        if not canonical:
+        if record is None or not all(request[field] == getattr(record, field) for field in POSITION_KEY_FIELDS):
             db.commit()
             return ServiceResult(409, {"error": {"code": "evidence_changed", "message": "The reviewed position no longer matches the current publication.", "canonical_evidence": record.as_dict() if record else None}})
+        if not record.review_target:
+            db.commit()
+            return ServiceResult(422, {"error": {"code": "position_not_review_target", "message": "Only NEED_INSPECT target positions can receive a human label."}})
         current = _current(db, record)
         current_id = current["current_event_id"] if current else None
         if expected != current_id:
             db.commit()
             return ServiceResult(409, {"error": {"code": "stale_current", "message": "The position review changed after it was loaded.", "submitted_expected_current_event_id": expected, "current": current}})
-        columns = ",".join((*POSITION_KEY_FIELDS, "state", "note", "author", "author_display", "created_at", "mutation_id", "supersedes_event_id"))
+        columns = ",".join((*POSITION_KEY_FIELDS, "label", "note", "author", "author_display", "created_at", "mutation_id", "supersedes_event_id"))
         placeholders = ",".join("?" for _ in range(len(POSITION_KEY_FIELDS) + 7))
         cursor = db.execute(
             f"INSERT INTO position_review_events({columns}) VALUES({placeholders})",
-            (*[getattr(record, field) for field in POSITION_KEY_FIELDS], state, note, author, author_display, int(time.time()), mutation_id, expected),
+            (*[getattr(record, field) for field in POSITION_KEY_FIELDS], label, note, author, author_display, int(time.time()), mutation_id, expected),
         )
         inserted = _event(db.execute("SELECT * FROM position_review_events WHERE id=?", (cursor.lastrowid,)).fetchone())
         current = _current(db, record)

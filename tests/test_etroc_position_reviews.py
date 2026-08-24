@@ -69,13 +69,13 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
     def setUp(self):
         self.module = load_module()
         self.evidence = self.module.load_evidence(STATIC_ROOT)
-        self.acquisition = next(iter(self.evidence.by_acquisition.values()))
-        self.position = self.acquisition.positions[0]
+        self.acquisition = next(item for item in self.evidence.by_acquisition.values() if item.target_count > 0)
+        self.position = next(item for item in self.acquisition.positions.values() if item.review_target)
 
     def request(self, **overrides):
         body = {field: getattr(self.position, field) for field in self.module.POSITION_KEY_FIELDS}
         body.update({
-            "state": "reviewed_no_optical_concern",
+            "label": "GREEN",
             "note": "",
             "expected_current_event_id": None,
             "mutation_id": str(uuid.uuid4()),
@@ -90,8 +90,35 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             .replace("position_publication_sha256 TEXT NOT NULL, ", "")
             .replace("position_publication_sha256,", "")
             .replace(" AND previous.position_publication_sha256 = NEW.position_publication_sha256", "")
-            for statement in self.module.DDL
+            for statement in self.module.V1_DDL
         )
+
+    def test_empty_deployed_v1_migrates_to_v2_and_nonempty_v1_fails_closed(self):
+        for nonempty in (False, True):
+            with self.subTest(nonempty=nonempty), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "reviews.sqlite3"
+                with sqlite3.connect(path) as db:
+                    for statement in self.module.V1_DDL:
+                        db.execute(statement)
+                    db.execute("INSERT INTO position_review_schema VALUES(1,1,1)")
+                    if nonempty:
+                        db.execute(
+                            "INSERT INTO position_review_events(dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version,state,note,author,author_display,created_at,mutation_id,supersedes_event_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)",
+                            ("ETROC_OI_2608", "W02G4-44", "a", "run", "a" * 64, "b" * 64, "d" * 64, 0, "c" * 64, "etroc-grid-16x16-v1", "reviewed_no_optical_concern", "", "u", "U", 1, str(uuid.uuid4())),
+                        )
+                    db.commit()
+                if nonempty:
+                    with self.assertRaisesRegex(ValueError, "cannot be mapped"):
+                        self.module.init_schema(path)
+                    with sqlite3.connect(path) as db:
+                        self.assertEqual(db.execute("SELECT count(*) FROM position_review_events").fetchone()[0], 1)
+                        self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 1)])
+                else:
+                    self.module.init_schema(path)
+                    with sqlite3.connect(path) as db:
+                        self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 2)])
+                        self.assertEqual([row[1] for row in db.execute("PRAGMA table_info(position_review_events)")][11], "label")
+                        self.module.validate_schema(db)
 
     def test_empty_legacy_v1_migrates_atomically_and_nonempty_rejects(self):
         for nonempty in (False, True):
@@ -116,7 +143,7 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
                     self.module.init_schema(path)
                     with sqlite3.connect(path) as db:
                         self.assertIsNone(db.execute("SELECT 1 FROM sqlite_master WHERE name='etroc_position_review_events'").fetchone())
-                        self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 1)])
+                        self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 2)])
 
     def test_validate_schema_requires_exact_integrity_check(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -125,8 +152,8 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             with sqlite3.connect(path) as db:
                 db.execute("PRAGMA ignore_check_constraints=ON")
                 db.execute(
-                    "INSERT INTO position_review_events(dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version,state,note,author,author_display,created_at,mutation_id,supersedes_event_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)",
-                    ("ETROC_OI_2608", "W02G4-44", "a", "run", "a" * 64, "b" * 64, "d" * 64, 999, "c" * 64, "etroc-grid-16x16-v1", "reviewed_no_optical_concern", "", "u", "U", 1, str(uuid.uuid4())),
+                    "INSERT INTO position_review_events(dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version,label,note,author,author_display,created_at,mutation_id,supersedes_event_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)",
+                    ("ETROC_OI_2608", "W02G4-44", "a", "run", "a" * 64, "b" * 64, "d" * 64, 999, "c" * 64, "etroc-grid-16x16-v1", "GREEN", "", "u", "U", 1, str(uuid.uuid4())),
                 )
                 db.execute("PRAGMA ignore_check_constraints=OFF")
                 db.commit()
@@ -153,7 +180,7 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             acquisition_module.init_schema(path)
             with sqlite3.connect(path) as db:
                 self.assertEqual(db.execute("PRAGMA user_version").fetchone()[0], 2)
-                self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 1)])
+                self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 2)])
                 self.assertEqual(db.execute("SELECT count(*) FROM position_review_events").fetchone()[0], 0)
                 self.module.validate_schema(db)
 
@@ -166,7 +193,8 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             self.assertEqual(created.status, 201)
             self.assertFalse(created.payload["idempotent_replay"])
             event = created.payload["event"]
-            self.assertEqual(event["position"], 0)
+            self.assertEqual(event["position"], self.position.position)
+            self.assertEqual(event["label"], "GREEN")
             replay = self.module.append(path, self.evidence, request, "ypark", "Young")
             self.assertEqual(replay.status, 200)
             self.assertTrue(replay.payload["idempotent_replay"])
@@ -179,16 +207,36 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             successor = self.module.append(
                 path,
                 self.evidence,
-                self.request(expected_current_event_id=event["event_id"], state="follow_up_required", note="Reinspect"),
+                self.request(expected_current_event_id=event["event_id"], label="RED", note=""),
                 "ypark",
                 "Young",
             )
             self.assertEqual(successor.status, 201)
+            self.assertEqual(successor.payload["event"]["label"], "RED")
             with sqlite3.connect(path) as db:
                 with self.assertRaises(sqlite3.DatabaseError):
                     db.execute("UPDATE position_review_events SET note='changed'")
                 with self.assertRaises(sqlite3.DatabaseError):
                     db.execute("DELETE FROM position_review_events")
+
+    def test_rejects_old_state_contract_invalid_labels_and_non_targets(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "reviews.sqlite3"
+            self.module.init_schema(path)
+            old = self.request()
+            old["state"] = old.pop("label")
+            result = self.module.append(path, self.evidence, old, "ypark", "Young")
+            self.assertEqual(result.status, 400)
+            self.assertEqual(result.payload["error"]["code"], "unknown_field")
+            invalid = self.module.append(path, self.evidence, self.request(label="NEED_INSPECT"), "ypark", "Young")
+            self.assertEqual(invalid.status, 422)
+            self.assertEqual(invalid.payload["error"]["code"], "invalid_label")
+            non_target = next(item for item in self.acquisition.positions.values() if not item.review_target)
+            request = {field: getattr(non_target, field) for field in self.module.POSITION_KEY_FIELDS}
+            request.update(label="GREEN", note="", expected_current_event_id=None, mutation_id=str(uuid.uuid4()))
+            rejected = self.module.append(path, self.evidence, request, "ypark", "Young")
+            self.assertEqual(rejected.status, 422)
+            self.assertEqual(rejected.payload["error"]["code"], "position_not_review_target")
 
     def test_summary_and_history_are_complete_and_position_scoped(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -204,14 +252,15 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             created = self.module.append(path, self.evidence, self.request(), "ypark", "Young")
             self.assertEqual(created.status, 201)
             refreshed = self.module.summary(path, self.evidence, self.acquisition.acquisition_id, "Young", True)
-            self.assertEqual(set(refreshed["reviews"]), {"0"})
-            history = self.module.history(path, self.evidence, self.acquisition.acquisition_id, 0)
+            self.assertEqual(set(refreshed["reviews"]), {str(self.position.position)})
+            history = self.module.history(path, self.evidence, self.acquisition.acquisition_id, self.position.position)
             self.assertEqual(history.status, 200)
-            self.assertEqual(history.payload["current"]["position"], 0)
+            self.assertEqual(history.payload["current"]["position"], self.position.position)
+            self.assertEqual(history.payload["current"]["label"], "GREEN")
             self.assertEqual(len(history.payload["history"]), 1)
-            audit = self.module.audit(path, self.acquisition.acquisition_id, 0, self.evidence)
+            audit = self.module.audit(path, self.acquisition.acquisition_id, self.position.position, self.evidence)
             self.assertEqual(audit.status, 200)
-            self.assertEqual(audit.payload["position"], 0)
+            self.assertEqual(audit.payload["position"], self.position.position)
             self.assertEqual(len(audit.payload["chains"]), 1)
             self.assertTrue(audit.payload["chains"][0]["current_publication"])
             self.assertEqual(audit.payload["chains"][0]["history"], history.payload["history"])
@@ -229,7 +278,7 @@ class PositionApiTests(unittest.TestCase):
         spec.loader.exec_module(self.server)
         self.server.ROOT = STATIC_ROOT
         self.server.DB_PATH = Path(self.tmp.name) / "reviews.sqlite3"
-        self.server.ETROC_REVIEWER_USERS = {"reviewer@cern.ch"}
+        self.server.ETROC_REVIEWER_USERS = {"young.park@cern.ch"}
         self.server.initialize_store(self.server.DB_PATH, STATIC_ROOT)
 
     def request(self, path, method="GET", payload=None, headers=None):
@@ -266,33 +315,34 @@ class PositionApiTests(unittest.TestCase):
         self.assertEqual(headers["Cache-Control"], "no-store")
         self.assertFalse(readonly["viewer"]["can_append_review"])
         self.assertEqual(len(readonly["evidence"]), 256)
-        status, _, summary = self.request(route, headers={"X-Forwarded-Email": "Reviewer@CERN.CH"})
+        status, _, summary = self.request(route, headers={"X-Forwarded-Email": "Young.Park@CERN.CH"})
         self.assertEqual(status, 200)
         self.assertTrue(summary["viewer"]["can_append_review"])
-        item = summary["evidence"]["0"]
+        item = next(value for value in summary["evidence"].values() if value["review_target"])
         request = {
             **{field: item[field] for field in load_module().POSITION_KEY_FIELDS},
-            "state": "reviewed_no_optical_concern",
+            "label": "GREEN",
             "note": "",
             "expected_current_event_id": None,
             "mutation_id": str(uuid.uuid4()),
         }
-        status, _, same_origin = self.request("/api/etroc-position-reviews", "POST", request, {"X-Forwarded-Email": "reviewer@cern.ch"})
+        status, _, same_origin = self.request("/api/etroc-position-reviews", "POST", request, {"X-Forwarded-Email": "young.park@cern.ch"})
         self.assertEqual(status, 403)
         self.assertEqual(same_origin["error"]["code"], "same_origin_required")
-        post_headers = {"X-Forwarded-Email": "reviewer@cern.ch", "Origin": self.server.APP_ORIGIN}
+        post_headers = {"X-Forwarded-Email": "young.park@cern.ch", "Origin": self.server.APP_ORIGIN}
         status, _, created = self.request("/api/etroc-position-reviews", "POST", request, post_headers)
         self.assertEqual(status, 201)
-        self.assertEqual(created["event"]["author"], "reviewer@cern.ch")
-        history_route = f"/api/etroc-position-reviews/history?acquisition_id={encoded}&position=0"
-        status, _, history = self.request(history_route, headers={"X-Forwarded-Email": "reviewer@cern.ch"})
+        self.assertEqual(created["event"]["author"], "young.park@cern.ch")
+        self.assertEqual(created["event"]["label"], "GREEN")
+        history_route = f"/api/etroc-position-reviews/history?acquisition_id={encoded}&position={item['position']}"
+        status, _, history = self.request(history_route, headers={"X-Forwarded-Email": "young.park@cern.ch"})
         self.assertEqual(status, 200)
         self.assertEqual(history["current"]["event_id"], created["event"]["event_id"])
-        audit_route = f"/api/etroc-position-reviews/audit?acquisition_id={encoded}&position=0"
-        status, _, audit = self.request(audit_route, headers={"X-Forwarded-Email": "reviewer@cern.ch"})
+        audit_route = f"/api/etroc-position-reviews/audit?acquisition_id={encoded}&position={item['position']}"
+        status, _, audit = self.request(audit_route, headers={"X-Forwarded-Email": "young.park@cern.ch"})
         self.assertEqual(status, 200)
         self.assertEqual(audit["chains"][0]["history"][0], created["event"])
-        status, _, invalid = self.request(route + "&extra=1", headers={"X-Forwarded-Email": "reviewer@cern.ch"})
+        status, _, invalid = self.request(route + "&extra=1", headers={"X-Forwarded-Email": "young.park@cern.ch"})
         self.assertEqual(status, 400)
         self.assertEqual(invalid["error"]["code"], "invalid_query")
 

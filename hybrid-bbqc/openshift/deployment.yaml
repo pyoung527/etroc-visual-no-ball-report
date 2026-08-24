@@ -33,7 +33,7 @@ spec:
             - name: COMMENTS_ADMIN_USERS
               value: "ypark,ypark@cern.ch"
             - name: ETROC_REVIEWER_USERS
-              value: "ypark,ypark@cern.ch"
+              value: "ypark,ypark@cern.ch,young.park@cern.ch"
             - name: HOST
               value: "127.0.0.1"
             - name: APP_ORIGIN
