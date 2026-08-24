@@ -144,9 +144,29 @@ def load_evidence(static_root: Path) -> EvidenceSet:
         expected_preview = Path("previews") / f"{etroc_serial}.jpg"
         if not _digest(preview_sha256) or not isinstance(preview_uri, str) or type(preview_size) is not int or preview_size < 1 or Path(preview_uri) != expected_preview:
             raise ValueError("invalid ETROC review preview digest")
+        clean_sha256 = raw_record.get("clean_montage_sha256")
+        clean_uri = raw_record.get("clean_montage_uri")
+        clean_size = raw_record.get("clean_montage_size_bytes")
+        position_sha256 = raw_record.get("position_publication_sha256")
+        position_uri = raw_record.get("position_publication_uri")
+        expected_clean = Path("clean-montages/sha256") / f"{clean_sha256}.jpg"
+        expected_positions = Path("positions/sha256") / f"{position_sha256}.json"
+        if (
+            not _digest(clean_sha256)
+            or not isinstance(clean_uri, str)
+            or type(clean_size) is not int
+            or clean_size < 1
+            or Path(clean_uri) != expected_clean
+            or not _digest(position_sha256)
+            or not isinstance(position_uri, str)
+            or Path(position_uri) != expected_positions
+        ):
+            raise ValueError("invalid ETROC review position publication digest")
         for relative, digest, size, asset_name in (
             (montage_uri, montage_sha256, montage_size, "montage"),
             (preview_uri, preview_sha256, preview_size, "preview"),
+            (clean_uri, clean_sha256, clean_size, "clean montage"),
+            (position_uri, position_sha256, None, "position publication"),
         ):
             if relative in canonical_assets:
                 raise ValueError("duplicate ETROC review canonical asset")
@@ -157,7 +177,7 @@ def load_evidence(static_root: Path) -> EvidenceSet:
                 asset_bytes = asset_path.read_bytes()
             except OSError as exc:
                 raise ValueError(f"ETROC review {asset_name} is unavailable") from exc
-            if len(asset_bytes) != size or hashlib.sha256(asset_bytes).hexdigest() != digest:
+            if (size is not None and len(asset_bytes) != size) or hashlib.sha256(asset_bytes).hexdigest() != digest:
                 raise ValueError(f"ETROC review {asset_name} bytes do not match publication")
             canonical_assets[relative] = digest
         evidence[acquisition_id] = EvidenceRecord(*key, f"data/etroc-optical/{DATASET_ID}/{montage_uri}")
@@ -169,7 +189,11 @@ def load_evidence(static_root: Path) -> EvidenceSet:
 def _managed_objects(db: sqlite3.Connection) -> dict[str, str]:
     rows = db.execute(
         "SELECT name,sql FROM sqlite_master WHERE "
-        "lower(name) GLOB 'etroc_*' "
+        "(lower(name) GLOB 'etroc_*' AND name NOT IN ("
+        "'etroc_position_review_schema','etroc_position_review_events',"
+        "'etroc_position_review_no_update','etroc_position_review_no_delete',"
+        "'etroc_position_review_same_evidence_successor')) "
+        "OR name GLOB 'idx_etroc_review_*' "
         "OR (tbl_name IN ('etroc_review_schema','etroc_review_events') "
         "AND type IN ('index','trigger') AND name NOT LIKE 'sqlite_autoindex%') "
         "ORDER BY name"

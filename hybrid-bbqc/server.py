@@ -15,6 +15,7 @@ MODULE_ROOT = Path(__file__).resolve().parent
 if str(MODULE_ROOT) not in sys.path:
     sys.path.insert(0, str(MODULE_ROOT))
 
+import etroc_position_reviews
 import etroc_reviews
 
 ROOT = Path(os.environ.get("STATIC_ROOT", "/app/static")).resolve()
@@ -54,6 +55,8 @@ ETROC_REVIEWER_USERS = etroc_reviewer_allowlist(
 )
 _ETROC_EVIDENCE_CACHE_LOCK = threading.Lock()
 _ETROC_EVIDENCE_CACHE: tuple[tuple[str, tuple[int, int, int, int], tuple[int, int, int, int] | None], etroc_reviews.EvidenceSet] | None = None
+_ETROC_POSITION_EVIDENCE_CACHE_LOCK = threading.Lock()
+_ETROC_POSITION_EVIDENCE_CACHE: tuple[tuple[str, tuple[int, int, int, int], tuple[int, int, int, int] | None], etroc_position_reviews.PositionEvidenceSet] | None = None
 MAX_BODY = int(os.environ.get("COMMENTS_MAX_BODY", "2000"))
 HOST = os.environ.get("HOST", "127.0.0.1")
 APP_ORIGIN = os.environ.get("APP_ORIGIN", "https://etl-hybrid-bbqc.app.cern.ch").rstrip(
@@ -819,6 +822,36 @@ def load_etroc_review_evidence(
         return evidence
 
 
+def reset_etroc_position_evidence_cache() -> None:
+    global _ETROC_POSITION_EVIDENCE_CACHE
+    with _ETROC_POSITION_EVIDENCE_CACHE_LOCK:
+        _ETROC_POSITION_EVIDENCE_CACHE = None
+
+
+def load_etroc_position_evidence(
+    static_root: Path, *, force_revalidate: bool = False
+) -> etroc_position_reviews.PositionEvidenceSet:
+    global _ETROC_POSITION_EVIDENCE_CACHE
+    identity = _etroc_evidence_identity(static_root)
+    with _ETROC_POSITION_EVIDENCE_CACHE_LOCK:
+        if (
+            not force_revalidate
+            and _ETROC_POSITION_EVIDENCE_CACHE is not None
+            and _ETROC_POSITION_EVIDENCE_CACHE[0] == identity
+        ):
+            return _ETROC_POSITION_EVIDENCE_CACHE[1]
+        _ETROC_POSITION_EVIDENCE_CACHE = None
+        evidence = etroc_position_reviews.load_evidence(static_root)
+        if _etroc_evidence_identity(static_root) != identity:
+            raise ValueError("ETROC position evidence changed while loading")
+        _ETROC_POSITION_EVIDENCE_CACHE = (identity, evidence)
+        return evidence
+
+
+def init_etroc_position_review_schema(db_path: Path) -> None:
+    etroc_position_reviews.init_schema(db_path)
+
+
 def init_etroc_review_schema(db_path: Path) -> None:
     etroc_reviews.init_schema(db_path)
 
@@ -835,11 +868,14 @@ def initialize_store(
         if not bundle.is_dir():
             raise ValueError("ETROC review evidence bundle is invalid")
         load_etroc_review_evidence(static_root, force_revalidate=True)
+        load_etroc_position_evidence(static_root, force_revalidate=True)
     init_db(
         db_path=db_path,
         static_root=static_root,
         require_additional_tests=require_additional_tests,
     )
+    if bundle.exists():
+        init_etroc_position_review_schema(db_path)
 
 
 def append_etroc_review(
@@ -1111,6 +1147,47 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path.startswith("/api/etroc-position-reviews"):
+            display, allowed, user = etroc_viewer(self.headers)
+            if user is None:
+                return json_response(self, 401, etroc_error("authentication_required", "CERN SSO login is required."))
+            if parsed.path == "/api/etroc-position-reviews":
+                try:
+                    query = etroc_query(parsed.query, {"dataset_id", "acquisition_id"})
+                except ValueError:
+                    return json_response(self, 400, etroc_error("invalid_query", "The query is invalid."))
+                try:
+                    evidence = load_etroc_position_evidence(ROOT)
+                except (OSError, ValueError):
+                    return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC position evidence is unavailable."))
+                if query["dataset_id"] != evidence.dataset_id:
+                    return json_response(self, 404, etroc_error("dataset_not_found", "The dataset is not available."))
+                try:
+                    payload = etroc_position_reviews.summary(DB_PATH, evidence, query["acquisition_id"], display, allowed)
+                except KeyError:
+                    return json_response(self, 404, etroc_error("acquisition_not_found", "The acquisition is not in the current publication."))
+                except sqlite3.DatabaseError:
+                    return json_response(self, 503, etroc_error("review_store_unavailable", "The position review store is unavailable."))
+                return json_response(self, 200, payload)
+            if parsed.path == "/api/etroc-position-reviews/history":
+                try:
+                    query = etroc_query(parsed.query, {"acquisition_id", "position"})
+                    if re.fullmatch(r"(?:0|[1-9][0-9]{0,2})", query["position"]) is None:
+                        raise ValueError("invalid position")
+                    position = int(query["position"])
+                    if position > 255:
+                        raise ValueError("invalid position")
+                except ValueError:
+                    return json_response(self, 400, etroc_error("invalid_query", "The query is invalid."))
+                try:
+                    evidence = load_etroc_position_evidence(ROOT)
+                    result = etroc_position_reviews.history(DB_PATH, evidence, query["acquisition_id"], position)
+                except (OSError, ValueError):
+                    return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC position evidence is unavailable."))
+                except sqlite3.DatabaseError:
+                    return json_response(self, 503, etroc_error("review_store_unavailable", "The position review store is unavailable."))
+                return json_response(self, result.status, result.payload)
+            return json_response(self, 404, etroc_error("position_not_found", "The ETROC position review endpoint is not available."))
         if parsed.path.startswith("/api/etroc-reviews"):
             display, allowed, user = etroc_viewer(self.headers)
             if user is None:
@@ -1340,6 +1417,37 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_POST(self):
         parsed = urllib.parse.urlparse(self.path)
+        if parsed.path == "/api/etroc-position-reviews":
+            display, allowed, user = etroc_viewer(self.headers)
+            if user is None:
+                return json_response(self, 401, etroc_error("authentication_required", "CERN SSO login is required."))
+            if not allowed:
+                return json_response(self, 403, etroc_error("review_not_authorized", "This identity cannot append ETROC position reviews."))
+            if (self.headers.get("Origin") or "") != APP_ORIGIN:
+                return json_response(self, 403, etroc_error("same_origin_required", "A same-origin request is required."))
+            content_type = (self.headers.get("Content-Type") or "").split(";", 1)[0].strip().lower()
+            if content_type != "application/json":
+                return json_response(self, 415, etroc_error("json_required", "An application/json request is required."))
+            try:
+                request = read_json(self)
+            except (TypeError, ValueError, json.JSONDecodeError):
+                return json_response(self, 400, etroc_error("invalid_json", "The request body must be a JSON object."))
+            request_error = etroc_position_reviews.validate_request(request)
+            if request_error is not None:
+                return json_response(self, request_error.status, request_error.payload)
+            try:
+                result = etroc_position_reviews.append(
+                    DB_PATH,
+                    lambda: load_etroc_position_evidence(ROOT, force_revalidate=True),
+                    request,
+                    user,
+                    display,
+                )
+            except (OSError, ValueError):
+                return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC position evidence is unavailable."))
+            except sqlite3.DatabaseError:
+                return json_response(self, 503, etroc_error("review_store_unavailable", "The position review store is unavailable."))
+            return json_response(self, result.status, result.payload)
         if parsed.path == "/api/etroc-reviews":
             display, allowed, user = etroc_viewer(self.headers)
             if user is None:
