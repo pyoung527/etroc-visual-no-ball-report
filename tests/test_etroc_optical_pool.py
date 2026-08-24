@@ -298,6 +298,14 @@ const mutations = [
   p => { p.records[0].montage_size_bytes = 0; },
   p => { p.records[0].preview_size_bytes = 1.5; },
   p => { p.records[0].source_montage_size_bytes = -1; },
+  p => { p.records[0].clean_montage_sha256 = "not-a-hash"; },
+  p => { p.records[0].clean_montage_uri = "clean-montages/sha256/" + "b".repeat(64) + ".jpg"; },
+  p => { p.records[0].position_publication_sha256 = "not-a-hash"; },
+  p => { p.records[0].position_publication_uri = "positions/sha256/" + "b".repeat(64) + ".json"; },
+  p => { p.records[0].position_geometry_version = "unknown"; },
+  p => { p.records[0].position_review_target_count += 1; },
+  p => { p.position_geometry_version = "unknown"; },
+  p => { p.position_review_target_count = 81; },
   p => {
     const hash = p.pipeline_files_sha256["etroc_inspection/__init__.py"];
     delete p.pipeline_files_sha256["etroc_inspection/__init__.py"];

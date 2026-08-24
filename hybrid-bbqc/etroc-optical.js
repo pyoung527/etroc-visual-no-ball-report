@@ -51,7 +51,11 @@
   function safeAssetUri(uri, role) {
     const pattern = role === "montage"
       ? /^montages\/sha256\/[0-9a-f]{64}\.jpg$/
-      : /^previews\/[A-Z0-9]+-[0-9]+\.jpg$/;
+      : role === "clean montage"
+        ? /^clean-montages\/sha256\/[0-9a-f]{64}\.jpg$/
+        : role === "position publication"
+          ? /^positions\/sha256\/[0-9a-f]{64}\.json$/
+          : /^previews\/[A-Z0-9]+-[0-9]+\.jpg$/;
     if (typeof uri !== "string" || !pattern.test(uri)) {
       throw new Error(`invalid ${role} URI`);
     }
@@ -83,7 +87,8 @@
       throw new Error("invalid pipeline provenance files or hashes");
     }
     if (payload.encoder?.pillow !== "12.2.0" || payload.encoder?.libjpeg !== "6.2") throw new Error("unexpected encoder provenance");
-    if (payload.record_count !== 36 || payload.position_record_count !== 9216 || payload.expected_positions_per_chip !== 256) {
+    if (payload.record_count !== 36 || payload.position_record_count !== 9216 || payload.expected_positions_per_chip !== 256
+      || payload.position_geometry_version !== "etroc-grid-16x16-v1" || payload.position_review_target_count !== 82) {
       throw new Error("unexpected top-level cardinality");
     }
     if (!Array.isArray(payload.records) || payload.records.length !== 36) {
@@ -92,7 +97,7 @@
     const seen = new Set();
     const counts = new Map();
     const runCounts = new Map();
-    const countFields = ["green_count", "blue_count", "yellow_count", "red_candidate_count", "needs_inspection_count", "review_candidate_count", "optical_no_ball_candidate_count"];
+    const countFields = ["green_count", "blue_count", "yellow_count", "red_candidate_count", "needs_inspection_count", "review_candidate_count", "optical_no_ball_candidate_count", "position_review_target_count"];
     payload.records.forEach((record) => {
       const identity = /^(W02G4|W03F7|W05E5)-([0-9]+)$/.exec(record.etroc_serial);
       if (!identity || !APPROVED_SERIALS.has(record.etroc_serial) || identity[1] !== record.wafer || identity[2] !== String(record.chip)) throw new Error("invalid or inconsistent ETROC identity");
@@ -110,8 +115,8 @@
       if (record.height_unit !== "mm" || record.source_width_px !== 2400 || record.source_height_px !== 2176) {
         throw new Error("unexpected source geometry or unit");
       }
-      const assetHashes = [record.montage_sha256, record.preview_sha256, record.source_montage_sha256];
-      const assetSizes = [record.montage_size_bytes, record.preview_size_bytes, record.source_montage_size_bytes];
+      const assetHashes = [record.montage_sha256, record.preview_sha256, record.source_montage_sha256, record.clean_montage_sha256, record.position_publication_sha256];
+      const assetSizes = [record.montage_size_bytes, record.preview_size_bytes, record.source_montage_size_bytes, record.clean_montage_size_bytes];
       if (assetHashes.some((value) => !isSha256(value))) throw new Error("invalid record asset hash");
       if (assetSizes.some((value) => !Number.isSafeInteger(value) || value <= 0)) throw new Error("invalid record asset size");
       countFields.forEach((field) => {
@@ -120,8 +125,11 @@
       if (record.green_count + record.blue_count + record.yellow_count + record.red_candidate_count + record.needs_inspection_count !== 256) {
         throw new Error("candidate category partition does not total 256");
       }
-      if (record.optical_no_ball_candidate_count > record.red_candidate_count) throw new Error("invalid no-ball/red relationship");
-      if (!record.montage_uri.startsWith("montages/sha256/") || record.preview_uri !== `previews/${record.etroc_serial}.jpg`) {
+      if (record.optical_no_ball_candidate_count > record.red_candidate_count || record.position_review_target_count !== record.needs_inspection_count) throw new Error("invalid candidate relationship");
+      if (!record.montage_uri.startsWith("montages/sha256/") || record.preview_uri !== `previews/${record.etroc_serial}.jpg`
+        || record.clean_montage_uri !== `clean-montages/sha256/${record.clean_montage_sha256}.jpg`
+        || record.position_publication_uri !== `positions/sha256/${record.position_publication_sha256}.json`
+        || record.position_geometry_version !== "etroc-grid-16x16-v1") {
         throw new Error("asset identity mismatch");
       }
       const expectedSourceRevision = SUPPLEMENT_SERIALS.has(record.etroc_serial) ? "supplement-re" : "base";
@@ -130,6 +138,8 @@
       }
       safeAssetUri(record.montage_uri, "montage");
       safeAssetUri(record.preview_uri, "preview");
+      safeAssetUri(record.clean_montage_uri, "clean montage");
+      safeAssetUri(record.position_publication_uri, "position publication");
       counts.set(record.wafer, (counts.get(record.wafer) || 0) + 1);
     });
     EXPECTED_WAFERS.forEach((expected, wafer) => {

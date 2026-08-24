@@ -1169,6 +1169,25 @@ class Handler(SimpleHTTPRequestHandler):
                 except sqlite3.DatabaseError:
                     return json_response(self, 503, etroc_error("review_store_unavailable", "The position review store is unavailable."))
                 return json_response(self, 200, payload)
+            if parsed.path == "/api/etroc-position-reviews/audit":
+                try:
+                    query = etroc_query(parsed.query, {"acquisition_id", "position"})
+                    if re.fullmatch(r"(?:0|[1-9][0-9]{0,2})", query["position"]) is None:
+                        raise ValueError("invalid position")
+                    position = int(query["position"])
+                    if position > 255:
+                        raise ValueError("invalid position")
+                except ValueError:
+                    return json_response(self, 400, etroc_error("invalid_query", "The query is invalid."))
+                try:
+                    evidence = load_etroc_position_evidence(ROOT)
+                except (OSError, ValueError):
+                    evidence = None
+                try:
+                    result = etroc_position_reviews.audit(DB_PATH, query["acquisition_id"], position, evidence)
+                except sqlite3.DatabaseError:
+                    return json_response(self, 503, etroc_error("review_store_unavailable", "The position review store is unavailable."))
+                return json_response(self, result.status, result.payload)
             if parsed.path == "/api/etroc-position-reviews/history":
                 try:
                     query = etroc_query(parsed.query, {"acquisition_id", "position"})

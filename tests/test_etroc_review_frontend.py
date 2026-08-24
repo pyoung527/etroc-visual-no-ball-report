@@ -13,13 +13,34 @@ INDEX = APP / "index.html"
 
 
 class ETROCReviewFrontendTests(unittest.TestCase):
-    def node(self, program: str) -> subprocess.CompletedProcess[str]:
+    def node(self, program: str, *extra_args: str | Path) -> subprocess.CompletedProcess[str]:
         return subprocess.run(
-            ["node", "-e", program, str(SCRIPT)],
+            ["node", "-e", program, str(SCRIPT), *(str(path) for path in extra_args)],
             check=False,
             capture_output=True,
             text=True,
         )
+
+    def test_position_publication_reconciliation_and_target_queue_are_fail_closed(self):
+        pool = json.loads((APP / "data/etroc-optical/ETROC_OI_2608/chips.json").read_text(encoding="utf-8"))
+        record = next(item for item in pool["records"] if item["position_review_target_count"] > 0)
+        position_path = APP / "data/etroc-optical/ETROC_OI_2608" / record["position_publication_uri"]
+        program = r'''
+const fs=require("fs"); const crypto=require("crypto").webcrypto; global.crypto=crypto; global.document={querySelector:()=>null}; require(process.argv[1]);
+const c=global.ETROCReviewContract; if(!c.POSITION_KEY_FIELDS.includes("position_publication_sha256")) process.exit(100); const record=JSON.parse(process.argv[3]); record.dataset_id="ETROC_OI_2608"; const bytes=fs.readFileSync(process.argv[2]);
+(async()=>{
+ const parsed=await c.parsePositionPublication(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),record);
+ if(parsed.positions.length!==256 || parsed.targetCount!==record.position_review_target_count) process.exit(101);
+ const evidence=Object.fromEntries(parsed.positions.map(position=>[String(position.position),Object.fromEntries(c.POSITION_EVIDENCE_FIELDS.map(field=>[field,position[field]]))]));
+ const summary={dataset_id:"ETROC_OI_2608",publication_sha256:"c".repeat(64),acquisition_id:record.acquisition_id,etroc_serial:record.etroc_serial,analysis_run_id:record.analysis_run_id,labelled_montage_sha256:record.montage_sha256,clean_montage_sha256:record.clean_montage_sha256,clean_montage_uri:`data/etroc-optical/ETROC_OI_2608/${record.clean_montage_uri}`,position_publication_sha256:record.position_publication_sha256,position_publication_uri:`data/etroc-optical/ETROC_OI_2608/${record.position_publication_uri}`,geometry_version:"etroc-grid-16x16-v1",position_count:256,target_count:parsed.targetCount,viewer:{identity_display:"reviewer",can_append_review:true},evidence,reviews:{}};
+ const reconciled=c.reconcilePositionEvidence(record,parsed,summary,summary.publication_sha256); if(reconciled.size!==256) process.exit(102);
+ const queue=c.makePositionQueue(parsed.positions,{}); if(queue.length!==parsed.targetCount || queue.some(position=>!position.review_target)) process.exit(103);
+ const reviews={[String(queue[0].position)]:{state:"reviewed_no_optical_concern"}}; if(c.makePositionQueue(parsed.positions,reviews).length!==queue.length-1) process.exit(104);
+ for(const mutate of [()=>{const x=structuredClone(summary);x.publication_sha256="d".repeat(64);return x},()=>{const x=structuredClone(summary);x.target_count++;return x},()=>{const x=structuredClone(summary);x.evidence["0"].source_image_sha256="b".repeat(64);return x},()=>{const x=structuredClone(summary);delete x.evidence["255"];return x}]){let rejected=false;try{c.reconcilePositionEvidence(record,parsed,mutate(),summary.publication_sha256)}catch(_){rejected=true}if(!rejected)process.exit(105)}
+})().catch(error=>{console.error(error);process.exit(106)});
+'''
+        result = self.node(program, position_path, json.dumps(record))
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
 
     def test_verified_evidence_contract_and_queue_are_fail_closed(self):
         program = r'''
@@ -268,6 +289,11 @@ for (const broken of [{}, { optical_no_ball_candidate_count: -1, red_candidate_c
             'role="dialog"', 'aria-modal="true"', 'aria-labelledby="etroc-review-title"',
             'data-etroc-review-status', 'name="etroc-review-state"', 'data-etroc-review-note',
             'data-etroc-review-save', 'data-etroc-review-save-next', 'data-etroc-review-close',
+            'data-etroc-position-section', 'data-etroc-position-mode="clean"', 'data-etroc-position-mode="analysis"',
+            'data-etroc-position-algorithm-overlay', 'data-etroc-position-human-overlay',
+            'data-etroc-position-progress', 'data-etroc-position-grid', 'role="grid"',
+            'data-etroc-position-context', 'name="etroc-position-state"', 'data-etroc-position-note',
+            'data-etroc-position-history', 'data-etroc-position-save', 'data-etroc-position-save-next', 'data-etroc-position-reapply',
         ):
             self.assertIn(required, html)
         self.assertIn('src="etroc-review.js', html)
@@ -294,6 +320,15 @@ for (const broken of [{}, { optical_no_ball_candidate_count: -1, red_candidate_c
         self.assertIn('Promise.allSettled([fetchHistory(record), montage.load(record)])', script)
         self.assertIn('inspectionControlsEnabled(true)', script)
         self.assertIn('Review history unavailable; read-only inspection.', script)
+        switch_start = script.index("async function switchPositionMontage")
+        switch_end = script.index("const montage = new MontageController", switch_start)
+        self.assertLess(script.index('state.position.cleanVerified = "";', switch_start, switch_end), script.index("await montage.load(record)", switch_start, switch_end))
+        self.assertIn('summary.publication_sha256 !== expectedPublicationSha256', script)
+        position_save = script.index("async function savePositionReview")
+        position_reapply = script.index("function reapplyPositionConflict", position_save)
+        self.assertIn('code: "post_save_successor"', script[position_save:position_reapply])
+        self.assertLess(script.index('state.position.conflict = { code: "post_save_successor"', position_save, position_reapply), script.index("if (andNext", position_save, position_reapply))
+        self.assertIn("positionReapply.hidden = false", script[position_save:position_reapply])
         for required in (
             'data-etroc-review-no-ball-count', 'data-etroc-review-red-count',
             'data-etroc-review-needs-inspection-count', 'data-etroc-review-candidate-count',

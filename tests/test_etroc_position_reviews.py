@@ -29,6 +29,7 @@ def load_module():
 class PositionEvidenceTests(unittest.TestCase):
     def test_loads_exact_clean_montage_and_9216_position_evidence(self):
         module = load_module()
+        self.assertIn("position_publication_sha256", module.POSITION_KEY_FIELDS)
         evidence = module.load_evidence(STATIC_ROOT)
         self.assertEqual(evidence.dataset_id, "ETROC_OI_2608")
         self.assertEqual(len(evidence.by_acquisition), 36)
@@ -82,6 +83,56 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
         body.update(overrides)
         return body
 
+    def legacy_ddl(self):
+        return tuple(
+            statement
+            .replace("position_review_", "etroc_position_review_")
+            .replace("position_publication_sha256 TEXT NOT NULL, ", "")
+            .replace("position_publication_sha256,", "")
+            .replace(" AND previous.position_publication_sha256 = NEW.position_publication_sha256", "")
+            for statement in self.module.DDL
+        )
+
+    def test_empty_legacy_v1_migrates_atomically_and_nonempty_rejects(self):
+        for nonempty in (False, True):
+            with self.subTest(nonempty=nonempty), tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "reviews.sqlite3"
+                with sqlite3.connect(path) as db:
+                    for statement in self.legacy_ddl():
+                        db.execute(statement)
+                    db.execute("INSERT INTO etroc_position_review_schema VALUES(1,1,1)")
+                    if nonempty:
+                        db.execute(
+                            "INSERT INTO etroc_position_review_events(dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position,source_image_sha256,geometry_version,state,note,author,author_display,created_at,mutation_id,supersedes_event_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)",
+                            ("ETROC_OI_2608", "W02G4-44", "a", "run", "a" * 64, "b" * 64, 0, "c" * 64, "etroc-grid-16x16-v1", "reviewed_no_optical_concern", "", "u", "U", 1, str(uuid.uuid4())),
+                        )
+                    db.commit()
+                if nonempty:
+                    with self.assertRaisesRegex(ValueError, "not safely empty"):
+                        self.module.init_schema(path)
+                    with sqlite3.connect(path) as db:
+                        self.assertEqual(db.execute("SELECT count(*) FROM etroc_position_review_events").fetchone()[0], 1)
+                else:
+                    self.module.init_schema(path)
+                    with sqlite3.connect(path) as db:
+                        self.assertIsNone(db.execute("SELECT 1 FROM sqlite_master WHERE name='etroc_position_review_events'").fetchone())
+                        self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 1)])
+
+    def test_validate_schema_requires_exact_integrity_check(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "reviews.sqlite3"
+            self.module.init_schema(path)
+            with sqlite3.connect(path) as db:
+                db.execute("PRAGMA ignore_check_constraints=ON")
+                db.execute(
+                    "INSERT INTO position_review_events(dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version,state,note,author,author_display,created_at,mutation_id,supersedes_event_id) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,NULL)",
+                    ("ETROC_OI_2608", "W02G4-44", "a", "run", "a" * 64, "b" * 64, "d" * 64, 999, "c" * 64, "etroc-grid-16x16-v1", "reviewed_no_optical_concern", "", "u", "U", 1, str(uuid.uuid4())),
+                )
+                db.execute("PRAGMA ignore_check_constraints=OFF")
+                db.commit()
+                with self.assertRaisesRegex(ValueError, "schema integrity"):
+                    self.module.validate_schema(db)
+
     def test_additive_schema_is_exact_idempotent_and_preserves_user_version(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "reviews.sqlite3"
@@ -102,8 +153,8 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             acquisition_module.init_schema(path)
             with sqlite3.connect(path) as db:
                 self.assertEqual(db.execute("PRAGMA user_version").fetchone()[0], 2)
-                self.assertEqual(db.execute("SELECT singleton,version FROM etroc_position_review_schema").fetchall(), [(1, 1)])
-                self.assertEqual(db.execute("SELECT count(*) FROM etroc_position_review_events").fetchone()[0], 0)
+                self.assertEqual(db.execute("SELECT singleton,version FROM position_review_schema").fetchall(), [(1, 1)])
+                self.assertEqual(db.execute("SELECT count(*) FROM position_review_events").fetchone()[0], 0)
                 self.module.validate_schema(db)
 
     def test_append_replay_stale_and_append_only_chain(self):
@@ -135,9 +186,9 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             self.assertEqual(successor.status, 201)
             with sqlite3.connect(path) as db:
                 with self.assertRaises(sqlite3.DatabaseError):
-                    db.execute("UPDATE etroc_position_review_events SET note='changed'")
+                    db.execute("UPDATE position_review_events SET note='changed'")
                 with self.assertRaises(sqlite3.DatabaseError):
-                    db.execute("DELETE FROM etroc_position_review_events")
+                    db.execute("DELETE FROM position_review_events")
 
     def test_summary_and_history_are_complete_and_position_scoped(self):
         with tempfile.TemporaryDirectory() as directory:
@@ -158,6 +209,12 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             self.assertEqual(history.status, 200)
             self.assertEqual(history.payload["current"]["position"], 0)
             self.assertEqual(len(history.payload["history"]), 1)
+            audit = self.module.audit(path, self.acquisition.acquisition_id, 0, self.evidence)
+            self.assertEqual(audit.status, 200)
+            self.assertEqual(audit.payload["position"], 0)
+            self.assertEqual(len(audit.payload["chains"]), 1)
+            self.assertTrue(audit.payload["chains"][0]["current_publication"])
+            self.assertEqual(audit.payload["chains"][0]["history"], history.payload["history"])
 
 
 class PositionApiTests(unittest.TestCase):
@@ -231,6 +288,10 @@ class PositionApiTests(unittest.TestCase):
         status, _, history = self.request(history_route, headers={"X-Forwarded-Email": "reviewer@cern.ch"})
         self.assertEqual(status, 200)
         self.assertEqual(history["current"]["event_id"], created["event"]["event_id"])
+        audit_route = f"/api/etroc-position-reviews/audit?acquisition_id={encoded}&position=0"
+        status, _, audit = self.request(audit_route, headers={"X-Forwarded-Email": "reviewer@cern.ch"})
+        self.assertEqual(status, 200)
+        self.assertEqual(audit["chains"][0]["history"][0], created["event"])
         status, _, invalid = self.request(route + "&extra=1", headers={"X-Forwarded-Email": "reviewer@cern.ch"})
         self.assertEqual(status, 400)
         self.assertEqual(invalid["error"]["code"], "invalid_query")

@@ -3,9 +3,14 @@
 
   const DATASET_ID = "ETROC_OI_2608";
   const DATA_BASE = "/data/etroc-optical/ETROC_OI_2608/";
+  const EVIDENCE_DATA_BASE = "data/etroc-optical/ETROC_OI_2608/";
   const EVIDENCE_FIELDS = Object.freeze(["dataset_id", "etroc_serial", "acquisition_id", "analysis_run_id", "montage_sha256"]);
   const STATES = Object.freeze(["reviewed_no_optical_concern", "reviewed_concern_observed", "follow_up_required"]);
   const EVIDENCE_RESPONSE_FIELDS = Object.freeze([...EVIDENCE_FIELDS, "montage_uri"]);
+  const POSITION_KEY_FIELDS = Object.freeze(["dataset_id", "etroc_serial", "acquisition_id", "analysis_run_id", "labelled_montage_sha256", "clean_montage_sha256", "position_publication_sha256", "position", "source_image_sha256", "geometry_version"]);
+  const POSITION_EVIDENCE_FIELDS = Object.freeze([...POSITION_KEY_FIELDS, "row", "column", "algorithm_category", "algorithm_reason", "review_target", "cell"]);
+  const POSITION_CATEGORIES = Object.freeze(["GREEN", "BLUE", "YELLOW", "RED", "NEED_INSPECT"]);
+  const POSITION_GEOMETRY_VERSION = "etroc-grid-16x16-v1";
   const EVENT_FIELDS = Object.freeze(["event_id", ...EVIDENCE_FIELDS, "state", "note", "author", "author_display", "created_at", "mutation_id", "supersedes_event_id"]);
   const CURRENT_FIELDS = Object.freeze(["current_event_id", ...EVIDENCE_FIELDS, "state", "note", "author", "author_display", "created_at", "history_count"]);
   const HASH = /^[0-9a-f]{64}$/;
@@ -34,6 +39,73 @@
     if (!detail || !Array.isArray(detail.records) || detail.records.length !== 36 || !HASH.test(detail.publicationSha256)) throw new Error("invalid ETROC publication event");
     const records = detail.records.map((record) => ({ ...record, dataset_id: DATASET_ID }));
     return { records, publication: { dataset_id: DATASET_ID, records }, publicationSha256: detail.publicationSha256 };
+  }
+
+  async function parsePositionPublication(bytes, record) {
+    const positionPublicationSha256 = await sha256(bytes);
+    if (!record || positionPublicationSha256 !== record.position_publication_sha256 || record.position_geometry_version !== POSITION_GEOMETRY_VERSION
+      || !HASH.test(record.montage_sha256) || !HASH.test(record.clean_montage_sha256)) throw new Error("invalid ETROC position publication identity");
+    const document = JSON.parse(new TextDecoder().decode(bytes));
+    const expectedDocumentFields = ["schema_version", "geometry_version", "dataset_id", "etroc_serial", "acquisition_id", "analysis_run_id", "labelled_montage_sha256", "clean_montage_sha256", "review_target_count", "positions"];
+    if (!hasExactFields(document, expectedDocumentFields) || document.schema_version !== "1.0" || document.geometry_version !== POSITION_GEOMETRY_VERSION
+      || document.dataset_id !== DATASET_ID || document.etroc_serial !== record.etroc_serial || document.acquisition_id !== record.acquisition_id
+      || document.analysis_run_id !== record.analysis_run_id || document.labelled_montage_sha256 !== record.montage_sha256
+      || document.clean_montage_sha256 !== record.clean_montage_sha256 || !Array.isArray(document.positions) || document.positions.length !== 256) throw new Error("invalid ETROC position publication");
+    let targetCount = 0;
+    const positions = document.positions.map((raw, expectedPosition) => {
+      const row = Math.floor(expectedPosition / 16); const column = expectedPosition % 16;
+      const expectedCell = { x: column * 150, y: row * 136, width: 150, height: 136, image_y: 16, image_height: 120 };
+      if (!hasExactFields(raw, ["position", "row", "column", "algorithm_category", "algorithm_reason", "source_image_sha256", "review_target", "cell"])
+        || raw.position !== expectedPosition || raw.row !== row || raw.column !== column || !POSITION_CATEGORIES.includes(raw.algorithm_category)
+        || typeof raw.algorithm_reason !== "string" || !raw.algorithm_reason || !HASH.test(raw.source_image_sha256)
+        || typeof raw.review_target !== "boolean" || raw.review_target !== (raw.algorithm_category === "NEED_INSPECT")
+        || !hasExactFields(raw.cell, Object.keys(expectedCell)) || Object.keys(expectedCell).some((field) => raw.cell[field] !== expectedCell[field])) throw new Error("invalid ETROC position record");
+      targetCount += Number(raw.review_target);
+      return { dataset_id: DATASET_ID, etroc_serial: record.etroc_serial, acquisition_id: record.acquisition_id, analysis_run_id: record.analysis_run_id,
+        labelled_montage_sha256: record.montage_sha256, clean_montage_sha256: record.clean_montage_sha256, position_publication_sha256: positionPublicationSha256,
+        position: expectedPosition, source_image_sha256: raw.source_image_sha256, geometry_version: POSITION_GEOMETRY_VERSION,
+        row, column, algorithm_category: raw.algorithm_category, algorithm_reason: raw.algorithm_reason, review_target: raw.review_target, cell: { ...raw.cell } };
+    });
+    if (targetCount !== document.review_target_count || targetCount !== record.position_review_target_count) throw new Error("ETROC position target count mismatch");
+    return { positions, targetCount, positionPublicationSha256 };
+  }
+
+  function samePositionEvidence(left, right) {
+    return POSITION_KEY_FIELDS.every((field) => left?.[field] === right?.[field])
+      && left?.row === right?.row && left?.column === right?.column && left?.algorithm_category === right?.algorithm_category
+      && left?.algorithm_reason === right?.algorithm_reason && left?.review_target === right?.review_target
+      && ["x", "y", "width", "height", "image_y", "image_height"].every((field) => left?.cell?.[field] === right?.cell?.[field]);
+  }
+
+  function reconcilePositionEvidence(record, parsed, summary, expectedPublicationSha256) {
+    const expectedSummaryFields = ["dataset_id", "publication_sha256", "acquisition_id", "etroc_serial", "analysis_run_id", "labelled_montage_sha256", "clean_montage_sha256", "clean_montage_uri", "position_publication_sha256", "position_publication_uri", "geometry_version", "position_count", "target_count", "viewer", "evidence", "reviews"];
+    if (!hasExactFields(summary, expectedSummaryFields) || summary.dataset_id !== DATASET_ID || !HASH.test(expectedPublicationSha256) || summary.publication_sha256 !== expectedPublicationSha256 || summary.acquisition_id !== record.acquisition_id
+      || summary.etroc_serial !== record.etroc_serial || summary.analysis_run_id !== record.analysis_run_id
+      || summary.labelled_montage_sha256 !== record.montage_sha256 || summary.clean_montage_sha256 !== record.clean_montage_sha256
+      || summary.clean_montage_uri !== `${EVIDENCE_DATA_BASE}${record.clean_montage_uri}` || summary.position_publication_sha256 !== parsed.positionPublicationSha256
+      || summary.position_publication_uri !== `${EVIDENCE_DATA_BASE}${record.position_publication_uri}` || summary.geometry_version !== POSITION_GEOMETRY_VERSION
+      || summary.position_count !== 256 || summary.target_count !== parsed.targetCount || !hasExactFields(summary.viewer, ["identity_display", "can_append_review"])
+      || typeof summary.viewer.identity_display !== "string" || typeof summary.viewer.can_append_review !== "boolean"
+      || !summary.evidence || typeof summary.evidence !== "object" || !summary.reviews || typeof summary.reviews !== "object") throw new Error("ETROC position evidence is unavailable");
+    const keys = Object.keys(summary.evidence);
+    if (keys.length !== 256 || keys.some((key, index) => key !== String(index))) throw new Error("ETROC position evidence keyset mismatch");
+    const result = new Map();
+    parsed.positions.forEach((position) => {
+      const remote = summary.evidence[String(position.position)];
+      if (!hasExactFields(remote, POSITION_EVIDENCE_FIELDS) || !samePositionEvidence(position, remote)) throw new Error("ETROC position evidence identity mismatch");
+      result.set(position.position, position);
+    });
+    Object.entries(summary.reviews).forEach(([key, review]) => {
+      const position = Number(key); const evidence = result.get(position);
+      if (!evidence || !review || POSITION_KEY_FIELDS.some((field) => review[field] !== evidence[field]) || !STATES.includes(review.state)
+        || !Number.isInteger(review.current_event_id) || review.current_event_id <= 0) throw new Error("ETROC position review provenance mismatch");
+    });
+    return result;
+  }
+
+  function makePositionQueue(positions, reviews, targetsOnly = true) {
+    return positions.filter((position) => (!targetsOnly || position.review_target) && !reviews?.[String(position.position)])
+      .slice().sort((left, right) => left.position - right.position);
   }
 
   function evidenceKey(record) { return EVIDENCE_FIELDS.map((field) => record[field]).join("\u0000"); }
@@ -218,7 +290,7 @@
     }
   }
 
-  globalThis.ETROCReviewContract = Object.freeze({ EVIDENCE_FIELDS, STATES, sha256, parsePublication, publicationFromEvent, reconcileEvidence, validatedSaveCurrent, validatedSaveEnvelope, validatedHistory, scientificCandidateCounts, canonicalComparator, makeQueue, snapshotQueue, openQueue, refreshQueueAfterSave, nextQueueIndex, ReviewSessionGate, draftMutation, applySaveResult, MontageController });
+  globalThis.ETROCReviewContract = Object.freeze({ EVIDENCE_FIELDS, POSITION_KEY_FIELDS, POSITION_EVIDENCE_FIELDS, STATES, sha256, parsePublication, publicationFromEvent, parsePositionPublication, reconcilePositionEvidence, makePositionQueue, reconcileEvidence, validatedSaveCurrent, validatedSaveEnvelope, validatedHistory, scientificCandidateCounts, canonicalComparator, makeQueue, snapshotQueue, openQueue, refreshQueueAfterSave, nextQueueIndex, ReviewSessionGate, draftMutation, applySaveResult, MontageController });
 
   const dialog = document.querySelector("[data-etroc-review-dialog]");
   if (!dialog) return;
@@ -314,6 +386,20 @@
   const original = dialog.querySelector("[data-etroc-review-original]");
   const confirmDiscard = dialog.querySelector("[data-etroc-review-discard-dialog]");
   const reapply = dialog.querySelector("[data-etroc-review-reapply]");
+  const positionGrid = dialog.querySelector("[data-etroc-position-grid]");
+  const positionCanvas = dialog.querySelector(".etroc-position-canvas");
+  const positionStart = dialog.querySelector("[data-etroc-position-start]");
+  const positionProgress = dialog.querySelector("[data-etroc-position-progress]");
+  const positionContext = dialog.querySelector("[data-etroc-position-context]");
+  const positionNote = dialog.querySelector("[data-etroc-position-note]");
+  const positionHistory = dialog.querySelector("[data-etroc-position-history]");
+  const positionSave = dialog.querySelector("[data-etroc-position-save]");
+  const positionSaveNext = dialog.querySelector("[data-etroc-position-save-next]");
+  const positionPrevious = dialog.querySelector("[data-etroc-position-previous]");
+  const positionReapply = dialog.querySelector("[data-etroc-position-reapply]");
+  const positionAlgorithmOverlay = dialog.querySelector("[data-etroc-position-algorithm-overlay]");
+  const positionHumanOverlay = dialog.querySelector("[data-etroc-position-human-overlay]");
+  const positionModeControls = [...dialog.querySelectorAll("[data-etroc-position-mode]")];
   reapply.hidden = true;
   const start = document.querySelector("[data-etroc-review-start]");
   const summaryNode = document.querySelector("[data-etroc-review-summary]");
@@ -323,7 +409,7 @@
   const serialFilter = document.querySelector("[data-etroc-search]");
   const candidateFilter = document.querySelector("[data-etroc-candidate-filter]");
   const controls = () => [save, saveNext, previous, next, reset, fit, zoomIn, zoomOut, original, ...dialog.querySelectorAll("input[name='etroc-review-state']"), note].filter(Boolean);
-  let state = { verified: false, records: [], publication: null, summary: null, evidence: new Map(), queue: [], queueIndex: 0, queueFilters: null, active: null, origin: null, mutation: null, loadedFingerprint: "", mode: "queue", zoom: 1, conflict: null, pendingDestination: null, session: new ReviewSessionGate(), activeMontageVerified: "", saveInFlight: false, verificationInFlight: false };
+  let state = { verified: false, records: [], publication: null, summary: null, evidence: new Map(), queue: [], queueIndex: 0, queueFilters: null, active: null, origin: null, mutation: null, loadedFingerprint: "", mode: "queue", zoom: 1, conflict: null, pendingDestination: null, session: new ReviewSessionGate(), activeMontageVerified: "", saveInFlight: false, verificationInFlight: false, position: { parsed: null, summary: null, evidence: new Map(), queue: [], queueIndex: 0, denominator: 0, active: null, mode: "queue", mutation: null, loadedFingerprint: "", cleanVerified: "", montageMode: "clean", saveInFlight: false, conflict: null } };
 
   function canSaveActive() { return Boolean(state.active && state.verified && state.summary?.viewer?.can_append_review && !state.conflict && !state.saveInFlight && !state.verificationInFlight && state.activeMontageVerified === evidenceKey(state.active) && state.session.canSave(state.active.acquisition_id, evidenceKey(state.active))); }
   function inspectionControlsEnabled(enabled) {
@@ -348,8 +434,8 @@
   function currentDraft() { const selected = dialog.querySelector("input[name='etroc-review-state']:checked"); return { state: selected?.value || "", note: note.value.trim(), expected_current_event_id: state.summary?.reviews?.[state.active?.acquisition_id]?.current_event_id ?? null }; }
   function fingerprint(draft) { return JSON.stringify(draft); }
   function refreshMutation() { const draft = currentDraft(); const value = fingerprint(draft); state.mutation = { fingerprint: value, id: draftMutation(draft, state.mutation && { fingerprint: state.mutation.fingerprint, mutationId: state.mutation.id }, () => crypto.randomUUID()) }; return { ...draft, mutation_id: state.mutation.id }; }
-  function dirty() { return fingerprint(currentDraft()) !== state.loadedFingerprint; }
-  function zoom(value) { state.zoom = Math.max(0.5, Math.min(3, value)); image.style.transform = `scale(${state.zoom})`; }
+  function dirty() { return fingerprint(currentDraft()) !== state.loadedFingerprint || positionDirty(); }
+  function zoom(value) { state.zoom = Math.max(0.5, Math.min(3, value)); positionCanvas.style.transform = `scale(${state.zoom})`; }
   function reviewedCount() { return state.records.filter((record) => state.summary?.reviews?.[record.acquisition_id]).length; }
   function updateProgress() { progress.textContent = `${reviewedCount()} / 36 reviewed · ${state.queueIndex + 1} / ${state.queue.length}`; previous.disabled = Boolean(state.conflict) || state.saveInFlight || state.verificationInFlight || state.queueIndex === 0; next.disabled = Boolean(state.conflict) || state.saveInFlight || state.verificationInFlight || state.queueIndex >= state.queue.length - 1; save.disabled = !canSaveActive(); saveNext.disabled = !canSaveActive() || state.mode === "correction"; }
   function utcTimestamp(value) { const millis = typeof value === "number" ? value * 1000 : Date.parse(value || ""); return Number.isFinite(millis) ? new Date(millis).toISOString() : "Timestamp unavailable"; }
@@ -357,6 +443,21 @@
   function updateScientificContext(record) { scientificCandidateCounts(record).forEach((count, index) => { scientificCountNodes[index].textContent = String(count); }); }
   async function fetchSummary() { const response = await fetch(`/api/etroc-reviews?dataset_id=${encodeURIComponent(DATASET_ID)}`, { credentials: "same-origin", headers: { Accept: "application/json" } }); if (!response.ok) throw new Error("review service unavailable"); return response.json(); }
   async function fetchHistory(record) { const response = await fetch(`/api/etroc-reviews/history?acquisition_id=${encodeURIComponent(record.acquisition_id)}`, { credentials: "same-origin" }); if (!response.ok) throw new Error("review history unavailable"); return validatedHistory(await response.json(), record); }
+  async function fetchPositionSummary(record) { const response = await fetch(`/api/etroc-position-reviews?dataset_id=${encodeURIComponent(DATASET_ID)}&acquisition_id=${encodeURIComponent(record.acquisition_id)}`, { credentials: "same-origin", headers: { Accept: "application/json" } }); if (!response.ok) throw new Error("position review service unavailable"); return response.json(); }
+  async function fetchPositionHistory(record, position) { const response = await fetch(`/api/etroc-position-reviews/history?acquisition_id=${encodeURIComponent(record.acquisition_id)}&position=${position}`, { credentials: "same-origin", headers: { Accept: "application/json" } }); if (!response.ok) throw new Error("position review history unavailable"); return response.json(); }
+  function positionFingerprint(position) { return POSITION_KEY_FIELDS.map((field) => position[field]).join("\u0000"); }
+  function positionDraft() { const selected = dialog.querySelector("input[name='etroc-position-state']:checked"); return { state: selected?.value || "", note: positionNote.value.trim(), expected_current_event_id: state.position.summary?.reviews?.[String(state.position.active?.position)]?.current_event_id ?? null }; }
+  function positionDirty() { return Boolean(state.position.active) && fingerprint(positionDraft()) !== state.position.loadedFingerprint; }
+  function syncPositionDraft(review) { dialog.querySelectorAll("input[name='etroc-position-state']").forEach((control) => { control.checked = control.value === review?.state; }); positionNote.value = review?.note || ""; state.position.loadedFingerprint = fingerprint(positionDraft()); state.position.mutation = null; state.position.conflict = null; positionReapply.hidden = true; }
+  function positionCanSave() { return Boolean(state.position.active && state.position.montageMode === "clean" && state.position.cleanVerified === state.position.active.clean_montage_sha256 && state.position.summary?.viewer?.can_append_review && !state.position.saveInFlight && !state.position.conflict); }
+  function positionControlsEnabled(enabled) { [...dialog.querySelectorAll("input[name='etroc-position-state']"), positionNote, positionSave, positionSaveNext, positionPrevious].filter(Boolean).forEach((control) => { control.disabled = !enabled; }); positionSave.disabled = !positionCanSave(); positionSaveNext.disabled = !positionCanSave() || state.position.mode !== "queue"; positionPrevious.disabled = state.position.mode !== "queue" || state.position.queueIndex <= 0; }
+  function updatePositionProgress() { if (!state.position.parsed || !state.position.summary) { positionProgress.textContent = "Position evidence unavailable."; positionStart.disabled = true; return; } const reviewedTargets = state.position.parsed.positions.filter((item) => item.review_target && state.position.summary.reviews[String(item.position)]).length; positionProgress.textContent = `${reviewedTargets} / ${state.position.parsed.targetCount} NEED_INSPECT positions reviewed${state.position.active ? ` · position ${state.position.active.position} (row ${state.position.active.row}, column ${state.position.active.column})` : ""}`; positionStart.disabled = !state.position.summary.viewer.can_append_review || !makePositionQueue(state.position.parsed.positions, state.position.summary.reviews).length; }
+  function setPositionHistory(items) { positionHistory.replaceChildren(); (items || []).forEach((item) => { const row = document.createElement("li"); row.textContent = `${item.state} · ${item.author_display || item.author || "Unknown reviewer"} · ${utcTimestamp(item.created_at)} · ${item.note || "No note"}`; positionHistory.append(row); }); }
+  function updatePositionContext(position) { positionContext.replaceChildren(); const heading = document.createElement("h4"); heading.textContent = `Position ${position.position} · row ${position.row} · column ${position.column}`; const algorithm = document.createElement("p"); algorithm.textContent = `Algorithm: ${position.algorithm_category} · ${position.algorithm_reason}. Exploratory signal, not a confirmed disposition.`; const digest = document.createElement("p"); digest.textContent = `Source SHA-256 ${position.source_image_sha256}`; const canvas = document.createElement("canvas"); canvas.className = "etroc-position-context-crop"; canvas.width = 300; canvas.height = 240; canvas.setAttribute("aria-label", `Clean crop for position ${position.position}`); const context = canvas.getContext("2d"); if (context && image.complete && image.naturalWidth) context.drawImage(image, position.cell.x, position.cell.y + position.cell.image_y, position.cell.width, position.cell.image_height, 0, 0, 300, 240); positionContext.append(heading, algorithm, digest, canvas); }
+  function renderPositionGrid() { positionGrid.replaceChildren(); if (!state.position.parsed) return; const showAlgorithm = positionAlgorithmOverlay.checked; const showHuman = positionHumanOverlay.checked; state.position.parsed.positions.forEach((position) => { const review = state.position.summary?.reviews?.[String(position.position)]; const cell = document.createElementNS("http://www.w3.org/2000/svg", "rect"); cell.setAttribute("x", position.cell.x); cell.setAttribute("y", position.cell.y); cell.setAttribute("width", position.cell.width); cell.setAttribute("height", position.cell.height); cell.setAttribute("role", "gridcell"); cell.setAttribute("tabindex", state.position.active?.position === position.position ? "0" : "-1"); cell.setAttribute("aria-label", `Position ${position.position}, ${position.algorithm_category}, ${review?.state || "unreviewed"}`); cell.dataset.position = String(position.position); cell.classList.add("position-cell"); if (showAlgorithm && position.review_target) cell.classList.add("target"); if (showHuman && review) cell.classList.add(review.state === "reviewed_concern_observed" ? "concern" : review.state === "follow_up_required" ? "follow-up" : "reviewed"); if (state.position.active?.position === position.position) cell.classList.add("active"); cell.addEventListener("click", () => selectPosition(position)); cell.addEventListener("keydown", (event) => { let next = position.position; if (event.key === "ArrowRight") next += 1; else if (event.key === "ArrowLeft") next -= 1; else if (event.key === "ArrowDown") next += 16; else if (event.key === "ArrowUp") next -= 16; else if (event.key === "Enter" || event.key === " ") { event.preventDefault(); selectPosition(position); return; } else return; if (next >= 0 && next < 256) { event.preventDefault(); selectPosition(state.position.parsed.positions[next]); requestAnimationFrame(() => positionGrid.querySelector(`[data-position="${next}"]`)?.focus()); } }); positionGrid.append(cell); }); }
+  async function selectPosition(position, queueMode = null) { if (!position || state.position.saveInFlight || positionDirty()) { if (positionDirty()) setStatus("Save or discard the active position draft before changing positions.", "failed"); return; } const reviewed = state.position.summary?.reviews?.[String(position.position)]; state.position.mode = queueMode || (reviewed ? "correction" : position.review_target ? "queue" : "ad_hoc"); state.position.active = position; if (state.position.mode === "queue") { const index = state.position.queue.findIndex((item) => item.position === position.position); if (index >= 0) state.position.queueIndex = index; } syncPositionDraft(reviewed); renderPositionGrid(); updatePositionContext(position); updatePositionProgress(); positionControlsEnabled(Boolean(state.position.summary?.viewer?.can_append_review)); try { const history = await fetchPositionHistory(state.active, position.position); if (state.position.active?.position === position.position) setPositionHistory(history.history); } catch (_) { setPositionHistory([]); positionControlsEnabled(false); } }
+  async function loadPositionWorkspace(record) { state.position = { parsed: null, summary: null, evidence: new Map(), queue: [], queueIndex: 0, denominator: 0, active: null, mode: "queue", mutation: null, loadedFingerprint: "", cleanVerified: "", montageMode: "clean", saveInFlight: false, conflict: null }; positionGrid.replaceChildren(); setPositionHistory([]); updatePositionProgress(); const [publicationResponse, summary] = await Promise.all([fetch(`${DATA_BASE}${record.position_publication_uri}`, { credentials: "same-origin" }), fetchPositionSummary(record)]); if (!publicationResponse.ok) throw new Error("position publication unavailable"); const bytes = await publicationResponse.arrayBuffer(); const parsed = await parsePositionPublication(bytes, record); const evidence = reconcilePositionEvidence(record, parsed, summary, state.publication.publicationSha256); const cleanRecord = { montage_sha256: record.clean_montage_sha256, montage_uri: record.clean_montage_uri }; const cleanReady = await montage.load(cleanRecord); if (!cleanReady) throw new Error("clean montage verification failed"); state.position.parsed = parsed; state.position.summary = summary; state.position.evidence = evidence; state.position.queue = makePositionQueue(parsed.positions, summary.reviews); state.position.denominator = parsed.targetCount; state.position.cleanVerified = record.clean_montage_sha256; state.position.montageMode = "clean"; positionModeControls.forEach((control) => { control.checked = control.value === "clean"; }); renderPositionGrid(); updatePositionProgress(); positionStart.disabled = !summary.viewer.can_append_review || !state.position.queue.length; }
+  async function switchPositionMontage(mode) { if (!state.active || !state.position.parsed || positionDirty()) { if (positionDirty()) setStatus("Save or discard the position draft before switching evidence modes.", "failed"); return; } state.position.cleanVerified = ""; state.position.montageMode = "loading"; positionControlsEnabled(false); controlsEnabled(false); const record = mode === "clean" ? { montage_sha256: state.active.clean_montage_sha256, montage_uri: state.active.clean_montage_uri } : state.active; const ready = await montage.load(record); if (!ready) { state.position.montageMode = "unavailable"; positionControlsEnabled(false); return; } state.position.montageMode = mode; if (mode === "clean") { state.position.cleanVerified = state.active.clean_montage_sha256; if (state.position.active) updatePositionContext(state.position.active); } controlsEnabled(mode === "analysis" && Boolean(state.summary?.viewer?.can_append_review)); positionControlsEnabled(mode === "clean" && Boolean(state.position.summary?.viewer?.can_append_review)); }
   const montage = new MontageController({ fetch: (...args) => fetch(...args), hash: sha256, createObjectURL: (blob) => URL.createObjectURL(blob), revokeObjectURL: (url) => URL.revokeObjectURL(url), decode: async (url) => { image.src = url; await (image.decode ? image.decode() : new Promise((resolve, reject) => { image.onload = resolve; image.onerror = reject; })); }, onReady: () => {}, onError: (error) => { if (!state.verificationInFlight) return; state.verificationInFlight = false; controlsEnabled(false); setStatus(`Verification failed: ${error.message}`, "failed"); } });
 
   let preloadAbort = null;
@@ -409,16 +510,26 @@
       return;
     }
     setHistory(historyResult.value);
-    controlsEnabled(Boolean(state.summary?.viewer?.can_append_review));
-    updateProgress();
-    setStatus(state.summary.viewer.can_append_review ? "Verified evidence and decoded exact montage bytes." : "Verified evidence. Read-only access.", state.summary.viewer.can_append_review ? "verified" : "readonly");
+    try {
+      await loadPositionWorkspace(record);
+      controlsEnabled(false);
+      positionControlsEnabled(false);
+      updateProgress();
+      setStatus(state.position.summary.viewer.can_append_review ? "Verified clean position evidence. Select a target or start position review." : "Verified clean position evidence. Read-only access.", state.position.summary.viewer.can_append_review ? "verified" : "readonly");
+    } catch (error) {
+      controlsEnabled(Boolean(state.summary?.viewer?.can_append_review));
+      positionControlsEnabled(false);
+      positionProgress.textContent = `Position review unavailable: ${error.message}`;
+      updateProgress();
+      setStatus(state.summary.viewer.can_append_review ? "Verified labelled acquisition evidence. Position review unavailable." : "Verified acquisition evidence. Read-only access.", state.summary.viewer.can_append_review ? "verified" : "readonly");
+    }
     void preloadAdjacent();
   }
   function applyQueue(record, origin) { const opened = openQueue(state.records, state.summary.reviews, record, filters()); state.mode = opened.mode; state.queue = opened.queue; state.queueIndex = opened.queueIndex; state.queueFilters = opened.filters; state.active = state.queue[0]; state.origin = origin; dialog.hidden = false; updateDialog(); close.focus(); }
-  function interactionBusy() { return state.saveInFlight || state.verificationInFlight; }
+  function interactionBusy() { return state.saveInFlight || state.verificationInFlight || state.position.saveInFlight; }
   function requestDestination(destination) { if (!dirty()) return destination(); state.pendingDestination = destination; confirmDiscard.showModal(); confirmDiscard.querySelector("[data-etroc-review-keep]")?.focus(); }
   function requestClose() { if (interactionBusy()) { setStatus("Wait for the active save or verification before closing.", "failed"); return; } requestDestination(closeDialog); }
-  function closeDialog() { if (interactionBusy()) return; state.pendingDestination = null; state.session.begin(""); preloadAbort?.abort(); state.activeMontageVerified = ""; controlsEnabled(false); montage.close(); image.removeAttribute("src"); dialog.hidden = true; state.origin?.focus(); }
+  function closeDialog() { if (interactionBusy()) return; state.pendingDestination = null; state.session.begin(""); preloadAbort?.abort(); state.activeMontageVerified = ""; state.position.cleanVerified = ""; positionGrid.replaceChildren(); positionControlsEnabled(false); controlsEnabled(false); montage.close(); image.removeAttribute("src"); dialog.hidden = true; state.origin?.focus(); }
   async function navigateForward() {
     state.verificationInFlight = true;
     controlsEnabled(false);
@@ -526,6 +637,54 @@
       if (andNext && state.mode === "queue") { const refreshed = refreshQueueAfterSave(state.queue, state.summary.reviews, activeId); state.queue = refreshed.queue; state.queueIndex = refreshed.queueIndex; if (state.queue.length) { state.active = state.queue[0]; state.saveInFlight = false; void updateDialog(); return; } setStatus("Queue complete. Review saved; choose Close to return to the pool.", "verified"); }
     } catch (error) { if (state.session.accept(token, activeId)) setStatus(`Save unavailable: ${error.message}. Retry retains this mutation ID.`, "failed"); } finally { if (state.session.accept(token, activeId)) { state.saveInFlight = false; controlsEnabled(canSaveActive()); updateProgress(); } }
   }
+  async function savePositionReview(andNext) {
+    if (!positionCanSave()) return;
+    const active = state.position.active; const draft = positionDraft();
+    if (!STATES.includes(draft.state) || (draft.state !== "reviewed_no_optical_concern" && !draft.note)) { setStatus("Choose a position state and provide notes for concern or follow-up.", "failed"); return; }
+    const draftFingerprint = fingerprint(draft); state.position.mutation = { fingerprint: draftFingerprint, id: draftMutation(draft, state.position.mutation && { fingerprint: state.position.mutation.fingerprint, mutationId: state.position.mutation.id }, () => crypto.randomUUID()) };
+    const payload = Object.fromEntries(POSITION_KEY_FIELDS.map((field) => [field, active[field]])); Object.assign(payload, draft, { mutation_id: state.position.mutation.id });
+    state.position.saveInFlight = true; positionControlsEnabled(false);
+    try {
+      const response = await fetch("/api/etroc-position-reviews", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
+      const body = await response.json();
+      if (response.status === 409) {
+        const conflict = body.error;
+        if (!conflict || typeof conflict.code !== "string") throw new Error("position conflict response is malformed");
+        const summary = await fetchPositionSummary(state.active);
+        state.position.evidence = reconcilePositionEvidence(state.active, state.position.parsed, summary, state.publication.publicationSha256);
+        state.position.summary = summary;
+        state.position.conflict = { ...conflict, current: summary.reviews[String(active.position)] || null };
+        positionReapply.hidden = false;
+        renderPositionGrid(); updatePositionProgress(); positionControlsEnabled(false);
+        setStatus(`${conflict.message || "Position conflict"} Draft retained; explicitly reapply with a fresh mutation ID.`, "failed");
+        return;
+      }
+      if (!response.ok || body.ok !== true || typeof body.idempotent_replay !== "boolean" || !body.event || POSITION_KEY_FIELDS.some((field) => body.event[field] !== active[field]) || body.event.state !== draft.state || body.event.note !== draft.note || body.event.mutation_id !== payload.mutation_id || body.event.supersedes_event_id !== draft.expected_current_event_id) throw new Error(body.error?.message || "position save failed");
+      const summary = await fetchPositionSummary(state.active); const reconciled = reconcilePositionEvidence(state.active, state.position.parsed, summary, state.publication.publicationSha256); state.position.summary = summary; state.position.evidence = reconciled;
+      const current = summary.reviews[String(active.position)]; if (!current || current.current_event_id < body.event.event_id || POSITION_KEY_FIELDS.some((field) => current[field] !== active[field])) throw new Error("position save readback mismatch");
+      const history = await fetchPositionHistory(state.active, active.position); if (!history.history?.some((item) => item.event_id === body.event.event_id)) throw new Error("position history readback mismatch");
+      setPositionHistory(history.history); renderPositionGrid(); updatePositionProgress();
+      if (current.current_event_id > body.event.event_id) {
+        state.position.conflict = { code: "post_save_successor", current };
+        positionReapply.hidden = false;
+        positionControlsEnabled(false);
+        setStatus("Position review saved, then changed by another reviewer. Draft retained; explicitly reapply.", "failed");
+        return;
+      }
+      if (current.current_event_id !== body.event.event_id) throw new Error("position current event does not match saved event");
+      syncPositionDraft(current); setStatus("Position review saved and read back.", "verified");
+      if (andNext && state.position.mode === "queue") { const nextIndex = state.position.queue.findIndex((item, index) => index > state.position.queueIndex && !summary.reviews[String(item.position)]); if (nextIndex >= 0) { state.position.queueIndex = nextIndex; state.position.saveInFlight = false; await selectPosition(state.position.queue[nextIndex], "queue"); return; } setStatus("Position target queue complete for this snapshot.", "verified"); }
+    } catch (error) { setStatus(`Position save unavailable: ${error.message}. Retry retains this mutation ID.`, "failed"); }
+    finally { state.position.saveInFlight = false; positionControlsEnabled(Boolean(state.position.summary?.viewer?.can_append_review) && state.position.montageMode === "clean"); }
+  }
+  function reapplyPositionConflict() {
+    if (!state.position.conflict || !state.position.active) return;
+    state.position.mutation = null;
+    state.position.conflict = null;
+    positionReapply.hidden = true;
+    positionControlsEnabled(Boolean(state.position.summary?.viewer?.can_append_review) && state.position.montageMode === "clean");
+    setStatus("Intervening position version adopted. Draft is ready with a fresh mutation ID.", "verified");
+  }
   function reapplyConflict() {
     if (!state.conflict) return;
     if (state.conflict.code === "mutation_id_conflict") {
@@ -554,5 +713,5 @@
   globalThis.addEventListener("etroc-optical-publication", async (event) => { try { const detail = event.detail || {}; const parsed = detail.records && detail.publicationSha256 ? publicationFromEvent(detail) : await parsePublication(detail.bytes); const summary = await fetchSummary(); state.evidence = reconcileEvidence(parsed, summary); state.records = parsed.records; state.publication = parsed; state.summary = summary; state.verified = true; bindRecords(state.records); updateReviewSurface(); setStatus("Verified review workspace available.", "verified"); } catch (error) { state.verified = false; controlsEnabled(false); setStatus(`Review unavailable: ${error.message}`, "failed"); } });
   dialog.addEventListener("keydown", (event) => { trapFocus(event); if (confirmDiscard.open) return; if (event.key === "Escape") { event.preventDefault(); requestClose(); return; } if (["INPUT", "TEXTAREA", "SELECT"].includes(event.target.tagName)) return; if (event.key === "ArrowRight") navigate(1); if (event.key === "ArrowLeft") navigate(-1); if (event.key === "+") zoom(state.zoom + .25); if (event.key === "-") zoom(state.zoom - .25); });
   dialog.addEventListener("click", (event) => { if (event.target === dialog) requestClose(); });
-  dialog.querySelectorAll("input[name='etroc-review-state']").forEach((control) => control.addEventListener("change", refreshMutation)); note.addEventListener("input", refreshMutation); close.addEventListener("click", requestClose); save.addEventListener("click", () => saveReview(false)); saveNext.addEventListener("click", () => saveReview(true)); previous.addEventListener("click", () => navigate(-1)); next.addEventListener("click", () => navigate(1)); reset.addEventListener("click", () => zoom(1)); fit.addEventListener("click", () => zoom(1)); zoomIn.addEventListener("click", () => zoom(state.zoom + .25)); zoomOut.addEventListener("click", () => zoom(state.zoom - .25)); reapply.addEventListener("click", reapplyConflict); confirmDiscard.addEventListener("cancel", () => { state.pendingDestination = null; }); confirmDiscard.querySelector("[data-etroc-review-keep]")?.addEventListener("click", () => { state.pendingDestination = null; confirmDiscard.close(); }); confirmDiscard.querySelector("[data-etroc-review-discard]")?.addEventListener("click", () => { const destination = state.pendingDestination; state.pendingDestination = null; confirmDiscard.close(); destination?.(); }); start.addEventListener("click", async () => { try { const summary = await fetchSummary(); const reconciled = reconcileEvidence(state.publication, summary); state.summary = summary; state.evidence = reconciled; updateReviewSurface(); const queue = snapshotQueue(state.records, state.summary.reviews, filters()); if (queue.length) applyQueue(queue[0], start); } catch (error) { setStatus(`Review unavailable: ${error.message}`, "failed"); } }); [stateFilter, orderFilter, waferFilter, serialFilter, candidateFilter].forEach((control) => control?.addEventListener("change", updateReviewSurface)); globalThis.addEventListener("beforeunload", (event) => { if (dirty()) { event.preventDefault(); event.returnValue = ""; } });
+  dialog.querySelectorAll("input[name='etroc-review-state']").forEach((control) => control.addEventListener("change", refreshMutation)); note.addEventListener("input", refreshMutation); close.addEventListener("click", requestClose); save.addEventListener("click", () => saveReview(false)); saveNext.addEventListener("click", () => saveReview(true)); previous.addEventListener("click", () => navigate(-1)); next.addEventListener("click", () => navigate(1)); reset.addEventListener("click", () => zoom(1)); fit.addEventListener("click", () => zoom(1)); zoomIn.addEventListener("click", () => zoom(state.zoom + .25)); zoomOut.addEventListener("click", () => zoom(state.zoom - .25)); reapply.addEventListener("click", reapplyConflict); confirmDiscard.addEventListener("cancel", () => { state.pendingDestination = null; }); confirmDiscard.querySelector("[data-etroc-review-keep]")?.addEventListener("click", () => { state.pendingDestination = null; confirmDiscard.close(); }); confirmDiscard.querySelector("[data-etroc-review-discard]")?.addEventListener("click", () => { const destination = state.pendingDestination; state.pendingDestination = null; confirmDiscard.close(); destination?.(); }); dialog.querySelectorAll("input[name='etroc-position-state']").forEach((control) => control.addEventListener("change", () => positionControlsEnabled(Boolean(state.position.summary?.viewer?.can_append_review) && state.position.montageMode === "clean"))); positionNote.addEventListener("input", () => positionControlsEnabled(Boolean(state.position.summary?.viewer?.can_append_review) && state.position.montageMode === "clean")); positionAlgorithmOverlay.addEventListener("change", renderPositionGrid); positionHumanOverlay.addEventListener("change", renderPositionGrid); positionModeControls.forEach((control) => control.addEventListener("change", () => { if (control.checked) void switchPositionMontage(control.value); })); positionStart.addEventListener("click", async () => { if (!state.active || !state.position.parsed || positionDirty()) return; try { const summary = await fetchPositionSummary(state.active); state.position.evidence = reconcilePositionEvidence(state.active, state.position.parsed, summary, state.publication.publicationSha256); state.position.summary = summary; state.position.queue = makePositionQueue(state.position.parsed.positions, summary.reviews); state.position.queueIndex = 0; state.position.denominator = state.position.parsed.targetCount; renderPositionGrid(); updatePositionProgress(); if (state.position.queue.length) await selectPosition(state.position.queue[0], "queue"); } catch (error) { setStatus(`Position queue unavailable: ${error.message}`, "failed"); } }); positionPrevious.addEventListener("click", () => { if (state.position.mode === "queue" && state.position.queueIndex > 0 && !positionDirty()) { state.position.queueIndex -= 1; void selectPosition(state.position.queue[state.position.queueIndex], "queue"); } }); positionSave.addEventListener("click", () => void savePositionReview(false)); positionSaveNext.addEventListener("click", () => void savePositionReview(true)); positionReapply.addEventListener("click", reapplyPositionConflict); start.addEventListener("click", async () => { try { const summary = await fetchSummary(); const reconciled = reconcileEvidence(state.publication, summary); state.summary = summary; state.evidence = reconciled; updateReviewSurface(); const queue = snapshotQueue(state.records, state.summary.reviews, filters()); if (queue.length) applyQueue(queue[0], start); } catch (error) { setStatus(`Review unavailable: ${error.message}`, "failed"); } }); [stateFilter, orderFilter, waferFilter, serialFilter, candidateFilter].forEach((control) => control?.addEventListener("change", updateReviewSurface)); globalThis.addEventListener("beforeunload", (event) => { if (dirty()) { event.preventDefault(); event.returnValue = ""; } });
 })();
