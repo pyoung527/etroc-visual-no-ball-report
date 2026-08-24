@@ -1826,11 +1826,11 @@ python3 -I - "${DATASET_DIR}/SHA256SUMS" <<'PY'
 from pathlib import PurePosixPath
 import re, sys
 lines=open(sys.argv[1], encoding='ascii').read().splitlines()
-if len(lines) != 145:
+if len(lines) != 181:
     raise SystemExit(f'unexpected ETROC dataset manifest cardinality: {len(lines)}')
 seen=set()
 for line in lines:
-    if not re.fullmatch(r'[0-9a-f]{64}  (chips\.json|montages/sha256/[0-9a-f]{64}\.jpg|clean-montages/sha256/[0-9a-f]{64}\.jpg|positions/sha256/[0-9a-f]{64}\.json|previews/(?:W02G4|W03F7|W05E5)-[0-9]+\.jpg)', line):
+    if not re.fullmatch(r'[0-9a-f]{64}  (chips\.json|montages/sha256/[0-9a-f]{64}\.jpg|clean-montages/sha256/[0-9a-f]{64}\.jpg|positions/sha256/[0-9a-f]{64}\.json|heights/sha256/[0-9a-f]{64}\.json|previews/(?:W02G4|W03F7|W05E5)-[0-9]+\.jpg)', line):
         raise SystemExit(f'unsafe ETROC dataset manifest entry: {line!r}')
     relative=line[66:]
     path=PurePosixPath(relative)
@@ -1841,6 +1841,7 @@ if (sum(path.startswith('montages/') for path in seen) != 36
         or sum(path.startswith('montages/sha256/') for path in seen) != 36
         or sum(path.startswith('clean-montages/sha256/') for path in seen) != 36
         or sum(path.startswith('positions/sha256/') for path in seen) != 36
+        or sum(path.startswith('heights/sha256/') for path in seen) != 36
         or sum(path.startswith('previews/') for path in seen) != 36
         or 'chips.json' not in seen):
     raise SystemExit('unexpected ETROC dataset asset roles')
@@ -2365,8 +2366,8 @@ if (not isinstance(records, list) or len(records) != 36
     raise SystemExit('runtime ETROC dataset cardinality mismatch')
 if Counter(row['wafer'] for row in records) != Counter({'W02G4': 18, 'W03F7': 9, 'W05E5': 9}):
     raise SystemExit('runtime ETROC wafer cardinality mismatch')
-assets=[root / row[key] for row in records for key in ('montage_uri','preview_uri','clean_montage_uri','position_publication_uri')]
-if len(set(assets)) != 144 or any(not path.is_file() or path.stat().st_size == 0 for path in assets):
+assets=[root / row[key] for row in records for key in ('montage_uri','preview_uri','clean_montage_uri','position_publication_uri','height_publication_uri')]
+if len(set(assets)) != 180 or any(not path.is_file() or path.stat().st_size == 0 for path in assets):
     raise SystemExit('runtime ETROC asset inventory mismatch')
 print({'dataset_id': payload['dataset_id'], 'records': len(records), 'assets': len(assets), 'positions': payload['position_record_count']})
 PY
@@ -2455,6 +2456,11 @@ for path in (f"{dataset_root}/{record['preview_uri']}", f"{dataset_root}/{record
 position_publication=fetch(f"{dataset_root}/{record['position_publication_uri']}")
 if hashlib.sha256(position_publication).hexdigest() != record['position_publication_sha256'] or len(json.loads(position_publication).get('positions', [])) != 256:
     raise SystemExit('runtime HTTP position publication contract failed')
+height_publication=fetch(f"{dataset_root}/{record['height_publication_uri']}")
+height_document=json.loads(height_publication)
+if (hashlib.sha256(height_publication).hexdigest() != record['height_publication_sha256']
+        or len(height_document.get('measurements', [])) != 256 or height_document.get('height_contract', {}).get('unit') != 'mm'):
+    raise SystemExit('runtime HTTP height publication contract failed')
 if not record['montage_uri'].startswith('montages/sha256/'):
     raise SystemExit('runtime HTTP content-addressed montage URI mismatch')
 montage = fetch(f"{dataset_root}/{record['montage_uri']}")
@@ -2557,9 +2563,23 @@ with urllib.request.urlopen(request, timeout=10) as response:
     summary=json.loads(response.read())
 if (summary.get('position_count') != 256 or summary.get('target_count') != record['position_review_target_count']
         or summary.get('position_publication_sha256') != record['position_publication_sha256']
+        or summary.get('height_publication_sha256') != record['height_publication_sha256']
+        or len(summary.get('height_evidence', {})) != 256
+        or summary.get('reviewed_target_count') != len(summary.get('reviews', {}))
+        or summary.get('completion_status') not in {'review_pending','review_complete'}
         or len(summary.get('evidence', {})) != 256 or not isinstance(summary.get('reviews'), dict)):
     raise SystemExit('ETROC position review runtime evidence mismatch')
 print(f"ETROC_POSITION_REVIEW_RUNTIME_CONTRACT PASS positions={len(summary['evidence'])} targets={summary['target_count']}")
+completion_url='http://127.0.0.1:8080/api/etroc-position-reviews/completion?dataset_id=ETROC_OI_2608'
+completion_request=urllib.request.Request(completion_url, headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']})
+with urllib.request.urlopen(completion_request, timeout=10) as response:
+    completion=json.loads(response.read())
+if (completion.get('record_count') != 36 or completion.get('target_count') != 82
+        or len(completion.get('completion', {})) != 36
+        or completion['completion'].get(record['acquisition_id'], {}).get('reviewed_target_count') != summary['reviewed_target_count']
+        or completion['completion'].get(record['acquisition_id'], {}).get('status') != summary['completion_status']):
+    raise SystemExit('ETROC completion runtime evidence mismatch')
+print(f"ETROC_COMPLETION_RUNTIME_CONTRACT PASS records={completion['record_count']} reviewed_targets={completion['reviewed_target_count']}")
 PY
 
 oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python - <<'PY'

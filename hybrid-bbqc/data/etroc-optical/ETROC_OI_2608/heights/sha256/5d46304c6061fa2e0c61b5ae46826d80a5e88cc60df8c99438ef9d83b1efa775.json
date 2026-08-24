@@ -1,0 +1,1296 @@
+{
+  "acquisition_id": "ETROC_OI_2608:W02G4-45:base",
+  "analysis_run_id": "ETROC_OI_2608:common-baseline-v0:pack2",
+  "dataset_id": "ETROC_OI_2608",
+  "etroc_serial": "W02G4-45",
+  "height_contract": {
+    "algorithm_config_sha256": "af2a8126c83da86a57a6b2cdbfe7393b473ce26855459da11623d602c323858d",
+    "in_spec_max_exclusive": 0.065,
+    "in_spec_min": 0.035,
+    "no_ball_lte": 0.01,
+    "unit": "mm"
+  },
+  "measurements": [
+    {
+      "position": 0,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 1,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 2,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 3,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 4,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 5,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 6,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0665
+    },
+    {
+      "position": 7,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 8,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 9,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 10,
+      "status": "IN_SPEC",
+      "value": 0.045
+    },
+    {
+      "position": 11,
+      "status": "IN_SPEC",
+      "value": 0.0625
+    },
+    {
+      "position": 12,
+      "status": "IN_SPEC",
+      "value": 0.0535
+    },
+    {
+      "position": 13,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 14,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 15,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 16,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 17,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 18,
+      "status": "IN_SPEC",
+      "value": 0.0475
+    },
+    {
+      "position": 19,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 20,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 21,
+      "status": "IN_SPEC",
+      "value": 0.0515
+    },
+    {
+      "position": 22,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 23,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 24,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 25,
+      "status": "IN_SPEC",
+      "value": 0.055
+    },
+    {
+      "position": 26,
+      "status": "IN_SPEC",
+      "value": 0.0585
+    },
+    {
+      "position": 27,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 28,
+      "status": "IN_SPEC",
+      "value": 0.063
+    },
+    {
+      "position": 29,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 30,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 31,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 32,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 33,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 34,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 35,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 36,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 37,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 38,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 39,
+      "status": "IN_SPEC",
+      "value": 0.059
+    },
+    {
+      "position": 40,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 41,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 42,
+      "status": "IN_SPEC",
+      "value": 0.056
+    },
+    {
+      "position": 43,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 44,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 45,
+      "status": "IN_SPEC",
+      "value": 0.0455
+    },
+    {
+      "position": 46,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 47,
+      "status": "IN_SPEC",
+      "value": 0.0625
+    },
+    {
+      "position": 48,
+      "status": "IN_SPEC",
+      "value": 0.06
+    },
+    {
+      "position": 49,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 50,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 51,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 52,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 53,
+      "status": "IN_SPEC",
+      "value": 0.0495
+    },
+    {
+      "position": 54,
+      "status": "IN_SPEC",
+      "value": 0.0425
+    },
+    {
+      "position": 55,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 56,
+      "status": "IN_SPEC",
+      "value": 0.063
+    },
+    {
+      "position": 57,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 58,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 59,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 60,
+      "status": "IN_SPEC",
+      "value": 0.0405
+    },
+    {
+      "position": 61,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 62,
+      "status": "IN_SPEC",
+      "value": 0.0635
+    },
+    {
+      "position": 63,
+      "status": "IN_SPEC",
+      "value": 0.05
+    },
+    {
+      "position": 64,
+      "status": "IN_SPEC",
+      "value": 0.0515
+    },
+    {
+      "position": 65,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 66,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 67,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 68,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 69,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 70,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 71,
+      "status": "IN_SPEC",
+      "value": 0.0555
+    },
+    {
+      "position": 72,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 73,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 74,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 75,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 76,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 77,
+      "status": "IN_SPEC",
+      "value": 0.0485
+    },
+    {
+      "position": 78,
+      "status": "IN_SPEC",
+      "value": 0.0615
+    },
+    {
+      "position": 79,
+      "status": "IN_SPEC",
+      "value": 0.054
+    },
+    {
+      "position": 80,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 81,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 82,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 83,
+      "status": "IN_SPEC",
+      "value": 0.047
+    },
+    {
+      "position": 84,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 85,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 86,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 87,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 88,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 89,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 90,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 91,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 92,
+      "status": "IN_SPEC",
+      "value": 0.0605
+    },
+    {
+      "position": 93,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 94,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 95,
+      "status": "IN_SPEC",
+      "value": 0.0425
+    },
+    {
+      "position": 96,
+      "status": "OUT_OF_SPEC",
+      "value": 0.074
+    },
+    {
+      "position": 97,
+      "status": "IN_SPEC",
+      "value": 0.0465
+    },
+    {
+      "position": 98,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 99,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 100,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 101,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 102,
+      "status": "IN_SPEC",
+      "value": 0.0555
+    },
+    {
+      "position": 103,
+      "status": "IN_SPEC",
+      "value": 0.06
+    },
+    {
+      "position": 104,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 105,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 106,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 107,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 108,
+      "status": "IN_SPEC",
+      "value": 0.0525
+    },
+    {
+      "position": 109,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 110,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 111,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 112,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 113,
+      "status": "OUT_OF_SPEC",
+      "value": 0.033
+    },
+    {
+      "position": 114,
+      "status": "IN_SPEC",
+      "value": 0.0505
+    },
+    {
+      "position": 115,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 116,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 117,
+      "status": "IN_SPEC",
+      "value": 0.0585
+    },
+    {
+      "position": 118,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 119,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 120,
+      "status": "IN_SPEC",
+      "value": 0.057
+    },
+    {
+      "position": 121,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 122,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 123,
+      "status": "IN_SPEC",
+      "value": 0.061
+    },
+    {
+      "position": 124,
+      "status": "IN_SPEC",
+      "value": 0.0545
+    },
+    {
+      "position": 125,
+      "status": "IN_SPEC",
+      "value": 0.0475
+    },
+    {
+      "position": 126,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 127,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 128,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 129,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 130,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 131,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 132,
+      "status": "IN_SPEC",
+      "value": 0.058
+    },
+    {
+      "position": 133,
+      "status": "IN_SPEC",
+      "value": 0.0575
+    },
+    {
+      "position": 134,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0665
+    },
+    {
+      "position": 135,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 136,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 137,
+      "status": "OUT_OF_SPEC",
+      "value": 0.067
+    },
+    {
+      "position": 138,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 139,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 140,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 141,
+      "status": "IN_SPEC",
+      "value": 0.052
+    },
+    {
+      "position": 142,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 143,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 144,
+      "status": "IN_SPEC",
+      "value": 0.053
+    },
+    {
+      "position": 145,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 146,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 147,
+      "status": "IN_SPEC",
+      "value": 0.0545
+    },
+    {
+      "position": 148,
+      "status": "IN_SPEC",
+      "value": 0.0615
+    },
+    {
+      "position": 149,
+      "status": "IN_SPEC",
+      "value": 0.0455
+    },
+    {
+      "position": 150,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 151,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 152,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 153,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0665
+    },
+    {
+      "position": 154,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0665
+    },
+    {
+      "position": 155,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 156,
+      "status": "IN_SPEC",
+      "value": 0.06
+    },
+    {
+      "position": 157,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 158,
+      "status": "IN_SPEC",
+      "value": 0.0505
+    },
+    {
+      "position": 159,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0725
+    },
+    {
+      "position": 160,
+      "status": "IN_SPEC",
+      "value": 0.0535
+    },
+    {
+      "position": 161,
+      "status": "IN_SPEC",
+      "value": 0.054
+    },
+    {
+      "position": 162,
+      "status": "IN_SPEC",
+      "value": 0.0535
+    },
+    {
+      "position": 163,
+      "status": "IN_SPEC",
+      "value": 0.0625
+    },
+    {
+      "position": 164,
+      "status": "IN_SPEC",
+      "value": 0.0625
+    },
+    {
+      "position": 165,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 166,
+      "status": "IN_SPEC",
+      "value": 0.0625
+    },
+    {
+      "position": 167,
+      "status": "IN_SPEC",
+      "value": 0.0615
+    },
+    {
+      "position": 168,
+      "status": "IN_SPEC",
+      "value": 0.0625
+    },
+    {
+      "position": 169,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 170,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 171,
+      "status": "IN_SPEC",
+      "value": 0.056
+    },
+    {
+      "position": 172,
+      "status": "IN_SPEC",
+      "value": 0.056
+    },
+    {
+      "position": 173,
+      "status": "IN_SPEC",
+      "value": 0.0615
+    },
+    {
+      "position": 174,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 175,
+      "status": "HEIGHT_NO_BALL",
+      "value": 0.0065
+    },
+    {
+      "position": 176,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 177,
+      "status": "IN_SPEC",
+      "value": 0.035
+    },
+    {
+      "position": 178,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 179,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 180,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0175
+    },
+    {
+      "position": 181,
+      "status": "IN_SPEC",
+      "value": 0.053
+    },
+    {
+      "position": 182,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 183,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 184,
+      "status": "IN_SPEC",
+      "value": 0.0575
+    },
+    {
+      "position": 185,
+      "status": "IN_SPEC",
+      "value": 0.0515
+    },
+    {
+      "position": 186,
+      "status": "IN_SPEC",
+      "value": 0.058
+    },
+    {
+      "position": 187,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0825
+    },
+    {
+      "position": 188,
+      "status": "IN_SPEC",
+      "value": 0.054
+    },
+    {
+      "position": 189,
+      "status": "IN_SPEC",
+      "value": 0.054
+    },
+    {
+      "position": 190,
+      "status": "IN_SPEC",
+      "value": 0.0545
+    },
+    {
+      "position": 191,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 192,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 193,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 194,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 195,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 196,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 197,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 198,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 199,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0665
+    },
+    {
+      "position": 200,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 201,
+      "status": "IN_SPEC",
+      "value": 0.0545
+    },
+    {
+      "position": 202,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 203,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 204,
+      "status": "IN_SPEC",
+      "value": 0.061
+    },
+    {
+      "position": 205,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 206,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 207,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 208,
+      "status": "OUT_OF_SPEC",
+      "value": 0.075
+    },
+    {
+      "position": 209,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 210,
+      "status": "IN_SPEC",
+      "value": 0.0595
+    },
+    {
+      "position": 211,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 212,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 213,
+      "status": "IN_SPEC",
+      "value": 0.062
+    },
+    {
+      "position": 214,
+      "status": "IN_SPEC",
+      "value": 0.061
+    },
+    {
+      "position": 215,
+      "status": "IN_SPEC",
+      "value": 0.0455
+    },
+    {
+      "position": 216,
+      "status": "IN_SPEC",
+      "value": 0.0595
+    },
+    {
+      "position": 217,
+      "status": "OUT_OF_SPEC",
+      "value": 0.03
+    },
+    {
+      "position": 218,
+      "status": "IN_SPEC",
+      "value": 0.059
+    },
+    {
+      "position": 219,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0135
+    },
+    {
+      "position": 220,
+      "status": "IN_SPEC",
+      "value": 0.0535
+    },
+    {
+      "position": 221,
+      "status": "IN_SPEC",
+      "value": 0.057
+    },
+    {
+      "position": 222,
+      "status": "IN_SPEC",
+      "value": 0.0585
+    },
+    {
+      "position": 223,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 224,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 225,
+      "status": "IN_SPEC",
+      "value": 0.056
+    },
+    {
+      "position": 226,
+      "status": "IN_SPEC",
+      "value": 0.052
+    },
+    {
+      "position": 227,
+      "status": "IN_SPEC",
+      "value": 0.0535
+    },
+    {
+      "position": 228,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 229,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 230,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 231,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 232,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 233,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 234,
+      "status": "IN_SPEC",
+      "value": 0.0535
+    },
+    {
+      "position": 235,
+      "status": "IN_SPEC",
+      "value": 0.0625
+    },
+    {
+      "position": 236,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 237,
+      "status": "IN_SPEC",
+      "value": 0.0485
+    },
+    {
+      "position": 238,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0885
+    },
+    {
+      "position": 239,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 240,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 241,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 242,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 243,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 244,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 245,
+      "status": "OUT_OF_SPEC",
+      "value": 0.0655
+    },
+    {
+      "position": 246,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 247,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 248,
+      "status": "IN_SPEC",
+      "value": 0.064
+    },
+    {
+      "position": 249,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 250,
+      "status": "OUT_OF_SPEC",
+      "value": 0.066
+    },
+    {
+      "position": 251,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 252,
+      "status": "IN_SPEC",
+      "value": 0.055
+    },
+    {
+      "position": 253,
+      "status": "OUT_OF_SPEC",
+      "value": 0.065
+    },
+    {
+      "position": 254,
+      "status": "IN_SPEC",
+      "value": 0.0645
+    },
+    {
+      "position": 255,
+      "status": "IN_SPEC",
+      "value": 0.049
+    }
+  ],
+  "schema_version": "1.0"
+}

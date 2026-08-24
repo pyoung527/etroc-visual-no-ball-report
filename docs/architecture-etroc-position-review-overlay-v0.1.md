@@ -186,9 +186,15 @@ GET /api/etroc-position-reviews?dataset_id=ETROC_OI_2608&acquisition_id=<encoded
   "clean_montage_uri":"data/etroc-optical/ETROC_OI_2608/clean-montages/sha256/<digest>.jpg",
   "position_publication_sha256":"<digest>",
   "position_publication_uri":"data/etroc-optical/ETROC_OI_2608/positions/sha256/<digest>.json",
+  "height_publication_sha256":"<digest>",
+  "height_publication_uri":"data/etroc-optical/ETROC_OI_2608/heights/sha256/<digest>.json",
+  "height_contract":{"unit":"mm","no_ball_lte":0.01,"in_spec_min":0.035,"in_spec_max_exclusive":0.065,"algorithm_config_sha256":"<digest>"},
+  "height_evidence":{"0":{"position":0,"status":"IN_SPEC","value":0.05}},
   "geometry_version":"etroc-grid-16x16-v1",
   "position_count":256,
   "target_count":1,
+  "reviewed_target_count":1,
+  "completion_status":"review_complete",
   "viewer":{"identity_display":"Young","can_append_review":true},
   "evidence":{"0":{"dataset_id":"ETROC_OI_2608","etroc_serial":"W02G4-44","acquisition_id":"...","analysis_run_id":"...","labelled_montage_sha256":"<digest>","clean_montage_sha256":"<digest>","position_publication_sha256":"<digest>","position":0,"source_image_sha256":"<digest>","geometry_version":"etroc-grid-16x16-v1","row":0,"column":0,"algorithm_category":"GREEN","algorithm_reason":"height_in_spec","review_target":false,"cell":{"x":0,"y":0,"width":150,"height":136,"image_y":16,"image_height":120}}},
   "reviews":{"0":{"current_event_id":1,"dataset_id":"ETROC_OI_2608","etroc_serial":"W02G4-44","acquisition_id":"...","analysis_run_id":"...","labelled_montage_sha256":"<digest>","clean_montage_sha256":"<digest>","position_publication_sha256":"<digest>","position":0,"source_image_sha256":"<digest>","geometry_version":"etroc-grid-16x16-v1","label":"GREEN","note":"","author":"young.park@cern.ch","author_display":"young.park","created_at":1787000000,"history_count":1}}
@@ -196,6 +202,14 @@ GET /api/etroc-position-reviews?dataset_id=ETROC_OI_2608&acquisition_id=<encoded
 ```
 
 `evidence` has exactly the string keys `"0".."255"`; `reviews` is a subset. Empty reviews is valid only beside the complete validated map.
+
+### Dataset completion
+
+```http
+GET /api/etroc-position-reviews/completion?dataset_id=ETROC_OI_2608
+```
+
+The response binds to the current `chips.json` digest and contains all 36 acquisition IDs with `target_count`, `reviewed_target_count`, and one derived status: `review_pending`, `review_complete`, or `not_applicable`. Completion is not a separate mutable disposition: it is recomputed from current append-only target events, so a final verified target save persists completion without creating a stale second flag.
 
 ### History and historical audit
 
@@ -228,6 +242,8 @@ Known valid IDs absent from current publication return `404 acquisition_not_foun
 - `positionPublication`: verified 256-position document.
 - `positionEvidence`: server-reconciled map.
 - `positionReviews`: current summaries.
+- `heightPublication`: separately content-addressed 256-position measured-height evidence. It is browser-hashed and reconciled with the server without changing the position-review event key or invalidating existing reviews.
+- `completion`: dataset-level persisted-workflow summary used by card badges, pending/complete filters, and the default pending queue.
 - `positionQueue`: immutable snapshot of positions that were both targets and unreviewed when Start opened; target denominator and order never expand or shrink.
 - `positionMode`: `queue`, `inspection`, or `correction`. Direct unreviewed target selection anchors the target queue; non-target positions are read-only inspection; reviewed targets are single-item correction and omit `Save & Next`.
 - `activePosition`: numeric position. Queue advancement refreshes live state, skips remotely completed positions, never adds positions, and preserves the fixed denominator.

@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import math
 import re
 import sqlite3
 import time
@@ -101,6 +102,10 @@ class PositionAcquisitionEvidence:
     clean_montage_uri: str
     position_publication_sha256: str
     position_publication_uri: str
+    height_publication_sha256: str
+    height_publication_uri: str
+    height_contract: Mapping[str, object]
+    height_measurements: Mapping[int, Mapping[str, object]]
     geometry_version: str
     target_count: int
     positions: Mapping[int, PositionEvidenceRecord]
@@ -196,15 +201,18 @@ def load_evidence(static_root: Path) -> PositionEvidenceSet:
         labelled_digest = raw_record.get("montage_sha256")
         clean_digest = raw_record.get("clean_montage_sha256")
         position_digest = raw_record.get("position_publication_sha256")
+        height_digest = raw_record.get("height_publication_sha256")
         clean_uri = raw_record.get("clean_montage_uri")
         position_uri = raw_record.get("position_publication_uri")
+        height_uri = raw_record.get("height_publication_uri")
         geometry = raw_record.get("position_geometry_version")
         target_count = raw_record.get("position_review_target_count")
         if (
             acquisition_id in acquisitions
-            or not all(_digest(value) for value in (labelled_digest, clean_digest, position_digest))
+            or not all(_digest(value) for value in (labelled_digest, clean_digest, position_digest, height_digest))
             or clean_uri != f"clean-montages/sha256/{clean_digest}.jpg"
             or position_uri != f"positions/sha256/{position_digest}.json"
+            or height_uri != f"heights/sha256/{height_digest}.json"
             or geometry != GEOMETRY_VERSION
             or type(target_count) is not int
             or target_count < 0
@@ -216,8 +224,10 @@ def load_evidence(static_root: Path) -> PositionEvidenceSet:
             (raw_record.get("preview_uri"), raw_record.get("preview_sha256"), raw_record.get("preview_size_bytes"), "preview"),
             (clean_uri, clean_digest, raw_record.get("clean_montage_size_bytes"), "clean montage"),
             (position_uri, position_digest, None, "position publication"),
+            (height_uri, height_digest, raw_record.get("height_publication_size_bytes"), "height publication"),
         )
         position_raw = b""
+        height_raw = b""
         for relative, digest, size, role in asset_specs:
             if not isinstance(relative, str) or not _digest(digest) or (size is not None and (type(size) is not int or size < 1)) or relative in canonical_assets:
                 raise ValueError("invalid ETROC position canonical asset")
@@ -225,6 +235,8 @@ def load_evidence(static_root: Path) -> PositionEvidenceSet:
             canonical_assets[relative] = digest
             if role == "position publication":
                 position_raw = raw
+            elif role == "height publication":
+                height_raw = raw
         try:
             document = json.loads(position_raw.decode("utf-8"))
         except (UnicodeError, json.JSONDecodeError) as exc:
@@ -244,6 +256,30 @@ def load_evidence(static_root: Path) -> PositionEvidenceSet:
             or len(raw_positions) != 256
         ):
             raise ValueError("ETROC position document identity mismatch")
+        try:
+            height_document = json.loads(height_raw.decode("utf-8"))
+        except (UnicodeError, json.JSONDecodeError) as exc:
+            raise ValueError("invalid ETROC height publication document") from exc
+        height_contract = height_document.get("height_contract") if isinstance(height_document, dict) else None
+        raw_measurements = height_document.get("measurements") if isinstance(height_document, dict) else None
+        expected_height_contract = {
+            "unit": "mm", "no_ball_lte": 0.01, "in_spec_min": 0.035,
+            "in_spec_max_exclusive": 0.065, "algorithm_config_sha256": publication.get("analysis_config_sha256"),
+        }
+        if (set(height_document) != {"schema_version", "dataset_id", "etroc_serial", "acquisition_id", "analysis_run_id", "height_contract", "measurements"}
+                or height_document.get("schema_version") != "1.0" or height_document.get("dataset_id") != dataset_id
+                or height_document.get("etroc_serial") != etroc_serial or height_document.get("acquisition_id") != acquisition_id
+                or height_document.get("analysis_run_id") != analysis_run_id or height_contract != expected_height_contract
+                or not isinstance(raw_measurements, list) or len(raw_measurements) != 256):
+            raise ValueError("ETROC height document identity mismatch")
+        height_measurements: dict[int, Mapping[str, object]] = {}
+        for expected_position, measurement in enumerate(raw_measurements):
+            if (not isinstance(measurement, dict) or set(measurement) != {"position", "status", "value"}
+                    or measurement.get("position") != expected_position or measurement.get("status") not in {"HEIGHT_NO_BALL", "IN_SPEC", "OUT_OF_SPEC"}
+                    or isinstance(measurement.get("value"), bool) or not isinstance(measurement.get("value"), (int, float))
+                    or not math.isfinite(float(measurement["value"]))):
+                raise ValueError("invalid ETROC height measurement")
+            height_measurements[expected_position] = MappingProxyType(dict(measurement))
         positions: dict[int, PositionEvidenceRecord] = {}
         observed_targets = 0
         expected_cell_keys = {"x", "y", "width", "height", "image_y", "image_height"}
@@ -285,6 +321,8 @@ def load_evidence(static_root: Path) -> PositionEvidenceSet:
             labelled_digest, clean_digest,
             f"data/etroc-optical/{DATASET_ID}/{clean_uri}",
             position_digest, f"data/etroc-optical/{DATASET_ID}/{position_uri}",
+            height_digest, f"data/etroc-optical/{DATASET_ID}/{height_uri}",
+            MappingProxyType(dict(expected_height_contract)), MappingProxyType(height_measurements),
             GEOMETRY_VERSION, target_count, MappingProxyType(positions),
         )
         total_positions += len(positions)
@@ -483,6 +521,26 @@ def _history(db: sqlite3.Connection, evidence: PositionEvidenceRecord) -> list[d
     return [_event(row) for row in rows]
 
 
+def _completion(acquisition: PositionAcquisitionEvidence, reviews: Mapping[str, object]) -> dict[str, object]:
+    reviewed_target_count = sum(
+        1 for position, record in acquisition.positions.items()
+        if record.review_target and str(position) in reviews
+    )
+    if acquisition.target_count == 0:
+        status = "not_applicable"
+    elif reviewed_target_count == acquisition.target_count:
+        status = "review_complete"
+    else:
+        status = "review_pending"
+    return {
+        "acquisition_id": acquisition.acquisition_id,
+        "etroc_serial": acquisition.etroc_serial,
+        "target_count": acquisition.target_count,
+        "reviewed_target_count": reviewed_target_count,
+        "status": status,
+    }
+
+
 def summary(db_path: Path, evidence: PositionEvidenceSet, acquisition_id: str, viewer_display: str, can_append_review: bool) -> dict[str, object]:
     acquisition = evidence.by_acquisition.get(acquisition_id)
     if acquisition is None:
@@ -490,6 +548,7 @@ def summary(db_path: Path, evidence: PositionEvidenceSet, acquisition_id: str, v
     with sqlite3.connect(Path(db_path)) as db:
         db.row_factory = sqlite3.Row
         reviews = {str(position): current for position, record in acquisition.positions.items() if (current := _current(db, record)) is not None}
+    completion = _completion(acquisition, reviews)
     return {
         "dataset_id": evidence.dataset_id,
         "publication_sha256": evidence.publication_sha256,
@@ -501,12 +560,41 @@ def summary(db_path: Path, evidence: PositionEvidenceSet, acquisition_id: str, v
         "clean_montage_uri": acquisition.clean_montage_uri,
         "position_publication_sha256": acquisition.position_publication_sha256,
         "position_publication_uri": acquisition.position_publication_uri,
+        "height_publication_sha256": acquisition.height_publication_sha256,
+        "height_publication_uri": acquisition.height_publication_uri,
+        "height_contract": dict(acquisition.height_contract),
+        "height_evidence": {str(position): dict(measurement) for position, measurement in acquisition.height_measurements.items()},
         "geometry_version": acquisition.geometry_version,
         "position_count": len(acquisition.positions),
         "target_count": acquisition.target_count,
+        "reviewed_target_count": completion["reviewed_target_count"],
+        "completion_status": completion["status"],
         "viewer": {"identity_display": viewer_display, "can_append_review": can_append_review},
         "evidence": {str(position): record.as_dict() for position, record in acquisition.positions.items()},
         "reviews": reviews,
+    }
+
+
+def completion_summary(db_path: Path, evidence: PositionEvidenceSet) -> dict[str, object]:
+    completion: dict[str, dict[str, object]] = {}
+    reviewed_total = 0
+    with sqlite3.connect(Path(db_path)) as db:
+        db.row_factory = sqlite3.Row
+        for acquisition_id, acquisition in evidence.by_acquisition.items():
+            reviews = {
+                str(position): current
+                for position, record in acquisition.positions.items()
+                if record.review_target and (current := _current(db, record)) is not None
+            }
+            reviewed_total += len(reviews)
+            completion[acquisition_id] = _completion(acquisition, reviews)
+    return {
+        "dataset_id": evidence.dataset_id,
+        "publication_sha256": evidence.publication_sha256,
+        "record_count": len(evidence.by_acquisition),
+        "target_count": sum(item.target_count for item in evidence.by_acquisition.values()),
+        "reviewed_target_count": reviewed_total,
+        "completion": completion,
     }
 
 

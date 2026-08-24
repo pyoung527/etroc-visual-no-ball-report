@@ -149,8 +149,12 @@ def load_evidence(static_root: Path) -> EvidenceSet:
         clean_size = raw_record.get("clean_montage_size_bytes")
         position_sha256 = raw_record.get("position_publication_sha256")
         position_uri = raw_record.get("position_publication_uri")
+        height_sha256 = raw_record.get("height_publication_sha256")
+        height_uri = raw_record.get("height_publication_uri")
+        height_size = raw_record.get("height_publication_size_bytes")
         expected_clean = Path("clean-montages/sha256") / f"{clean_sha256}.jpg"
         expected_positions = Path("positions/sha256") / f"{position_sha256}.json"
+        expected_heights = Path("heights/sha256") / f"{height_sha256}.json"
         if (
             not _digest(clean_sha256)
             or not isinstance(clean_uri, str)
@@ -160,6 +164,11 @@ def load_evidence(static_root: Path) -> EvidenceSet:
             or not _digest(position_sha256)
             or not isinstance(position_uri, str)
             or Path(position_uri) != expected_positions
+            or not _digest(height_sha256)
+            or not isinstance(height_uri, str)
+            or type(height_size) is not int
+            or height_size < 1
+            or Path(height_uri) != expected_heights
         ):
             raise ValueError("invalid ETROC review position publication digest")
         for relative, digest, size, asset_name in (
@@ -167,6 +176,7 @@ def load_evidence(static_root: Path) -> EvidenceSet:
             (preview_uri, preview_sha256, preview_size, "preview"),
             (clean_uri, clean_sha256, clean_size, "clean montage"),
             (position_uri, position_sha256, None, "position publication"),
+            (height_uri, height_sha256, height_size, "height publication"),
         ):
             if relative in canonical_assets:
                 raise ValueError("duplicate ETROC review canonical asset")

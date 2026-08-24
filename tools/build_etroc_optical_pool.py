@@ -14,8 +14,10 @@ import shutil
 import tempfile
 from collections import Counter, defaultdict
 from pathlib import Path
+from typing import cast
 
 import PIL
+import yaml
 from PIL import Image, features
 
 EXPECTED_WAFER_COUNTS = {"W02G4": 18, "W03F7": 9, "W05E5": 9}
@@ -34,6 +36,7 @@ DATASET_ID = "ETROC_OI_2608"
 WEB_BUDGET_BYTES = 180 * 1024 * 1024
 POSITION_GEOMETRY_VERSION = "etroc-grid-16x16-v1"
 POSITION_CATEGORIES = frozenset({"GREEN", "BLUE", "YELLOW", "RED", "NEED_INSPECT"})
+HEIGHT_STATUSES = frozenset({"HEIGHT_NO_BALL", "IN_SPEC", "OUT_OF_SPEC"})
 GRID_ROWS = 16
 GRID_COLUMNS = 16
 TILE_WIDTH = 150
@@ -60,6 +63,31 @@ def int_field(row: dict[str, str], name: str) -> int:
     if value < 0:
         raise ValueError(f"negative {name}: {value}")
     return value
+
+
+def load_height_contract(provenance: dict[str, object]) -> dict[str, object]:
+    config_path = Path(str(provenance.get("config", ""))).resolve()
+    expected_digest = provenance.get("config_sha256")
+    if not config_path.is_file() or not isinstance(expected_digest, str) or sha256(config_path) != expected_digest:
+        raise ValueError("height config provenance mismatch")
+    config = yaml.safe_load(config_path.read_text(encoding="utf-8"))
+    height = config.get("height") if isinstance(config, dict) else None
+    if not isinstance(height, dict):
+        raise ValueError("height config is unavailable")
+    def threshold(name: str) -> float:
+        value = height.get(name)
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise ValueError("height thresholds are invalid")
+        result = float(value)
+        if not math.isfinite(result):
+            raise ValueError("height thresholds are invalid")
+        return result
+    no_ball = threshold("no_ball_lte")
+    minimum = threshold("in_spec_min")
+    maximum = threshold("in_spec_max")
+    if not 0 <= no_ball < minimum < maximum:
+        raise ValueError("height thresholds are inconsistent")
+    return {"unit": "mm", "no_ball_lte": no_ball, "in_spec_min": minimum, "in_spec_max_exclusive": maximum, "algorithm_config_sha256": expected_digest}
 
 
 def resolve_under(root: Path, relative_path: str) -> Path:
@@ -119,6 +147,7 @@ def validate_position_results(
     position_path: Path,
     summaries: dict[str, dict[str, str]],
     source_root: Path,
+    height_contract: dict[str, object],
 ) -> tuple[int, dict[str, list[dict[str, object]]]]:
     positions: dict[str, set[int]] = defaultdict(set)
     source_images: dict[str, set[str]] = defaultdict(set)
@@ -167,6 +196,14 @@ def validate_position_results(
                 raise ValueError(f"invalid height: {serial} position {position}") from exc
             if not math.isfinite(height):
                 raise ValueError(f"non-finite height: {serial} position {position}")
+            if row["height_unit"] != height_contract["unit"] or row["height_status"] not in HEIGHT_STATUSES:
+                raise ValueError(f"height evidence mismatch: {serial} position {position}")
+            no_ball_lte = cast(float, height_contract["no_ball_lte"])
+            in_spec_min = cast(float, height_contract["in_spec_min"])
+            in_spec_max = cast(float, height_contract["in_spec_max_exclusive"])
+            expected_status = "HEIGHT_NO_BALL" if height <= no_ball_lte else "IN_SPEC" if in_spec_min <= height < in_spec_max else "OUT_OF_SPEC"
+            if row["height_status"] != expected_status or row["algorithm_config"] != f"etroc_w03f7.yaml@sha256:{height_contract['algorithm_config_sha256']}":
+                raise ValueError(f"height classification mismatch: {serial} position {position}")
             positions[serial].add(position)
             source_images[serial].add(source_image)
             category_counts[serial][category] += 1
@@ -176,6 +213,8 @@ def validate_position_results(
                 "column": grid_column,
                 "algorithm_category": category,
                 "algorithm_reason": row["reason"],
+                "height": height,
+                "height_status": row["height_status"],
                 "source_image_sha256": sha256(source_path),
                 "source_path": source_path,
                 "review_target": category == "NEED_INSPECT",
@@ -296,6 +335,25 @@ def position_publication(
     }
 
 
+def height_publication(
+    record: dict[str, object],
+    position_rows: list[dict[str, object]],
+    height_contract: dict[str, object],
+) -> dict[str, object]:
+    return {
+        "schema_version": "1.0",
+        "dataset_id": DATASET_ID,
+        "etroc_serial": record["etroc_serial"],
+        "acquisition_id": record["acquisition_id"],
+        "analysis_run_id": record["analysis_run_id"],
+        "height_contract": height_contract,
+        "measurements": [
+            {"position": int(str(row["position"])), "status": row["height_status"], "value": row["height"]}
+            for row in position_rows
+        ],
+    }
+
+
 def verify_bundle(output_dir: Path, records: list[dict[str, object]]) -> None:
     expected_files = {"chips.json"}
     total_positions = 0
@@ -305,6 +363,7 @@ def verify_bundle(output_dir: Path, records: list[dict[str, object]]) -> None:
         expected_files.add(str(record["preview_uri"]))
         expected_files.add(str(record["clean_montage_uri"]))
         expected_files.add(str(record["position_publication_uri"]))
+        expected_files.add(str(record["height_publication_uri"]))
         for role, size in (("montage", (2400, 2176)), ("preview", (720, 653)), ("clean_montage", (2400, 2176))):
             asset = resolve_under(output_dir, str(record[f"{role}_uri"]))
             if sha256(asset) != record[f"{role}_sha256"] or asset.stat().st_size != record[f"{role}_size_bytes"]:
@@ -348,6 +407,21 @@ def verify_bundle(output_dir: Path, records: list[dict[str, object]]) -> None:
             target_count += int(position["review_target"])
         if target_count != record["position_review_target_count"] or target_count != position_document.get("review_target_count"):
             raise ValueError(f"position review target count mismatch: {record['etroc_serial']}")
+        height_path = resolve_under(output_dir, str(record["height_publication_uri"]))
+        if sha256(height_path) != record["height_publication_sha256"] or height_path.stat().st_size != record["height_publication_size_bytes"]:
+            raise ValueError(f"height publication integrity mismatch: {record['etroc_serial']}")
+        height_document = json.loads(height_path.read_text(encoding="utf-8"))
+        measurements = height_document.get("measurements")
+        if (height_document.get("schema_version") != "1.0" or height_document.get("dataset_id") != DATASET_ID
+                or height_document.get("etroc_serial") != record["etroc_serial"] or height_document.get("acquisition_id") != record["acquisition_id"]
+                or height_document.get("analysis_run_id") != record["analysis_run_id"] or not isinstance(height_document.get("height_contract"), dict)
+                or not isinstance(measurements, list) or len(measurements) != 256):
+            raise ValueError(f"height publication contract mismatch: {record['etroc_serial']}")
+        for expected_position, measurement in enumerate(measurements):
+            if (measurement.get("position") != expected_position or isinstance(measurement.get("value"), bool)
+                    or not isinstance(measurement.get("value"), (int, float)) or not math.isfinite(float(measurement["value"]))
+                    or measurement.get("status") not in HEIGHT_STATUSES):
+                raise ValueError(f"height measurement contract mismatch: {record['etroc_serial']} position {expected_position}")
         total_positions += len(positions)
         total_targets += target_count
     if total_positions != 9216 or total_targets != 82:
@@ -388,6 +462,7 @@ def build_pool(analysis_dir: Path, app_dir: Path, complete_manifest_path: Path) 
         raise ValueError("complete source manifest checksum does not match analysis provenance")
     if provenance["status"] != "exploratory_common_baseline_not_publication_ready":
         raise ValueError("unexpected analysis provenance status")
+    height_contract = load_height_contract(provenance)
     summaries = validate_summary_rows(rows)
     source_root = (complete_manifest_path.parent.parent / "analysis_ready").resolve()
     if (
@@ -396,7 +471,7 @@ def build_pool(analysis_dir: Path, app_dir: Path, complete_manifest_path: Path) 
         or not source_root.is_dir()
     ):
         raise ValueError("complete manifest does not identify the exact analysis-ready source image root")
-    position_count, positions_by_serial = validate_position_results(position_path, summaries, source_root)
+    position_count, positions_by_serial = validate_position_results(position_path, summaries, source_root, height_contract)
     sources = validate_source_montages(analysis_dir, rows)
 
     destination = app_dir / "data" / "etroc-optical" / DATASET_ID
@@ -463,6 +538,16 @@ def build_pool(analysis_dir: Path, app_dir: Path, complete_manifest_path: Path) 
             position_path_output.write_bytes(position_bytes)
             record["position_publication_uri"] = position_uri
             record["position_publication_sha256"] = position_sha256
+            height_document = height_publication(record, position_rows, height_contract)
+            height_bytes = (json.dumps(height_document, ensure_ascii=False, indent=2, sort_keys=True) + "\n").encode("utf-8")
+            height_sha256 = hashlib.sha256(height_bytes).hexdigest()
+            height_uri = f"heights/sha256/{height_sha256}.json"
+            height_path_output = resolve_under(staged, height_uri)
+            height_path_output.parent.mkdir(parents=True, exist_ok=True)
+            height_path_output.write_bytes(height_bytes)
+            record["height_publication_uri"] = height_uri
+            record["height_publication_sha256"] = height_sha256
+            record["height_publication_size_bytes"] = len(height_bytes)
             records.append(record)
 
         payload = {

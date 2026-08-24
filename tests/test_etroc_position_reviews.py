@@ -40,6 +40,9 @@ class PositionEvidenceTests(unittest.TestCase):
             self.assertEqual(len(acquisition.positions), 256)
             self.assertEqual(acquisition.clean_montage_uri, f"data/etroc-optical/ETROC_OI_2608/clean-montages/sha256/{acquisition.clean_montage_sha256}.jpg")
             self.assertEqual(acquisition.position_publication_uri, f"data/etroc-optical/ETROC_OI_2608/positions/sha256/{acquisition.position_publication_sha256}.json")
+            self.assertEqual(acquisition.height_publication_uri, f"data/etroc-optical/ETROC_OI_2608/heights/sha256/{acquisition.height_publication_sha256}.json")
+            self.assertEqual(acquisition.height_contract, {"unit": "mm", "no_ball_lte": 0.01, "in_spec_min": 0.035, "in_spec_max_exclusive": 0.065, "algorithm_config_sha256": "af2a8126c83da86a57a6b2cdbfe7393b473ce26855459da11623d602c323858d"})
+            self.assertEqual(len(acquisition.height_measurements), 256)
             for expected_position, position in acquisition.positions.items():
                 self.assertEqual(position.position, expected_position)
                 self.assertEqual(position.row, expected_position // 16)
@@ -249,10 +252,15 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             self.assertEqual(len(summary["evidence"]), 256)
             self.assertEqual(summary["reviews"], {})
             self.assertEqual(summary["target_count"], self.acquisition.target_count)
+            self.assertEqual(summary["reviewed_target_count"], 0)
+            self.assertEqual(summary["completion_status"], "review_pending")
             created = self.module.append(path, self.evidence, self.request(), "ypark", "Young")
             self.assertEqual(created.status, 201)
             refreshed = self.module.summary(path, self.evidence, self.acquisition.acquisition_id, "Young", True)
             self.assertEqual(set(refreshed["reviews"]), {str(self.position.position)})
+            self.assertEqual(refreshed["reviewed_target_count"], 1)
+            expected_status = "review_complete" if self.acquisition.target_count == 1 else "review_pending"
+            self.assertEqual(refreshed["completion_status"], expected_status)
             history = self.module.history(path, self.evidence, self.acquisition.acquisition_id, self.position.position)
             self.assertEqual(history.status, 200)
             self.assertEqual(history.payload["current"]["position"], self.position.position)
@@ -264,6 +272,38 @@ class PositionSchemaAndServiceTests(unittest.TestCase):
             self.assertEqual(len(audit.payload["chains"]), 1)
             self.assertTrue(audit.payload["chains"][0]["current_publication"])
             self.assertEqual(audit.payload["chains"][0]["history"], history.payload["history"])
+
+    def test_dataset_completion_summary_is_derived_from_persisted_target_reviews(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "reviews.sqlite3"
+            self.module.init_schema(path)
+            initial = self.module.completion_summary(path, self.evidence)
+            self.assertEqual(initial["dataset_id"], "ETROC_OI_2608")
+            self.assertEqual(initial["record_count"], 36)
+            self.assertEqual(initial["target_count"], 82)
+            self.assertEqual(initial["reviewed_target_count"], 0)
+            self.assertEqual(len(initial["completion"]), 36)
+            item = initial["completion"][self.acquisition.acquisition_id]
+            self.assertEqual(item["status"], "review_pending")
+            self.assertEqual(item["reviewed_target_count"], 0)
+
+            current_ids = {}
+            for position in self.acquisition.positions.values():
+                if not position.review_target:
+                    continue
+                request = {field: getattr(position, field) for field in self.module.POSITION_KEY_FIELDS}
+                request.update(label="YELLOW", note="", expected_current_event_id=current_ids.get(position.position), mutation_id=str(uuid.uuid4()))
+                result = self.module.append(path, self.evidence, request, "ypark", "Young")
+                self.assertEqual(result.status, 201)
+                current_ids[position.position] = result.payload["event"]["event_id"]
+
+            complete = self.module.completion_summary(path, self.evidence)
+            item = complete["completion"][self.acquisition.acquisition_id]
+            self.assertEqual(item["reviewed_target_count"], self.acquisition.target_count)
+            self.assertEqual(item["status"], "review_complete")
+            self.assertEqual(complete["reviewed_target_count"], self.acquisition.target_count)
+            no_targets = next(value for value in complete["completion"].values() if value["target_count"] == 0)
+            self.assertEqual(no_targets["status"], "not_applicable")
 
 
 class PositionApiTests(unittest.TestCase):
@@ -318,6 +358,11 @@ class PositionApiTests(unittest.TestCase):
         status, _, summary = self.request(route, headers={"X-Forwarded-Email": "Young.Park@CERN.CH"})
         self.assertEqual(status, 200)
         self.assertTrue(summary["viewer"]["can_append_review"])
+        completion_route = "/api/etroc-position-reviews/completion?dataset_id=ETROC_OI_2608"
+        status, _, completion = self.request(completion_route, headers={"X-Forwarded-Email": "Young.Park@CERN.CH"})
+        self.assertEqual(status, 200)
+        self.assertEqual(completion["record_count"], 36)
+        self.assertEqual(completion["target_count"], 82)
         item = next(value for value in summary["evidence"].values() if value["review_target"])
         request = {
             **{field: item[field] for field in load_module().POSITION_KEY_FIELDS},

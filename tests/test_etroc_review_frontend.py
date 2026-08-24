@@ -21,6 +21,33 @@ class ETROCReviewFrontendTests(unittest.TestCase):
             text=True,
         )
 
+    def test_persisted_completion_summary_drives_card_state_filter_and_pending_queue(self):
+        program = r'''
+global.document = {querySelector: () => null}; require(process.argv[1]); const c=global.ETROCReviewContract;
+const records=Array.from({length:36},(_,index)=>({dataset_id:"ETROC_OI_2608",etroc_serial:`W02G4-${index}`,acquisition_id:`a${index}`,position_review_target_count:index===2?0:index===0?1:2,needs_inspection_count:index===2?0:index===0?1:2,review_candidate_count:1,optical_no_ball_candidate_count:0,red_candidate_count:0}));
+const completion=Object.fromEntries(records.map((record,index)=>[record.acquisition_id,{acquisition_id:record.acquisition_id,etroc_serial:record.etroc_serial,target_count:record.position_review_target_count,reviewed_target_count:index===0?1:0,status:index===0?"review_complete":index===2?"not_applicable":"review_pending"}]));
+const payload={dataset_id:"ETROC_OI_2608",publication_sha256:"a".repeat(64),record_count:36,target_count:69,reviewed_target_count:1,completion};
+const map=c.reconcileCompletion(records,payload,payload.publication_sha256);
+if(map.size!==36 || map.get("a0").status!=="review_complete" || !c.completionMatch("complete",map.get("a0")) || c.completionMatch("pending",map.get("a0"))) process.exit(201);
+if(!c.completionMatch("pending",map.get("a1")) || !c.completionMatch("all",map.get("a2"))) process.exit(202);
+const pending=c.makeCompletionQueue(records,map,{wafer:"",serial:"",candidate:"needs_inspection",order:"candidate"});
+if(pending.some(record=>record.acquisition_id==="a0" || record.acquisition_id==="a2") || pending.length!==34) process.exit(203);
+for(const mutate of [()=>({...payload,reviewed_target_count:2}),()=>({...payload,completion:{...completion,a0:{...completion.a0,status:"review_pending"}}}),()=>({...payload,completion:{...completion,a1:{...completion.a1,reviewed_target_count:3}}})]){let rejected=false;try{c.reconcileCompletion(records,mutate(),payload.publication_sha256)}catch(_){rejected=true}if(!rejected)process.exit(204)}
+'''
+        result = self.node(program)
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+
+    def test_position_height_publication_is_verified_and_quantitative(self):
+        pool = json.loads((APP / "data/etroc-optical/ETROC_OI_2608/chips.json").read_text(encoding="utf-8"))
+        record = next(item for item in pool["records"] if item["etroc_serial"] == "W02G4-67")
+        height_path = APP / "data/etroc-optical/ETROC_OI_2608" / record["height_publication_uri"]
+        program = r'''
+const fs=require("fs");const crypto=require("crypto").webcrypto;global.crypto=crypto;global.document={querySelector:()=>null};require(process.argv[1]);const c=global.ETROCReviewContract;const record=JSON.parse(process.argv[3]);record.dataset_id="ETROC_OI_2608";const bytes=fs.readFileSync(process.argv[2]);
+(async()=>{const parsed=await c.parseHeightPublication(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),record);if(parsed.measurements.length!==256||parsed.measurements[114].value!==0.0025||parsed.measurements[114].status!=="HEIGHT_NO_BALL"||parsed.contract.unit!=="mm"||parsed.contract.no_ball_lte!==0.01||parsed.contract.in_spec_min!==0.035||parsed.contract.in_spec_max_exclusive!==0.065)process.exit(211);})().catch(error=>{console.error(error);process.exit(212)});
+'''
+        result = self.node(program, height_path, json.dumps(record))
+        self.assertEqual(result.returncode, 0, result.stderr or result.stdout)
+
     def test_position_publication_reconciliation_and_target_queue_are_fail_closed(self):
         pool = json.loads((APP / "data/etroc-optical/ETROC_OI_2608/chips.json").read_text(encoding="utf-8"))
         record = next(item for item in pool["records"] if item["position_review_target_count"] > 0)
@@ -32,7 +59,8 @@ const c=global.ETROCReviewContract; if(!c.POSITION_KEY_FIELDS.includes("position
  const parsed=await c.parsePositionPublication(bytes.buffer.slice(bytes.byteOffset,bytes.byteOffset+bytes.byteLength),record);
  if(parsed.positions.length!==256 || parsed.targetCount!==record.position_review_target_count) process.exit(101);
  const evidence=Object.fromEntries(parsed.positions.map(position=>[String(position.position),Object.fromEntries(c.POSITION_EVIDENCE_FIELDS.map(field=>[field,position[field]]))]));
- const summary={dataset_id:"ETROC_OI_2608",publication_sha256:"c".repeat(64),acquisition_id:record.acquisition_id,etroc_serial:record.etroc_serial,analysis_run_id:record.analysis_run_id,labelled_montage_sha256:record.montage_sha256,clean_montage_sha256:record.clean_montage_sha256,clean_montage_uri:`data/etroc-optical/ETROC_OI_2608/${record.clean_montage_uri}`,position_publication_sha256:record.position_publication_sha256,position_publication_uri:`data/etroc-optical/ETROC_OI_2608/${record.position_publication_uri}`,geometry_version:"etroc-grid-16x16-v1",position_count:256,target_count:parsed.targetCount,viewer:{identity_display:"reviewer",can_append_review:true},evidence,reviews:{}};
+ const heightEvidence=Object.fromEntries(parsed.positions.map(position=>[String(position.position),{position:position.position,status:"IN_SPEC",value:0.05}]));
+ const summary={dataset_id:"ETROC_OI_2608",publication_sha256:"c".repeat(64),acquisition_id:record.acquisition_id,etroc_serial:record.etroc_serial,analysis_run_id:record.analysis_run_id,labelled_montage_sha256:record.montage_sha256,clean_montage_sha256:record.clean_montage_sha256,clean_montage_uri:`data/etroc-optical/ETROC_OI_2608/${record.clean_montage_uri}`,position_publication_sha256:record.position_publication_sha256,position_publication_uri:`data/etroc-optical/ETROC_OI_2608/${record.position_publication_uri}`,height_publication_sha256:record.height_publication_sha256,height_publication_uri:`data/etroc-optical/ETROC_OI_2608/${record.height_publication_uri}`,height_contract:{unit:"mm",no_ball_lte:0.01,in_spec_min:0.035,in_spec_max_exclusive:0.065,algorithm_config_sha256:"a".repeat(64)},height_evidence:heightEvidence,geometry_version:"etroc-grid-16x16-v1",position_count:256,target_count:parsed.targetCount,reviewed_target_count:0,completion_status:"review_pending",viewer:{identity_display:"reviewer",can_append_review:true},evidence,reviews:{}};
  const reconciled=c.reconcilePositionEvidence(record,parsed,summary,summary.publication_sha256); if(reconciled.size!==256) process.exit(102);
  const queue=c.makePositionQueue(parsed.positions,{}); if(queue.length!==parsed.targetCount || queue.some(position=>!position.review_target)) process.exit(103);
  const reviews={[String(queue[0].position)]:{label:"GREEN"}}; if(c.makePositionQueue(parsed.positions,reviews).length!==queue.length-1) process.exit(104);
@@ -346,6 +374,13 @@ if (c.positionOpenMode({review_target:false},null) !== "inspection") process.exi
         self.assertNotIn('original.href = `${DATA_BASE}${record.montage_uri}`', script)
         self.assertIn('inspectionControlsEnabled(true)', script)
         self.assertIn('Verified clean evidence. Select a NEED_INSPECT target or start the queue.', script)
+        self.assertIn('data-etroc-review-completion-filter', script)
+        self.assertIn('Review complete', script)
+        self.assertIn('Review pending', script)
+        self.assertIn('fetchCompletionSummary()', script)
+        self.assertIn('Measured height', script)
+        self.assertIn('In-spec range', script)
+        self.assertIn('No-ball threshold', script)
         switch_start = script.index("async function switchPositionMontage")
         switch_end = script.index("const montage = new MontageController", switch_start)
         self.assertLess(script.index('state.position.cleanVerified = "";', switch_start, switch_end), script.index("await montage.load(record)", switch_start, switch_end))

@@ -184,6 +184,23 @@ class EtrocOpticalPoolTests(unittest.TestCase):
                 self.assertEqual(image.info.get("progressive"), 1)
             self.assertRegex(record["position_publication_sha256"], r"^[0-9a-f]{64}$")
             self.assertEqual(record["position_publication_uri"], f"positions/sha256/{record['position_publication_sha256']}.json")
+            self.assertRegex(record["height_publication_sha256"], r"^[0-9a-f]{64}$")
+            self.assertEqual(record["height_publication_uri"], f"heights/sha256/{record['height_publication_sha256']}.json")
+            height_file = DATASET / record["height_publication_uri"]
+            self.assertEqual(hashlib.sha256(height_file.read_bytes()).hexdigest(), record["height_publication_sha256"])
+            self.assertEqual(height_file.stat().st_size, record["height_publication_size_bytes"])
+            height_document = json.loads(height_file.read_text(encoding="utf-8"))
+            self.assertEqual(height_document["schema_version"], "1.0")
+            self.assertEqual(height_document["dataset_id"], "ETROC_OI_2608")
+            self.assertEqual(height_document["etroc_serial"], record["etroc_serial"])
+            self.assertEqual(height_document["acquisition_id"], record["acquisition_id"])
+            self.assertEqual(height_document["analysis_run_id"], record["analysis_run_id"])
+            self.assertEqual(height_document["height_contract"], {"unit": "mm", "no_ball_lte": 0.01, "in_spec_min": 0.035, "in_spec_max_exclusive": 0.065, "algorithm_config_sha256": payload["analysis_config_sha256"]})
+            self.assertEqual(len(height_document["measurements"]), 256)
+            for expected_position, measurement in enumerate(height_document["measurements"]):
+                self.assertEqual(measurement["position"], expected_position)
+                self.assertIsInstance(measurement["value"], float)
+                self.assertIn(measurement["status"], {"HEIGHT_NO_BALL", "IN_SPEC", "OUT_OF_SPEC", "MISSING_HEIGHT"})
             position_file = DATASET / record["position_publication_uri"]
             self.assertTrue(position_file.is_file(), position_file)
             raw = position_file.read_bytes()
@@ -219,6 +236,9 @@ class EtrocOpticalPoolTests(unittest.TestCase):
                 target_count += int(position["review_target"])
         self.assertEqual(len(seen_positions), 9216)
         self.assertEqual(target_count, 82)
+        target = next(record for record in payload["records"] if record["etroc_serial"] == "W02G4-67")
+        target_heights = json.loads((DATASET / target["height_publication_uri"]).read_text(encoding="utf-8"))["measurements"]
+        self.assertEqual(target_heights[114], {"position": 114, "status": "HEIGHT_NO_BALL", "value": 0.0025})
 
     def test_clean_publication_preserves_existing_labelled_montage_bytes(self):
         payload = self.load_pool()

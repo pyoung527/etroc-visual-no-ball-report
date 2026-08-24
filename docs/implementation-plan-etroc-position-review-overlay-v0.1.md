@@ -63,7 +63,8 @@
 1. Add RED tests for strict query parsing, exact no-store response shapes, complete 256-entry summary evidence, history, and DB-derived historical audit.
 2. Add RED tests for capability, CERN primary identity `young.park@cern.ch`, read-only access, same-origin JSON POST, unknown fields, exact `label` enum, target-only mutation, complete key including `position_publication_sha256`, root/successor, stale `409`, exact replay, divergent mutation reuse, error precedence, and historical-only mutation rejection.
 3. Implement service transactions and HTTP routes.
-4. Verify acquisition API and Hybrid tests remain unchanged.
+4. Add a no-store dataset completion summary derived from current canonical target reviews; do not add a second mutable completion flag.
+5. Verify acquisition API and Hybrid tests remain unchanged.
 
 ## Task 4: Verified position controller and SVG overlay
 
@@ -91,6 +92,8 @@
 2. Implement clean-default viewport with analysis toggle and synchronized SVG overlay.
 3. Implement keyboard grid navigation, focus restoration, dirty confirmation, responsive crop/decision pane, read-only capability, accessible announcements, reduced motion.
 4. Remove acquisition-level disposition controls from the position-classification UI while preserving their backend data objects for compatibility.
+5. Publish measured height evidence separately from immutable position publications, browser-verify its digest, and display value/unit/status, no-ball threshold, in-spec range, and reference delta.
+6. Mark cards `Review complete` when all targets have current labels; default the pool/queue to pending and retain complete items for correction through a filter.
 
 ## Task 6: Release packaging and deployment gates
 

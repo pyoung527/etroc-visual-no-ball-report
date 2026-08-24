@@ -1151,6 +1151,22 @@ class Handler(SimpleHTTPRequestHandler):
             display, allowed, user = etroc_viewer(self.headers)
             if user is None:
                 return json_response(self, 401, etroc_error("authentication_required", "CERN SSO login is required."))
+            if parsed.path == "/api/etroc-position-reviews/completion":
+                try:
+                    query = etroc_query(parsed.query, {"dataset_id"})
+                except ValueError:
+                    return json_response(self, 400, etroc_error("invalid_query", "The query is invalid."))
+                try:
+                    evidence = load_etroc_position_evidence(ROOT)
+                except (OSError, ValueError):
+                    return json_response(self, 503, etroc_error("evidence_unavailable", "Current ETROC position evidence is unavailable."))
+                if query["dataset_id"] != evidence.dataset_id:
+                    return json_response(self, 404, etroc_error("dataset_not_found", "The dataset is not available."))
+                try:
+                    payload = etroc_position_reviews.completion_summary(DB_PATH, evidence)
+                except sqlite3.DatabaseError:
+                    return json_response(self, 503, etroc_error("review_store_unavailable", "The position review store is unavailable."))
+                return json_response(self, 200, payload)
             if parsed.path == "/api/etroc-position-reviews":
                 try:
                     query = etroc_query(parsed.query, {"dataset_id", "acquisition_id"})

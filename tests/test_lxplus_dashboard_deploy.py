@@ -664,15 +664,17 @@ measure_dashboard_headroom
         for required in (
             "ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'",
             "unexpected ETROC dataset manifest cardinality",
-            "if len(lines) != 145:",
+            "if len(lines) != 181:",
             "unsafe ETROC dataset manifest entry",
             "sum(path.startswith('montages/') for path in seen) != 36",
             "sum(path.startswith('clean-montages/sha256/') for path in seen) != 36",
             "sum(path.startswith('positions/sha256/') for path in seen) != 36",
+            "sum(path.startswith('heights/sha256/') for path in seen) != 36",
             "sum(path.startswith('previews/') for path in seen) != 36",
             "cd '/app/static/${ETROC_DATASET_REL}' && sha256sum -c SHA256SUMS",
             "payload.get('position_record_count') != 9216",
-            "len(set(assets)) != 144",
+            "len(set(assets)) != 180",
+            "ETROC_COMPLETION_RUNTIME_CONTRACT PASS",
         ):
             self.assertIn(required, script)
         self.assertIn('"${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/${relative}"', script)
