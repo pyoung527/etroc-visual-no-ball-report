@@ -448,7 +448,7 @@ measure_dashboard_headroom
         )
 
         # Then: the exact closed set forwards stdin and none allocates a TTY.
-        self.assertEqual(len(call_blocks), 12, f"unexpected heredoc oc exec call set: {call_blocks}")
+        self.assertEqual(len(call_blocks), 15, f"unexpected heredoc oc exec call set: {call_blocks}")
         missing_stdin = [block for block in call_blocks if re.search(r"\bexec\s+-i(?:\s|$)", block) is None]
         tty_calls = [
             block
@@ -634,20 +634,21 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='128f5abdfba09e051938062fa46074035cf4a0ca'",
+            "SOURCE_REVISION='0d7dd7b5dfdd7aea36133869766806dc21bbf6aa'",
             script,
         )
         expected = {
-            "index.html": "af5dbe0db30b41bb231be3248a4c9a1aebd831988759d839aece1c07c996e2ae",
+            "index.html": "03ce2f0376e835270936ca3e2f497cd0d5646a52b8dfc327a0058a39eb0c9a9f",
             "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
             "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
-            "etroc-optical.css": "d34af84b4828f6b354813c3356fce1d1f064cbc09826c0d4abd999451bf49d1d",
-            "etroc-optical.js": "cf44ffb22cde59e6f527e02711db01f594c69081cc53ec275758b77ec7f35ecd",
-            "etroc-review.js": "2c1bcdd76b0fec0b05c32807b23526b1da543b9adde1429f87a1ce64dbce7809",
+            "etroc-optical.css": "eb1d5bb6ae6b31ba7c00aa946e0396845b6cd10e8fcb8a3891aee9e1463df029",
+            "etroc-optical.js": "c565469f4b750018548db7a439018109414c7a107b1d3194a485208498652b5d",
+            "etroc-review.js": "77798dc10fe9d21c11ea203d4fb435e056329ea0612cf8265669c12f3158b60f",
             "lgad-optical-stats.js": "e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02",
-            "ETROC_MANIFEST_SHA256": "616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29",
-            "SERVER_PY_SHA256": "45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e",
-            "ETROC_REVIEWS_PY_SHA256": "d2338ff8ea37c7d4d26f5246c32075dee68534f2d725a9fc28e427073ed12ebc",
+            "ETROC_MANIFEST_SHA256": "e3c74d49cf8aea3e7dc960c92937298a653cefa7ec72a3a5a3f4177183fa9471",
+            "SERVER_PY_SHA256": "b5bb6c91d7eb46eabdeedacc43abb76696cd24ff724eb0023366c313df26e55d",
+            "ETROC_REVIEWS_PY_SHA256": "65819646c5dde06f62efbfbe73bad224e27e9b8b6ae9c1c6808e162801dbc454",
+            "ETROC_POSITION_REVIEWS_PY_SHA256": "dff26825ad6e5d42df338be74b9781866b2a1b754215f7c2dab4f01cfdf970d1",
             "DEPLOYMENT_MANIFEST_SHA256": "6f1bbc7e0e573f58d9e4dda4efa9c85b10ed6012ced2475e43be77476087ac05",
             "SERVICE_MANIFEST_SHA256": "84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c",
             "ROUTE_MANIFEST_SHA256": "23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43",
@@ -663,12 +664,15 @@ measure_dashboard_headroom
         for required in (
             "ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'",
             "unexpected ETROC dataset manifest cardinality",
+            "if len(lines) != 145:",
             "unsafe ETROC dataset manifest entry",
             "sum(path.startswith('montages/') for path in seen) != 36",
+            "sum(path.startswith('clean-montages/sha256/') for path in seen) != 36",
+            "sum(path.startswith('positions/sha256/') for path in seen) != 36",
             "sum(path.startswith('previews/') for path in seen) != 36",
             "cd '/app/static/${ETROC_DATASET_REL}' && sha256sum -c SHA256SUMS",
             "payload.get('position_record_count') != 9216",
-            "len(set(assets)) != 72",
+            "len(set(assets)) != 144",
         ):
             self.assertIn(required, script)
         self.assertIn('"${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/${relative}"', script)
@@ -716,18 +720,23 @@ measure_dashboard_headroom
             "ETROC_REVIEW_JS_SHA256=",
             "SERVER_PY_SHA256=",
             "ETROC_REVIEWS_PY_SHA256=",
+            "ETROC_POSITION_REVIEWS_PY_SHA256=",
             '"${RAW_ROOT}/hybrid-bbqc/${file}"',
             '"${RAW_ROOT}/hybrid-bbqc/server.py"',
             '"${RAW_ROOT}/hybrid-bbqc/etroc_reviews.py"',
+            '"${RAW_ROOT}/hybrid-bbqc/etroc_position_reviews.py"',
             '"$ETROC_REVIEW_JS_SHA256"',
             '"$SERVER_PY_SHA256"',
             '"$ETROC_REVIEWS_PY_SHA256"',
+            '"$ETROC_POSITION_REVIEWS_PY_SHA256"',
             "runtime/server.py",
             "runtime/etroc_reviews.py",
+            "runtime/etroc_position_reviews.py",
             "COPY runtime/ /app/static/",
             "/app/static/etroc-review.js",
             "/app/static/server.py",
             "/app/static/etroc_reviews.py",
+            "/app/static/etroc_position_reviews.py",
         ):
             self.assertIn(required, script)
         self.assertLess(script.index("COPY runtime/ /app/static/"), script.index("USER app"))

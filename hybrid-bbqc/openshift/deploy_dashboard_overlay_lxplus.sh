@@ -4,18 +4,19 @@ umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 CANDIDATE_HOST_PYTHON='/usr/bin/python3.12'
 
-SOURCE_REVISION='128f5abdfba09e051938062fa46074035cf4a0ca'
+SOURCE_REVISION='0d7dd7b5dfdd7aea36133869766806dc21bbf6aa'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
-INDEX_SHA256='af5dbe0db30b41bb231be3248a4c9a1aebd831988759d839aece1c07c996e2ae'
+INDEX_SHA256='03ce2f0376e835270936ca3e2f497cd0d5646a52b8dfc327a0058a39eb0c9a9f'
 CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
 JS_SHA256='317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644'
-ETROC_CSS_SHA256='d34af84b4828f6b354813c3356fce1d1f064cbc09826c0d4abd999451bf49d1d'
-ETROC_JS_SHA256='cf44ffb22cde59e6f527e02711db01f594c69081cc53ec275758b77ec7f35ecd'
-ETROC_REVIEW_JS_SHA256='2c1bcdd76b0fec0b05c32807b23526b1da543b9adde1429f87a1ce64dbce7809'
+ETROC_CSS_SHA256='eb1d5bb6ae6b31ba7c00aa946e0396845b6cd10e8fcb8a3891aee9e1463df029'
+ETROC_JS_SHA256='c565469f4b750018548db7a439018109414c7a107b1d3194a485208498652b5d'
+ETROC_REVIEW_JS_SHA256='77798dc10fe9d21c11ea203d4fb435e056329ea0612cf8265669c12f3158b60f'
 LGAD_STATS_JS_SHA256='e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02'
-ETROC_MANIFEST_SHA256='616a369eb3861a0d3c57e855a8136a0843fde658934537edfedad8f32644cc29'
-SERVER_PY_SHA256='45c822200ea03ae433619b457c8764aec52a94b7716c2241d8f8e88feeb1056e'
-ETROC_REVIEWS_PY_SHA256='d2338ff8ea37c7d4d26f5246c32075dee68534f2d725a9fc28e427073ed12ebc'
+ETROC_MANIFEST_SHA256='e3c74d49cf8aea3e7dc960c92937298a653cefa7ec72a3a5a3f4177183fa9471'
+SERVER_PY_SHA256='b5bb6c91d7eb46eabdeedacc43abb76696cd24ff724eb0023366c313df26e55d'
+ETROC_REVIEWS_PY_SHA256='65819646c5dde06f62efbfbe73bad224e27e9b8b6ae9c1c6808e162801dbc454'
+ETROC_POSITION_REVIEWS_PY_SHA256='dff26825ad6e5d42df338be74b9781866b2a1b754215f7c2dab4f01cfdf970d1'
 DEPLOYMENT_MANIFEST_SHA256='6f1bbc7e0e573f58d9e4dda4efa9c85b10ed6012ced2475e43be77476087ac05'
 SERVICE_MANIFEST_SHA256='84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c'
 ROUTE_MANIFEST_SHA256='23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43'
@@ -96,6 +97,9 @@ NEW_WEB_IMAGE=''
 ETROC_EVENT_SNAPSHOT_BEFORE=''
 ETROC_EVENT_SNAPSHOT_BACKUP=''
 ETROC_EVENT_SNAPSHOT_POST_ROLLOUT=''
+POSITION_EVENT_SNAPSHOT_BEFORE=''
+POSITION_EVENT_SNAPSHOT_BACKUP=''
+POSITION_EVENT_SNAPSHOT_POST_ROLLOUT=''
 CANDIDATE_PROBE_POD=''
 CANDIDATE_PROBE_POD_UID=''
 CANDIDATE_PROBE_POD_OWNED=0
@@ -735,6 +739,19 @@ with sqlite3.connect(sys.argv[1]) as db:
         print('{"present":false}')
     else:
         rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,montage_sha256,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM etroc_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+}
+
+snapshot_position_review_events() {
+  python3 -I - "$1" <<'PY'
+import json, sqlite3, sys
+with sqlite3.connect(sys.argv[1]) as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='position_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM position_review_events ORDER BY id').fetchall()
         print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
 PY
 }
@@ -1561,6 +1578,17 @@ with sqlite3.connect('/data/comments.sqlite3') as db:
         print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
 PY
 )"
+POSITION_EVENT_SNAPSHOT_BEFORE="$(oc -n "$PROJECT" exec -i "$POD" -c web -- python - <<'PY'
+import json, sqlite3
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='position_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM position_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+)"
 STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
 BACKUP="/data/comments.sqlite3.before-dashboard-${STAMP}.bak"
 validate_backup_directory "$BACKUP_DIR"
@@ -1719,7 +1747,7 @@ PY
 BACKUP_HYBRID_SCHEMA_SHA256="$(python3 -I - "$LOCAL_BACKUP" <<'PY'
 import hashlib, json, sqlite3, sys
 with sqlite3.connect(sys.argv[1]) as db:
-    rows=db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
+    rows=db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' AND name NOT LIKE 'position_review_%' AND name NOT LIKE 'idx_position_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
 print(hashlib.sha256(json.dumps(rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest())
 PY
 )"
@@ -1728,7 +1756,9 @@ BACKUP_SHA256="$(sha256sum "$LOCAL_BACKUP" | cut -d' ' -f1)"
 [[ "$BACKUP_SHA256" =~ ^[0-9a-f]{64}$ ]]
 printf '%s  %s\n' "$BACKUP_SHA256" "$LOCAL_BACKUP" > "${LOCAL_BACKUP}.sha256"
 ETROC_EVENT_SNAPSHOT_BACKUP="$(snapshot_etroc_review_events "$LOCAL_BACKUP")"
+POSITION_EVENT_SNAPSHOT_BACKUP="$(snapshot_position_review_events "$LOCAL_BACKUP")"
 assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$ETROC_EVENT_SNAPSHOT_BACKUP"
+assert_etroc_snapshot "$POSITION_EVENT_SNAPSHOT_BEFORE" "$POSITION_EVENT_SNAPSHOT_BACKUP"
 
 mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay" "${BUILD_CONTEXT}/runtime" "${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
 for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js etroc-review.js lgad-optical-stats.js; do
@@ -1736,6 +1766,7 @@ for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optica
 done
 download "${RAW_ROOT}/hybrid-bbqc/server.py" "${BUILD_CONTEXT}/runtime/server.py"
 download "${RAW_ROOT}/hybrid-bbqc/etroc_reviews.py" "${BUILD_CONTEXT}/runtime/etroc_reviews.py"
+download "${RAW_ROOT}/hybrid-bbqc/etroc_position_reviews.py" "${BUILD_CONTEXT}/runtime/etroc_position_reviews.py"
 DATASET_DIR="${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
 download "${RAW_ROOT}/hybrid-bbqc/${ETROC_DATASET_REL}/SHA256SUMS" "${DATASET_DIR}/SHA256SUMS"
 printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${DATASET_DIR}/SHA256SUMS" | sha256sum -c -
@@ -1743,18 +1774,23 @@ python3 -I - "${DATASET_DIR}/SHA256SUMS" <<'PY'
 from pathlib import PurePosixPath
 import re, sys
 lines=open(sys.argv[1], encoding='ascii').read().splitlines()
-if len(lines) != 73:
+if len(lines) != 145:
     raise SystemExit(f'unexpected ETROC dataset manifest cardinality: {len(lines)}')
 seen=set()
 for line in lines:
-    if not re.fullmatch(r'[0-9a-f]{64}  (chips\.json|montages/sha256/[0-9a-f]{64}\.jpg|previews/(?:W02G4|W03F7|W05E5)-[0-9]+\.jpg)', line):
+    if not re.fullmatch(r'[0-9a-f]{64}  (chips\.json|montages/sha256/[0-9a-f]{64}\.jpg|clean-montages/sha256/[0-9a-f]{64}\.jpg|positions/sha256/[0-9a-f]{64}\.json|previews/(?:W02G4|W03F7|W05E5)-[0-9]+\.jpg)', line):
         raise SystemExit(f'unsafe ETROC dataset manifest entry: {line!r}')
     relative=line[66:]
     path=PurePosixPath(relative)
     if path.is_absolute() or '..' in path.parts or relative in seen:
         raise SystemExit(f'unsafe or duplicate ETROC dataset path: {relative!r}')
     seen.add(relative)
-if sum(path.startswith('montages/') for path in seen) != 36 or sum(path.startswith('montages/sha256/') for path in seen) != 36 or sum(path.startswith('previews/') for path in seen) != 36 or 'chips.json' not in seen:
+if (sum(path.startswith('montages/') for path in seen) != 36
+        or sum(path.startswith('montages/sha256/') for path in seen) != 36
+        or sum(path.startswith('clean-montages/sha256/') for path in seen) != 36
+        or sum(path.startswith('positions/sha256/') for path in seen) != 36
+        or sum(path.startswith('previews/') for path in seen) != 36
+        or 'chips.json' not in seen):
     raise SystemExit('unexpected ETROC dataset asset roles')
 PY
 while read -r digest relative; do
@@ -1780,6 +1816,7 @@ done < "${DATASET_DIR}/SHA256SUMS"
   cd "${BUILD_CONTEXT}/runtime"
   printf '%s  %s\n' "$SERVER_PY_SHA256" server.py > SHA256SUMS
   printf '%s  %s\n' "$ETROC_REVIEWS_PY_SHA256" etroc_reviews.py >> SHA256SUMS
+  printf '%s  %s\n' "$ETROC_POSITION_REVIEWS_PY_SHA256" etroc_position_reviews.py >> SHA256SUMS
   sha256sum -c SHA256SUMS
 )
 printf '%s\n' \
@@ -1807,6 +1844,7 @@ from pathlib import Path
 
 candidate = Path(os.environ['CANDIDATE_DB'])
 sys.path.insert(0, os.environ['CANDIDATE_RUNTIME'])
+import etroc_position_reviews
 import etroc_reviews
 
 with sqlite3.connect(candidate) as db:
@@ -1814,14 +1852,18 @@ with sqlite3.connect(candidate) as db:
 if before_comments != int(os.environ['BEFORE_COMMENTS']):
     raise SystemExit(f'candidate comment count changed before migration: {before_comments}')
 etroc_reviews.init_schema(candidate)
+etroc_position_reviews.init_schema(candidate)
 with sqlite3.connect(candidate) as db:
     db.execute('PRAGMA foreign_keys=ON')
     etroc_reviews.validate_schema(db)
+    etroc_position_reviews.validate_schema(db)
     objects = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE name LIKE 'etroc_review_%' OR name LIKE 'idx_etroc_review_%'")}
+    position_objects = {row[0] for row in db.execute("SELECT name FROM sqlite_master WHERE name LIKE 'position_review_%' OR name LIKE 'idx_position_review_%'")}
     version = db.execute('SELECT singleton,version FROM etroc_review_schema').fetchall()
+    position_version = db.execute('SELECT singleton,version FROM position_review_schema').fetchall()
     foreign_key_errors = db.execute('PRAGMA foreign_key_check').fetchall()
     integrity = db.execute('PRAGMA integrity_check').fetchone()[0]
-    hybrid_rows=db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
+    hybrid_rows=db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' AND name NOT LIKE 'position_review_%' AND name NOT LIKE 'idx_position_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
 candidate_hybrid_schema_sha256=hashlib.sha256(json.dumps(hybrid_rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest()
 expected_objects = {
     'etroc_review_schema', 'etroc_review_events', 'idx_etroc_review_one_root',
@@ -1829,13 +1871,24 @@ expected_objects = {
     'idx_etroc_review_current_lookup', 'etroc_review_no_update',
     'etroc_review_no_delete', 'etroc_review_same_evidence_successor',
 }
-if objects != expected_objects or version != [(1, 1)] or foreign_key_errors or integrity != 'ok':
+expected_position_objects = {
+    'position_review_schema', 'position_review_events',
+    'idx_position_review_one_root', 'idx_position_review_one_successor',
+    'idx_position_review_author_mutation', 'idx_position_review_current_lookup',
+    'position_review_no_update', 'position_review_no_delete',
+    'position_review_same_evidence_successor',
+}
+if (objects != expected_objects or position_objects != expected_position_objects
+        or version != [(1, 1)] or position_version != [(1, 1)]
+        or foreign_key_errors or integrity != 'ok'):
     raise SystemExit('candidate ETROC schema/integrity verification failed')
 if candidate_hybrid_schema_sha256 != os.environ['BACKUP_HYBRID_SCHEMA_SHA256']:
     raise SystemExit('existing Hybrid schema changed during ETROC migration')
 etroc_reviews.init_schema(candidate)
+etroc_position_reviews.init_schema(candidate)
 with sqlite3.connect(candidate) as db:
     etroc_reviews.validate_schema(db)
+    etroc_position_reviews.validate_schema(db)
     if db.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
         raise SystemExit('candidate ETROC migration is not idempotent')
     db.execute('CREATE INDEX etroc_review_unapproved_attachment ON etroc_review_events(author)')
@@ -1847,6 +1900,16 @@ with sqlite3.connect(candidate) as db:
         raise SystemExit('arbitrary ETROC attached object bypassed schema validation')
     db.execute('DROP INDEX etroc_review_unapproved_attachment')
     etroc_reviews.validate_schema(db)
+    etroc_position_reviews.validate_schema(db)
+    db.execute('CREATE INDEX position_review_unapproved_attachment ON position_review_events(author)')
+    try:
+        etroc_position_reviews.validate_schema(db)
+    except ValueError:
+        pass
+    else:
+        raise SystemExit('arbitrary ETROC position attached object bypassed schema validation')
+    db.execute('DROP INDEX position_review_unapproved_attachment')
+    etroc_position_reviews.validate_schema(db)
 evidence=etroc_reviews.load_evidence(Path(os.environ['CANDIDATE_STATIC_ROOT']))
 record=evidence.by_acquisition[sorted(evidence.by_acquisition)[0]]
 with sqlite3.connect(candidate) as db:
@@ -1856,6 +1919,7 @@ with sqlite3.connect(candidate) as db:
 etroc_reviews.init_schema(candidate)
 with sqlite3.connect(candidate) as db:
     etroc_reviews.validate_schema(db)
+    etroc_position_reviews.validate_schema(db)
     empty_history_events = db.execute('SELECT COUNT(*) FROM etroc_review_events').fetchone()[0]
 
 event_fields=(*etroc_reviews.KEY_FIELDS, 'state', 'note', 'mutation_id')
@@ -1929,6 +1993,7 @@ with sqlite3.connect(candidate) as db:
     if db.execute('SELECT COUNT(*) FROM comments').fetchone()[0] != before_comments:
         raise SystemExit('candidate migrated DB Hybrid comments changed during mutation verification')
     etroc_reviews.validate_schema(db)
+    etroc_position_reviews.validate_schema(db)
     if db.execute('PRAGMA integrity_check').fetchone()[0] != 'ok':
         raise SystemExit('candidate deterministic mutation schema/integrity verification failed')
 print('CANDIDATE_ETROC_SCHEMA PASS')
@@ -2216,6 +2281,7 @@ REMOTE_ETROC_REVIEW_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /
 REMOTE_LGAD_STATS_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/lgad-optical-stats.js | cut -d' ' -f1)"
 REMOTE_SERVER_PY_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/server.py | cut -d' ' -f1)"
 REMOTE_ETROC_REVIEWS_PY_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc_reviews.py | cut -d' ' -f1)"
+REMOTE_ETROC_POSITION_REVIEWS_PY_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc_position_reviews.py | cut -d' ' -f1)"
 REMOTE_ETROC_MANIFEST_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum "/app/static/${ETROC_DATASET_REL}/SHA256SUMS" | cut -d' ' -f1)"
 test "$REMOTE_INDEX_SHA" = "$INDEX_SHA256"
 test "$REMOTE_CSS_SHA" = "$CSS_SHA256"
@@ -2226,6 +2292,7 @@ test "$REMOTE_ETROC_REVIEW_JS_SHA" = "$ETROC_REVIEW_JS_SHA256"
 test "$REMOTE_LGAD_STATS_JS_SHA" = "$LGAD_STATS_JS_SHA256"
 test "$REMOTE_SERVER_PY_SHA" = "$SERVER_PY_SHA256"
 test "$REMOTE_ETROC_REVIEWS_PY_SHA" = "$ETROC_REVIEWS_PY_SHA256"
+test "$REMOTE_ETROC_POSITION_REVIEWS_PY_SHA" = "$ETROC_POSITION_REVIEWS_PY_SHA256"
 test "$REMOTE_ETROC_MANIFEST_SHA" = "$ETROC_MANIFEST_SHA256"
 oc -n "$PROJECT" exec "$POD" -c web -- sh -c \
   "cd '/app/static/${ETROC_DATASET_REL}' && sha256sum -c SHA256SUMS"
@@ -2238,12 +2305,15 @@ payload=json.loads((root / 'chips.json').read_text(encoding='utf-8'))
 records=payload.get('records')
 if payload.get('dataset_id') != 'ETROC_OI_2608' or payload.get('publication_status') != 'exploratory_review_pending':
     raise SystemExit('runtime ETROC dataset identity/status mismatch')
-if not isinstance(records, list) or len(records) != 36 or payload.get('position_record_count') != 9216:
+if (not isinstance(records, list) or len(records) != 36
+        or payload.get('position_record_count') != 9216
+        or payload.get('position_review_target_count') != 82
+        or payload.get('position_geometry_version') != 'etroc-grid-16x16-v1'):
     raise SystemExit('runtime ETROC dataset cardinality mismatch')
 if Counter(row['wafer'] for row in records) != Counter({'W02G4': 18, 'W03F7': 9, 'W05E5': 9}):
     raise SystemExit('runtime ETROC wafer cardinality mismatch')
-assets=[root / row[key] for row in records for key in ('montage_uri','preview_uri')]
-if len(set(assets)) != 72 or any(not path.is_file() or path.stat().st_size == 0 for path in assets):
+assets=[root / row[key] for row in records for key in ('montage_uri','preview_uri','clean_montage_uri','position_publication_uri')]
+if len(set(assets)) != 144 or any(not path.is_file() or path.stat().st_size == 0 for path in assets):
     raise SystemExit('runtime ETROC asset inventory mismatch')
 print({'dataset_id': payload['dataset_id'], 'records': len(records), 'assets': len(assets), 'positions': payload['position_record_count']})
 PY
@@ -2325,10 +2395,13 @@ if payload.get('dataset_id') != 'ETROC_OI_2608' or len(payload.get('records', []
 
 record = payload['records'][0]
 dataset_root = 'data/etroc-optical/ETROC_OI_2608'
-for path in (f"{dataset_root}/{record['preview_uri']}", f"{dataset_root}/{record['montage_uri']}"):
+for path in (f"{dataset_root}/{record['preview_uri']}", f"{dataset_root}/{record['montage_uri']}", f"{dataset_root}/{record['clean_montage_uri']}"):
     image = fetch(path)
     if not image.startswith(b'\xff\xd8') or not image.endswith(b'\xff\xd9'):
         raise SystemExit(f'runtime HTTP JPEG contract failed: {path}')
+position_publication=fetch(f"{dataset_root}/{record['position_publication_uri']}")
+if hashlib.sha256(position_publication).hexdigest() != record['position_publication_sha256'] or len(json.loads(position_publication).get('positions', [])) != 256:
+    raise SystemExit('runtime HTTP position publication contract failed')
 if not record['montage_uri'].startswith('montages/sha256/'):
     raise SystemExit('runtime HTTP content-addressed montage URI mismatch')
 montage = fetch(f"{dataset_root}/{record['montage_uri']}")
@@ -2418,24 +2491,47 @@ if summary.get('viewer', {}).get('can_append_review') is not True:
 print(f"ETROC_REVIEW_RUNTIME_CONTRACT PASS records={len(evidence)}")
 PY
 
+oc -n "$PROJECT" exec -i "$POD" -c web -- env ETROC_REVIEWER_TEST_USER="$ETROC_REVIEWER_TEST_USER" python - <<'PY'
+import json, os, urllib.parse, urllib.request
+from pathlib import Path
+publication=json.loads(Path('/app/static/data/etroc-optical/ETROC_OI_2608/chips.json').read_text(encoding='utf-8'))
+record=next(item for item in publication['records'] if item['position_review_target_count'] > 0)
+url='http://127.0.0.1:8080/api/etroc-position-reviews?dataset_id=ETROC_OI_2608&acquisition_id=' + urllib.parse.quote(record['acquisition_id'], safe='')
+request=urllib.request.Request(url, headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']})
+with urllib.request.urlopen(request, timeout=10) as response:
+    if response.status != 200 or response.headers.get('Cache-Control') != 'no-store':
+        raise SystemExit('ETROC position review runtime response mismatch')
+    summary=json.loads(response.read())
+if (summary.get('position_count') != 256 or summary.get('target_count') != record['position_review_target_count']
+        or summary.get('position_publication_sha256') != record['position_publication_sha256']
+        or len(summary.get('evidence', {})) != 256 or not isinstance(summary.get('reviews'), dict)):
+    raise SystemExit('ETROC position review runtime evidence mismatch')
+print(f"ETROC_POSITION_REVIEW_RUNTIME_CONTRACT PASS positions={len(summary['evidence'])} targets={summary['target_count']}")
+PY
+
 oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python - <<'PY'
 import hashlib, json, os, sqlite3, sys
 sys.path.insert(0, '/app/static')
+import etroc_position_reviews
 import etroc_reviews
 with sqlite3.connect('/data/comments.sqlite3') as db:
     db.execute('PRAGMA foreign_keys=ON')
     schema_rows = db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' ORDER BY type,name,tbl_name,sql").fetchall()
-    hybrid_rows = db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
+    hybrid_rows = db.execute("SELECT type,name,tbl_name,COALESCE(sql,'') FROM sqlite_master WHERE name NOT LIKE 'sqlite_%' AND name NOT LIKE 'etroc_review_%' AND name NOT LIKE 'idx_etroc_review_%' AND name NOT LIKE 'position_review_%' AND name NOT LIKE 'idx_position_review_%' ORDER BY type,name,tbl_name,sql").fetchall()
     comments = db.execute('SELECT COUNT(*) FROM comments').fetchone()[0]
     foreign_key_errors = db.execute('PRAGMA foreign_key_check').fetchall()
     integrity = db.execute('PRAGMA integrity_check').fetchone()[0]
     attached_objects = db.execute("SELECT type,name,tbl_name FROM sqlite_master WHERE name IN ('etroc_review_schema','etroc_review_events') OR tbl_name IN ('etroc_review_schema','etroc_review_events') ORDER BY type,name").fetchall()
+    position_attached_objects = db.execute("SELECT type,name,tbl_name FROM sqlite_master WHERE name IN ('position_review_schema','position_review_events') OR tbl_name IN ('position_review_schema','position_review_events') ORDER BY type,name").fetchall()
     review_objects = {row[1] for row in attached_objects}
+    position_review_objects = {row[1] for row in position_attached_objects}
     review_version = db.execute('SELECT singleton,version FROM etroc_review_schema').fetchall()
+    position_review_version = db.execute('SELECT singleton,version FROM position_review_schema').fetchall()
     columns = [(row[1], row[2].upper(), row[3]) for row in db.execute('PRAGMA table_info(etroc_review_events)')]
     indexes = {row[1]: (row[2], row[3], row[4], tuple(index_row[2] for index_row in db.execute(f'PRAGMA index_info("{row[1]}")'))) for row in db.execute('PRAGMA index_list(etroc_review_events)')}
     foreign_keys = [tuple(row) for row in db.execute('PRAGMA foreign_key_list(etroc_review_events)')]
     etroc_reviews.validate_schema(db)
+    etroc_position_reviews.validate_schema(db)
 schema_payload = json.dumps(schema_rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
 runtime_schema_sha256 = hashlib.sha256(schema_payload).hexdigest()
 runtime_hybrid_schema_sha256 = hashlib.sha256(json.dumps(hybrid_rows, ensure_ascii=False, separators=(',', ':')).encode('utf-8')).hexdigest()
@@ -2445,10 +2541,22 @@ expected_review_objects = {
     'idx_etroc_review_current_lookup', 'etroc_review_no_update',
     'etroc_review_no_delete', 'etroc_review_same_evidence_successor',
 }
-if review_objects != expected_review_objects or len(review_version) != 1 or review_version[0][:2] != (1, 1):
+expected_position_review_objects = {
+    'position_review_schema', 'position_review_events',
+    'idx_position_review_one_root', 'idx_position_review_one_successor',
+    'idx_position_review_author_mutation', 'idx_position_review_current_lookup',
+    'position_review_no_update', 'position_review_no_delete',
+    'position_review_same_evidence_successor',
+}
+if (review_objects != expected_review_objects
+        or position_review_objects != expected_position_review_objects
+        or len(review_version) != 1 or review_version[0][:2] != (1, 1)
+        or len(position_review_version) != 1 or position_review_version[0][:2] != (1, 1)):
     raise SystemExit('ETROC review schema/startup probe failed')
 if any(name not in expected_review_objects for _kind, name, _table in attached_objects):
     raise SystemExit('arbitrary ETROC attached object')
+if any(name not in expected_position_review_objects for _kind, name, _table in position_attached_objects):
+    raise SystemExit('arbitrary ETROC position attached object')
 expected_columns = [
     ('id', 'INTEGER', 0), ('dataset_id', 'TEXT', 1), ('etroc_serial', 'TEXT', 1),
     ('acquisition_id', 'TEXT', 1), ('analysis_run_id', 'TEXT', 1), ('montage_sha256', 'TEXT', 1),
@@ -2485,7 +2593,19 @@ with sqlite3.connect('/data/comments.sqlite3') as db:
         print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
 PY
 )"
+POSITION_EVENT_SNAPSHOT_POST_ROLLOUT="$(oc -n "$PROJECT" exec -i "$POD" -c web -- python - <<'PY'
+import json, sqlite3
+with sqlite3.connect('/data/comments.sqlite3') as db:
+    exists = db.execute("SELECT 1 FROM sqlite_master WHERE type='table' AND name='position_review_events'").fetchone()
+    if not exists:
+        print('{"present":false}')
+    else:
+        rows = db.execute('SELECT id,dataset_id,etroc_serial,acquisition_id,analysis_run_id,labelled_montage_sha256,clean_montage_sha256,position_publication_sha256,position,source_image_sha256,geometry_version,state,note,author,author_display,created_at,mutation_id,supersedes_event_id FROM position_review_events ORDER BY id').fetchall()
+        print(json.dumps({'present': True, 'count': len(rows), 'identity_chain': rows}, separators=(',', ':')))
+PY
+)"
 assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$ETROC_EVENT_SNAPSHOT_POST_ROLLOUT"
+assert_etroc_snapshot "$POSITION_EVENT_SNAPSHOT_BEFORE" "$POSITION_EVENT_SNAPSHOT_POST_ROLLOUT"
 READY="$(oc -n "$PROJECT" get pod "$POD" -o jsonpath='{range .status.containerStatuses[*]}{.name}={.ready}{"\n"}{end}')"
 grep -qx 'web=true' <<< "$READY"
 grep -qx 'oauth2-proxy=true' <<< "$READY"
