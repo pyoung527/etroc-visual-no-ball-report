@@ -773,6 +773,7 @@ measure_dashboard_headroom
             "etroc_reviews.validate_schema(db)",
             "etroc_position_reviews.validate_schema(db)",
             "value_field = 'label' if 'label' in columns else 'state' if 'state' in columns else None",
+            "position_version != [(1, 2)]",
             "position_review_version[0][:2] != (1, 2)",
             "PRAGMA foreign_key_check",
             "PRAGMA integrity_check",

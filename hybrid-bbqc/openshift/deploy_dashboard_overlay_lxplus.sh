@@ -1911,7 +1911,7 @@ expected_position_objects = {
     'position_review_same_evidence_successor',
 }
 if (objects != expected_objects or position_objects != expected_position_objects
-        or version != [(1, 1)] or position_version != [(1, 1)]
+        or version != [(1, 1)] or position_version != [(1, 2)]
         or foreign_key_errors or integrity != 'ok'):
     raise SystemExit('candidate ETROC schema/integrity verification failed')
 if candidate_hybrid_schema_sha256 != os.environ['BACKUP_HYBRID_SCHEMA_SHA256']:
