@@ -1413,6 +1413,10 @@ measure_dashboard_headroom
             release_environment = target_environment | {"BASELINE_OBJECT_FILE": str(release_baseline_file), "CAPTURED_OBJECT_FILE": str(release_capture_file), "ETROC_REVIEWER_USERS_NORMALIZED": "young.park@cern.ch,ypark,ypark@cern.ch"}
             release_result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=release_environment)
             self.assertEqual(release_result.returncode, 0, release_result.stderr)
+            release_capture["spec"]["template"]["spec"]["containers"][0]["env"][2]["value"] = "young.park@cern.ch,ypark,ypark@cern.ch"
+            release_capture_file.write_text(json.dumps(release_capture), encoding="utf-8")
+            stable_release = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=release_environment)
+            self.assertEqual(stable_release.returncode, 0, stable_release.stderr)
             release_capture["spec"]["template"]["spec"]["containers"][0]["env"][2]["value"] = "other@cern.ch"
             release_capture_file.write_text(json.dumps(release_capture), encoding="utf-8")
             reviewer_drift = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=release_environment)

@@ -1265,9 +1265,10 @@ if kind == 'Deployment':
                     if not values or any(not value or value != value.strip() or value.lower() != value for value in values) or len(set(values)) != len(values):
                         raise SystemExit('captured target Deployment reviewer environment is malformed')
                     return ','.join(sorted(values))
+                captured_reviewer_normalized = normalized_reviewer(captured_reviewer)
                 if (captured_map != baseline_map
                         or normalized_reviewer(baseline_reviewer) != requested_reviewer
-                        or normalized_reviewer(captured_reviewer) != 'ypark,ypark@cern.ch'):
+                        or captured_reviewer_normalized not in {requested_reviewer, 'ypark,ypark@cern.ch'}):
                     raise SystemExit('captured target Deployment web environment differs from pinned baseline')
                 captured_env[:]=copy.deepcopy(baseline_env)
             else:
