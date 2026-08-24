@@ -51,6 +51,7 @@ CANDIDATE_DB="${WORK_DIR}/comments-candidate.sqlite3"
 CANDIDATE_HTTP_ACQUISITION_FILE="${WORK_DIR}/candidate-http-acquisition-id"
 OLD_RUNTIME_DIR="${WORK_DIR}/previous-runtime"
 OLD_RUNTIME_SERVER="${OLD_RUNTIME_DIR}/server.py"
+OLD_RUNTIME_ETROC_REVIEWS="${OLD_RUNTIME_DIR}/etroc_reviews.py"
 MANIFESTS_DIR="${WORK_DIR}/manifests"
 SERVICE_MANIFEST_FILE="${MANIFESTS_DIR}/service.yaml"
 ROUTE_MANIFEST_FILE="${MANIFESTS_DIR}/route.yaml"
@@ -206,35 +207,40 @@ PY
   then
     return 1
   fi
-  oc image extract --registry-config="$registry_auth" "$public_image" --path "/app/static/server.py:${OLD_RUNTIME_DIR}" || return 1
+  oc image extract --registry-config="$registry_auth" "$public_image" \
+    --path "/app/static/server.py:${OLD_RUNTIME_DIR}" \
+    --path "/app/static/etroc_reviews.py:${OLD_RUNTIME_DIR}" || return 1
   rm -f -- "$registry_auth"
   trap - RETURN
-  if ! OLD_RUNTIME_SERVER_SHA256="$(OLD_RUNTIME_DIR="$OLD_RUNTIME_DIR" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
+  if ! OLD_RUNTIME_SERVER_SHA256="$(OLD_RUNTIME_DIR="$OLD_RUNTIME_DIR" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" OLD_RUNTIME_ETROC_REVIEWS="$OLD_RUNTIME_ETROC_REVIEWS" python3 -I - <<'PY'
 import os, stat
 from pathlib import Path
 
 root = Path(os.environ['OLD_RUNTIME_DIR'])
 source = Path(os.environ['OLD_RUNTIME_SERVER'])
+dependency = Path(os.environ['OLD_RUNTIME_ETROC_REVIEWS'])
 root_status = root.lstat()
 if stat.S_ISLNK(root_status.st_mode) or not stat.S_ISDIR(root_status.st_mode):
     raise SystemExit('previous runtime extraction directory is unsafe')
 if root_status.st_uid != os.geteuid() or root_status.st_mode & 0o077:
     raise SystemExit('previous runtime extraction directory ownership or mode is unsafe')
-entries = list(root.iterdir())
-if entries != [source]:
+entries = set(root.iterdir())
+if entries != {source, dependency}:
     raise SystemExit('previous runtime extraction produced unexpected files')
-source_status = source.lstat()
-if stat.S_ISLNK(source_status.st_mode) or not stat.S_ISREG(source_status.st_mode) or source_status.st_nlink != 1:
-    raise SystemExit('previous runtime server is not a regular non-symlink file')
-if source_status.st_uid != os.geteuid() or source_status.st_mode & 0o022:
-    raise SystemExit('previous runtime server ownership or mode is unsafe')
+for candidate in (source, dependency):
+    candidate_status = candidate.lstat()
+    if stat.S_ISLNK(candidate_status.st_mode) or not stat.S_ISREG(candidate_status.st_mode) or candidate_status.st_nlink != 1:
+        raise SystemExit('previous runtime source is not a regular non-symlink file')
+    if candidate_status.st_uid != os.geteuid() or candidate_status.st_mode & 0o022:
+        raise SystemExit('previous runtime source ownership or mode is unsafe')
+    candidate_contents = candidate.read_bytes()
+    if not candidate_contents:
+        raise SystemExit('previous runtime source is empty')
+    try:
+        compile(candidate_contents.decode('utf-8'), str(candidate), 'exec')
+    except (SyntaxError, UnicodeDecodeError) as error:
+        raise SystemExit(f'previous runtime source is malformed: {error}') from error
 contents = source.read_bytes()
-if not contents:
-    raise SystemExit('previous runtime server is empty')
-try:
-    compile(contents.decode('utf-8'), str(source), 'exec')
-except (SyntaxError, UnicodeDecodeError) as error:
-    raise SystemExit(f'previous runtime server source is malformed: {error}') from error
 import hashlib
 print(hashlib.sha256(contents).hexdigest())
 PY
@@ -1999,11 +2005,12 @@ with sqlite3.connect(candidate) as db:
 print('CANDIDATE_ETROC_SCHEMA PASS')
 PY
 COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" python3 -I - <<'PY'
-import http.client, importlib.util, json, os, threading, uuid
+import http.client, importlib.util, json, os, sys, threading, uuid
 from http.server import ThreadingHTTPServer
 from pathlib import Path
 
 source = Path(os.environ['OLD_RUNTIME_SERVER'])
+sys.path.insert(0, str(source.parent))
 candidate_static_root = Path(os.environ['CANDIDATE_STATIC_ROOT']).resolve()
 if not candidate_static_root.is_dir() or not (candidate_static_root / 'index.html').is_file():
     raise SystemExit('candidate static root is unavailable for previous-binary compatibility')

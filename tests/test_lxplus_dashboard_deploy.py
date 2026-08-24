@@ -774,7 +774,8 @@ measure_dashboard_headroom
             "PRAGMA foreign_key_check",
             "PRAGMA integrity_check",
             "OLD_RUNTIME_SERVER",
-            "oc image extract --registry-config=\"$registry_auth\" \"$public_image\" --path \"/app/static/server.py:${OLD_RUNTIME_DIR}\"",
+            "--path \"/app/static/server.py:${OLD_RUNTIME_DIR}\"",
+            "--path \"/app/static/etroc_reviews.py:${OLD_RUNTIME_DIR}\"",
             "previous-binary comments",
         ):
             self.assertIn(required, script)
@@ -2546,15 +2547,16 @@ case \"$1 $2\" in
     test \"$3\" = --registry-config=\"$FAKE_AUTH_PATH\"
     test \"$4\" = \"$FAKE_PUBLIC_IMAGE\"
     test \"$5\" = --path
+    test \"$7\" = --path
     test \"$(stat -c '%a' \"$FAKE_AUTH_PATH\")\" = 600
     test \"$(stat -c '%h' \"$FAKE_AUTH_PATH\")\" = 1
     test -s \"$FAKE_AUTH_PATH\"
     case \"$FAKE_OC_MODE\" in
-      success) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\" ;;
-      symlink) ln -s \"$FAKE_SERVER\" \"${6#*:}/server.py\" ;;
-      extra) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; : > \"${6#*:}/unexpected.py\" ;;
-      empty) : > \"${6#*:}/server.py\" ;;
-      malformed) printf 'not valid python =\\n' > \"${6#*:}/server.py\" ;;
+      success) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\" ;;
+      symlink) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; ln -s \"$FAKE_SERVER\" \"${6#*:}/server.py\" ;;
+      extra) cp \"$FAKE_SERVER\" \"${6#*:}/server.py\"; cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; : > \"${6#*:}/unexpected.py\" ;;
+      empty) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; : > \"${6#*:}/server.py\" ;;
+      malformed) cp \"$FAKE_ETROC_REVIEWS\" \"${8#*:}/etroc_reviews.py\"; printf 'not valid python =\\n' > \"${6#*:}/server.py\" ;;
       failure) exit 42 ;;
     esac ;;
   *) exit 99 ;;
@@ -2568,6 +2570,7 @@ esac
                 """import json
 import os
 import sqlite3
+import etroc_reviews
 from http.server import BaseHTTPRequestHandler
 
 APP_ORIGIN = 'http://127.0.0.1:8080'
@@ -2600,11 +2603,15 @@ class Handler(BaseHTTPRequestHandler):
                 encoding="utf-8",
             )
             source.chmod(0o600)
+            dependency = root / "etroc_reviews.py"
+            dependency.write_text("# previous runtime dependency\n", encoding="utf-8")
+            dependency.chmod(0o600)
             candidate_db = root / "candidate.sqlite3"
             environment = os.environ | {
                 "PATH": f"{fake_bin}:{os.environ['PATH']}",
                 "FAKE_OC_ARGS": str(root / "oc-args"),
                 "FAKE_SERVER": str(source),
+                "FAKE_ETROC_REVIEWS": str(dependency),
                 "CANDIDATE_DB": str(candidate_db),
                 "FAKE_AUTH_CONTENT": "registry-token-must-not-escape",
             }
@@ -2614,6 +2621,7 @@ WORK_DIR={shlex.quote(str(root / "work"))}
 mkdir -p "$WORK_DIR"
 OLD_RUNTIME_DIR="$WORK_DIR/previous-runtime"
 OLD_RUNTIME_SERVER="$OLD_RUNTIME_DIR/server.py"
+OLD_RUNTIME_ETROC_REVIEWS="$OLD_RUNTIME_DIR/etroc_reviews.py"
 OLD_WEB_IMAGE="${{TEST_OLD_WEB_IMAGE:-image-registry.openshift-image-registry.svc:5000/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}}}"
 FAKE_AUTH_PATH="$WORK_DIR/registry-auth.json"
 FAKE_PUBLIC_IMAGE="registry.paas.cern.ch/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}"
@@ -2632,9 +2640,10 @@ fi
 extract_previous_runtime_server
 test ! -e "$FAKE_AUTH_PATH"
 COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" python3 -I - <<'PY'
-import importlib.util, os
+import importlib.util, os, sys
 from pathlib import Path
 source = Path(os.environ['OLD_RUNTIME_SERVER'])
+sys.path.insert(0, str(source.parent))
 spec = importlib.util.spec_from_file_location('old_runtime', source)
 if spec is None or spec.loader is None:
     raise SystemExit('old runtime is unavailable')
@@ -2667,6 +2676,7 @@ printf 'sha=%s\\n' "$OLD_RUNTIME_SERVER_SHA256"
                     "image", "extract", f"--registry-config={root / 'work' / 'registry-auth.json'}",
                     f"registry.paas.cern.ch/etroc-solder-inspection/etl-hybrid-bbqc@sha256:{'a' * 64}",
                     "--path", f"/app/static/server.py:{root / 'work' / 'previous-runtime'}",
+                    "--path", f"/app/static/etroc_reviews.py:{root / 'work' / 'previous-runtime'}",
                 ],
             )
             self.assertFalse((root / "work" / "registry-auth.json").exists())
