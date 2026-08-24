@@ -1381,6 +1381,22 @@ measure_dashboard_headroom
                 else:
                     self.assertEqual(rendered["spec"]["ports"], baseline_service["spec"]["ports"])
 
+            target_capture = json.loads(json.dumps(baseline_deployment))
+            target_capture["metadata"] |= {"namespace": "etroc-solder-inspection", "uid": "deployment-uid", "resourceVersion": "2"}
+            target_capture["spec"]["template"]["spec"]["containers"][0]["image"] = "old-web"
+            target_capture["spec"]["template"]["spec"]["containers"][1]["image"] = "old-proxy"
+            target_capture["spec"]["template"]["spec"]["containers"][0]["env"].reverse()
+            target_capture_file = root / "Deployment-captured-target-permuted.json"
+            target_capture_file.write_text(json.dumps(target_capture), encoding="utf-8")
+            target_environment = os.environ | {"RELEASE_KIND": "Deployment", "BASELINE_OBJECT_FILE": str(root / "Deployment-baseline.json"), "CAPTURED_OBJECT_FILE": str(target_capture_file), "NEW_WEB_IMAGE": "new-web", "OLD_WEB_IMAGE": "old-web", "OLD_PROXY_IMAGE": "old-proxy", "OLD_TOPOLOGY_MODE": "target", "SOURCE_REVISION": "source", "BUILD_CONTEXT_SHA256": "context", "BUILD_NAME": "build", "ETROC_REVIEWER_USERS_NORMALIZED": "user@cern.ch"}
+            target_result = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=target_environment)
+            self.assertEqual(target_result.returncode, 0, target_result.stderr)
+            target_capture["spec"]["template"]["spec"]["containers"][0]["env"][0]["value"] = "drift"
+            target_capture_file.write_text(json.dumps(target_capture), encoding="utf-8")
+            target_drift = subprocess.run([sys.executable, "-I", "-c", renderer], check=False, capture_output=True, text=True, env=target_environment)
+            self.assertNotEqual(target_drift.returncode, 0)
+            self.assertIn("environment differs from pinned baseline", target_drift.stderr)
+
             invalid_service = json.loads(json.dumps(captured_service))
             invalid_service["spec"]["type"] = "NodePort"
             invalid_service_file = root / "Service-captured-invalid-default.json"

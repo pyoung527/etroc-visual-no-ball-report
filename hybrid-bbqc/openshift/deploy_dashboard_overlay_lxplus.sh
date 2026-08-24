@@ -1230,6 +1230,24 @@ if kind == 'Deployment':
         if captured_proxy.get('args') != legacy_args or baseline_proxy.get('args') != target_args:
             raise SystemExit('captured legacy Deployment proxy args are not the reviewed delta')
         captured_proxy['args']=copy.deepcopy(baseline_proxy['args'])
+    elif old_topology_mode == 'target':
+        baseline_env=baseline_containers.get('web', {}).get('env')
+        captured_env=captured_containers.get('web', {}).get('env')
+        if baseline_env is None and captured_env is None:
+            pass
+        elif not isinstance(baseline_env, list) or not isinstance(captured_env, list):
+            raise SystemExit('captured target Deployment web environment is malformed')
+        else:
+            def env_map(items):
+                if any(not isinstance(item, dict) or not isinstance(item.get('name'), str) for item in items):
+                    raise SystemExit('captured target Deployment web environment is malformed')
+                mapped={item['name']: item for item in items}
+                if len(mapped) != len(items):
+                    raise SystemExit('captured target Deployment web environment contains duplicate names')
+                return mapped
+            if env_map(captured_env) != env_map(baseline_env):
+                raise SystemExit('captured target Deployment web environment differs from pinned baseline')
+            captured_containers['web']['env']=copy.deepcopy(baseline_env)
 if kind == 'Service':
     for field in ('clusterIP', 'clusterIPs', 'ipFamilies', 'ipFamilyPolicy', 'healthCheckNodePort'):
         if field in captured_spec:
