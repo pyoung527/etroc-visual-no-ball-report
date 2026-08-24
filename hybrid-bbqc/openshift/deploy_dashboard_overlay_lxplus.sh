@@ -2004,7 +2004,7 @@ with sqlite3.connect(candidate) as db:
         raise SystemExit('candidate deterministic mutation schema/integrity verification failed')
 print('CANDIDATE_ETROC_SCHEMA PASS')
 PY
-COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" python3 -I - <<'PY'
+COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" "$CANDIDATE_HOST_PYTHON" -I - <<'PY'
 import http.client, importlib.util, json, os, sys, threading, uuid
 from http.server import ThreadingHTTPServer
 from pathlib import Path

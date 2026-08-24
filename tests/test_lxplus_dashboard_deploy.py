@@ -774,6 +774,7 @@ measure_dashboard_headroom
             "PRAGMA foreign_key_check",
             "PRAGMA integrity_check",
             "OLD_RUNTIME_SERVER",
+            '"$CANDIDATE_HOST_PYTHON" -I - <<\'PY\'',
             "--path \"/app/static/server.py:${OLD_RUNTIME_DIR}\"",
             "--path \"/app/static/etroc_reviews.py:${OLD_RUNTIME_DIR}\"",
             "previous-binary comments",
@@ -2729,7 +2730,7 @@ printf 'sha=%s\\n' "$OLD_RUNTIME_SERVER_SHA256"
         # Then: it uses only the extracted absolute source and the immutable candidate overlay,
         # never a production candidate DB path.
         self.assertIn(
-            'COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" python3 -I',
+            'COMMENTS_DB="$CANDIDATE_DB" OLD_RUNTIME_SERVER="$OLD_RUNTIME_SERVER" CANDIDATE_STATIC_ROOT="${BUILD_CONTEXT}/overlay" "$CANDIDATE_HOST_PYTHON" -I',
             script,
         )
         self.assertIn("source = Path(os.environ['OLD_RUNTIME_SERVER'])", script)
