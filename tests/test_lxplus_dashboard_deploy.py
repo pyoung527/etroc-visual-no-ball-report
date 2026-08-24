@@ -634,22 +634,22 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='0d7dd7b5dfdd7aea36133869766806dc21bbf6aa'",
+            "SOURCE_REVISION='50517e9e36e09f766972443700999674b2ab3395'",
             script,
         )
         expected = {
-            "index.html": "03ce2f0376e835270936ca3e2f497cd0d5646a52b8dfc327a0058a39eb0c9a9f",
+            "index.html": "37c7702345089150823340e242de698510a72c99dc83bb07f902a2465fa1e4b1",
             "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
             "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
-            "etroc-optical.css": "eb1d5bb6ae6b31ba7c00aa946e0396845b6cd10e8fcb8a3891aee9e1463df029",
+            "etroc-optical.css": "b5fa95983a9b85ad72b9c8c4c93573aa4d7e7961bf6356fd11e7ddc8a43d8c3c",
             "etroc-optical.js": "c565469f4b750018548db7a439018109414c7a107b1d3194a485208498652b5d",
-            "etroc-review.js": "77798dc10fe9d21c11ea203d4fb435e056329ea0612cf8265669c12f3158b60f",
+            "etroc-review.js": "c616b8887e68044e747415ca9c088ce65a296bac107924600c3415cbbfb0bce9",
             "lgad-optical-stats.js": "e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02",
             "ETROC_MANIFEST_SHA256": "e3c74d49cf8aea3e7dc960c92937298a653cefa7ec72a3a5a3f4177183fa9471",
             "SERVER_PY_SHA256": "b5bb6c91d7eb46eabdeedacc43abb76696cd24ff724eb0023366c313df26e55d",
             "ETROC_REVIEWS_PY_SHA256": "65819646c5dde06f62efbfbe73bad224e27e9b8b6ae9c1c6808e162801dbc454",
-            "ETROC_POSITION_REVIEWS_PY_SHA256": "dff26825ad6e5d42df338be74b9781866b2a1b754215f7c2dab4f01cfdf970d1",
-            "DEPLOYMENT_MANIFEST_SHA256": "6f1bbc7e0e573f58d9e4dda4efa9c85b10ed6012ced2475e43be77476087ac05",
+            "ETROC_POSITION_REVIEWS_PY_SHA256": "16d7c1b90fc34984b454167c50bd57e18638c201a2eb400b489f02a55498ae32",
+            "DEPLOYMENT_MANIFEST_SHA256": "45a3a2266bcb4d18dcdb9949e5b55a00ed85f4f1e7494cebb87500b84bdbae30",
             "SERVICE_MANIFEST_SHA256": "84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c",
             "ROUTE_MANIFEST_SHA256": "23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43",
         }
@@ -771,6 +771,9 @@ measure_dashboard_headroom
             "CANDIDATE_LEGACY_COMMENTS_COMPAT PASS",
             "init_schema(candidate)",
             "etroc_reviews.validate_schema(db)",
+            "etroc_position_reviews.validate_schema(db)",
+            "value_field = 'label' if 'label' in columns else 'state' if 'state' in columns else None",
+            "position_review_version[0][:2] != (1, 2)",
             "PRAGMA foreign_key_check",
             "PRAGMA integrity_check",
             "OLD_RUNTIME_SERVER",
