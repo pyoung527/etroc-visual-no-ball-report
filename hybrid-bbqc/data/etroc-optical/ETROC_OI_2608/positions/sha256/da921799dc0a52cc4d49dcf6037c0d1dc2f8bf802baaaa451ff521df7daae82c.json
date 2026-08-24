@@ -1,0 +1,4365 @@
+{
+  "acquisition_id": "ETROC_OI_2608:W02G4-78:base",
+  "analysis_run_id": "ETROC_OI_2608:common-baseline-v0:pack1",
+  "clean_montage_sha256": "5c72f9b8896020a541f28919bf654ba65a78514635a7070a8474ca65001f0750",
+  "dataset_id": "ETROC_OI_2608",
+  "etroc_serial": "W02G4-78",
+  "geometry_version": "etroc-grid-16x16-v1",
+  "labelled_montage_sha256": "58ab3f51bbb73464cac52e8fcfb6574721081bd078b6a1f8dd8e40eac85b71cb",
+  "positions": [
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 0
+      },
+      "column": 0,
+      "position": 0,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "7203edd50adaaad7fa7f8a3b3b6625be81c0a8bd69f509eaeba2b755185e0171"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 0
+      },
+      "column": 1,
+      "position": 1,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "f794d6bcbcf75f448559031f2131e22c8671300921d9be0d85f6b8918d8c64c5"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 0
+      },
+      "column": 2,
+      "position": 2,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "c01524312073ca382c7b0d7263775d6fb3913292d6a2377a175513510d621f79"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 0
+      },
+      "column": 3,
+      "position": 3,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "53b80386a4a6b2b683ec93c4f74130d3e89f1db287b30ae5be35c38dc1ed7219"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 0
+      },
+      "column": 4,
+      "position": 4,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "feca855bb0dd2ae19cb8bf9ae8da5777380cb93a1f8a26fc725beb1640faf765"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 0
+      },
+      "column": 5,
+      "position": 5,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "8d238412597e0787f2ccf4c6b26de18c82eb2d92b91b583686a04be2fadc516e"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 0
+      },
+      "column": 6,
+      "position": 6,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "977dcf2828b215d353fcf8e0902dcc1f3d6ce9a2454f66a2836b88b5e5256e1b"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 0
+      },
+      "column": 7,
+      "position": 7,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "31a994271094b96bded2e53cc3b334acb1fa09fa0477ee376e5b6bf9aaf4c958"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 0
+      },
+      "column": 8,
+      "position": 8,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "a94d6ecbf062746edfc3b8703f79af17a8a69db8d9de1349a13e48c88f54554a"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 0
+      },
+      "column": 9,
+      "position": 9,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "bbc4f6ace7ebea449baaf3bfdc38b2b7488b29d103ed62653f0fe58877370898"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 0
+      },
+      "column": 10,
+      "position": 10,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "efb3794daea7888f9af56e589ee3518644b89165f131eedbfb9f74b7aea3ed58"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 0
+      },
+      "column": 11,
+      "position": 11,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "1dbd00b2b736ed545c3ad4c6dd5e5762a376634d5ba0d95aaee12b11f8ee3a40"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 0
+      },
+      "column": 12,
+      "position": 12,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "089895d15eee83706058f3cd831637b51f2bcda61609f2334e8ce144bb8ec83c"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 0
+      },
+      "column": 13,
+      "position": 13,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "572e690b7edcd2816cf8684ec1d990ab3f3089ac1d24eccf1b389672a0f4112a"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 0
+      },
+      "column": 14,
+      "position": 14,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "a7ea28dafe70a8b19af691fd4b6bebb525afd916890b90275934c6df316379a5"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 0
+      },
+      "column": 15,
+      "position": 15,
+      "review_target": false,
+      "row": 0,
+      "source_image_sha256": "268c9dae8b66c35a5ff0613b35158e5dbfc68a6c757878ea9987a9f3750fd02f"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 136
+      },
+      "column": 0,
+      "position": 16,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "a3ede4c1e1a1d40f3ef60c67618c8d0fc90d56c4d80e06514fdd5a55d9b4cfca"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 136
+      },
+      "column": 1,
+      "position": 17,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "3433f7a8e8b2eabe4707938f7f2577e786a7e496e8169c07bd38ab86c13fb1bf"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 136
+      },
+      "column": 2,
+      "position": 18,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "32531fc1db3227198b6e42dda1b71d020ac64149b37307aaf6c40f3302a4253a"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 136
+      },
+      "column": 3,
+      "position": 19,
+      "review_target": true,
+      "row": 1,
+      "source_image_sha256": "31596d5d57efc5e2caa6423bdeca505a0bcd5bab469cda3bcb8cfec5afb7d717"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 136
+      },
+      "column": 4,
+      "position": 20,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "77648e645323e352b43a2bc6435949a38fc29a49103898b736622f2a20f9cb2c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 136
+      },
+      "column": 5,
+      "position": 21,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "0f297809e6a1a3245ceb0d465579875d65a63af71ca9e6a4e4fb3a605b8bd1e2"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 136
+      },
+      "column": 6,
+      "position": 22,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "cb2daa1a189f59472ed21598827c5e6d8608c6f76ce33672e038d114b42eb4f2"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 136
+      },
+      "column": 7,
+      "position": 23,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "6b243a0fb4cfe0d262bb7fdfe2d4f6ab8fb017d9bc04ac3425241115092954e6"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 136
+      },
+      "column": 8,
+      "position": 24,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "46df35036e08a56895dd2e26c7f91f3b7a9295fd636571c28a4e010ff29e16e1"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 136
+      },
+      "column": 9,
+      "position": 25,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "5fd2c00e430977b12478d68b2fc6e9eb190d75e7f70a3a11ffa8811c7cd69294"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 136
+      },
+      "column": 10,
+      "position": 26,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "2df1de49489af7e31c277e9fd0bcb0eb1c5a33e3cc191202ce03a7ea6ecaea4f"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 136
+      },
+      "column": 11,
+      "position": 27,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "195a656080a6b501a6ba307710cd523d06e458490d2cbede94c14ae16783dd99"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 136
+      },
+      "column": 12,
+      "position": 28,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "c24f4d76978a7b2bf8c82b6b77272dc74d042a6eafe1a01db8ff5b1a5e387a8b"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 136
+      },
+      "column": 13,
+      "position": 29,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "914a87674345e829fcc4ca0e8bb7687e7e6e4c8a4b7065256fdb3766f2659f06"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 136
+      },
+      "column": 14,
+      "position": 30,
+      "review_target": false,
+      "row": 1,
+      "source_image_sha256": "0381acc65d321929a4ab613a27fb2d513adadbf30408b7a3e61651b175fbeba0"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 136
+      },
+      "column": 15,
+      "position": 31,
+      "review_target": true,
+      "row": 1,
+      "source_image_sha256": "b32b5d55d35e3586053b816ab8691945cd45e0d7284f6811c57a7c9c088f6f56"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 272
+      },
+      "column": 0,
+      "position": 32,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "a2d58cdfec8775b619fbcc919139815a3533e7c5d12036ce57539e01f33c7095"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 272
+      },
+      "column": 1,
+      "position": 33,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "6e968f7f63b851ce42e84137a1a36fc9ff4b658ae761e7e69dc71193dcca8da3"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 272
+      },
+      "column": 2,
+      "position": 34,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "7f5b617c312fa7d6b22e3e985749d2e1128bf85d1516b056638e6ae57e947bdf"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 272
+      },
+      "column": 3,
+      "position": 35,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "38789f1a247b1a9010eaa3d0d9c47b5fd331eaa380ec6a1e086bf00e2f703268"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 272
+      },
+      "column": 4,
+      "position": 36,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "c0ccf3de5ef00b984b3a918ed1509e2bf418f64924ecfa330340689576308047"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 272
+      },
+      "column": 5,
+      "position": 37,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "4f01fc648e584050c6712c1444890e82a6853f6e183e6d12c7381c30dd8f205a"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 272
+      },
+      "column": 6,
+      "position": 38,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "7c667101317f0f5bf3caec515c592748877260c3a0ceb24b2cc7ec8c6d903330"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 272
+      },
+      "column": 7,
+      "position": 39,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "fc566eb53c759ffd5210fce89086c49621a37e5036a5d6938f6347b472c9f576"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 272
+      },
+      "column": 8,
+      "position": 40,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "b49ba86cf4fd8e7d9f6ebc9185ab304664e7cb8986ed809b7fd60768a8a1290d"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 272
+      },
+      "column": 9,
+      "position": 41,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "6ede1d966d0f2824367fc04135f4d4ae0ffad4702b00e7ee25c2f1e3ef729c52"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 272
+      },
+      "column": 10,
+      "position": 42,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "45f76407f4d1ebcfe3cb848332f741b7c147132e1757862a9eaf8b20a3a4b667"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 272
+      },
+      "column": 11,
+      "position": 43,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "ee70f0dc261afa01c3fd925e1c318f6d546081663da271aacd680c159d96fe27"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 272
+      },
+      "column": 12,
+      "position": 44,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "466c15c64b63350d2a8f3886508bc6ef76b1f8c57ea065a9cf35fdaf56436e7c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 272
+      },
+      "column": 13,
+      "position": 45,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "4c9903e7bd9583f2f4c5f1656125c3c792917325cdea5f70127567960a558226"
+    },
+    {
+      "algorithm_category": "RED",
+      "algorithm_reason": "optical_no_ball",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 272
+      },
+      "column": 14,
+      "position": 46,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "e21b88f51836c78a4f2d598e9e62e3072cad84a4c9e1b2981a480558c6616e94"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 272
+      },
+      "column": 15,
+      "position": 47,
+      "review_target": false,
+      "row": 2,
+      "source_image_sha256": "bd414ee2272c69fd06a1a52ea446cf1d7a6ed9cf4eb03c401f017e180710c89c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 408
+      },
+      "column": 0,
+      "position": 48,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "3d6debc291f5eaa1e191a5bc643d6a5d782e19955a941a47dd43326014f34329"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 408
+      },
+      "column": 1,
+      "position": 49,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "fe6092850334448c4872f93a6af3b69ebb561d9dce5962dcd7db97e37dc706b0"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 408
+      },
+      "column": 2,
+      "position": 50,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "c960284519fd3aa699fee4f99bb241f0aeb8fa49ccc6b09cd5bbb83a0c47654b"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 408
+      },
+      "column": 3,
+      "position": 51,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "a97578efb515e3bd6945b254de8a7d77f610421d4bc34198f012d23ce8361b7b"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 408
+      },
+      "column": 4,
+      "position": 52,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "cdbfcc6957f9b234d2d7c6117ba0ac15ef56ccdbf192ac4ff9b179c40b52045d"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 408
+      },
+      "column": 5,
+      "position": 53,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "2bdd5786db3472a37e67cc815f8cc4c739218e6d61d7872c87bdbe20ed0ec035"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 408
+      },
+      "column": 6,
+      "position": 54,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "fdef21761d9a88a50a4f82f0d91836692efaa9edc1bcaf11ef8bb8314a29e6e9"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 408
+      },
+      "column": 7,
+      "position": 55,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "0d78509fbe67869136b3772a94db37dca76200bcbc1ea141222bb3545435bd8e"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 408
+      },
+      "column": 8,
+      "position": 56,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "7c03a699f42d552b2aa74fe414debfb028e8aa723c11e940998fa5204e95815e"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 408
+      },
+      "column": 9,
+      "position": 57,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "e1884daa27df2b20eec7e9ec109d90a95b6f97192215ed284791bd179c07868f"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 408
+      },
+      "column": 10,
+      "position": 58,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "5f92e5805f7a150911e1a79c2b4f276b76d38387a92f543ecc4e87908febf653"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 408
+      },
+      "column": 11,
+      "position": 59,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "fd22b2e73511391e007525766c5cf3890a7a61c21583141301475a75d28e2992"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 408
+      },
+      "column": 12,
+      "position": 60,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "2e513ef90e8c8b46117c339da015e38f67e842c6a16c47b98e59fcdf0bbe6cec"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 408
+      },
+      "column": 13,
+      "position": 61,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "9d9154e3b277d75a38206db69a3028e272030c709ae68aeb7c4ced34d26f410d"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 408
+      },
+      "column": 14,
+      "position": 62,
+      "review_target": false,
+      "row": 3,
+      "source_image_sha256": "cdb9239739142e73df6ae04f50d5c04f0502f9ad5782f5f463c894af12783d97"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 408
+      },
+      "column": 15,
+      "position": 63,
+      "review_target": true,
+      "row": 3,
+      "source_image_sha256": "24163c9011113a322065ac88027247eaa42fa7f2b4e405fb6fed880f27263021"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 544
+      },
+      "column": 0,
+      "position": 64,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "6ff9c137eb33dd199bca72ad4bfce01919e5a018f9a3bc1f94ee491968b842f7"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 544
+      },
+      "column": 1,
+      "position": 65,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "59d532e00c186f24e2d029b515af70136cb36b233393168e9fa38da20284fe97"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 544
+      },
+      "column": 2,
+      "position": 66,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "fcc357fe63f09da479d945211d0c82354dfe19315ea7f6c36f322cc932b7ad20"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 544
+      },
+      "column": 3,
+      "position": 67,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "350cfdf17a5f194fa023edc192f089cfa16398ccd720ad6e877faca9e7f20a81"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 544
+      },
+      "column": 4,
+      "position": 68,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "c38d209acd59cc3ad1e65a1454dffd6aa36c0b8c97bed2a23326c21e6df221c2"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 544
+      },
+      "column": 5,
+      "position": 69,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "adf4c6c893e8337ba4cfa9b3062ad06adb4590c06d3bf4da3fda9ff8395ee937"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 544
+      },
+      "column": 6,
+      "position": 70,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "acedfb2a4ebb26a3eb8670bdc1aa0bc07c1b929e31090455c908205cea7420ec"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 544
+      },
+      "column": 7,
+      "position": 71,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "df50253677f45ad842403b20bda5471e1af0907252c4ea18b187eafd299b3384"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 544
+      },
+      "column": 8,
+      "position": 72,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "da2c8f7445494b584fcca44bfa8b6e92e3f6348e8fce10f9f149011c4969b31b"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 544
+      },
+      "column": 9,
+      "position": 73,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "c0e808ef67e85ba82546fa9abd3365abdd28c4d575e76e2f8c44b666f6031940"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 544
+      },
+      "column": 10,
+      "position": 74,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "efa1a82bb5c099639d69713a6c130ff6d3cd3af367fd8bddb8e9622d69202978"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 544
+      },
+      "column": 11,
+      "position": 75,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "c670705a1e02d8e9bc5a26897c936161fed0629d5d63c2495605ca5150a24cd3"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 544
+      },
+      "column": 12,
+      "position": 76,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "eb878a7c3077e2059411281785cffdd35dd7a5ccba4bd3ecac49dd7add31abf6"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 544
+      },
+      "column": 13,
+      "position": 77,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "90929fa4176ba20bb8c0dbb0da85aba98550d2e286df65ae0a871d7244ba70ed"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 544
+      },
+      "column": 14,
+      "position": 78,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "098870451015981e82771d75dcd8e562e07b6e2511df2d4392a46d7327137197"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 544
+      },
+      "column": 15,
+      "position": 79,
+      "review_target": false,
+      "row": 4,
+      "source_image_sha256": "547476f1b354d86f0c224fd4b65582d736de3817a374027292e6f001eaa7903f"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 680
+      },
+      "column": 0,
+      "position": 80,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "770ae8af193efda3c50622ed3fb6676f84d84b417164dd3dce5eccfefefab9d6"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 680
+      },
+      "column": 1,
+      "position": 81,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "8e231d0aee2be8a4968ba509116d770c6ded03580961268e4e0a7a885d97da9a"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 680
+      },
+      "column": 2,
+      "position": 82,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "4275c18151cddf463352e9504cd1528ca777ed5fa986b75115a1745303801983"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 680
+      },
+      "column": 3,
+      "position": 83,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "1cf0e2b335bd120203ee37666c8581e5f8996d476bae7097fc6772abf415be28"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 680
+      },
+      "column": 4,
+      "position": 84,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "695aa88792d50e33b1fca7a059df4e2d707fbdd2b8d8017508af3b8b2323cddb"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 680
+      },
+      "column": 5,
+      "position": 85,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "6a67c23c9aa0637a57f075e3d2ff6090cc7980dd537f8391acb1358d70a61e46"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 680
+      },
+      "column": 6,
+      "position": 86,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "4e76da328c8296b93c93d971e89ed70daa4fd90cc2eacf68e4dd8fb9f72dcd77"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 680
+      },
+      "column": 7,
+      "position": 87,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "9fedcbd99be81c30fbd16f935fe6eecc51f6394c7eef69d02ad3db47aea96492"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 680
+      },
+      "column": 8,
+      "position": 88,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "1e7c585188ab2e89ab7e51b3d3fa983a366ec11d683d6073f83535ddae6fce49"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 680
+      },
+      "column": 9,
+      "position": 89,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "4a7e63db913aa4e782db0a4a3dd9604fc968eeb8891cccea1914eea8146621bc"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 680
+      },
+      "column": 10,
+      "position": 90,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "0893a46e97f4774f88a6a66efc9c0f07308d0b6d658a2ace336e46fd21852895"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 680
+      },
+      "column": 11,
+      "position": 91,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "66cbbc2a37a0eec790ed2e5f98bab0b5bb1f3260950599982a61efd341a41240"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 680
+      },
+      "column": 12,
+      "position": 92,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "6a274a87786d0577c0664ddedab6bbcfa223daa464d7420714751e2e289a6d6f"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 680
+      },
+      "column": 13,
+      "position": 93,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "30d8091011f673e807ee098e85d743ff1e4b5b39a03a567baa895c555881942b"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 680
+      },
+      "column": 14,
+      "position": 94,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "828363000abbcb7b2d5dd1cf0566020334ddb30c969c8b43abbdd38f46d3a475"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 680
+      },
+      "column": 15,
+      "position": 95,
+      "review_target": false,
+      "row": 5,
+      "source_image_sha256": "365b76387801359df611317fa2bfc062390f0a4506975d022c12b4f131fdeac1"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 816
+      },
+      "column": 0,
+      "position": 96,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "e79b2239cd08eeb5bb1b49e32d99536392d2d00b458bfb0b5d16afc87cc8003d"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 816
+      },
+      "column": 1,
+      "position": 97,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "5269989638ddf566fc8a3b0163520787e8f23406bb58b88484e0ea092aa4891e"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 816
+      },
+      "column": 2,
+      "position": 98,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "6b2bb7d29168c408511b0fd534d918dc3af8f57719929df6ef9adf2cf19e1816"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 816
+      },
+      "column": 3,
+      "position": 99,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "12b7859f7f1a82947c4ed18c3084df12c081b7edd3fdab4e2bd1584e9fb5c82d"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 816
+      },
+      "column": 4,
+      "position": 100,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "22cea8691e6bef892d8f145b6733c2f74db087d9567eab980e466ab96fb65818"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 816
+      },
+      "column": 5,
+      "position": 101,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "672a5df3521b72923e8d15c18fe81208a3eb6d9ecb1d36a256fb5bf673964af4"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 816
+      },
+      "column": 6,
+      "position": 102,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "e2de5b43e3a4b8f1704a522fbe2c12e19ca5bc403b10580563bb6376b4e2da6f"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 816
+      },
+      "column": 7,
+      "position": 103,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "b37dfeab1c7ce212d445fcf420c90685e03507437849826ea31b228eb4595ea6"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 816
+      },
+      "column": 8,
+      "position": 104,
+      "review_target": true,
+      "row": 6,
+      "source_image_sha256": "13db4f281026c5b5265cf9f5e220c0f7b4331008007278c486a2be68119413ce"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 816
+      },
+      "column": 9,
+      "position": 105,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "03567fe47fc29d88e844c54a178b0759367a6719c915b3001e1caa83c52fe517"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 816
+      },
+      "column": 10,
+      "position": 106,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "a4ccd91016da5359414695cb0dd766c9b38e5e043df30ace5b7cdb1e9f3caad9"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 816
+      },
+      "column": 11,
+      "position": 107,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "396c302557dc6edff311884945e758dd8163d0c2f3493cac83f512245b5e69d4"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 816
+      },
+      "column": 12,
+      "position": 108,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "79d1651aeb29ab05e07ed4612f11e90213a5ad02191e2c69e3fa2f8a2e421da0"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 816
+      },
+      "column": 13,
+      "position": 109,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "404a2e2cc40dadde08b2b94be7d797c89c5fd85323a2b4e700ca6bc524af9ece"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 816
+      },
+      "column": 14,
+      "position": 110,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "5dd1f831fb8a45ceaa31eb359eae08400b84d925e94d5a3510c4e7bc855be810"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 816
+      },
+      "column": 15,
+      "position": 111,
+      "review_target": false,
+      "row": 6,
+      "source_image_sha256": "98741e6db936b797542b41c97de478586ac824c888c6c4deb16acde770ab638a"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 952
+      },
+      "column": 0,
+      "position": 112,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "37c8fca2723e632f43f2779563120a936e6ddd06686312a4687cc606b2c7dc45"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 952
+      },
+      "column": 1,
+      "position": 113,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "e307a9c4879600ce7306dc558d591a5bcccf799e3ceb8b05f6ba3a6b93340ea4"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 952
+      },
+      "column": 2,
+      "position": 114,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "b7d28d053c396173dab2a268f24993932d35c374085f6a0312f9389417c279db"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 952
+      },
+      "column": 3,
+      "position": 115,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "6ce2a56afd8ee1be9dea6c47066c92483f9cfef761cb7e5ea7a872bc51f20b65"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 952
+      },
+      "column": 4,
+      "position": 116,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "9890a0a919726f5f99754691fe7e936b8f9e3204a71a255adafb95fa24c2a03b"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 952
+      },
+      "column": 5,
+      "position": 117,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "90521517d8757438e23274a83989b5db42ea9b9126855a437f64ca60223e4db8"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "misalignment",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 952
+      },
+      "column": 6,
+      "position": 118,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "199db96740d4dac2fc21c2a778c026814f88cab60722394733e9b3093002068d"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 952
+      },
+      "column": 7,
+      "position": 119,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "f44f436798c61af1e6ec77188255504d5268532fb91579617498dafd5069af96"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 952
+      },
+      "column": 8,
+      "position": 120,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "da2ed8defe1fadced1d5dada8cdf923f058930a097dc0bfafb3cfb02eac3b290"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 952
+      },
+      "column": 9,
+      "position": 121,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "3580a0e02ffbcbd7830cac136c6d198cf97ff34be1018cd4999c1731407b9cbf"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 952
+      },
+      "column": 10,
+      "position": 122,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "87f416f9041798b029b75068f256b6fd946e98819c32def24d7bcf748d839ec9"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 952
+      },
+      "column": 11,
+      "position": 123,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "950d5286c1fb8149606a4604dbadb04db0e9b18ef47e9f9ffe8e1699d0273086"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 952
+      },
+      "column": 12,
+      "position": 124,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "bed6ebc9386464d1ed638ae9d0af86024d930e39f5fa6d753fce1286bc17130c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 952
+      },
+      "column": 13,
+      "position": 125,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "cca776cf0547a8e838565157a620447cc7cf3ead622035df1fa636b55fb9f223"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 952
+      },
+      "column": 14,
+      "position": 126,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "f3a5d9093df7ba9a824e92932ea19b2a76d93bb9558051a6c71a563f6aaeed88"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 952
+      },
+      "column": 15,
+      "position": 127,
+      "review_target": false,
+      "row": 7,
+      "source_image_sha256": "996cec7f88c1bc44c528e5e0597dfedd5686aa078c71a85d91506bc080087ea7"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 1088
+      },
+      "column": 0,
+      "position": 128,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "22a45e826db4a03e4e2e01e940cea3ce21f04c5ad33dbf35f5d8e2a60188efd7"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 1088
+      },
+      "column": 1,
+      "position": 129,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "e787233139d8c2a8fb37e1caea43f4a43f21b160ccdedb2c9d80b6c448aaa34f"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 1088
+      },
+      "column": 2,
+      "position": 130,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "ae79a73c7723529254a529d4a5033723b2473e8473e5fa92c8efe08043baadc3"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 1088
+      },
+      "column": 3,
+      "position": 131,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "d1eee9cb65c1f32f2482298faf8fdaa08391549c1dea6d041966e75c4f1ed1b1"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 1088
+      },
+      "column": 4,
+      "position": 132,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "ad992b24f5b5517c6ed8509aa0c783f6db78b8f32a9de31dc1be699d58d7e730"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 1088
+      },
+      "column": 5,
+      "position": 133,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "c9668fad578895a4699acf530d8d2fac34ee6ddafc32028af9c10c892abe74a4"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 1088
+      },
+      "column": 6,
+      "position": 134,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "ca9b7106416495e0dfbf30c1677bcfc55dc3f81c0b822ff0d420a3519a847fc7"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 1088
+      },
+      "column": 7,
+      "position": 135,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "df74a77731825018c333172e31fc81fde37f2f30be2388cf9b6ed43e00e0ac15"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 1088
+      },
+      "column": 8,
+      "position": 136,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "0b1331900ec790c6de24cead19c386f259aff2c549aa3839f8b8fefe3d254f0d"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 1088
+      },
+      "column": 9,
+      "position": 137,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "4240ccb1ce3a31f299725fa5b8c51a68958425264be12919f931f21e491476f9"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "misalignment",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 1088
+      },
+      "column": 10,
+      "position": 138,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "97fcf7a8d0b31121c01bf2d64d4bb8110b6a86d545b07269de04882b7f409dfa"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 1088
+      },
+      "column": 11,
+      "position": 139,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "4b7fc9de29dfc81c14fdb4cfddca6c8a9205f13227f9023010286070aac094cb"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 1088
+      },
+      "column": 12,
+      "position": 140,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "adf7fd0733909902d556c66d410d81ae7a5e9ec70b54b91864571046c380d344"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 1088
+      },
+      "column": 13,
+      "position": 141,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "7ecc6d7098be289d3fafe9727ad2ef8dab22eabd4ca516c362701e0122aadd8c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 1088
+      },
+      "column": 14,
+      "position": 142,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "9a81947d1fc0aa3f2d26b68de75ce39831287b06007eec0e48a4503539a45302"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 1088
+      },
+      "column": 15,
+      "position": 143,
+      "review_target": false,
+      "row": 8,
+      "source_image_sha256": "7b7c02d518d3305e7928ef7059ddd534c1d3a90b74bc8b7899b50346e6d61342"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 1224
+      },
+      "column": 0,
+      "position": 144,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "92bfa35e26608caf15625f338f878155d37408a7206ff00486c586371956f2e5"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 1224
+      },
+      "column": 1,
+      "position": 145,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "1e1a5e62182e360727615a763e480ca3b32e87c5034e94933022e295e0219672"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 1224
+      },
+      "column": 2,
+      "position": 146,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "dbff500b00648f6b12242018d592625395057f054acf6d2a06bde02b52b0fd7b"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 1224
+      },
+      "column": 3,
+      "position": 147,
+      "review_target": true,
+      "row": 9,
+      "source_image_sha256": "fdace76fe848989a10f65166a79875704f888ab60fd11d9a3c909958563b6c45"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 1224
+      },
+      "column": 4,
+      "position": 148,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "0fa4b9b3a49b8c8be6be5125ebbdb730ac1c6bf8b0cc7d907d479f30eb410cb9"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 1224
+      },
+      "column": 5,
+      "position": 149,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "23bc372c28411ed24b64697178b2b2eee6f822e447e6aaa29d00bac1fe8a81e3"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 1224
+      },
+      "column": 6,
+      "position": 150,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "48c5b666d52be58e9b67da2a99897682dd37539261f6636dd85602a504ef0fcd"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 1224
+      },
+      "column": 7,
+      "position": 151,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "2c1fcbda7ddb3b9ac54a94f5c7491c0d82400452c151a93b46c974ccd1d39342"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 1224
+      },
+      "column": 8,
+      "position": 152,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "b7c86bfdfa608881b97e384396e6a1430131edd7b89d108719f0e2d798912372"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 1224
+      },
+      "column": 9,
+      "position": 153,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "8e858490f826b4fae1c9f38640fede04153c8199832cad4a8bcd00ea78061055"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 1224
+      },
+      "column": 10,
+      "position": 154,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "23d0232ac4d2f90115617ae64381f3b090c406c0a4bf01e9502c601e656e8493"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 1224
+      },
+      "column": 11,
+      "position": 155,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "1171d72fff7d0df18dc2a03afb99bc02a19e2f538952cfff7ee31e345f2fb6ae"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 1224
+      },
+      "column": 12,
+      "position": 156,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "e72587518437add0faa33ff1d26c197e21551f1e7546f6bc68e5fa6d66174096"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 1224
+      },
+      "column": 13,
+      "position": 157,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "77047dc7c2114fc82e4402ef2426abbe15c2f359a6f52a23a6746af7ee1c8f74"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 1224
+      },
+      "column": 14,
+      "position": 158,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "0ebfd900065eef01b3a57e71e17fa6d55bc9edf40a145aa94d5d2760a32a8771"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 1224
+      },
+      "column": 15,
+      "position": 159,
+      "review_target": false,
+      "row": 9,
+      "source_image_sha256": "25640ec4f5d86ea9562ba539f2e06b51c531dec946d9022e7dcc69f0ac217938"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 1360
+      },
+      "column": 0,
+      "position": 160,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "a4cd6170ededb38aab4516c2b796591d34775f77922c00d223f7db724c96378c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 1360
+      },
+      "column": 1,
+      "position": 161,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "7a5b4f21689e545386afdc0e3f8b48192f50d8471675c5b3ab1ac8dca6d7f6b4"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 1360
+      },
+      "column": 2,
+      "position": 162,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "0caf36c9aa1f97b9cc6bdca5b72b15294468f5ca6346653f889a027bc91ffde6"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 1360
+      },
+      "column": 3,
+      "position": 163,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "f347a293c415ca3474c9c70ef77c79fdd6634a9b4fa3930b1456efe6a888abf1"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 1360
+      },
+      "column": 4,
+      "position": 164,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "bc0a3a8e4295bbc31407e99477dcbe159d2d025bb4307a5b0549729fa6b506d9"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 1360
+      },
+      "column": 5,
+      "position": 165,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "9456a145fa315b7ddd0df030224c94eb86f69e256fe4d336915527d67862bf51"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 1360
+      },
+      "column": 6,
+      "position": 166,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "c22fe43d897e8c26e1051c8ae6591bdf2ac7438e9828def544262be62f538d38"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 1360
+      },
+      "column": 7,
+      "position": 167,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "ab321e011a80f25884d2a0aedc9bac4f49deff290d23d64cd9fa58a32baf6f32"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 1360
+      },
+      "column": 8,
+      "position": 168,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "c6a41385c1c42f6a19d8e612805a117a74176097fe068fa1a55ffaab51b2ef6c"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 1360
+      },
+      "column": 9,
+      "position": 169,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "ae37d3f80ca66937bc93837d65bbcfa008924fb4f0df82ba5e2e40c81c6f1393"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 1360
+      },
+      "column": 10,
+      "position": 170,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "39ff82d42232d3d581ad017b5ef6208e1d377c6155137a66088a5693b5918e1e"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 1360
+      },
+      "column": 11,
+      "position": 171,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "375a35e13d582b6690a2bc1c736fbf698fcd9ae5a1239a4f5ddbbcbdab59a163"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 1360
+      },
+      "column": 12,
+      "position": 172,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "ee1de24500507e3bf7e6d9fe62acc89b99f016b8dcde7081417820baaead47fb"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 1360
+      },
+      "column": 13,
+      "position": 173,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "984fdf78fc3cd116fb1999303e3cfeed4762f91731e4f102e6317a21742512fa"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 1360
+      },
+      "column": 14,
+      "position": 174,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "68e303e33f44355c698222af91cadfaa096265806a1493b5aae4551d98f699c8"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 1360
+      },
+      "column": 15,
+      "position": 175,
+      "review_target": false,
+      "row": 10,
+      "source_image_sha256": "9c8590c5b0fdfaa82a04422e85bde2cf60dc6ce9ab03bda7dd2453b3999900f7"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 1496
+      },
+      "column": 0,
+      "position": 176,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "2e06acc8ea1e88e58438021fd35e0b43f5f0e070c5e6c8e567a867ce07b916eb"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 1496
+      },
+      "column": 1,
+      "position": 177,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "dcce27ebe32ab62ec530e4b9e832046930117fc3348135ac60594c9d5303e76a"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 1496
+      },
+      "column": 2,
+      "position": 178,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "fe8a2ee9784cc2204e3653265ce7f55ebd541f1856ceeb34d705354a96374ed4"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 1496
+      },
+      "column": 3,
+      "position": 179,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "79683909e44a592d87e300051425cdbbe123ddffd8accb3ebbc637d45d3e932e"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 1496
+      },
+      "column": 4,
+      "position": 180,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "abc1fe47643589431aaf91122d7830b8ba084d48c9dd87a2d2b40685cf28301c"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 1496
+      },
+      "column": 5,
+      "position": 181,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "bc96f6a1a7b9370bd00b12acfb678542afb8323ea47ef01e076a4eed98193741"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 1496
+      },
+      "column": 6,
+      "position": 182,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "5fa11650c261fe772bfbab1b5a08ce36acfd822f3bf22b94c8fc69c7bfa64ea0"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 1496
+      },
+      "column": 7,
+      "position": 183,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "afe71fac1bcf43d2bbf90129dbe9a853af89128643e4cf4c99f87a6ceb80b062"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 1496
+      },
+      "column": 8,
+      "position": 184,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "45b5eb9e66ba45cec929a26ad4c07807d53de3873a5af9952104152456b896ad"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 1496
+      },
+      "column": 9,
+      "position": 185,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "b4d451ea97da5ef50d4bbc4959e20f4d176894a40c793133ddf71322b64eb81a"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 1496
+      },
+      "column": 10,
+      "position": 186,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "ddf2276b23a0db0b6d5f1058ce747434a2a68b3974e2b87ec963568f8fc65495"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 1496
+      },
+      "column": 11,
+      "position": 187,
+      "review_target": true,
+      "row": 11,
+      "source_image_sha256": "be34ec8701f94b5ff211278e3c0570b9adf31356015bf5c5433f4ee19d42f88c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 1496
+      },
+      "column": 12,
+      "position": 188,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "1ea217e8e7561ee28882d464dd9ddbec51ea9e13a555799da479d18c85f99af6"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 1496
+      },
+      "column": 13,
+      "position": 189,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "32c0281ef6c2649360914ea8950052641efe07012a24bd746a4a4a8eb1441bac"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 1496
+      },
+      "column": 14,
+      "position": 190,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "98107d72f7eee16d4d143777b449f8269204cac3937bf0abeccd0095a1971639"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 1496
+      },
+      "column": 15,
+      "position": 191,
+      "review_target": false,
+      "row": 11,
+      "source_image_sha256": "c02f65401fb4e200734fd1cc97bbfc43034bd54d058f3e7beb7908943c800c32"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 1632
+      },
+      "column": 0,
+      "position": 192,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "306b0bff14d7fc146f933fb25cb83f3fcfd73dc83eb633b54eb2d060323853d0"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 1632
+      },
+      "column": 1,
+      "position": 193,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "7736c4ea0fc1754977af21290b9c6d47d358a8df2438669f9c5dc3cec75bd4cd"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 1632
+      },
+      "column": 2,
+      "position": 194,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "dc18d1e765fc2230ec53e921edb5108581623611e4ffd75a4ce245c398fb6d2e"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 1632
+      },
+      "column": 3,
+      "position": 195,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "ad0c22d4afe0d02c8b851dc74331f6a8dd87b673d123c599c63fc654548ba6ae"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 1632
+      },
+      "column": 4,
+      "position": 196,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "8a7019f7bd61e4d6a740ed31e5f9b2939190b430f48adc1efcb9bf813dd0d839"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 1632
+      },
+      "column": 5,
+      "position": 197,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "05f5ae0c36c69e0c87d385c2ca7df318926fa401fdf921e1eacd836db69eee9e"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 1632
+      },
+      "column": 6,
+      "position": 198,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "516a9c8ef04ecb503896d814b7c426b5521403a50a388c1e74c0a51bbdb4c383"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 1632
+      },
+      "column": 7,
+      "position": 199,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "e2ae2edc0cb61bf8860c912e86bbd505fe1c597132c904d7d57ebab946058cc8"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 1632
+      },
+      "column": 8,
+      "position": 200,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "59932b22e882bd4990407887b166000d2434caaec3d58ec124226b3627c0af11"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 1632
+      },
+      "column": 9,
+      "position": 201,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "9b2b029288fa8f9d4771b8014c9ac10890737f5b70b71135fadfd86145076a66"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 1632
+      },
+      "column": 10,
+      "position": 202,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "e71189e85ce65fc38ac50296f076041256fe7b74dcd95a80d21e9c24911b57b4"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 1632
+      },
+      "column": 11,
+      "position": 203,
+      "review_target": true,
+      "row": 12,
+      "source_image_sha256": "affac331c6521f6902fb65f5e4af641c6452c36dbefa7a8bafc2b01502474d47"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 1632
+      },
+      "column": 12,
+      "position": 204,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "5b4d08b8bc87e586b47a12b01e84db7619389358db1e38500b7c9a457b0eaf32"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 1632
+      },
+      "column": 13,
+      "position": 205,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "471557518e638cc1ea1c02fd88cfdeda3e7b475728282df8cf917e66e2210608"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 1632
+      },
+      "column": 14,
+      "position": 206,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "5bb52a4f0846ec89ae495ba7e4b6208f64da5ae93ca5bed6bbb85a72ed3c25e8"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 1632
+      },
+      "column": 15,
+      "position": 207,
+      "review_target": false,
+      "row": 12,
+      "source_image_sha256": "c9f3ac69603de3297ea06c3bf371f95c5288f05bce0d9cb8c49119182721ea27"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 1768
+      },
+      "column": 0,
+      "position": 208,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "801bc70b392ca8db6dc399fbb6eaf43b08d468b6037d204fe2e8f246ad164f2d"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 1768
+      },
+      "column": 1,
+      "position": 209,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "26a927fe6114cf65132cf42ff6663e1cc90baab474ef1292c58997c965ba62cd"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 1768
+      },
+      "column": 2,
+      "position": 210,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "641a951319317bae63efd953115a9113fcb01849c7db2b228e9ced475adf25c0"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 1768
+      },
+      "column": 3,
+      "position": 211,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "c63964f6509461b838586d33176cbebdd719720689bab69bc0260177bed4474f"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 1768
+      },
+      "column": 4,
+      "position": 212,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "8c6e5db369ee77974025dc96c153dbfbaee70b106f99b0caeb92978a44ff3943"
+    },
+    {
+      "algorithm_category": "YELLOW",
+      "algorithm_reason": "shape_defect",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 1768
+      },
+      "column": 5,
+      "position": 213,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "c8a5906c565c4d4e6ec720830ea99672be8d05daa543f17292a106ef3c79167d"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 1768
+      },
+      "column": 6,
+      "position": 214,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "3b95d49363958042f4e8a84612230252054d50d93b72a128fa1e9ac825fcf282"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 1768
+      },
+      "column": 7,
+      "position": 215,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "28e6c593ac9c675314afb463cf94bc0af088dc2b08c2f6fbdcece446a734472c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 1768
+      },
+      "column": 8,
+      "position": 216,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "23410c9d7cb40d3a8502aff8ac903e044d92128af24992cdffb33fd7a90f55b9"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 1768
+      },
+      "column": 9,
+      "position": 217,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "9ec37d906ae4f265200199fdee127f57179172fed1aac5ac1df8e1858738ba8a"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 1768
+      },
+      "column": 10,
+      "position": 218,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "d0fb99cf7d4f5f23acf9cd3ba03994ced4d08a20fad695f865c0045f999dbe1a"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 1768
+      },
+      "column": 11,
+      "position": 219,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "9ba92e66f7b91ab2684ed49dcbf1dbf80b482b6d2c26142d420075e51ecadb89"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 1768
+      },
+      "column": 12,
+      "position": 220,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "60b61f0453d102bd0b110bd2aed0105b712b58cd9b44529965efc95cbf2c1e8d"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 1768
+      },
+      "column": 13,
+      "position": 221,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "009cbc308b3f00c166ee8d90a130434ac03faa7a5fd2ec70e497f37d77b922bb"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 1768
+      },
+      "column": 14,
+      "position": 222,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "30e58862af8eaca3aacb9fd5812ab491ebd25e3610b5f9470eba41c3f279563e"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 1768
+      },
+      "column": 15,
+      "position": 223,
+      "review_target": false,
+      "row": 13,
+      "source_image_sha256": "1d5aed4a3b8a2faffb7bd8cd8c31854dd3988adebcf930c523b23abd52ea1632"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 1904
+      },
+      "column": 0,
+      "position": 224,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "b178a25108ad09b279c500a9b9b6214618c264654fa1ead0b5af36e7e63def86"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 1904
+      },
+      "column": 1,
+      "position": 225,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "8c1d67a89702d123911b093794ab7f0c82f2ed413533bb06853f4f75bae35202"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 1904
+      },
+      "column": 2,
+      "position": 226,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "f51fad7c215412dab09dce3ac9663e7e0d1bb89db3e5c2205e95fc0b8157e3ab"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 1904
+      },
+      "column": 3,
+      "position": 227,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "d0f24f1e5bf7ec8c880265a4021e59a7a1992c991afca6f2656ecb06377c26f1"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 1904
+      },
+      "column": 4,
+      "position": 228,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "ca6416a98cfc690178b1c24e413c1c6273b94fbf661823a71cfc0381a853caba"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 1904
+      },
+      "column": 5,
+      "position": 229,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "3ab77f6b08df930447b9b330f3a5308de6abd6c4820aaf0e87fe705e29434326"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 1904
+      },
+      "column": 6,
+      "position": 230,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "4609475cb6327e36af728b047b9cd6e3fad3f7c3fc91128ef56196c0f65cc16e"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 1904
+      },
+      "column": 7,
+      "position": 231,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "f9c13617e76d3ed05fd79e71b5f359e70152e8fe69f16a0544cb1f6e8ab40211"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 1904
+      },
+      "column": 8,
+      "position": 232,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "64cc8c46e8895538b25ae73b7c0917cebfdedc394305460d55ca787590c27153"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 1904
+      },
+      "column": 9,
+      "position": 233,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "134bab8f0767b5744b833c39ef87675a41a9110b376c27edead7f22b5eb195b4"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 1904
+      },
+      "column": 10,
+      "position": 234,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "3cce06406162c2a3fc519f4989657910770b29bd38db42206212b26f4c6356f9"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 1904
+      },
+      "column": 11,
+      "position": 235,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "08f8b2e81d656493efee6fd46261bdd6338c704721ff9029c5beebc3cb331a83"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 1904
+      },
+      "column": 12,
+      "position": 236,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "df3e22a7c38c5699e6905a4efaa6eb12b29595d4011ceb791cf7359002376788"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 1904
+      },
+      "column": 13,
+      "position": 237,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "c583ea4518eb09938d492acc5108fac4caca105f67873c6bf83ba99683816477"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 1904
+      },
+      "column": 14,
+      "position": 238,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "17c25f344e0ad8e3958c335bb2c70a133406c184b7a1f0d66fd1bee0608717fa"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 1904
+      },
+      "column": 15,
+      "position": 239,
+      "review_target": false,
+      "row": 14,
+      "source_image_sha256": "1692c0001c6d1ca92ba2f30aaf3bc5bcef07a15f2a887ed970dc0a69246ce04c"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 0,
+        "y": 2040
+      },
+      "column": 0,
+      "position": 240,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "07466aa78869d69f892617a8cb31c4a6399c079a1939c2d0ce35a8d70b6e60a1"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 150,
+        "y": 2040
+      },
+      "column": 1,
+      "position": 241,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "cca405ee70c0c163dd8fc7850dcaf061405ad383ca3ab3be63c2e09e696052f6"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 300,
+        "y": 2040
+      },
+      "column": 2,
+      "position": 242,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "00192db7000163ca8976803180ef69747b956784b90dfc05f259c36ef063e377"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 450,
+        "y": 2040
+      },
+      "column": 3,
+      "position": 243,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "2a95625aabba873180f38406021c22c6d430fd0ec9ba0cd00585ed0ff3a628a3"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 600,
+        "y": 2040
+      },
+      "column": 4,
+      "position": 244,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "a7745debf8769078a6c4e18477ba94a2f43c61eddecacd37d1267994fc3d2070"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 750,
+        "y": 2040
+      },
+      "column": 5,
+      "position": 245,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "12dd8ccf2aa1ff372a1c2430d2cd09bb51da094270393d3f06365f2f5c411dac"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 900,
+        "y": 2040
+      },
+      "column": 6,
+      "position": 246,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "86ac2f91dc415b26ef3a67e10a754175095cdcc5b315b7ac4b922f01ea70d89c"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1050,
+        "y": 2040
+      },
+      "column": 7,
+      "position": 247,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "a9f66d33debfc7cfd29a314d0c19f2fab3a11708c6857188133be203c324ba2a"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1200,
+        "y": 2040
+      },
+      "column": 8,
+      "position": 248,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "5b45a72b41ad0299b7809a31cecd4874c8b472e2dcad5b4700a84ba04f25f2a3"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1350,
+        "y": 2040
+      },
+      "column": 9,
+      "position": 249,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "6226706aeafe90adf132daa4c0a9dd16319fa0e7ee8ab906be507567f01d55ac"
+    },
+    {
+      "algorithm_category": "BLUE",
+      "algorithm_reason": "height_out_of_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1500,
+        "y": 2040
+      },
+      "column": 10,
+      "position": 250,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "27ea4dd2a5fdf700f4d6efa0122cf7076c2a452435e5e81be8b5cf982c8594db"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1650,
+        "y": 2040
+      },
+      "column": 11,
+      "position": 251,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "ab8807acb62b03a5e82efdcfb86e80519d52a5105c2e945048686169bf2cc0cc"
+    },
+    {
+      "algorithm_category": "NEED_INSPECT",
+      "algorithm_reason": "height_no_ball_but_optical_present",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1800,
+        "y": 2040
+      },
+      "column": 12,
+      "position": 252,
+      "review_target": true,
+      "row": 15,
+      "source_image_sha256": "cecf0aaa9a71079de28bceca4435d5a3f31e16f888d22862b410b5156dab82bd"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 1950,
+        "y": 2040
+      },
+      "column": 13,
+      "position": 253,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "5028b0b0da97fb87c15cd36eff785e6fb1d52a2b174274d7ce605dde00428caf"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2100,
+        "y": 2040
+      },
+      "column": 14,
+      "position": 254,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "a1d656800a637540a2cc38682562c38530297141fb1a4349613948a76fbbe7f1"
+    },
+    {
+      "algorithm_category": "GREEN",
+      "algorithm_reason": "height_in_spec",
+      "cell": {
+        "height": 136,
+        "image_height": 120,
+        "image_y": 16,
+        "width": 150,
+        "x": 2250,
+        "y": 2040
+      },
+      "column": 15,
+      "position": 255,
+      "review_target": false,
+      "row": 15,
+      "source_image_sha256": "7b0a3d49d4690f64aa6d9e4616d2a4f0e481a403e3a2117eb517b71ce258d5b4"
+    }
+  ],
+  "review_target_count": 8,
+  "schema_version": "1.0"
+}

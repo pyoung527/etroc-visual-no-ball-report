@@ -165,6 +165,71 @@ class EtrocOpticalPoolTests(unittest.TestCase):
             self.assertTrue(montage.is_file(), montage)
             self.assertEqual(hashlib.sha256(montage.read_bytes()).hexdigest(), row["montage_sha256"])
 
+    def test_clean_montages_and_position_publications_are_exact_and_content_addressed(self):
+        payload = self.load_pool()
+        self.assertEqual(payload["position_geometry_version"], "etroc-grid-16x16-v1")
+        self.assertEqual(payload["position_review_target_count"], 82)
+        seen_positions = set()
+        target_count = 0
+        for record in payload["records"]:
+            self.assertRegex(record["clean_montage_sha256"], r"^[0-9a-f]{64}$")
+            self.assertEqual(record["clean_montage_uri"], f"clean-montages/sha256/{record['clean_montage_sha256']}.jpg")
+            clean = DATASET / record["clean_montage_uri"]
+            self.assertTrue(clean.is_file(), clean)
+            self.assertEqual(hashlib.sha256(clean.read_bytes()).hexdigest(), record["clean_montage_sha256"])
+            self.assertEqual(clean.stat().st_size, record["clean_montage_size_bytes"])
+            with Image.open(clean) as image:
+                self.assertEqual(image.size, (2400, 2176))
+                self.assertEqual(image.mode, "RGB")
+                self.assertEqual(image.info.get("progressive"), 1)
+            self.assertRegex(record["position_publication_sha256"], r"^[0-9a-f]{64}$")
+            self.assertEqual(record["position_publication_uri"], f"positions/sha256/{record['position_publication_sha256']}.json")
+            position_file = DATASET / record["position_publication_uri"]
+            self.assertTrue(position_file.is_file(), position_file)
+            raw = position_file.read_bytes()
+            self.assertEqual(hashlib.sha256(raw).hexdigest(), record["position_publication_sha256"])
+            document = json.loads(raw)
+            self.assertEqual(document["schema_version"], "1.0")
+            self.assertEqual(document["geometry_version"], "etroc-grid-16x16-v1")
+            self.assertEqual(document["dataset_id"], "ETROC_OI_2608")
+            self.assertEqual(document["etroc_serial"], record["etroc_serial"])
+            self.assertEqual(document["acquisition_id"], record["acquisition_id"])
+            self.assertEqual(document["analysis_run_id"], record["analysis_run_id"])
+            self.assertEqual(document["labelled_montage_sha256"], record["montage_sha256"])
+            self.assertEqual(document["clean_montage_sha256"], record["clean_montage_sha256"])
+            self.assertEqual(len(document["positions"]), 256)
+            self.assertEqual(document["review_target_count"], record["position_review_target_count"])
+            for expected_position, position in enumerate(document["positions"]):
+                self.assertEqual(position["position"], expected_position)
+                self.assertEqual(position["row"], expected_position // 16)
+                self.assertEqual(position["column"], expected_position % 16)
+                self.assertRegex(position["source_image_sha256"], r"^[0-9a-f]{64}$")
+                self.assertEqual(position["review_target"], position["algorithm_category"] == "NEED_INSPECT")
+                self.assertEqual(position["cell"], {
+                    "x": (expected_position % 16) * 150,
+                    "y": (expected_position // 16) * 136,
+                    "width": 150,
+                    "height": 136,
+                    "image_y": 16,
+                    "image_height": 120,
+                })
+                key = (record["etroc_serial"], expected_position)
+                self.assertNotIn(key, seen_positions)
+                seen_positions.add(key)
+                target_count += int(position["review_target"])
+        self.assertEqual(len(seen_positions), 9216)
+        self.assertEqual(target_count, 82)
+
+    def test_clean_publication_preserves_existing_labelled_montage_bytes(self):
+        payload = self.load_pool()
+        expected = {
+            row["etroc_serial"]: (row["montage_sha256"], hashlib.sha256((DATASET / row["montage_uri"]).read_bytes()).hexdigest())
+            for row in payload["records"]
+        }
+        self.assertEqual(len(expected), 36)
+        self.assertTrue(all(metadata == (metadata[0], metadata[0]) for metadata in expected.values()))
+        self.assertTrue(all(row["clean_montage_sha256"] != row["montage_sha256"] for row in payload["records"]))
+
     def test_dataset_checksum_manifest_is_complete_and_exact(self):
         entries = {}
         for line in CHECKSUMS.read_text(encoding="utf-8").splitlines():
@@ -196,7 +261,7 @@ class EtrocOpticalPoolTests(unittest.TestCase):
         self.assertTrue(all(row["analysis_run_id"].startswith("ETROC_OI_2608:common-baseline-v0:") for row in records))
         self.assertTrue(all(len(row["source_montage_sha256"]) == 64 for row in records))
         asset_bytes = sum(path.stat().st_size for path in DATASET.rglob("*") if path.is_file())
-        self.assertLess(asset_bytes, 90 * 1024 * 1024)
+        self.assertLess(asset_bytes, 180 * 1024 * 1024)
 
     def test_optical_tab_loads_pool_without_changing_hybrid_inventory(self):
         html = INDEX.read_text(encoding="utf-8")
