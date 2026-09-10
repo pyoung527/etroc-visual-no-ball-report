@@ -634,14 +634,14 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='742be964df275a63ebd541d453d346f86034c19b'",
+            "SOURCE_REVISION='2e9feb504f9b2aae9b3084b0369c2ff0d832bb77'",
             script,
         )
         expected = {
-            "index.html": "f2c97ef0ea2bd3eaf974ede7c5a1cccd1922e1846fda0039a29ef2a51e7ae90b",
+            "index.html": "abd95a9290c35facbdd7374e0c89ecb33e7e5c95e742ef0f592cefba1d354682",
             "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
             "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
-            "etroc-optical.css": "8fb6b8dbfc2e02bb6c03c055689a5c7e2568d1633e6792c0f1d3930af667d40a",
+            "etroc-optical.css": "6d3b4d331e83e4efdd0e668c05bb3271c3f7a8cbf6be960f25fbbee16f46bf0b",
             "etroc-optical.js": "37c4d11b74bc3f4c706f74ab377d4c3e307c2cf1aae2795ce70b3695f252f496",
             "etroc-review.js": "13472e47c1f54f3efceb24662f6015a3d15441fc339788ffce2fb8a8117eaa1b",
             "lgad-optical-stats.js": "e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02",
