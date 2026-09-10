@@ -234,75 +234,6 @@
     return { runCount: runs.length, runs };
   }
 
-  function renderSummary(records) {
-    const summary = element("section", "etroc-pool-summary");
-    summary.setAttribute("aria-label", "ETROC_OI_2608 dataset summary");
-    [
-      ["ETROCs", records.length],
-      ["Positions", records.reduce((total, record) => total + record.position_count, 0).toLocaleString()],
-      ["Coverage", "256 / 256 each"],
-      ["Review state", "Pending"],
-    ].forEach(([label, value]) => {
-      const metric = element("div", "etroc-pool-metric");
-      metric.append(element("span", "", label), element("strong", "", value));
-      summary.append(metric);
-    });
-    return summary;
-  }
-
-  function renderCard(record) {
-    const card = element("a", "etroc-pool-card");
-    card.href = safeAssetUri(record.montage_uri, "montage");
-    card.target = "_blank";
-    card.rel = "noopener";
-    card.dataset.etrocSerial = record.etroc_serial;
-
-    const image = document.createElement("img");
-    image.loading = "lazy";
-    image.src = safeAssetUri(record.preview_uri, "preview");
-    image.alt = `${record.etroc_serial} pre-bonding optical inspection montage preview`;
-    image.width = 720;
-    image.height = 653;
-
-    const body = element("div", "etroc-pool-card-body");
-    const heading = element("div", "etroc-pool-card-heading");
-    heading.append(
-      element("strong", "", record.etroc_serial),
-      element("span", "etroc-pool-badge", "Exploratory")
-    );
-    const coverage = element("span", "", `${record.position_count}/256 positions · review pending`);
-    const candidates = element(
-      "em",
-      "",
-      `${record.red_candidate_count} red candidate · ${record.needs_inspection_count} needs inspection · ${record.optical_no_ball_candidate_count} optical no-ball candidate`
-    );
-    const warning = element("small", "", "Algorithmic screening only — not a confirmed QC disposition");
-    body.append(heading, coverage, candidates, warning);
-    card.append(image, body);
-    return card;
-  }
-
-  function render(records) {
-    const fragment = document.createDocumentFragment();
-    fragment.append(renderSummary(records));
-    EXPECTED_WAFERS.forEach((expected, wafer) => {
-      const group = element("section", "etroc-pool-group");
-      const heading = element("div", "wafer");
-      heading.append(
-        element("h3", "", wafer),
-        element("span", "", `${expected} ETROCs · ETROC_OI_2608 exploratory montages`)
-      );
-      const grid = element("div", "etroc-pool-grid");
-      records.filter((record) => record.wafer === wafer).forEach((record) => grid.append(renderCard(record)));
-      group.append(heading, grid);
-      fragment.append(group);
-    });
-    root.replaceChildren(fragment);
-    root.setAttribute("aria-busy", "false");
-    status.textContent = "ETROC_OI_2608 loaded: 36 ETROCs · 9,216 positions · review pending";
-    status.classList.add("loaded");
-  }
-
   const CATEGORY_SPECS = [
     ["green", "Green", "green"],
     ["blue", "Blue", "blue"],
@@ -515,8 +446,8 @@
 
   function initStatistics(records, payload) {
     if (!statsRoot || !statsStatus) return;
-    const waferFilter = statsRoot.querySelector("[data-etroc-wafer-filter]");
-    const search = statsRoot.querySelector("[data-etroc-search]");
+    const waferFilter = statsRoot.querySelector("[data-etroc-original-wafer-filter]");
+    const search = statsRoot.querySelector("[data-etroc-original-search]");
     const filterState = statsRoot.querySelector("[data-etroc-filter-state]");
     const provenanceNode = statsRoot.querySelector("[data-etroc-provenance]");
     if (!waferFilter || !search || !filterState || !provenanceNode) throw new Error("ETROC statistics controls or provenance region are unavailable");
@@ -525,13 +456,7 @@
       const visible = selectRecords(records, waferFilter.value, search.value);
       const summary = renderStatistics(visible);
       filterState.textContent = `${visible.length} / ${records.length} ETROCs · ${summary.positionCount.toLocaleString("en-US")} positions`;
-      const visibleSerials = new Set(visible.map((record) => record.etroc_serial));
-      root.querySelectorAll(".etroc-pool-card").forEach((card) => {
-        card.classList.toggle("filter-hidden", !visibleSerials.has(card.dataset.etrocSerial));
-      });
-      root.querySelectorAll(".etroc-pool-group").forEach((group) => {
-        group.classList.toggle("filter-hidden", !group.querySelector(".etroc-pool-card:not(.filter-hidden)"));
-      });
+
     }
 
     initStatisticsTableSorting(apply);
@@ -542,7 +467,7 @@
     const provenance = summarizeProvenance(records);
     const config = payload.analysis_config_sha256.slice(0, 12);
     const runLabels = provenance.runs.map(({ analysisRunId, recordCount }) => `${analysisRunId.split(":").at(-1)} ${recordCount}`);
-    statsStatus.textContent = `ETROC_OI_2608 · ${provenance.runCount} immutable analysis runs · config ${config}… · exploratory review pending`;
+    statsStatus.textContent = `ETROC_OI_2608 · ${provenance.runCount} immutable analysis runs · config ${config}… · original algorithm snapshot`;
     provenanceNode.textContent = `Immutable analysis-run distribution: ${runLabels.join(" · ")}. Created ${payload.analysis_created_at_utc}; config SHA-256 ${payload.analysis_config_sha256}.`;
     statsStatus.classList.add("loaded");
   }
@@ -568,7 +493,6 @@
     })
     .then(async (bytes) => {
       const { payload, records, publicationSha256 } = await parseVerifiedPublication(bytes);
-      render(records);
       initStatistics(records, payload);
       globalThis.dispatchEvent(new CustomEvent("etroc-optical-publication", { detail: { bytes, records, publicationSha256 } }));
     })
@@ -581,6 +505,7 @@
       status.textContent = "ETROC optical dataset unavailable";
       status.classList.add("failed");
       renderStatisticsFailure();
+      globalThis.dispatchEvent(new CustomEvent("etroc-optical-unavailable"));
       console.error("ETROC optical pool load failed", error);
     });
 })();

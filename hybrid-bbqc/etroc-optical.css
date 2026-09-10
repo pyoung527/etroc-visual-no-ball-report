@@ -619,3 +619,42 @@
     transition: none;
   }
 }
+
+/* Result-first presentation: evidence stays immutable; only overlays are live. */
+.etroc-results button, .etroc-result-card button, .etroc-original-evidence > summary {
+  min-height: 44px; cursor: pointer;
+}
+.etroc-results button, .etroc-result-card button {
+  padding: 8px 12px; border: 1px solid #b8cbbf; border-radius: 8px;
+  color: #104b3a; background: #fffdf8; font: inherit; font-weight: 700;
+}
+.etroc-results :focus-visible, .etroc-result-card :focus-visible, .etroc-original-evidence > summary:focus-visible {
+  outline: 3px solid #22684e; outline-offset: 3px;
+}
+.etroc-result-montage { position: relative; background: #111; aspect-ratio: 2400 / 2176; }
+.etroc-result-montage img { display: block; width: 100%; height: auto; }
+.etroc-effective-overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
+.etroc-effective-overlay text { paint-order: stroke; stroke: #111; stroke-width: 2px; font-family: monospace; }
+.etroc-result-card { text-decoration: none; color: #18201d; }
+.etroc-result-card h3 { margin: 0 0 10px; color: #104b3a; }
+.etroc-result-card p { margin: 8px 0; font-size: 13px; }
+.etroc-result-card .etroc-pool-card-body { display: block; }
+.etroc-result-categories { display: flex; flex-wrap: wrap; gap: 7px; }
+.etroc-result-category { display: inline-block; padding: 5px 8px; border-radius: 6px; font-size: 13px; font-weight: 750; border: 1px solid currentColor; }
+.etroc-result-category.green { background: #e6f3ee; color: #164d36; }
+.etroc-result-category.blue { background: #e8f1fd; color: #174b7d; }
+.etroc-result-category.yellow { background: #fff4cc; color: #674c00; }
+.etroc-result-category.red { background: #ffe7e8; color: #942433; }
+.etroc-result-category.pending { background: #f1f1f1; color: #414141; border-style: dashed; }
+.etroc-result-legend { color: #4c5650; font-size: 13px; }
+.etroc-original-evidence { margin: 16px 0; padding: 10px 14px; border: 1px solid #d5ddd7; border-radius: 10px; overflow-wrap: anywhere; }
+.etroc-original-evidence > summary { display: list-item; align-content: center; font-weight: 700; color: #104b3a; }
+.etroc-original-evidence a { color: #164f3b; }
+.etroc-result-card .etroc-original-evidence { margin-bottom: 0; }
+[data-etroc-results-status].failed { color: #942433; }
+.position-cell.pending-label { stroke: #fff; stroke-width: 5px; stroke-dasharray: 9 5; fill: rgba(255,255,255,.08); }
+@media (max-width: 640px) {
+  .etroc-results .optical-analytics-toolbar > label { flex: 1 1 100%; min-width: 0; }
+  .etroc-results .optical-analytics-toolbar input, .etroc-results .optical-analytics-toolbar select { box-sizing: border-box; width: 100%; }
+  .etroc-results .optical-analytics-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}

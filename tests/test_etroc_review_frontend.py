@@ -331,7 +331,7 @@ if (c.positionOpenMode({review_target:false},null) !== "inspection") process.exi
 
     def test_workspace_markup_and_safe_dom_contract(self):
         html = INDEX.read_text(encoding="utf-8")
-        workspace = html[html.index('<section id="etroc-review-workspace"'):html.index('<h2 class="etroc-legacy-boundary"')]
+        workspace = html[html.index('<section id="etroc-review-workspace"'):html.index('<details class="etroc-original-evidence etroc-legacy-boundary"')]
         script = SCRIPT.read_text(encoding="utf-8") if SCRIPT.exists() else ""
         for required in (
             'role="dialog"', 'aria-modal="true"', 'aria-labelledby="etroc-review-title"',

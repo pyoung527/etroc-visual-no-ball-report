@@ -598,6 +598,50 @@ def completion_summary(db_path: Path, evidence: PositionEvidenceSet) -> dict[str
     }
 
 
+def results_summary(db_path: Path, evidence: PositionEvidenceSet) -> dict[str, object]:
+    """Bounded current labels from one read snapshot, never history or review notes.
+
+    Algorithm/geometry evidence was validated by load_evidence. Current human
+    labels use the exact immutable position key, just like the detail API.
+    """
+    results: dict[str, dict[str, object]] = {}
+    with sqlite3.connect(f"{Path(db_path).resolve().as_uri()}?mode=ro", uri=True) as db:
+        db.execute("BEGIN")
+        validate_schema(db)
+        db.row_factory = sqlite3.Row
+        for acquisition_id, acquisition in evidence.by_acquisition.items():
+            reviews = {}
+            for position, record in acquisition.positions.items():
+                if not record.review_target:
+                    continue
+                current = _current(db, record)
+                if current is not None:
+                    if current["label"] not in HUMAN_LABELS or type(current["current_event_id"]) is not int or current["current_event_id"] <= 0:
+                        raise ValueError("invalid current position review")
+                    reviews[str(position)] = {
+                        "label": current["label"], "current_event_id": current["current_event_id"],
+                    }
+            results[acquisition_id] = {
+                **_completion(acquisition, reviews),
+                "analysis_run_id": acquisition.analysis_run_id,
+                "labelled_montage_sha256": acquisition.labelled_montage_sha256,
+                "clean_montage_sha256": acquisition.clean_montage_sha256,
+                "position_publication_sha256": acquisition.position_publication_sha256,
+                "geometry_version": acquisition.geometry_version,
+                "algorithm_labels": [acquisition.positions[position].algorithm_category for position in range(256)],
+                "human_labels": reviews,
+            }
+    return {
+        "dataset_id": evidence.dataset_id,
+        "publication_sha256": evidence.publication_sha256,
+        "record_count": len(results),
+        "position_count": sum(len(item.positions) for item in evidence.by_acquisition.values()),
+        "target_count": sum(item["target_count"] for item in results.values()),
+        "reviewed_target_count": sum(item["reviewed_target_count"] for item in results.values()),
+        "results": results,
+    }
+
+
 def history(db_path: Path, evidence: PositionEvidenceSet, acquisition_id: str, position: int) -> ServiceResult:
     acquisition = evidence.by_acquisition.get(acquisition_id)
     record = acquisition.positions.get(position) if acquisition is not None else None
