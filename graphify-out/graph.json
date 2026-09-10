@@ -3005,9 +3005,9 @@
       "file_type": "rationale",
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L602",
-      "id": "etroc_position_reviews_rationale_602",
       "community": 3,
-      "norm_label": "bounded current labels from one read snapshot, never history or review notes."
+      "norm_label": "bounded current labels from one read snapshot, never history or review notes.",
+      "id": "etroc_position_reviews_rationale_602"
     },
     {
       "label": "validate_build_provenance.py",
@@ -3311,18 +3311,18 @@
       "file_type": "rationale",
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L1",
-      "id": "test_etroc_results_rationale_1",
       "community": 3,
-      "norm_label": "post-review aggregate: real immutable evidence and temporary review stores only."
+      "norm_label": "post-review aggregate: real immutable evidence and temporary review stores only.",
+      "id": "test_etroc_results_rationale_1"
     },
     {
       "label": "Explicitly test-only fixture; append legitimate events, never edit production DB",
       "file_type": "rationale",
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L13",
-      "id": "test_etroc_results_rationale_13",
       "community": 3,
-      "norm_label": "explicitly test-only fixture; append legitimate events, never edit production db"
+      "norm_label": "explicitly test-only fixture; append legitimate events, never edit production db",
+      "id": "test_etroc_results_rationale_13"
     },
     {
       "label": "test_tab_local_dashboards.py",
@@ -5327,9 +5327,9 @@
       "file_type": "rationale",
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L1",
-      "id": "test_etroc_results_release_rationale_1",
       "community": 3,
-      "norm_label": "release closure for the result-first etroc entry document."
+      "norm_label": "release closure for the result-first etroc entry document.",
+      "id": "test_etroc_results_release_rationale_1"
     },
     {
       "label": "test_apply_comment_concordance.py",
@@ -5480,9 +5480,9 @@
       "file_type": "rationale",
       "source_file": "tests/test_etroc_postreview_regressions.py",
       "source_location": "L1",
-      "id": "test_etroc_postreview_regressions_rationale_1",
       "community": 21,
-      "norm_label": "behavioral regressions for the post-review save/readback ui boundary."
+      "norm_label": "behavioral regressions for the post-review save/readback ui boundary.",
+      "id": "test_etroc_postreview_regressions_rationale_1"
     },
     {
       "label": "test_hybrid_registry.py",
@@ -8913,8 +8913,8 @@
       "source_file": "hybrid-bbqc/etroc-optical.js",
       "source_location": "L465",
       "weight": 1.0,
-      "_src": "etroc_optical_initstatistics",
-      "_tgt": "etroc_results_apply",
+      "_src": "etroc_results_apply",
+      "_tgt": "etroc_optical_initstatistics",
       "source": "etroc_results_apply",
       "target": "etroc_optical_initstatistics"
     },
@@ -16761,8 +16761,8 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L31",
       "weight": 1.0,
-      "_src": "test_etroc_results_setupclass",
-      "_tgt": "etroc_position_reviews_load_evidence",
+      "_src": "etroc_position_reviews_load_evidence",
+      "_tgt": "test_etroc_results_setupclass",
       "source": "etroc_position_reviews_load_evidence",
       "target": "test_etroc_results_setupclass"
     },
@@ -16809,8 +16809,8 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L32",
       "weight": 1.0,
-      "_src": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
-      "_tgt": "etroc_position_reviews_load_evidence",
+      "_src": "etroc_position_reviews_load_evidence",
+      "_tgt": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
       "source": "etroc_position_reviews_load_evidence",
       "target": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial"
     },
@@ -16821,8 +16821,8 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L13",
       "weight": 1.0,
-      "_src": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
-      "_tgt": "etroc_position_reviews_load_evidence",
+      "_src": "etroc_position_reviews_load_evidence",
+      "_tgt": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
       "source": "etroc_position_reviews_load_evidence",
       "target": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed"
     },
@@ -17001,8 +17001,8 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L36",
       "weight": 1.0,
-      "_src": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence",
-      "_tgt": "etroc_position_reviews_init_schema",
+      "_src": "etroc_position_reviews_init_schema",
+      "_tgt": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence",
       "source": "etroc_position_reviews_init_schema",
       "target": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence"
     },
@@ -17013,8 +17013,8 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L68",
       "weight": 1.0,
-      "_src": "test_etroc_results_resultservicetests_test_missing_or_malformed_store_never_returns_zero_completion",
-      "_tgt": "etroc_position_reviews_init_schema",
+      "_src": "etroc_position_reviews_init_schema",
+      "_tgt": "test_etroc_results_resultservicetests_test_missing_or_malformed_store_never_returns_zero_completion",
       "source": "etroc_position_reviews_init_schema",
       "target": "test_etroc_results_resultservicetests_test_missing_or_malformed_store_never_returns_zero_completion"
     },
@@ -17121,8 +17121,8 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L34",
       "weight": 1.0,
-      "_src": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
-      "_tgt": "etroc_position_reviews_init_schema",
+      "_src": "etroc_position_reviews_init_schema",
+      "_tgt": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
       "source": "etroc_position_reviews_init_schema",
       "target": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial"
     },
@@ -17133,8 +17133,8 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L17",
       "weight": 1.0,
-      "_src": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
-      "_tgt": "etroc_position_reviews_init_schema",
+      "_src": "etroc_position_reviews_init_schema",
+      "_tgt": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
       "source": "etroc_position_reviews_init_schema",
       "target": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed"
     },
@@ -17289,8 +17289,8 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L36",
       "weight": 1.0,
-      "_src": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
-      "_tgt": "etroc_position_reviews_completion_summary",
+      "_src": "etroc_position_reviews_completion_summary",
+      "_tgt": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
       "source": "etroc_position_reviews_completion_summary",
       "target": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial"
     },
@@ -17313,8 +17313,8 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L37",
       "weight": 1.0,
-      "_src": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence",
-      "_tgt": "etroc_position_reviews_results_summary",
+      "_src": "etroc_position_reviews_results_summary",
+      "_tgt": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence",
       "source": "etroc_position_reviews_results_summary",
       "target": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence"
     },
@@ -17325,8 +17325,8 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L67",
       "weight": 1.0,
-      "_src": "test_etroc_results_resultservicetests_test_missing_or_malformed_store_never_returns_zero_completion",
-      "_tgt": "etroc_position_reviews_results_summary",
+      "_src": "etroc_position_reviews_results_summary",
+      "_tgt": "test_etroc_results_resultservicetests_test_missing_or_malformed_store_never_returns_zero_completion",
       "source": "etroc_position_reviews_results_summary",
       "target": "test_etroc_results_resultservicetests_test_missing_or_malformed_store_never_returns_zero_completion"
     },
@@ -17337,8 +17337,8 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L35",
       "weight": 1.0,
-      "_src": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
-      "_tgt": "etroc_position_reviews_results_summary",
+      "_src": "etroc_position_reviews_results_summary",
+      "_tgt": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
       "source": "etroc_position_reviews_results_summary",
       "target": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial"
     },
@@ -17349,8 +17349,8 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L18",
       "weight": 1.0,
-      "_src": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
-      "_tgt": "etroc_position_reviews_results_summary",
+      "_src": "etroc_position_reviews_results_summary",
+      "_tgt": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
       "source": "etroc_position_reviews_results_summary",
       "target": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed"
     },
@@ -17421,8 +17421,8 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L21",
       "weight": 1.0,
-      "_src": "test_etroc_results_seed_reviews",
-      "_tgt": "etroc_position_reviews_append",
+      "_src": "etroc_position_reviews_append",
+      "_tgt": "test_etroc_results_seed_reviews",
       "source": "etroc_position_reviews_append",
       "target": "test_etroc_results_seed_reviews"
     },
@@ -17433,8 +17433,8 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L54",
       "weight": 1.0,
-      "_src": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence",
-      "_tgt": "etroc_position_reviews_append",
+      "_src": "etroc_position_reviews_append",
+      "_tgt": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence",
       "source": "etroc_position_reviews_append",
       "target": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence"
     },
@@ -18261,8 +18261,8 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L19",
       "weight": 1.0,
-      "_src": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
-      "_tgt": "test_etroc_results_seed_reviews",
+      "_src": "test_etroc_results_seed_reviews",
+      "_tgt": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
       "source": "test_etroc_results_seed_reviews",
       "target": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed"
     },
@@ -18298,9 +18298,9 @@
       "weight": 0.8,
       "_src": "test_etroc_results_resultservicetests",
       "_tgt": "test_etroc_position_reviews_positionapitests",
+      "confidence_score": 0.5,
       "source": "test_etroc_results_resultservicetests",
-      "target": "test_etroc_position_reviews_positionapitests",
-      "confidence_score": 0.5
+      "target": "test_etroc_position_reviews_positionapitests"
     },
     {
       "relation": "calls",
@@ -18346,9 +18346,9 @@
       "weight": 0.8,
       "_src": "test_etroc_results_resultapitests",
       "_tgt": "test_etroc_position_reviews_positionapitests",
+      "confidence_score": 0.5,
       "source": "test_etroc_results_resultapitests",
-      "target": "test_etroc_position_reviews_positionapitests",
-      "confidence_score": 0.5
+      "target": "test_etroc_position_reviews_positionapitests"
     },
     {
       "relation": "calls",
@@ -18370,9 +18370,9 @@
       "weight": 0.8,
       "_src": "test_etroc_results_rationale_1",
       "_tgt": "test_etroc_position_reviews_positionapitests",
+      "confidence_score": 0.5,
       "source": "test_etroc_results_rationale_1",
-      "target": "test_etroc_position_reviews_positionapitests",
-      "confidence_score": 0.5
+      "target": "test_etroc_position_reviews_positionapitests"
     },
     {
       "relation": "uses",
@@ -18382,9 +18382,9 @@
       "weight": 0.8,
       "_src": "test_etroc_results_rationale_13",
       "_tgt": "test_etroc_position_reviews_positionapitests",
+      "confidence_score": 0.5,
       "source": "test_etroc_results_rationale_13",
-      "target": "test_etroc_position_reviews_positionapitests",
-      "confidence_score": 0.5
+      "target": "test_etroc_position_reviews_positionapitests"
     },
     {
       "relation": "contains",
@@ -20577,8 +20577,8 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L31",
       "weight": 1.0,
-      "_src": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
-      "_tgt": "test_etroc_position_reviews_load_module",
+      "_src": "test_etroc_position_reviews_load_module",
+      "_tgt": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
       "source": "test_etroc_position_reviews_load_module",
       "target": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial"
     },
@@ -20589,8 +20589,8 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L12",
       "weight": 1.0,
-      "_src": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
-      "_tgt": "test_etroc_position_reviews_load_module",
+      "_src": "test_etroc_position_reviews_load_module",
+      "_tgt": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
       "source": "test_etroc_position_reviews_load_module",
       "target": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed"
     },

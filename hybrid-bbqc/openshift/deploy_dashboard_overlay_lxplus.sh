@@ -4,19 +4,20 @@ umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 CANDIDATE_HOST_PYTHON='/usr/bin/python3.12'
 
-SOURCE_REVISION='58e6cf3283169e3e515b8b397fb2d728a9355a05'
+SOURCE_REVISION='aa2647fdbfa700f32ad59c00793499f8522eb67e'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
-INDEX_SHA256='75db811ce0dfbe3ea8bc7056672072c8db9d5a312f1c605edabdb5d48953827d'
+INDEX_SHA256='a792f17d26f7ffcadbe726f91a498b2f3e6edbe0096e3ae6f1a156a3a4773862'
 CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
 JS_SHA256='317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644'
-ETROC_CSS_SHA256='91ad0bbb50dd31f73925d3ae8d10a1c6033b442149f2fe115df0420ad5a33aa9'
-ETROC_JS_SHA256='ac5107a94416e68730d5ba635235eeee1ffcde232fd4fa5eb79dd1446ca85ded'
-ETROC_REVIEW_JS_SHA256='d289d45617b14005f89f9a27f976576ba278e3c16889649be2707e50c055c263'
+ETROC_CSS_SHA256='93428e2d9ed16df85490f404147ef34353f42e1ee8ebe52f8a89aacf5d2e299b'
+ETROC_JS_SHA256='37c4d11b74bc3f4c706f74ab377d4c3e307c2cf1aae2795ce70b3695f252f496'
+ETROC_REVIEW_JS_SHA256='13472e47c1f54f3efceb24662f6015a3d15441fc339788ffce2fb8a8117eaa1b'
+ETROC_RESULTS_JS_SHA256='355084803e7f99f499efdd11a594a41cc9d213c717274c38762bb5742140db53'
 LGAD_STATS_JS_SHA256='e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02'
 ETROC_MANIFEST_SHA256='4860c04dbd5c2fd4a750150443dcab7385aa71067d68f86b1cf6b30f3f62b50b'
-SERVER_PY_SHA256='948ed1eeced31c533fe5d794911f2b9bc97290e22bf07b02e27376a534c3378e'
+SERVER_PY_SHA256='d6bb2e7f7c1b82e1f3743e972fecbb53e493b8f4be6623dde57ae4e7379baa36'
 ETROC_REVIEWS_PY_SHA256='1bbe25926481d38350e9138d509bf7fdc68b09874ce88d5bcc2ee534e15a1fa3'
-ETROC_POSITION_REVIEWS_PY_SHA256='f8fd0c88777dd845f32e7c0c33fe7ff3cb7570703277076dff975bfce6fc7132'
+ETROC_POSITION_REVIEWS_PY_SHA256='592714d659b85f3e38dd36bea69de891afd0929bf1326d03654c72c09460bdb2'
 DEPLOYMENT_MANIFEST_SHA256='45a3a2266bcb4d18dcdb9949e5b55a00ed85f4f1e7494cebb87500b84bdbae30'
 SERVICE_MANIFEST_SHA256='84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c'
 ROUTE_MANIFEST_SHA256='23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43'
@@ -1814,7 +1815,7 @@ assert_etroc_snapshot "$ETROC_EVENT_SNAPSHOT_BEFORE" "$ETROC_EVENT_SNAPSHOT_BACK
 assert_etroc_snapshot "$POSITION_EVENT_SNAPSHOT_BEFORE" "$POSITION_EVENT_SNAPSHOT_BACKUP"
 
 mkdir -p "${BUILD_CONTEXT}/hybrid-bbqc" "${BUILD_CONTEXT}/overlay" "${BUILD_CONTEXT}/runtime" "${BUILD_CONTEXT}/overlay/${ETROC_DATASET_REL}"
-for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js etroc-review.js lgad-optical-stats.js; do
+for file in index.html dashboard.css dashboard.js etroc-optical.css etroc-optical.js etroc-review.js etroc-results.js lgad-optical-stats.js; do
   download "${RAW_ROOT}/hybrid-bbqc/${file}" "${BUILD_CONTEXT}/overlay/${file}"
 done
 download "${RAW_ROOT}/hybrid-bbqc/server.py" "${BUILD_CONTEXT}/runtime/server.py"
@@ -1860,6 +1861,7 @@ done < "${DATASET_DIR}/SHA256SUMS"
   printf '%s  %s\n' "$ETROC_CSS_SHA256" etroc-optical.css >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_JS_SHA256" etroc-optical.js >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_REVIEW_JS_SHA256" etroc-review.js >> SHA256SUMS
+  printf '%s  %s\n' "$ETROC_RESULTS_JS_SHA256" etroc-results.js >> SHA256SUMS
   printf '%s  %s\n' "$LGAD_STATS_JS_SHA256" lgad-optical-stats.js >> SHA256SUMS
   printf '%s  %s\n' "$ETROC_MANIFEST_SHA256" "${ETROC_DATASET_REL}/SHA256SUMS" >> SHA256SUMS
   sha256sum -c SHA256SUMS
@@ -2333,6 +2335,7 @@ REMOTE_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/da
 REMOTE_ETROC_CSS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.css | cut -d' ' -f1)"
 REMOTE_ETROC_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-optical.js | cut -d' ' -f1)"
 REMOTE_ETROC_REVIEW_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-review.js | cut -d' ' -f1)"
+REMOTE_ETROC_RESULTS_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc-results.js | cut -d' ' -f1)"
 REMOTE_LGAD_STATS_JS_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/lgad-optical-stats.js | cut -d' ' -f1)"
 REMOTE_SERVER_PY_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/server.py | cut -d' ' -f1)"
 REMOTE_ETROC_REVIEWS_PY_SHA="$(oc -n "$PROJECT" exec "$POD" -c web -- sha256sum /app/static/etroc_reviews.py | cut -d' ' -f1)"
@@ -2344,6 +2347,7 @@ test "$REMOTE_JS_SHA" = "$JS_SHA256"
 test "$REMOTE_ETROC_CSS_SHA" = "$ETROC_CSS_SHA256"
 test "$REMOTE_ETROC_JS_SHA" = "$ETROC_JS_SHA256"
 test "$REMOTE_ETROC_REVIEW_JS_SHA" = "$ETROC_REVIEW_JS_SHA256"
+test "$REMOTE_ETROC_RESULTS_JS_SHA" = "$ETROC_RESULTS_JS_SHA256"
 test "$REMOTE_LGAD_STATS_JS_SHA" = "$LGAD_STATS_JS_SHA256"
 test "$REMOTE_SERVER_PY_SHA" = "$SERVER_PY_SHA256"
 test "$REMOTE_ETROC_REVIEWS_PY_SHA" = "$ETROC_REVIEWS_PY_SHA256"
@@ -2417,6 +2421,7 @@ PY
 oc -n "$PROJECT" exec -i "$POD" -c web -- env \
   INDEX_SHA256="$INDEX_SHA256" ETROC_CSS_SHA256="$ETROC_CSS_SHA256" \
   ETROC_JS_SHA256="$ETROC_JS_SHA256" ETROC_REVIEW_JS_SHA256="$ETROC_REVIEW_JS_SHA256" \
+  ETROC_RESULTS_JS_SHA256="$ETROC_RESULTS_JS_SHA256" \
   LGAD_STATS_JS_SHA256="$LGAD_STATS_JS_SHA256" python - <<'PY'
 import hashlib, json, os
 import urllib.request
@@ -2437,6 +2442,7 @@ for path, expected_sha256 in (
     ('etroc-optical.js', os.environ['ETROC_JS_SHA256']),
     ('etroc-optical.css', os.environ['ETROC_CSS_SHA256']),
     ('etroc-review.js', os.environ['ETROC_REVIEW_JS_SHA256']),
+    ('etroc-results.js', os.environ['ETROC_RESULTS_JS_SHA256']),
     ('lgad-optical-stats.js', os.environ['LGAD_STATS_JS_SHA256']),
 ):
     actual = hashlib.sha256(fetch(path)).hexdigest()
@@ -2581,6 +2587,29 @@ if (completion.get('record_count') != 36 or completion.get('target_count') != 82
         or completion['completion'].get(record['acquisition_id'], {}).get('status') != summary['completion_status']):
     raise SystemExit('ETROC completion runtime evidence mismatch')
 print(f"ETROC_COMPLETION_RUNTIME_CONTRACT PASS records={completion['record_count']} reviewed_targets={completion['reviewed_target_count']}")
+results_url='http://127.0.0.1:8080/api/etroc-position-reviews/results?dataset_id=ETROC_OI_2608'
+results_request=urllib.request.Request(results_url, headers={'X-Forwarded-Email': os.environ['ETROC_REVIEWER_TEST_USER']})
+with urllib.request.urlopen(results_request, timeout=10) as response:
+    if response.status != 200 or response.headers.get('Cache-Control') != 'no-store':
+        raise SystemExit('ETROC results runtime response mismatch')
+    results=json.loads(response.read())
+expected_ids={item['acquisition_id'] for item in publication['records']}
+if (results.get('record_count') != 36 or results.get('position_count') != 9216
+        or results.get('target_count') != 82
+        or set(results.get('results', {})) != expected_ids
+        or results.get('reviewed_target_count') != completion['reviewed_target_count']):
+    raise SystemExit('ETROC results runtime cohort mismatch')
+for item in publication['records']:
+    result=results['results'][item['acquisition_id']]
+    if (len(result.get('algorithm_labels', [])) != 256
+            or result.get('position_publication_sha256') != item['position_publication_sha256']
+            or result.get('target_count') != item['position_review_target_count']
+            or len(result.get('human_labels', {})) != result.get('reviewed_target_count')
+            or result.get('algorithm_labels', []).count('NEED_INSPECT') != result.get('target_count')
+            or any(label not in {'GREEN','BLUE','YELLOW','RED','NEED_INSPECT'} for label in result.get('algorithm_labels', []))
+            or any(label.get('label') not in {'GREEN','BLUE','YELLOW','RED'} for label in result.get('human_labels', {}).values())):
+        raise SystemExit('ETROC results runtime evidence mismatch')
+print(f"ETROC_RESULTS_RUNTIME_CONTRACT PASS records={results['record_count']} positions={results['position_count']}")
 PY
 
 oc -n "$PROJECT" exec -i "$POD" -c web -- env BEFORE_COMMENTS="$BEFORE_COMMENTS" BACKUP_SCHEMA_SHA256="$BACKUP_SCHEMA_SHA256" BACKUP_HYBRID_SCHEMA_SHA256="$BACKUP_HYBRID_SCHEMA_SHA256" python - <<'PY'

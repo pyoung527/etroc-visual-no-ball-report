@@ -634,21 +634,21 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='58e6cf3283169e3e515b8b397fb2d728a9355a05'",
+            "SOURCE_REVISION='aa2647fdbfa700f32ad59c00793499f8522eb67e'",
             script,
         )
         expected = {
-            "index.html": "75db811ce0dfbe3ea8bc7056672072c8db9d5a312f1c605edabdb5d48953827d",
+            "index.html": "a792f17d26f7ffcadbe726f91a498b2f3e6edbe0096e3ae6f1a156a3a4773862",
             "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
             "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
-            "etroc-optical.css": "91ad0bbb50dd31f73925d3ae8d10a1c6033b442149f2fe115df0420ad5a33aa9",
-            "etroc-optical.js": "ac5107a94416e68730d5ba635235eeee1ffcde232fd4fa5eb79dd1446ca85ded",
-            "etroc-review.js": "d289d45617b14005f89f9a27f976576ba278e3c16889649be2707e50c055c263",
+            "etroc-optical.css": "93428e2d9ed16df85490f404147ef34353f42e1ee8ebe52f8a89aacf5d2e299b",
+            "etroc-optical.js": "37c4d11b74bc3f4c706f74ab377d4c3e307c2cf1aae2795ce70b3695f252f496",
+            "etroc-review.js": "13472e47c1f54f3efceb24662f6015a3d15441fc339788ffce2fb8a8117eaa1b",
             "lgad-optical-stats.js": "e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02",
             "ETROC_MANIFEST_SHA256": "4860c04dbd5c2fd4a750150443dcab7385aa71067d68f86b1cf6b30f3f62b50b",
-            "SERVER_PY_SHA256": "948ed1eeced31c533fe5d794911f2b9bc97290e22bf07b02e27376a534c3378e",
+            "SERVER_PY_SHA256": "d6bb2e7f7c1b82e1f3743e972fecbb53e493b8f4be6623dde57ae4e7379baa36",
             "ETROC_REVIEWS_PY_SHA256": "1bbe25926481d38350e9138d509bf7fdc68b09874ce88d5bcc2ee534e15a1fa3",
-            "ETROC_POSITION_REVIEWS_PY_SHA256": "f8fd0c88777dd845f32e7c0c33fe7ff3cb7570703277076dff975bfce6fc7132",
+            "ETROC_POSITION_REVIEWS_PY_SHA256": "592714d659b85f3e38dd36bea69de891afd0929bf1326d03654c72c09460bdb2",
             "DEPLOYMENT_MANIFEST_SHA256": "45a3a2266bcb4d18dcdb9949e5b55a00ed85f4f1e7494cebb87500b84bdbae30",
             "SERVICE_MANIFEST_SHA256": "84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c",
             "ROUTE_MANIFEST_SHA256": "23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43",
