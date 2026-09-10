@@ -12,6 +12,12 @@ The pre-bonding ETROC tab opens on all 36 acquisitions, not an empty pending que
 - Corrections/history/height inspection remain a secondary action opening the existing evidence-verified workspace. Workspace current overlay uses effective labels by default. Original algorithm overlay is opt-in.
 - Missing, malformed or failed live result responses clear all result metrics/cards and report unavailable, never zero or a fallback original montage as final.
 
+## Read-only card montage viewer (focused follow-up)
+- Clicking the result image (a native named button, Enter/Space) or noninteractive card body opens a large native dialog with the same reconciled 256 zero-based effective labels, categories/counts and existing SVG geometry. All acquisitions, including zero-target ones, are supported. This is not the correction workspace or original labelled evidence.
+- Existing correction/history buttons, links, Original evidence details/summary, and text selection keep their own actions and never open the viewer. Named Close, Escape, and backdrop dismiss; focus returns to the image trigger. Native modal focus containment and responsive, scrollable cream/dark-green token styling fit mobile screens.
+- Fetch the canonical clean montage once per opening, verify SHA256, decode and display those exact Blob bytes; never fall back to original labelled images. Fail closed on fetch/hash/decode failure. Invalidate pending work on close/reopen, results refresh/error and position-review update; revoke owned Blob URLs on every completion/cleanup path. Viewer is strictly read-only with no API writes or backend/data changes.
+- Focused executable Node-through-pytest regressions cover routing, effective overlays/count parity, integrity failures, lifecycle races and cleanup. Parent independently owns real-browser QA/deploy; no graph update, cache-version/pin/deployment edits, commit or push in this follow-up.
+
 ## Architecture / API
 Add authenticated GET `/api/etroc-position-reviews/results?dataset_id=ETROC_OI_2608` alongside the unchanged completion endpoint. Reuse authoritative `load_evidence`, full-evidence-key `_current`, schema validation and one SQLite read snapshot. Return bounded per-acquisition algorithm arrays (256), sparse current human labels (target positions only, event ID), evidence digests and completion. No history, notes or giant 256-position detail responses in the aggregate endpoint. Existing write/read/history APIs and concurrency protections remain unchanged.
 

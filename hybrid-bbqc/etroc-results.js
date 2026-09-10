@@ -115,13 +115,108 @@
     return strip;
   }
 
-  function renderCard(model) {
+  // A separate, read-only surface; only reconciled models enter this viewer.
+  function createViewer() {
+    const dialog = node("dialog", "etroc-result-viewer");
+    dialog.setAttribute("data-etroc-result-viewer", "");
+    dialog.setAttribute("aria-labelledby", "etroc-result-viewer-title");
+    const heading = node("h2"); heading.id = "etroc-result-viewer-title";
+    const closeButton = node("button", "optical-table-link", "Close reviewed montage");
+    closeButton.type = "button";
+    closeButton.setAttribute("data-etroc-result-viewer-close", "");
+    const header = node("div", "etroc-result-viewer-header"); header.append(heading, closeButton);
+    const status = node("p"); status.setAttribute("role", "status");
+    status.setAttribute("data-etroc-result-viewer-status", "");
+    const content = node("div");
+    dialog.append(header, status, content); document.body.append(dialog);
+    let generation = 0, controller = null, trigger = null;
+    const urls = new Set();
+    const release = url => { if (urls.delete(url)) URL.revokeObjectURL(url); };
+    function cleanup() {
+      ++generation; controller?.abort(); controller = null;
+      urls.forEach(release); content.replaceChildren();
+      const previous = trigger; trigger = null;
+      if (previous?.isConnected) previous.focus();
+    }
+    function close() {
+      const previous = trigger;
+      cleanup();
+      if (dialog.open) dialog.close();
+      // The opener is inert until the native modal has actually closed.
+      if (previous?.isConnected) previous.focus();
+    }
+    closeButton.addEventListener("click", close);
+    // Invalidate synchronously, rather than waiting for the queued close event.
+    dialog.addEventListener("cancel", event => { event.preventDefault(); close(); });
+    dialog.addEventListener("close", () => { if (!dialog.open) cleanup(); });
+    dialog.addEventListener("click", event => {
+      if (event.target !== dialog) return;
+      const box = dialog.getBoundingClientRect();
+      if (event.clientX < box.left || event.clientX > box.right || event.clientY < box.top || event.clientY > box.bottom) close();
+    });
+    async function open(model, opener) {
+      close(); trigger = opener;
+      const token = ++generation;
+      controller = new AbortController();
+      const current = () => token === generation && dialog.open;
+      heading.textContent = `${model.etroc_serial} · Current reviewed montage`;
+      status.textContent = "Verifying clean optical evidence…";
+      dialog.showModal(); closeButton.focus();
+      let url = null, displayed = false;
+      try {
+        const response = await fetch(BASE + model.clean_montage_uri, {method: "GET", credentials: "same-origin", cache: "no-store", signal: controller.signal});
+        if (!current()) return;
+        if (!response.ok) throw new Error("Clean montage request failed");
+        const bytes = await response.arrayBuffer();
+        if (!current()) return;
+        const digest = await crypto.subtle.digest("SHA-256", bytes);
+        if (!current()) return;
+        const hash = [...new Uint8Array(digest)].map(value => value.toString(16).padStart(2, "0")).join("");
+        if (hash !== model.clean_montage_sha256) throw new Error("Clean montage integrity mismatch");
+        url = URL.createObjectURL(new Blob([bytes], {type: "image/jpeg"})); urls.add(url);
+        const image = node("img"); image.src = url; image.width = 2400; image.height = 2176;
+        image.alt = `${model.etroc_serial}: verified clean evidence with current effective labels`;
+        await image.decode();
+        if (!current()) return;
+        image.setAttribute("data-etroc-result-viewer-image", "");
+        const montage = node("div", "etroc-result-montage"); montage.append(image, renderOverlay(model));
+        content.replaceChildren(categoryStrip(model.categories),
+          node("p", "", `${model.reviewed_target_count} human · ${model.positions.length - model.target_count} algorithm · ${model.categories.PENDING} unreviewed. H = human; A = algorithm; ? = pending. Positions 0–255. Read-only.`), montage);
+        displayed = true;
+        status.textContent = "Verified clean montage · current effective labels on all 256 positions";
+      } catch (error) {
+        if (current()) {
+          content.replaceChildren();
+          status.textContent = "Reviewed montage unavailable — clean evidence could not be verified or decoded. Close and reopen to retry; no original-image fallback.";
+        }
+      } finally {
+        if (url && !displayed) release(url);
+      }
+    }
+    return {open, close};
+  }
+  let resultViewer = null;
+  function openResultViewer(model, trigger) {
+    resultViewer ||= createViewer();
+    void resultViewer.open(model, trigger);
+  }
+
+  function renderCard(model, onOpen = openResultViewer) {
     const card = node("article", "etroc-pool-card etroc-result-card");
     card.dataset.etrocSerial = model.etroc_serial;
     card.dataset.etrocAcquisition = model.acquisition_id;
     const body = node("div", "etroc-pool-card-body");
     body.append(node("h3", "", model.etroc_serial));
-    const figure = node("div", "etroc-result-montage");
+    const figure = node("button", "etroc-result-montage");
+    figure.type = "button";
+    figure.setAttribute("aria-label", `${model.etroc_serial}: open current reviewed montage`);
+    figure.setAttribute("aria-haspopup", "dialog");
+    figure.addEventListener("click", () => onOpen(model, figure));
+    card.addEventListener("click", event => {
+      if (event.defaultPrevented || event.button !== 0 || String(globalThis.getSelection?.() || "").trim()
+        || event.target.closest("button, a, details, summary, input, select, textarea, [role='button'], [contenteditable]")) return;
+      onOpen(model, figure);
+    });
     const image = node("img");
     image.src = BASE + model.clean_montage_uri; image.loading = "lazy"; image.width = 2400; image.height = 2176;
     image.alt = `${model.etroc_serial} clean optical evidence; effective labels in overlay`;
@@ -147,7 +242,7 @@
     return card;
   }
 
-  globalThis.ETROCResultsContract = Object.freeze({reconcile, summarize, select, renderOverlay, renderCard});
+  globalThis.ETROCResultsContract = Object.freeze({reconcile, summarize, select, renderOverlay, renderCard, createViewer});
   const root = document.querySelector("[data-etroc-results]");
   if (!root) return;
   const pool = document.querySelector("[data-etroc-optical-pool]");
@@ -162,6 +257,7 @@
   let publication = null, models = null, generation = 0;
 
   function clear(message, failed = false) {
+    resultViewer?.close();
     models = null; pool.replaceChildren(); metrics.replaceChildren(); categories.replaceChildren();
     status.textContent = message; status.classList.toggle("failed", failed);
     root.setAttribute("aria-busy", String(!failed)); pool.setAttribute("aria-busy", String(!failed));
@@ -190,6 +286,7 @@
     if (!visible.length) pool.append(node("p", "optical-chart-empty", "No ETROCs match these filters. Select All review states to see the full result cohort."));
   }
   async function refresh() {
+    resultViewer?.close();
     if (!publication) return;
     const token = ++generation;
     clear("Loading current reviewed results…");

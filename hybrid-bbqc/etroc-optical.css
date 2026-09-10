@@ -631,6 +631,29 @@
 .etroc-results :focus-visible, .etroc-result-card :focus-visible, .etroc-original-evidence > summary:focus-visible {
   outline: 3px solid #22684e; outline-offset: 3px;
 }
+.etroc-result-card button.etroc-result-montage {
+  display: block; width: 100%; padding: 0; border: 0; border-radius: 0;
+  background: #111; overflow: hidden;
+}
+.etroc-result-viewer {
+  box-sizing: border-box; width: min(1400px, calc(100vw - 24px));
+  max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px);
+  padding: clamp(12px, 2vw, 24px); border: 1px solid #b8cbbf; border-radius: 14px;
+  overflow: auto; overscroll-behavior: contain;
+  background: #fffdf8; color: #18201d; font: inherit;
+}
+.etroc-result-viewer::backdrop { background: rgba(17, 32, 25, .76); }
+.etroc-result-viewer-header {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;
+}
+.etroc-result-viewer h2 { margin: 0; color: #104b3a; font-size: clamp(18px, 2vw, 24px); overflow-wrap: anywhere; }
+.etroc-result-viewer p { font-size: 13px; }
+.etroc-result-viewer button {
+  min-height: 44px; padding: 8px 12px; border: 1px solid #b8cbbf; border-radius: 8px;
+  color: #104b3a; background: #fffdf8; font: inherit; font-weight: 700; cursor: pointer;
+}
+.etroc-result-viewer :focus-visible { outline: 3px solid #22684e; outline-offset: 3px; }
+.etroc-result-viewer .etroc-result-montage { width: 100%; }
 .etroc-result-montage { position: relative; background: #111; aspect-ratio: 2400 / 2176; }
 .etroc-result-montage img { display: block; width: 100%; height: auto; }
 .etroc-effective-overlay { position: absolute; inset: 0; width: 100%; height: 100%; }
