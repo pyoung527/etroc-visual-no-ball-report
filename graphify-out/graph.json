@@ -4832,9 +4832,9 @@
       "file_type": "rationale",
       "source_file": "tests/test_etroc_result_viewer.py",
       "source_location": "L1",
-      "id": "test_etroc_result_viewer_rationale_1",
       "community": 21,
-      "norm_label": "execute the real result viewer/controller in a small native-dom boundary harness"
+      "norm_label": "execute the real result viewer/controller in a small native-dom boundary harness",
+      "id": "test_etroc_result_viewer_rationale_1"
     },
     {
       "label": "test_analytics_dashboard.py",
