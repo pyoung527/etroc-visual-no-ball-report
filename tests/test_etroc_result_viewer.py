@@ -83,6 +83,26 @@ const byHook=hook=>nodes.find(n=>n.attrs[hook]!==undefined);
  }else{
   const image=byHook('data-etroc-result-viewer-image');assert.equal(image.src,'blob:1');assert.deepEqual(new Uint8Array(await blobs[0].arrayBuffer()),bytes);
   const groups=nodes.filter(n=>n.tagName==='g');assert.equal(groups.length,256);assert.equal(groups[255].attrs['data-position'],'255');assert.equal(groups[255].attrs['data-label'],scenario==='zero_targets'?'GREEN':'RED');
+  for(const [i,g] of groups.entries()){
+   const number=g.children.find(n=>n.attrs['data-etroc-location-number']!==undefined);
+   assert(number,`Position ${i} needs a persistent visible number, not just a title`);
+   assert.equal(number.tagName,'text');assert.equal(number.textContent,String(i));
+   assert.equal(number.attrs.fill,'#fff');assert(Number(number.attrs['font-size'])>=32);
+   assert.equal(number.attrs['font-weight'],'800');assert(!number.attrs.hidden);
+   const x=i%16*150,y=Math.floor(i/16)*136;
+   assert(Number(number.attrs.x)>=x+4);assert.equal(Number(number.attrs.y),y+32);
+   const badge=g.children.find(n=>n.attrs['data-etroc-location-badge']!==undefined);
+   assert(badge);assert.equal(badge.attrs.fill,'#111');
+   assert.equal(Number(badge.attrs.y),y+1);assert.equal(Number(badge.attrs.height),39);
+   assert(Number(badge.attrs.y)+Number(badge.attrs.height)<=y+40);
+   assert(g.children.some(n=>n.tagName==='text'&&n.textContent===`${model.positions[i].label} ${model.positions[i].source==='human'?'H':'A'}`));
+  }
+  const scroller=nodes.find(n=>n.attrs['data-etroc-result-viewer-scroll']!==undefined);
+  assert(scroller);assert.equal(scroller.attrs.tabindex,'0');assert.equal(image.parent.parent,scroller);
+  assert(!scroller.children.includes(byHook('data-etroc-result-viewer-close')));
+  const card=c.renderCard(model,()=>{});
+  const cardSvg=card.children[0].children.find(n=>n.tagName==='svg');
+  assert.deepEqual(cardSvg.children.map(g=>g.children.find(n=>n.attrs['data-etroc-location-number']!==undefined)?.textContent),Array.from({length:256},(_,i)=>String(i)));
   assert(nodes.some(n=>n.textContent==='GREEN '+model.categories.GREEN));
   dialog.fire('click',{clientX:20,clientY:20});assert(dialog.open);
   dialog.fire('click',{clientX:0,clientY:0});assert(!dialog.open);assert.equal(focused,trigger);assert.deepEqual(revoked,['blob:1']);

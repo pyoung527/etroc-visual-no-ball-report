@@ -18,6 +18,11 @@ The pre-bonding ETROC tab opens on all 36 acquisitions, not an empty pending que
 - Fetch the canonical clean montage once per opening, verify SHA256, decode and display those exact Blob bytes; never fall back to original labelled images. Fail closed on fetch/hash/decode failure. Invalidate pending work on close/reopen, results refresh/error and position-review update; revoke owned Blob URLs on every completion/cleanup path. Viewer is strictly read-only with no API writes or backend/data changes.
 - Focused executable Node-through-pytest regressions cover routing, effective overlays/count parity, integrity failures, lifecycle races and cleanup. Parent independently owns real-browser QA/deploy; no graph update, cache-version/pin/deployment edits, commit or push in this follow-up.
 
+## Visible canonical locations (focused usability follow-up)
+- Every cell in the shared card/popup SVG permanently displays its canonical zero-based position (0–255), not only a tooltip. Use bold high-contrast numbers on an opaque upper-edge badge; keep the central solder-ball evidence unobscured and preserve effective category text and H/A/pending source distinction.
+- The popup maintains a minimum 1200px montage width (at least 16px location numerals), with a bounded keyboard-focusable two-axis scroll region on narrow screens. Keep its heading and Close control outside that region and reachable while scrolling. Cards retain the same visible numbered SVG as a compact preview.
+- Regression tests execute the actual renderer through Node/pytest, checking all canonical positions, unchanged sources/labels, edge-only badge geometry, and the popup scroll boundary. No changes to SHA verification, decoding, Blob ownership, scientific data, backend or authentication.
+
 ## Architecture / API
 Add authenticated GET `/api/etroc-position-reviews/results?dataset_id=ETROC_OI_2608` alongside the unchanged completion endpoint. Reuse authoritative `load_evidence`, full-evidence-key `_current`, schema validation and one SQLite read snapshot. Return bounded per-acquisition algorithm arrays (256), sparse current human labels (target positions only, event ID), evidence digests and completion. No history, notes or giant 256-position detail responses in the aggregate endpoint. Existing write/read/history APIs and concurrency protections remain unchanged.
 

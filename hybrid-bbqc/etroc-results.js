@@ -98,9 +98,13 @@
       title.textContent = `Position ${position.position}: ${position.label} · ${position.source}${position.event_id ? ` · event ${position.event_id}` : ""}`;
       const rect = svgNode("rect", {x: x + 2, y: y + 2, width: 146, height: 132, fill: "none", stroke: COLORS[position.label], "stroke-width": 4});
       if (position.label === "PENDING") rect.setAttribute("stroke-dasharray", "9 5");
-      const text = svgNode("text", {x: x + 44, y: y + 13, fill: COLORS[position.label], "font-size": 13, "font-weight": 700});
+      // Keep the central evidence clear: identity and classification share the upper edge only.
+      const badge = svgNode("rect", {x: x + 4, y: y + 1, width: 142, height: 39, fill: "#111", "data-etroc-location-badge": ""});
+      const number = svgNode("text", {x: x + 7, y: y + 32, fill: "#fff", "font-size": 32, "font-weight": 800, class: "etroc-location-number", "data-etroc-location-number": position.position});
+      number.textContent = String(position.position);
+      const text = svgNode("text", {x: x + 69, y: y + 18, fill: COLORS[position.label], "font-size": 13, "font-weight": 700});
       text.textContent = `${position.label === "PENDING" ? "?" : position.label} ${position.source === "human" ? "H" : position.source === "algorithm" ? "A" : ""}`;
-      group.append(title, rect, text); svg.append(group);
+      group.append(title, rect, badge, number, text); svg.append(group);
     });
     return svg;
   }
@@ -180,8 +184,14 @@
         if (!current()) return;
         image.setAttribute("data-etroc-result-viewer-image", "");
         const montage = node("div", "etroc-result-montage"); montage.append(image, renderOverlay(model));
+        const scroller = node("div", "etroc-result-viewer-scroll");
+        scroller.setAttribute("data-etroc-result-viewer-scroll", "");
+        scroller.setAttribute("tabindex", "0");
+        scroller.setAttribute("role", "region");
+        scroller.setAttribute("aria-label", "Numbered montage, positions 0–255. Scroll to inspect all cells.");
+        scroller.append(montage);
         content.replaceChildren(categoryStrip(model.categories),
-          node("p", "", `${model.reviewed_target_count} human · ${model.positions.length - model.target_count} algorithm · ${model.categories.PENDING} unreviewed. H = human; A = algorithm; ? = pending. Positions 0–255. Read-only.`), montage);
+          node("p", "", `${model.reviewed_target_count} human · ${model.positions.length - model.target_count} algorithm · ${model.categories.PENDING} unreviewed. H = human; A = algorithm; ? = pending. Positions 0–255. Scroll montage to inspect. Read-only.`), scroller);
         displayed = true;
         status.textContent = "Verified clean montage · current effective labels on all 256 positions";
       } catch (error) {
