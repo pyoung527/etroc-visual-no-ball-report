@@ -505,7 +505,7 @@ measure_dashboard_headroom
         self.assertLess(gate, script.index("ensure_authenticated\n"))
         self.assertLess(gate, script.index('BACKUP="/data/comments.sqlite3.before-dashboard-'))
         self.assertIn('candidate_python_version="$("$CANDIDATE_HOST_PYTHON" -I -c', script)
-        self.assertIn('test "$candidate_python_version" = 3.12.13', script)
+        self.assertIn('test "$candidate_python_version" = 3.12.14', script)
         self.assertIn('"$CANDIDATE_HOST_PYTHON" -I -c \'from dataclasses import make_dataclass;', script)
         candidate_rehearsal = script.index('CANDIDATE_RUNTIME="${BUILD_CONTEXT}/runtime"')
         candidate_command = script[candidate_rehearsal : script.index("<<'PY'", candidate_rehearsal)]

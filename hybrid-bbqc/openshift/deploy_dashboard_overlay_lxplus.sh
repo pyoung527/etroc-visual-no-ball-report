@@ -274,7 +274,7 @@ verify_candidate_host_python() {
   local candidate_python_version
   test -x "$CANDIDATE_HOST_PYTHON"
   candidate_python_version="$("$CANDIDATE_HOST_PYTHON" -I -c 'import sys; print(".".join(map(str, sys.version_info[:3])))')"
-  test "$candidate_python_version" = 3.12.13
+  test "$candidate_python_version" = 3.12.14
   "$CANDIDATE_HOST_PYTHON" -I -c 'from dataclasses import make_dataclass; make_dataclass("Probe", [("value", int)], frozen=True, slots=True)'
   printf 'CANDIDATE_HOST_PYTHON PASS path=%s version=%s\n' "$CANDIDATE_HOST_PYTHON" "$candidate_python_version"
 }
