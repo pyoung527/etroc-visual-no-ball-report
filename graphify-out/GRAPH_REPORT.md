@@ -1,11 +1,11 @@
 # Graph Report - bbqc-etroc-production  (2026-09-11)
 
 ## Corpus Check
-- 40 files · ~35,549,637 words
+- 40 files · ~35,549,721 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 714 nodes · 1548 edges · 20 communities detected
+- 715 nodes · 1552 edges · 19 communities detected
 - Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 317 edges (avg confidence: 0.8)
 - Token cost: 0 input · 0 output
 
@@ -29,12 +29,11 @@
 - [[_COMMUNITY_Community 16|Community 16]]
 - [[_COMMUNITY_Community 17|Community 17]]
 - [[_COMMUNITY_Community 18|Community 18]]
-- [[_COMMUNITY_Community 19|Community 19]]
 
 ## God Nodes (most connected - your core abstractions)
 1. `LxplusDashboardDeployTests` - 83 edges
 2. `append()` - 62 edges
-3. `run()` - 52 edges
+3. `run()` - 53 edges
 4. `append()` - 44 edges
 5. `init_db()` - 33 edges
 6. `sha256()` - 22 edges
@@ -59,31 +58,31 @@
 
 ### Community 0 - "Community 0"
 Cohesion: 0.02
-Nodes (19): Behavioral regressions for the post-review save/readback UI boundary., test_actual_position_save_refreshes_only_validated_readback(), test_result_style_selectors_and_pending_copy_match_runtime(), Execute the real result viewer/controller in a small native-DOM boundary harness, test_read_only_result_viewer(), LxplusAdditionalTestsDeployTests, LxplusDashboardDeployTests, Execute supplied-image lifecycle against real controller, with native DOM bounda (+11 more)
+Nodes (20): Behavioral regressions for the post-review save/readback UI boundary., test_actual_position_save_refreshes_only_validated_readback(), test_result_style_selectors_and_pending_copy_match_runtime(), Execute the real result viewer/controller in a small native-DOM boundary harness, test_read_only_result_viewer(), LxplusAdditionalTestsDeployTests, LxplusDashboardDeployTests, Execute supplied-image lifecycle against real controller, with native DOM bounda (+12 more)
 
 ### Community 1 - "Community 1"
 Cohesion: 0.06
 Nodes (76): applyQueue(), canonicalComparator(), canonicalMontageUri(), canSaveActive(), closeDialog(), controls(), controlsEnabled(), currentDraft() (+68 more)
 
 ### Community 2 - "Community 2"
-Cohesion: 0.06
-Nodes (33): bind_hybrid(), canonical_cern_principal(), discover_canonical_pairs(), discover_redirect_aliases(), etroc_error(), etroc_query(), etroc_reviewer_allowlist(), etroc_viewer() (+25 more)
+Cohesion: 0.07
+Nodes (43): append(), _asset_bytes(), audit(), _checksum_inventory(), _completion(), completion_summary(), _current(), _digest() (+35 more)
 
 ### Community 3 - "Community 3"
 Cohesion: 0.07
-Nodes (42): append(), _asset_bytes(), audit(), _checksum_inventory(), _completion(), completion_summary(), _current(), _digest() (+34 more)
+Nodes (31): append_etroc_review(), canonical_cern_principal(), discover_canonical_pairs(), discover_redirect_aliases(), etroc_error(), _etroc_evidence_identity(), etroc_query(), etroc_reviewer_allowlist() (+23 more)
 
 ### Community 4 - "Community 4"
 Cohesion: 0.07
 Nodes (31): appendCell(), element(), initStatistics(), initStatisticsTableSorting(), parseVerifiedPublication(), ratioLabel(), renderCategoryRows(), renderStatistics() (+23 more)
 
 ### Community 5 - "Community 5"
-Cohesion: 0.09
-Nodes (27): atomic_replace_directory(), build_pool(), height_publication(), int_field(), load_height_contract(), main(), position_publication(), render_clean_montage() (+19 more)
+Cohesion: 0.08
+Nodes (16): bind_hybrid(), init_db(), list_hybrids(), load_additional_tests_manifest(), source_identifier_pair(), split_pair_key(), validate_additional_test_schema(), AdditionalTestManifestTests (+8 more)
 
 ### Community 6 - "Community 6"
-Cohesion: 0.13
-Nodes (11): append_etroc_review(), _etroc_evidence_identity(), init_etroc_review_schema(), load_etroc_review_evidence(), reset_etroc_review_evidence_cache(), EvidenceTests, load_server_module(), ReviewApiTests (+3 more)
+Cohesion: 0.09
+Nodes (26): atomic_replace_directory(), build_pool(), height_publication(), int_field(), load_height_contract(), main(), position_publication(), render_clean_montage() (+18 more)
 
 ### Community 7 - "Community 7"
 Cohesion: 0.15
@@ -126,14 +125,10 @@ Cohesion: 0.4
 Nodes (3): buildconfig(), BuildProvenanceValidatorTests, completed_build()
 
 ### Community 17 - "Community 17"
-Cohesion: 0.29
-Nodes (3): PositionApiTests, ResultApiTests, HybridRegistryHttpTests
-
-### Community 18 - "Community 18"
 Cohesion: 0.43
 Nodes (6): api(), esc(), fmt(), loadComments(), loadMe(), renderComment()
 
-### Community 19 - "Community 19"
+### Community 18 - "Community 18"
 Cohesion: 0.33
 Nodes (1): HybridPairCorrectionTests
 
@@ -144,18 +139,18 @@ Nodes (1): HybridPairCorrectionTests
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 - **Thin community `Community 15`** (15 nodes): `AnalyticsDashboardTests`, `.test_additional_test_failure_marks_table_cells_unavailable()`, `.test_additional_tests_use_live_registry_api_and_safe_badges()`, `.test_dashboard_does_not_change_canonical_hybrid_inventory()`, `.test_dashboard_does_not_present_absence_of_optical_candidate_as_review_ready()`, `.test_dashboard_exposes_semantic_chart_regions_and_scientific_caveat()`, `.test_dashboard_handles_untrusted_group_labels_and_pending_rows_safely()`, `.test_dashboard_script_uses_existing_rows_and_live_comment_summary()`, `.test_dashboard_styles_are_responsive_and_respect_reduced_motion()`, `.test_live_updates_are_announced_and_only_animate_the_reviewed_counter()`, `.test_main_page_loads_local_dashboard_assets_and_places_dashboard_first()`, `.test_table_csv_export_contract()`, `.test_table_filters_and_sorting_are_keyboard_and_screen_reader_accessible()`, `.test_table_has_static_advanced_tests_column_for_every_hybrid()`, `test_analytics_dashboard.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
-- **Thin community `Community 19`** (6 nodes): `HybridPairCorrectionTests`, `.test_concordance_snapshot_uses_the_corrected_comment_target()`, `.test_corrected_detail_page_keeps_an_old_url_redirect()`, `.test_dashboard_uses_only_the_corrected_w04f2_81_slug()`, `.test_manifest_preserves_w04f2_34_and_corrects_w04f2_81()`, `test_hybrid_pair_correction.py`
+- **Thin community `Community 18`** (6 nodes): `HybridPairCorrectionTests`, `.test_concordance_snapshot_uses_the_corrected_comment_target()`, `.test_corrected_detail_page_keeps_an_old_url_redirect()`, `.test_dashboard_uses_only_the_corrected_w04f2_81_slug()`, `.test_manifest_preserves_w04f2_34_and_corrects_w04f2_81()`, `test_hybrid_pair_correction.py`
   Too small to be a meaningful cluster - may be noise or needs more connections extracted.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `append()` connect `Community 3` to `Community 0`, `Community 1`, `Community 2`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 10`, `Community 12`, `Community 13`, `Community 14`?**
+- **Why does `append()` connect `Community 2` to `Community 0`, `Community 1`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 7`, `Community 8`, `Community 10`, `Community 12`, `Community 13`, `Community 14`?**
   _High betweenness centrality (0.374) - this node is a cross-community bridge._
-- **Why does `run()` connect `Community 0` to `Community 3`, `Community 4`, `Community 5`, `Community 11`, `Community 16`?**
-  _High betweenness centrality (0.200) - this node is a cross-community bridge._
+- **Why does `run()` connect `Community 0` to `Community 2`, `Community 4`, `Community 6`, `Community 11`, `Community 16`?**
+  _High betweenness centrality (0.201) - this node is a cross-community bridge._
 - **Why does `append()` connect `Community 7` to `Community 0`, `Community 2`, `Community 3`, `Community 4`, `Community 5`, `Community 6`, `Community 8`, `Community 10`, `Community 12`, `Community 14`?**
-  _High betweenness centrality (0.190) - this node is a cross-community bridge._
+  _High betweenness centrality (0.189) - this node is a cross-community bridge._
 - **Are the 54 inferred relationships involving `append()` (e.g. with `.handle_data()` and `.handle_endtag()`) actually correct?**
   _`append()` has 54 INFERRED edges - model-reasoned connections that need verification._
 - **Are the 46 inferred relationships involving `run()` (e.g. with `.test_lgad_statistics_contract_reconciles_and_rejects_bad_inventory()` and `.test_backup_dir_override_defaults_exactly_and_rejects_unsafe_paths()`) actually correct?**

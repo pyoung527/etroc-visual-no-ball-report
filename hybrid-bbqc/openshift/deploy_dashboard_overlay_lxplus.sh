@@ -4,15 +4,15 @@ umask 077
 unset PYTHONHOME PYTHONINSPECT PYTHONOPTIMIZE PYTHONPATH
 CANDIDATE_HOST_PYTHON='/usr/bin/python3.12'
 
-SOURCE_REVISION='2e9feb504f9b2aae9b3084b0369c2ff0d832bb77'
+SOURCE_REVISION='90fd001b3de02cedbf99981b9b210f1376f34dd9'
 RAW_ROOT="https://raw.githubusercontent.com/pyoung527/etroc-visual-no-ball-report/${SOURCE_REVISION}"
-INDEX_SHA256='abd95a9290c35facbdd7374e0c89ecb33e7e5c95e742ef0f592cefba1d354682'
+INDEX_SHA256='646952024eb2f3468bf718d4ec6ffc66c25cf897d36c8c20b99057928cbe4b41'
 CSS_SHA256='5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f'
 JS_SHA256='317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644'
 ETROC_CSS_SHA256='6d3b4d331e83e4efdd0e668c05bb3271c3f7a8cbf6be960f25fbbee16f46bf0b'
 ETROC_JS_SHA256='37c4d11b74bc3f4c706f74ab377d4c3e307c2cf1aae2795ce70b3695f252f496'
 ETROC_REVIEW_JS_SHA256='13472e47c1f54f3efceb24662f6015a3d15441fc339788ffce2fb8a8117eaa1b'
-ETROC_RESULTS_JS_SHA256='151210e57f337271c679987b2847f3609e17d8c72dfa838df81d079273f6bd78'
+ETROC_RESULTS_JS_SHA256='867e0bedb0db72bf67814203784fa9779efdb55f60e2bdb9ebab1c416291a5ef'
 LGAD_STATS_JS_SHA256='e3cfb2eff6b8391cdae80b19cf75740bb5680c12434402594eb894ce36796a02'
 ETROC_MANIFEST_SHA256='4860c04dbd5c2fd4a750150443dcab7385aa71067d68f86b1cf6b30f3f62b50b'
 SERVER_PY_SHA256='d6bb2e7f7c1b82e1f3743e972fecbb53e493b8f4be6623dde57ae4e7379baa36'
@@ -22,6 +22,11 @@ DEPLOYMENT_MANIFEST_SHA256='45a3a2266bcb4d18dcdb9949e5b55a00ed85f4f1e7494cebb875
 SERVICE_MANIFEST_SHA256='84b99d048fcf52d5dfbe9ee919287b36197429818228682fccbcc4ad4e5dcf5c'
 ROUTE_MANIFEST_SHA256='23b1dbfa7cd930754ebc70eef3c853e164e55c43dbb8e05e5d0affad71ec8f43'
 ETROC_DATASET_REL='data/etroc-optical/ETROC_OI_2608'
+# Parent must freeze source and pin these four artifacts before authentication.
+NEW_HYBRIDS_JS_SHA256='b1f6a10e9420abcff4ace12274675ecc05dcebf165449648fa66a3152656618c'
+NEW_HYBRIDS_CSS_SHA256='3b0e2e5f6d398e1062d1d01c6b49392a8255e2c1dbda3de26b6fc0c44c59513e'
+NEW_HYBRIDS_MANIFEST_SHA256='cc1eae6b36079f6a857e4e4acc6c9addc9ee5851aedd7715029ced47ac50285a'
+NEW_HYBRIDS_SUMS_SHA256='9cf752dae50289666e35a041a3a687696276063ba648c112d8119bee2eaad641'
 SELECTOR_SHA256='54e53acf4853fab3d804101568cfd4276272c45e15cc59e8bb5bb3befb91cc86'
 VALIDATOR_SHA256='ecec82614fdc8c6524c722fd5809886d8fbe1e7799d6b04a0da2f50cfdd1f9f8'
 SSO_SOURCE_REVISION='d049ae2182f795c4f5dec15dfb8dbef8971518da'
@@ -285,6 +290,169 @@ download() {
     --retry 5 --retry-delay 2 --retry-max-time 180 \
     --connect-timeout 20 --max-time 300 \
     "$url" --output "$destination"
+}
+
+# One bounded verifier is used for pre-auth downloads, context, image and HTTP.
+# This cohort never participates in canonical Hybrid registration or DB counts.
+new_hybrids_verifier() {
+  cat <<'NEW_HYBRIDS_PY'
+import hashlib, json, os, re, stat, sys, time
+from pathlib import Path
+import urllib.request, urllib.error
+
+root, mode, js_pin, css_pin, manifest_pin, sums_pin = sys.argv[1:7]
+if mode not in ('download', 'files', 'http'):
+    raise SystemExit('invalid new Hybrid verification mode')
+for pin in (js_pin, css_pin, manifest_pin, sums_pin):
+    if re.fullmatch('[0-9a-f]{64}', pin) is None:
+        raise SystemExit('new Hybrid release UNPINNED: freeze and pin all assets before authentication')
+root = Path(root)
+relative_root = 'data/new-hybrids/NEW_HYBRIDS_20260911'
+bundle = root / relative_root
+class NoRedirect(urllib.request.HTTPRedirectHandler):
+    def redirect_request(self, *args, **kwargs):
+        raise SystemExit('new Hybrid asset redirect refused')
+opener = urllib.request.build_opener(NoRedirect)
+base = sys.argv[7] if mode == 'download' else 'http://127.0.0.1:8080'
+if mode == 'download' and re.fullmatch(r'https://raw\.githubusercontent\.com/pyoung527/etroc-visual-no-ball-report/[0-9a-f]{40}/hybrid-bbqc', base) is None:
+    raise SystemExit('new Hybrid source must be immutable trusted HTTPS')
+
+def safe_file(path):
+    for parent in (path, *path.parents):
+        if parent == root.parent:
+            break
+        if parent.is_symlink():
+            raise SystemExit('new Hybrid symlink refused')
+    info = path.stat()
+    if not stat.S_ISREG(info.st_mode) or info.st_nlink != 1:
+        raise SystemExit('new Hybrid asset is not a single regular file')
+
+def fetch(relative, pin, limit=8*1024*1024):
+    path = root / relative
+    if mode in ('download', 'http'):
+        for attempt in range(3):
+            try:
+                with opener.open(base + '/' + relative, timeout=30) as response:
+                    if response.status != 200:
+                        raise SystemExit('new Hybrid asset HTTP status mismatch')
+                    raw = response.read(limit + 1)
+                break
+            except urllib.error.HTTPError as error:
+                if attempt == 2 or error.code not in (408, 429, 500, 502, 503, 504):
+                    raise
+            except (urllib.error.URLError, TimeoutError, ConnectionError):
+                if attempt == 2:
+                    raise
+            time.sleep(attempt + 1)
+    else:
+        safe_file(path)
+        with path.open('rb') as stream:
+            raw = stream.read(limit + 1)
+    if not raw or len(raw) > limit or hashlib.sha256(raw).hexdigest() != pin:
+        raise SystemExit('new Hybrid asset size/checksum mismatch: ' + relative)
+    if mode == 'download':
+        # The preauth root is private and freshly created; refuse preexisting links.
+        if path.exists() or path.is_symlink():
+            safe_file(path)
+        for parent in path.parents:
+            if parent == root.parent:
+                break
+            if parent.is_symlink():
+                raise SystemExit('new Hybrid destination symlink refused')
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(raw)
+    return raw
+
+sums = fetch(relative_root + '/SHA256SUMS', sums_pin, 16384)
+if not sums.endswith(b'\n') or b'\r' in sums:
+    raise SystemExit('new Hybrid checksum list must use canonical LF lines')
+lines = sums.decode('ascii').splitlines()
+if len(lines) != 38:
+    raise SystemExit('new Hybrid checksum list must contain 35 images and 3 source/manifest files')
+assets = {}
+for line in lines:
+    match = re.fullmatch(r'([0-9a-f]{64})  (manifest\.json|source-original\.csv|source-corrected\.csv|images/[0-9a-f]{64}\.png)', line)
+    if match is None:
+        raise SystemExit('unsafe new Hybrid checksum entry')
+    digest, name = match.groups()
+    if name in assets:
+        raise SystemExit('duplicate new Hybrid checksum entry')
+    if name.startswith('images/') and Path(name).stem != digest:
+        raise SystemExit('new Hybrid content-addressed image digest mismatch')
+    assets[name] = digest
+images = {name for name in assets if name.startswith('images/')}
+if len(images) != 35 or set(assets) - images != {'manifest.json', 'source-original.csv', 'source-corrected.csv'}:
+    raise SystemExit('new Hybrid exact asset roles mismatch')
+if assets['manifest.json'] != manifest_pin:
+    raise SystemExit('new Hybrid manifest pin disagrees with checksum list')
+
+def unique_object(pairs):
+    result = {}
+    for key, value in pairs:
+        if key in result:
+            raise SystemExit('duplicate new Hybrid manifest JSON key')
+        result[key] = value
+    return result
+
+manifest = json.loads(fetch(relative_root + '/manifest.json', manifest_pin, 512*1024), object_pairs_hook=unique_object)
+records = manifest.get('records', [])
+if manifest.get('dataset_id') != 'NEW_HYBRIDS_20260911' or not isinstance(records, list) or len(records) != 35:
+    raise SystemExit('new Hybrid manifest identity/cardinality mismatch')
+serials, manifest_images = set(), set()
+for record in records:
+    serial = record['etroc_serial']
+    image = record['image']
+    uri = image['uri']
+    if (not isinstance(serial, str) or re.fullmatch(r'(W02G4|W03F7|W05E5)-[0-9]+', serial) is None
+            or serial == 'W03F7-85' or serial in serials or uri in manifest_images
+            or uri not in images or image['sha256'] != assets[uri]):
+        raise SystemExit('new Hybrid manifest image/identity closure mismatch')
+    serials.add(serial)
+    manifest_images.add(uri)
+if manifest_images != images:
+    raise SystemExit('new Hybrid manifest does not close over all 35 images')
+for name, digest in assets.items():
+    if name != 'manifest.json':
+        fetch(relative_root + '/' + name, digest)
+fetch('new-hybrids.js', js_pin, 512*1024)
+fetch('new-hybrids.css', css_pin, 512*1024)
+if mode != 'http':
+    actual = set()
+    for path in bundle.rglob('*'):
+        if path.is_symlink():
+            raise SystemExit('new Hybrid bundle symlink refused')
+        if not path.is_dir():
+            safe_file(path)
+            actual.add(path.relative_to(bundle).as_posix())
+    if actual != set(assets) | {'SHA256SUMS'}:
+        raise SystemExit('new Hybrid bundle contains missing or unlisted files')
+print('NEW_HYBRIDS_CLOSURE PASS mode=' + mode + ' records=35 images=35 source_csv=2')
+NEW_HYBRIDS_PY
+}
+
+prepare_new_hybrids() {
+  mkdir -p "${BUILD_CONTEXT}/overlay"
+  python3 -I - "${BUILD_CONTEXT}/overlay" download \
+    "$NEW_HYBRIDS_JS_SHA256" "$NEW_HYBRIDS_CSS_SHA256" \
+    "$NEW_HYBRIDS_MANIFEST_SHA256" "$NEW_HYBRIDS_SUMS_SHA256" \
+    "${RAW_ROOT}/hybrid-bbqc" < <(new_hybrids_verifier)
+}
+
+verify_new_hybrids_context() {
+  python3 -I - "${BUILD_CONTEXT}/overlay" files \
+    "$NEW_HYBRIDS_JS_SHA256" "$NEW_HYBRIDS_CSS_SHA256" \
+    "$NEW_HYBRIDS_MANIFEST_SHA256" "$NEW_HYBRIDS_SUMS_SHA256" < <(new_hybrids_verifier)
+}
+
+verify_new_hybrids_runtime() {
+  local pod="$1" mode
+  local -a container=()
+  if test -n "${2:-}"; then container=(-c "$2"); fi
+  for mode in files http; do
+    oc -n "$PROJECT" exec -i "$pod" "${container[@]}" -- python -I - /app/static "$mode" \
+      "$NEW_HYBRIDS_JS_SHA256" "$NEW_HYBRIDS_CSS_SHA256" \
+      "$NEW_HYBRIDS_MANIFEST_SHA256" "$NEW_HYBRIDS_SUMS_SHA256" < <(new_hybrids_verifier)
+  done
 }
 
 validate_backup_directory() {
@@ -1563,6 +1731,7 @@ for command in oc curl python3 sha256sum tar fs find wc; do
   command -v "$command" >/dev/null
  done
 verify_candidate_host_python
+prepare_new_hybrids
 ensure_authenticated
 oc project "$PROJECT" >/dev/null
 verify_context
@@ -1889,6 +2058,7 @@ print('\n'.join(sorted(path.name for path in Path(sys.argv[1]).iterdir())))
 PY
 )"
 test "$ACTUAL_TOP_LEVEL" = "$EXPECTED_TOP_LEVEL"
+verify_new_hybrids_context
 BUILD_CONTEXT_SHA256="$(tar --sort=name --mtime='UTC 1970-01-01' --owner=0 --group=0 --numeric-owner \
   -cf - -C "$BUILD_CONTEXT" hybrid-bbqc overlay runtime | sha256sum | cut -d' ' -f1)"
 [[ "$BUILD_CONTEXT_SHA256" =~ ^[0-9a-f]{64}$ ]]
@@ -2103,6 +2273,7 @@ PY
 
 {
   declare -p SOURCE_REVISION ETROC_DATASET_REL ETROC_MANIFEST_SHA256 API_SERVER EXPECTED_API_SERVER EXPECTED_USER PROJECT DEPLOYMENT BUILDCONFIG PVC
+  declare -p NEW_HYBRIDS_JS_SHA256 NEW_HYBRIDS_CSS_SHA256 NEW_HYBRIDS_MANIFEST_SHA256 NEW_HYBRIDS_SUMS_SHA256
   declare -p DEPLOYMENT_MANIFEST_SHA256 SERVICE_MANIFEST_SHA256 ROUTE_MANIFEST_SHA256
   declare -p ETROC_REVIEWER_USERS_COUNT ETROC_REVIEWER_USERS_SHA256
   declare -p DEPLOYMENT_UID SERVICE_UID ROUTE_UID OLD_WEB_IMAGE OLD_RUNTIME_SERVER_SHA256 OLD_PROXY_IMAGE OLD_TOPOLOGY_MODE BEFORE_COMMENTS STAMP BACKUP BACKUP_DIR DURABLE_STORAGE_TYPE DURABLE_STORAGE_CAPACITY_KIB DURABLE_STORAGE_USED_KIB DURABLE_STORAGE_FREE_KIB LOCAL_BACKUP BACKUP_SHA256 BACKUP_SCHEMA_SHA256 BACKUP_HYBRID_SCHEMA_SHA256
@@ -2291,6 +2462,7 @@ PY
 done
 verify_candidate_probe_identity
 grep -q 'BBQC_STARTUP_OK' <<< "$(oc -n "$PROJECT" exec "$CANDIDATE_PROBE_POD" -- env EXPECTED_POD_UID="$CANDIDATE_PROBE_POD_UID" sh -ec 'test "$POD_UID" = "$EXPECTED_POD_UID"; cat /tmp/candidate-entrypoint.log')"
+verify_new_hybrids_runtime "$CANDIDATE_PROBE_POD"
 cleanup_candidate_probe_pod
 printf 'CANDIDATE_IMAGE_STARTUP PASS image=%s\n' "$NEW_WEB_IMAGE"
 
@@ -2477,6 +2649,7 @@ if hashlib.sha256(montage).hexdigest() != record['montage_sha256']:
 print(f"RUNTIME_HTTP_ASSETS PASS dataset_id={payload['dataset_id']} records={len(payload['records'])}")
 PY
 
+verify_new_hybrids_runtime "$POD" web
 ETROC_REVIEWER_TEST_USER="${ETROC_REVIEWER_USERS_NORMALIZED%%,*}"
 oc -n "$PROJECT" exec -i "$POD" -c web -- env ETROC_REVIEWER_USERS="$ETROC_REVIEWER_USERS_NORMALIZED" \
   CHIPS_PUBLICATION_SHA256="$CHIPS_PUBLICATION_SHA256" \

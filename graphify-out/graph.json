@@ -9,7 +9,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/make_candidate_contact_sheet.py",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_make_candidate_contact_sheet_py",
-      "community": 20,
+      "community": 19,
       "norm_label": "make_candidate_contact_sheet.py"
     },
     {
@@ -540,7 +540,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L1",
       "id": "tools_build_etroc_optical_pool_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "build_etroc_optical_pool.py"
     },
     {
@@ -549,7 +549,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L53",
       "id": "build_etroc_optical_pool_sha256",
-      "community": 5,
+      "community": 6,
       "norm_label": "sha256()"
     },
     {
@@ -558,7 +558,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L61",
       "id": "build_etroc_optical_pool_int_field",
-      "community": 5,
+      "community": 6,
       "norm_label": "int_field()"
     },
     {
@@ -567,7 +567,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L68",
       "id": "build_etroc_optical_pool_load_height_contract",
-      "community": 5,
+      "community": 6,
       "norm_label": "load_height_contract()"
     },
     {
@@ -576,7 +576,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L93",
       "id": "build_etroc_optical_pool_resolve_under",
-      "community": 5,
+      "community": 6,
       "norm_label": "resolve_under()"
     },
     {
@@ -585,7 +585,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L108",
       "id": "build_etroc_optical_pool_validate_summary_rows",
-      "community": 5,
+      "community": 6,
       "norm_label": "validate_summary_rows()"
     },
     {
@@ -594,7 +594,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L146",
       "id": "build_etroc_optical_pool_validate_position_results",
-      "community": 5,
+      "community": 6,
       "norm_label": "validate_position_results()"
     },
     {
@@ -603,7 +603,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L241",
       "id": "build_etroc_optical_pool_validate_source_montages",
-      "community": 5,
+      "community": 6,
       "norm_label": "validate_source_montages()"
     },
     {
@@ -612,7 +612,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L257",
       "id": "build_etroc_optical_pool_render_jpegs",
-      "community": 5,
+      "community": 6,
       "norm_label": "render_jpegs()"
     },
     {
@@ -621,7 +621,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L279",
       "id": "build_etroc_optical_pool_render_clean_montage",
-      "community": 5,
+      "community": 6,
       "norm_label": "render_clean_montage()"
     },
     {
@@ -630,7 +630,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L300",
       "id": "build_etroc_optical_pool_position_publication",
-      "community": 5,
+      "community": 6,
       "norm_label": "position_publication()"
     },
     {
@@ -639,7 +639,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L338",
       "id": "build_etroc_optical_pool_height_publication",
-      "community": 5,
+      "community": 6,
       "norm_label": "height_publication()"
     },
     {
@@ -648,7 +648,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L357",
       "id": "build_etroc_optical_pool_verify_bundle",
-      "community": 5,
+      "community": 6,
       "norm_label": "verify_bundle()"
     },
     {
@@ -657,7 +657,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L436",
       "id": "build_etroc_optical_pool_atomic_replace_directory",
-      "community": 5,
+      "community": 6,
       "norm_label": "atomic_replace_directory()"
     },
     {
@@ -666,7 +666,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L453",
       "id": "build_etroc_optical_pool_build_pool",
-      "community": 5,
+      "community": 6,
       "norm_label": "build_pool()"
     },
     {
@@ -675,7 +675,7 @@
       "source_file": "tools/build_etroc_optical_pool.py",
       "source_location": "L596",
       "id": "build_etroc_optical_pool_main",
-      "community": 5,
+      "community": 6,
       "norm_label": "main()"
     },
     {
@@ -684,7 +684,7 @@
       "source_file": "tools/build_new_hybrids.py",
       "source_location": "L1",
       "id": "tools_build_new_hybrids_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "build_new_hybrids.py"
     },
     {
@@ -693,7 +693,7 @@
       "source_file": "tools/build_new_hybrids.py",
       "source_location": "L29",
       "id": "build_new_hybrids_sha",
-      "community": 5,
+      "community": 6,
       "norm_label": "sha()"
     },
     {
@@ -702,7 +702,7 @@
       "source_file": "tools/build_new_hybrids.py",
       "source_location": "L32",
       "id": "build_new_hybrids_validate_archive",
-      "community": 5,
+      "community": 6,
       "norm_label": "validate_archive()"
     },
     {
@@ -711,7 +711,7 @@
       "source_file": "tools/build_new_hybrids.py",
       "source_location": "L76",
       "id": "build_new_hybrids_build",
-      "community": 5,
+      "community": 6,
       "norm_label": "build()"
     },
     {
@@ -719,7 +719,7 @@
       "file_type": "rationale",
       "source_file": "tools/build_new_hybrids.py",
       "source_location": "L1",
-      "community": 5,
+      "community": 6,
       "norm_label": "deterministic, byte-preserving publication of the approved supplied batch.",
       "id": "build_new_hybrids_rationale_1"
     },
@@ -873,7 +873,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L1",
       "id": "tmp_etroc_visual_no_ball_report_plan_hybrid_bbqc_comments_js",
-      "community": 18,
+      "community": 17,
       "norm_label": "comments.js"
     },
     {
@@ -882,7 +882,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L19",
       "id": "comments_fmt",
-      "community": 18,
+      "community": 17,
       "norm_label": "fmt()"
     },
     {
@@ -891,7 +891,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L20",
       "id": "comments_esc",
-      "community": 18,
+      "community": 17,
       "norm_label": "esc()"
     },
     {
@@ -900,7 +900,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L21",
       "id": "comments_api",
-      "community": 18,
+      "community": 17,
       "norm_label": "api()"
     },
     {
@@ -909,7 +909,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L26",
       "id": "comments_resetedit",
-      "community": 18,
+      "community": 17,
       "norm_label": "resetedit()"
     },
     {
@@ -918,7 +918,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L32",
       "id": "comments_loadme",
-      "community": 18,
+      "community": 17,
       "norm_label": "loadme()"
     },
     {
@@ -927,7 +927,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L47",
       "id": "comments_rendercomment",
-      "community": 18,
+      "community": 17,
       "norm_label": "rendercomment()"
     },
     {
@@ -936,7 +936,7 @@
       "source_file": "/tmp/etroc-visual-no-ball-report-plan/hybrid-bbqc/comments.js",
       "source_location": "L52",
       "id": "comments_loadcomments",
-      "community": 18,
+      "community": 17,
       "norm_label": "loadcomments()"
     },
     {
@@ -1359,7 +1359,7 @@
       "source_file": "hybrid-bbqc/etroc-review.js",
       "source_location": "L26",
       "id": "etroc_review_sha256",
-      "community": 5,
+      "community": 6,
       "norm_label": "sha256()"
     },
     {
@@ -2241,7 +2241,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_server_py",
-      "community": 2,
+      "community": 3,
       "norm_label": "server.py"
     },
     {
@@ -2250,7 +2250,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L39",
       "id": "server_canonical_cern_principal",
-      "community": 2,
+      "community": 3,
       "norm_label": "canonical_cern_principal()"
     },
     {
@@ -2259,7 +2259,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L46",
       "id": "server_etroc_reviewer_allowlist",
-      "community": 2,
+      "community": 3,
       "norm_label": "etroc_reviewer_allowlist()"
     },
     {
@@ -2268,7 +2268,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L74",
       "id": "server_split_pair_key",
-      "community": 2,
+      "community": 5,
       "norm_label": "split_pair_key()"
     },
     {
@@ -2277,7 +2277,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L84",
       "id": "server_discover_canonical_pairs",
-      "community": 2,
+      "community": 3,
       "norm_label": "discover_canonical_pairs()"
     },
     {
@@ -2286,7 +2286,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L97",
       "id": "server_discover_redirect_aliases",
-      "community": 2,
+      "community": 3,
       "norm_label": "discover_redirect_aliases()"
     },
     {
@@ -2295,7 +2295,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L120",
       "id": "server_source_identifier_pair",
-      "community": 2,
+      "community": 5,
       "norm_label": "source_identifier_pair()"
     },
     {
@@ -2304,7 +2304,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L130",
       "id": "server_load_additional_tests_manifest",
-      "community": 2,
+      "community": 5,
       "norm_label": "load_additional_tests_manifest()"
     },
     {
@@ -2313,7 +2313,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L214",
       "id": "server_validate_additional_test_schema",
-      "community": 2,
+      "community": 5,
       "norm_label": "validate_additional_test_schema()"
     },
     {
@@ -2322,7 +2322,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L296",
       "id": "server_init_db",
-      "community": 2,
+      "community": 5,
       "norm_label": "init_db()"
     },
     {
@@ -2331,7 +2331,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L721",
       "id": "server_identity",
-      "community": 2,
+      "community": 3,
       "norm_label": "identity()"
     },
     {
@@ -2340,7 +2340,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L740",
       "id": "server_json_response",
-      "community": 2,
+      "community": 3,
       "norm_label": "json_response()"
     },
     {
@@ -2349,7 +2349,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L750",
       "id": "server_mutation_request_error",
-      "community": 2,
+      "community": 3,
       "norm_label": "mutation_request_error()"
     },
     {
@@ -2358,7 +2358,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L763",
       "id": "server_read_json",
-      "community": 2,
+      "community": 3,
       "norm_label": "read_json()"
     },
     {
@@ -2367,7 +2367,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L777",
       "id": "server_etroc_evidence_identity",
-      "community": 6,
+      "community": 3,
       "norm_label": "_etroc_evidence_identity()"
     },
     {
@@ -2376,7 +2376,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L798",
       "id": "server_reset_etroc_review_evidence_cache",
-      "community": 6,
+      "community": 3,
       "norm_label": "reset_etroc_review_evidence_cache()"
     },
     {
@@ -2385,7 +2385,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L804",
       "id": "server_load_etroc_review_evidence",
-      "community": 6,
+      "community": 3,
       "norm_label": "load_etroc_review_evidence()"
     },
     {
@@ -2394,7 +2394,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L825",
       "id": "server_reset_etroc_position_evidence_cache",
-      "community": 2,
+      "community": 3,
       "norm_label": "reset_etroc_position_evidence_cache()"
     },
     {
@@ -2412,7 +2412,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L851",
       "id": "server_init_etroc_position_review_schema",
-      "community": 2,
+      "community": 3,
       "norm_label": "init_etroc_position_review_schema()"
     },
     {
@@ -2421,7 +2421,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L855",
       "id": "server_init_etroc_review_schema",
-      "community": 6,
+      "community": 3,
       "norm_label": "init_etroc_review_schema()"
     },
     {
@@ -2430,7 +2430,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L859",
       "id": "server_initialize_store",
-      "community": 2,
+      "community": 3,
       "norm_label": "initialize_store()"
     },
     {
@@ -2439,7 +2439,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L881",
       "id": "server_append_etroc_review",
-      "community": 6,
+      "community": 3,
       "norm_label": "append_etroc_review()"
     },
     {
@@ -2448,7 +2448,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L887",
       "id": "server_etroc_error",
-      "community": 2,
+      "community": 3,
       "norm_label": "etroc_error()"
     },
     {
@@ -2457,7 +2457,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L891",
       "id": "server_etroc_query",
-      "community": 2,
+      "community": 3,
       "norm_label": "etroc_query()"
     },
     {
@@ -2466,7 +2466,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L903",
       "id": "server_etroc_viewer",
-      "community": 2,
+      "community": 3,
       "norm_label": "etroc_viewer()"
     },
     {
@@ -2475,7 +2475,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L913",
       "id": "server_normalize_target",
-      "community": 2,
+      "community": 3,
       "norm_label": "normalize_target()"
     },
     {
@@ -2484,7 +2484,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L923",
       "id": "server_normalize_status",
-      "community": 2,
+      "community": 3,
       "norm_label": "normalize_status()"
     },
     {
@@ -2493,7 +2493,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L931",
       "id": "server_resolve_hybrid_targets",
-      "community": 2,
+      "community": 3,
       "norm_label": "resolve_hybrid_targets()"
     },
     {
@@ -2502,7 +2502,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L962",
       "id": "server_resolve_hybrid_target",
-      "community": 2,
+      "community": 3,
       "norm_label": "resolve_hybrid_target()"
     },
     {
@@ -2511,7 +2511,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L968",
       "id": "server_bind_hybrid",
-      "community": 2,
+      "community": 5,
       "norm_label": "bind_hybrid()"
     },
     {
@@ -2520,7 +2520,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1071",
       "id": "server_list_hybrids",
-      "community": 2,
+      "community": 5,
       "norm_label": "list_hybrids()"
     },
     {
@@ -2529,7 +2529,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1132",
       "id": "server_handler",
-      "community": 2,
+      "community": 3,
       "norm_label": "handler"
     },
     {
@@ -2538,7 +2538,7 @@
       "source_file": "",
       "source_location": "",
       "id": "simplehttprequesthandler",
-      "community": 2,
+      "community": 3,
       "norm_label": "simplehttprequesthandler"
     },
     {
@@ -2547,7 +2547,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1135",
       "id": "server_handler_translate_path",
-      "community": 2,
+      "community": 3,
       "norm_label": ".translate_path()"
     },
     {
@@ -2556,7 +2556,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1145",
       "id": "server_handler_log_message",
-      "community": 2,
+      "community": 3,
       "norm_label": ".log_message()"
     },
     {
@@ -2565,7 +2565,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1148",
       "id": "server_handler_do_get",
-      "community": 3,
+      "community": 2,
       "norm_label": ".do_get()"
     },
     {
@@ -2574,7 +2574,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1454",
       "id": "server_handler_do_post",
-      "community": 2,
+      "community": 3,
       "norm_label": ".do_post()"
     },
     {
@@ -2583,7 +2583,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1609",
       "id": "server_handler_do_patch",
-      "community": 2,
+      "community": 3,
       "norm_label": ".do_patch()"
     },
     {
@@ -2592,7 +2592,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1663",
       "id": "server_handler_do_put",
-      "community": 2,
+      "community": 3,
       "norm_label": ".do_put()"
     },
     {
@@ -2601,7 +2601,7 @@
       "source_file": "hybrid-bbqc/server.py",
       "source_location": "L1666",
       "id": "server_handler_do_delete",
-      "community": 2,
+      "community": 3,
       "norm_label": ".do_delete()"
     },
     {
@@ -2898,7 +2898,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L1",
       "id": "hybrid_bbqc_etroc_position_reviews_py",
-      "community": 3,
+      "community": 2,
       "norm_label": "etroc_position_reviews.py"
     },
     {
@@ -2907,7 +2907,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L64",
       "id": "etroc_position_reviews_positionevidencerecord",
-      "community": 3,
+      "community": 2,
       "norm_label": "positionevidencerecord"
     },
     {
@@ -2916,7 +2916,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L82",
       "id": "etroc_position_reviews_positionevidencerecord_as_dict",
-      "community": 3,
+      "community": 2,
       "norm_label": ".as_dict()"
     },
     {
@@ -2925,7 +2925,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L95",
       "id": "etroc_position_reviews_positionacquisitionevidence",
-      "community": 3,
+      "community": 2,
       "norm_label": "positionacquisitionevidence"
     },
     {
@@ -2934,7 +2934,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L115",
       "id": "etroc_position_reviews_positionevidenceset",
-      "community": 3,
+      "community": 2,
       "norm_label": "positionevidenceset"
     },
     {
@@ -2943,7 +2943,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L122",
       "id": "etroc_position_reviews_serviceresult",
-      "community": 3,
+      "community": 2,
       "norm_label": "serviceresult"
     },
     {
@@ -2952,7 +2952,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L127",
       "id": "etroc_position_reviews_normalized_sql",
-      "community": 3,
+      "community": 2,
       "norm_label": "_normalized_sql()"
     },
     {
@@ -2961,7 +2961,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L132",
       "id": "etroc_position_reviews_digest",
-      "community": 3,
+      "community": 2,
       "norm_label": "_digest()"
     },
     {
@@ -2970,7 +2970,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L136",
       "id": "etroc_position_reviews_checksum_inventory",
-      "community": 3,
+      "community": 2,
       "norm_label": "_checksum_inventory()"
     },
     {
@@ -2979,7 +2979,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L156",
       "id": "etroc_position_reviews_asset_bytes",
-      "community": 3,
+      "community": 2,
       "norm_label": "_asset_bytes()"
     },
     {
@@ -2988,7 +2988,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L169",
       "id": "etroc_position_reviews_load_evidence",
-      "community": 3,
+      "community": 2,
       "norm_label": "load_evidence()"
     },
     {
@@ -2997,7 +2997,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L337",
       "id": "etroc_position_reviews_legacy_objects",
-      "community": 3,
+      "community": 2,
       "norm_label": "_legacy_objects()"
     },
     {
@@ -3006,7 +3006,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L348",
       "id": "etroc_position_reviews_drop_empty_legacy_schema",
-      "community": 3,
+      "community": 2,
       "norm_label": "_drop_empty_legacy_schema()"
     },
     {
@@ -3015,7 +3015,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L372",
       "id": "etroc_position_reviews_managed_objects",
-      "community": 3,
+      "community": 2,
       "norm_label": "_managed_objects()"
     },
     {
@@ -3024,7 +3024,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L382",
       "id": "etroc_position_reviews_index_details",
-      "community": 3,
+      "community": 2,
       "norm_label": "_index_details()"
     },
     {
@@ -3033,7 +3033,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L390",
       "id": "etroc_position_reviews_validate_schema_contract",
-      "community": 3,
+      "community": 2,
       "norm_label": "_validate_schema_contract()"
     },
     {
@@ -3042,7 +3042,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L439",
       "id": "etroc_position_reviews_validate_schema",
-      "community": 3,
+      "community": 2,
       "norm_label": "validate_schema()"
     },
     {
@@ -3051,7 +3051,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L443",
       "id": "etroc_position_reviews_drop_position_schema",
-      "community": 3,
+      "community": 2,
       "norm_label": "_drop_position_schema()"
     },
     {
@@ -3060,7 +3060,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L458",
       "id": "etroc_position_reviews_migrate_empty_v1",
-      "community": 3,
+      "community": 2,
       "norm_label": "_migrate_empty_v1()"
     },
     {
@@ -3069,7 +3069,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L468",
       "id": "etroc_position_reviews_init_schema",
-      "community": 3,
+      "community": 2,
       "norm_label": "init_schema()"
     },
     {
@@ -3078,7 +3078,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L491",
       "id": "etroc_position_reviews_event",
-      "community": 3,
+      "community": 2,
       "norm_label": "_event()"
     },
     {
@@ -3087,7 +3087,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L495",
       "id": "etroc_position_reviews_current",
-      "community": 3,
+      "community": 2,
       "norm_label": "_current()"
     },
     {
@@ -3096,7 +3096,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L515",
       "id": "etroc_position_reviews_history",
-      "community": 3,
+      "community": 2,
       "norm_label": "_history()"
     },
     {
@@ -3105,7 +3105,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L524",
       "id": "etroc_position_reviews_completion",
-      "community": 3,
+      "community": 2,
       "norm_label": "_completion()"
     },
     {
@@ -3114,7 +3114,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L544",
       "id": "etroc_position_reviews_summary",
-      "community": 3,
+      "community": 2,
       "norm_label": "summary()"
     },
     {
@@ -3123,7 +3123,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L578",
       "id": "etroc_position_reviews_completion_summary",
-      "community": 3,
+      "community": 2,
       "norm_label": "completion_summary()"
     },
     {
@@ -3132,7 +3132,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L601",
       "id": "etroc_position_reviews_results_summary",
-      "community": 3,
+      "community": 2,
       "norm_label": "results_summary()"
     },
     {
@@ -3141,7 +3141,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L656",
       "id": "etroc_position_reviews_audit",
-      "community": 3,
+      "community": 2,
       "norm_label": "audit()"
     },
     {
@@ -3150,7 +3150,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L694",
       "id": "etroc_position_reviews_validate_request",
-      "community": 3,
+      "community": 2,
       "norm_label": "validate_request()"
     },
     {
@@ -3159,7 +3159,7 @@
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L725",
       "id": "etroc_position_reviews_append",
-      "community": 3,
+      "community": 2,
       "norm_label": "append()"
     },
     {
@@ -3167,7 +3167,7 @@
       "file_type": "rationale",
       "source_file": "hybrid-bbqc/etroc_position_reviews.py",
       "source_location": "L602",
-      "community": 3,
+      "community": 2,
       "norm_label": "bounded current labels from one read snapshot, never history or review notes.",
       "id": "etroc_position_reviews_rationale_602"
     },
@@ -3393,7 +3393,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L1",
       "id": "tests_test_etroc_results_py",
-      "community": 3,
+      "community": 2,
       "norm_label": "test_etroc_results.py"
     },
     {
@@ -3402,7 +3402,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L12",
       "id": "test_etroc_results_seed_reviews",
-      "community": 3,
+      "community": 2,
       "norm_label": "seed_reviews()"
     },
     {
@@ -3411,7 +3411,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L27",
       "id": "test_etroc_results_resultservicetests",
-      "community": 3,
+      "community": 2,
       "norm_label": "resultservicetests"
     },
     {
@@ -3420,7 +3420,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L29",
       "id": "test_etroc_results_setupclass",
-      "community": 3,
+      "community": 2,
       "norm_label": "setupclass()"
     },
     {
@@ -3429,7 +3429,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L33",
       "id": "test_etroc_results_resultservicetests_test_pending_complete_correction_and_bounded_evidence",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_pending_complete_correction_and_bounded_evidence()"
     },
     {
@@ -3438,7 +3438,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L63",
       "id": "test_etroc_results_resultservicetests_test_missing_or_malformed_store_never_returns_zero_completion",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_missing_or_malformed_store_never_returns_zero_completion()"
     },
     {
@@ -3447,7 +3447,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L75",
       "id": "test_etroc_results_resultapitests",
-      "community": 17,
+      "community": 2,
       "norm_label": "resultapitests"
     },
     {
@@ -3456,7 +3456,7 @@
       "source_file": "",
       "source_location": "",
       "id": "positionapitests",
-      "community": 17,
+      "community": 2,
       "norm_label": "positionapitests"
     },
     {
@@ -3465,7 +3465,7 @@
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L76",
       "id": "test_etroc_results_resultapitests_test_results_route_auth_cache_query_and_unavailable",
-      "community": 17,
+      "community": 2,
       "norm_label": ".test_results_route_auth_cache_query_and_unavailable()"
     },
     {
@@ -3473,7 +3473,7 @@
       "file_type": "rationale",
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L1",
-      "community": 3,
+      "community": 2,
       "norm_label": "post-review aggregate: real immutable evidence and temporary review stores only.",
       "id": "test_etroc_results_rationale_1"
     },
@@ -3482,7 +3482,7 @@
       "file_type": "rationale",
       "source_file": "tests/test_etroc_results.py",
       "source_location": "L13",
-      "community": 3,
+      "community": 2,
       "norm_label": "explicitly test-only fixture; append legitimate events, never edit production db",
       "id": "test_etroc_results_rationale_13"
     },
@@ -4599,7 +4599,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L1",
       "id": "tests_test_etroc_optical_pool_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "test_etroc_optical_pool.py"
     },
     {
@@ -4608,7 +4608,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L32",
       "id": "test_etroc_optical_pool_etrocopticalpooltests",
-      "community": 5,
+      "community": 6,
       "norm_label": "etrocopticalpooltests"
     },
     {
@@ -4617,7 +4617,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L34",
       "id": "test_etroc_optical_pool_valid_summary_rows",
-      "community": 5,
+      "community": 6,
       "norm_label": "valid_summary_rows()"
     },
     {
@@ -4626,7 +4626,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L53",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_builder_rejects_unapproved_or_inconsistent_etroc_identity",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_builder_rejects_unapproved_or_inconsistent_etroc_identity()"
     },
     {
@@ -4635,7 +4635,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L69",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_atomic_directory_swap_restores_previous_bundle_on_failure",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_atomic_directory_swap_restores_previous_bundle_on_failure()"
     },
     {
@@ -4644,7 +4644,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L94",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_builder_rejects_absolute_and_traversing_source_paths",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_builder_rejects_absolute_and_traversing_source_paths()"
     },
     {
@@ -4653,7 +4653,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L102",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_builder_rejects_mismatched_complete_manifest_before_output",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_builder_rejects_mismatched_complete_manifest_before_output()"
     },
     {
@@ -4662,7 +4662,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L119",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_load_pool",
-      "community": 5,
+      "community": 6,
       "norm_label": ".load_pool()"
     },
     {
@@ -4671,7 +4671,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L122",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_has_exact_complete_unbonded_etroc_inventory",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_has_exact_complete_unbonded_etroc_inventory()"
     },
     {
@@ -4680,7 +4680,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L136",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_assets_are_relative_integrity_checked_web_files",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_assets_are_relative_integrity_checked_web_files()"
     },
     {
@@ -4689,7 +4689,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L157",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_montage_uris_are_content_addressed_and_publish_only_digests",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_montage_uris_are_content_addressed_and_publish_only_digests()"
     },
     {
@@ -4698,7 +4698,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L168",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_clean_montages_and_position_publications_are_exact_and_content_addressed",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_clean_montages_and_position_publications_are_exact_and_content_addressed()"
     },
     {
@@ -4707,7 +4707,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L243",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_clean_publication_preserves_existing_labelled_montage_bytes",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_clean_publication_preserves_existing_labelled_montage_bytes()"
     },
     {
@@ -4716,7 +4716,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L253",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_dataset_checksum_manifest_is_complete_and_exact",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_dataset_checksum_manifest_is_complete_and_exact()"
     },
     {
@@ -4725,7 +4725,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L269",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_provenance_identity_and_web_size_budget",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_provenance_identity_and_web_size_budget()"
     },
     {
@@ -4734,7 +4734,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L286",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_optical_tab_loads_pool_without_changing_hybrid_inventory",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_optical_tab_loads_pool_without_changing_hybrid_inventory()"
     },
     {
@@ -4743,7 +4743,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L297",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_browser_contract_rejects_malformed_scientific_payloads",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_browser_contract_rejects_malformed_scientific_payloads()"
     },
     {
@@ -4752,7 +4752,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L353",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_statistics_contract_reconciles_exact_dataset_and_wafer_totals",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_statistics_contract_reconciles_exact_dataset_and_wafer_totals()"
     },
     {
@@ -4761,7 +4761,7 @@
       "source_file": "tests/test_etroc_optical_pool.py",
       "source_location": "L399",
       "id": "test_etroc_optical_pool_etrocopticalpooltests_test_pool_renderer_is_safe_accessible_and_fail_visible",
-      "community": 5,
+      "community": 6,
       "norm_label": ".test_pool_renderer_is_safe_accessible_and_fail_visible()"
     },
     {
@@ -4770,7 +4770,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L1",
       "id": "tests_test_etroc_position_reviews_py",
-      "community": 3,
+      "community": 2,
       "norm_label": "test_etroc_position_reviews.py"
     },
     {
@@ -4779,7 +4779,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L19",
       "id": "test_etroc_position_reviews_load_module",
-      "community": 3,
+      "community": 2,
       "norm_label": "load_module()"
     },
     {
@@ -4788,7 +4788,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L29",
       "id": "test_etroc_position_reviews_positionevidencetests",
-      "community": 3,
+      "community": 2,
       "norm_label": "positionevidencetests"
     },
     {
@@ -4797,7 +4797,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L30",
       "id": "test_etroc_position_reviews_positionevidencetests_test_loads_exact_clean_montage_and_9216_position_evidence",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_loads_exact_clean_montage_and_9216_position_evidence()"
     },
     {
@@ -4806,7 +4806,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L52",
       "id": "test_etroc_position_reviews_positionevidencetests_test_rejects_position_publication_or_clean_byte_drift",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_rejects_position_publication_or_clean_byte_drift()"
     },
     {
@@ -4815,7 +4815,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L71",
       "id": "test_etroc_position_reviews_positionschemaandservicetests",
-      "community": 3,
+      "community": 2,
       "norm_label": "positionschemaandservicetests"
     },
     {
@@ -4824,7 +4824,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L72",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_setup",
-      "community": 3,
+      "community": 2,
       "norm_label": ".setup()"
     },
     {
@@ -4833,7 +4833,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L78",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_request",
-      "community": 3,
+      "community": 2,
       "norm_label": ".request()"
     },
     {
@@ -4842,7 +4842,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L89",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_legacy_ddl",
-      "community": 3,
+      "community": 2,
       "norm_label": ".legacy_ddl()"
     },
     {
@@ -4851,7 +4851,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L99",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_empty_deployed_v1_migrates_to_v2_and_nonempty_v1_fails_closed",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_empty_deployed_v1_migrates_to_v2_and_nonempty_v1_fails_closed()"
     },
     {
@@ -4860,7 +4860,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L126",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_empty_legacy_v1_migrates_atomically_and_nonempty_rejects",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_empty_legacy_v1_migrates_atomically_and_nonempty_rejects()"
     },
     {
@@ -4869,7 +4869,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L151",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_validate_schema_requires_exact_integrity_check",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_validate_schema_requires_exact_integrity_check()"
     },
     {
@@ -4878,7 +4878,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L166",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_additive_schema_is_exact_idempotent_and_preserves_user_version",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_additive_schema_is_exact_idempotent_and_preserves_user_version()"
     },
     {
@@ -4887,7 +4887,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L190",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_append_replay_stale_and_append_only_chain",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_append_replay_stale_and_append_only_chain()"
     },
     {
@@ -4896,7 +4896,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L225",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_rejects_old_state_contract_invalid_labels_and_non_targets",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_rejects_old_state_contract_invalid_labels_and_non_targets()"
     },
     {
@@ -4905,7 +4905,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L244",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_summary_and_history_are_complete_and_position_scoped",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_summary_and_history_are_complete_and_position_scoped()"
     },
     {
@@ -4914,7 +4914,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L276",
       "id": "test_etroc_position_reviews_positionschemaandservicetests_test_dataset_completion_summary_is_derived_from_persisted_target_reviews",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_dataset_completion_summary_is_derived_from_persisted_target_reviews()"
     },
     {
@@ -4923,7 +4923,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L309",
       "id": "test_etroc_position_reviews_positionapitests",
-      "community": 3,
+      "community": 2,
       "norm_label": "positionapitests"
     },
     {
@@ -4932,7 +4932,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L310",
       "id": "test_etroc_position_reviews_positionapitests_setup",
-      "community": 2,
+      "community": 3,
       "norm_label": ".setup()"
     },
     {
@@ -4941,7 +4941,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L324",
       "id": "test_etroc_position_reviews_positionapitests_request",
-      "community": 3,
+      "community": 2,
       "norm_label": ".request()"
     },
     {
@@ -4950,7 +4950,7 @@
       "source_file": "tests/test_etroc_position_reviews.py",
       "source_location": "L345",
       "id": "test_etroc_position_reviews_positionapitests_test_summary_append_history_and_read_only_capability",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_summary_append_history_and_read_only_capability()"
     },
     {
@@ -5121,7 +5121,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L1",
       "id": "tmp_bbqc_etroc_oi_2608_tests_test_etroc_reviews_py",
-      "community": 6,
+      "community": 3,
       "norm_label": "test_etroc_reviews.py"
     },
     {
@@ -5130,7 +5130,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L22",
       "id": "test_etroc_reviews_load_server_module",
-      "community": 6,
+      "community": 3,
       "norm_label": "load_server_module()"
     },
     {
@@ -5139,7 +5139,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L31",
       "id": "test_etroc_reviews_evidencetests",
-      "community": 6,
+      "community": 3,
       "norm_label": "evidencetests"
     },
     {
@@ -5148,7 +5148,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L32",
       "id": "test_etroc_reviews_evidencetests_test_caches_evidence_until_publication_or_manifest_identity_changes",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_caches_evidence_until_publication_or_manifest_identity_changes()"
     },
     {
@@ -5157,7 +5157,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L55",
       "id": "test_etroc_reviews_evidencetests_test_loads_exact_raw_publication_and_hashed_montages",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_loads_exact_raw_publication_and_hashed_montages()"
     },
     {
@@ -5166,7 +5166,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L77",
       "id": "test_etroc_reviews_evidencetests_test_rejects_duplicate_or_deployment_skew",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_rejects_duplicate_or_deployment_skew()"
     },
     {
@@ -5175,7 +5175,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L93",
       "id": "test_etroc_reviews_evidencetests_test_rejects_checksum_inventory_that_omits_a_canonical_preview",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_rejects_checksum_inventory_that_omits_a_canonical_preview()"
     },
     {
@@ -5184,7 +5184,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L114",
       "id": "test_etroc_reviews_evidencetests_test_forced_reload_rehashes_assets_after_a_warm_cache",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_forced_reload_rehashes_assets_after_a_warm_cache()"
     },
     {
@@ -5193,7 +5193,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L137",
       "id": "test_etroc_reviews_startupevidencetests",
-      "community": 6,
+      "community": 3,
       "norm_label": "startupevidencetests"
     },
     {
@@ -5202,7 +5202,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L138",
       "id": "test_etroc_reviews_startupevidencetests_test_initialize_store_requires_complete_present_bundle_before_schema_side_effects",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_initialize_store_requires_complete_present_bundle_before_schema_side_effects()"
     },
     {
@@ -5211,7 +5211,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L183",
       "id": "test_etroc_reviews_schematests",
-      "community": 6,
+      "community": 3,
       "norm_label": "schematests"
     },
     {
@@ -5220,7 +5220,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L184",
       "id": "test_etroc_reviews_schematests_test_migrates_only_additive_schema_without_user_version_change",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_migrates_only_additive_schema_without_user_version_change()"
     },
     {
@@ -5229,7 +5229,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L209",
       "id": "test_etroc_reviews_schematests_test_rejects_partial_and_future_review_schemas",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_rejects_partial_and_future_review_schemas()"
     },
     {
@@ -5238,7 +5238,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L227",
       "id": "test_etroc_reviews_schematests_test_rejects_arbitrary_named_etroc_indexes_and_triggers_only",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_rejects_arbitrary_named_etroc_indexes_and_triggers_only()"
     },
     {
@@ -5247,7 +5247,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L253",
       "id": "test_etroc_reviews_schematests_test_rejects_schema_check_literal_case_drift",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_rejects_schema_check_literal_case_drift()"
     },
     {
@@ -5256,7 +5256,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L273",
       "id": "test_etroc_reviews_schematests_test_rejects_every_stray_etroc_prefixed_object",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_rejects_every_stray_etroc_prefixed_object()"
     },
     {
@@ -5265,7 +5265,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L288",
       "id": "test_etroc_reviews_reviewservicetests",
-      "community": 6,
+      "community": 3,
       "norm_label": "reviewservicetests"
     },
     {
@@ -5274,7 +5274,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L289",
       "id": "test_etroc_reviews_reviewservicetests_test_append_chain_idempotency_and_evidence_validation",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_append_chain_idempotency_and_evidence_validation()"
     },
     {
@@ -5283,7 +5283,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L323",
       "id": "test_etroc_reviews_reviewservicetests_test_idempotent_replay_reads_event_and_current_inside_the_write_transaction",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_idempotent_replay_reads_event_and_current_inside_the_write_transaction()"
     },
     {
@@ -5292,7 +5292,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L353",
       "id": "test_etroc_reviews_reviewapitests",
-      "community": 6,
+      "community": 3,
       "norm_label": "reviewapitests"
     },
     {
@@ -5301,7 +5301,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L354",
       "id": "test_etroc_reviews_reviewapitests_setup",
-      "community": 6,
+      "community": 3,
       "norm_label": ".setup()"
     },
     {
@@ -5310,7 +5310,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L363",
       "id": "test_etroc_reviews_reviewapitests_request",
-      "community": 6,
+      "community": 3,
       "norm_label": ".request()"
     },
     {
@@ -5319,7 +5319,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L385",
       "id": "test_etroc_reviews_reviewapitests_test_summary_history_audit_and_strict_mutation_boundary",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_summary_history_audit_and_strict_mutation_boundary()"
     },
     {
@@ -5328,7 +5328,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L449",
       "id": "test_etroc_reviews_reviewapitests_test_get_routes_require_identity_and_keep_non_reviewers_read_only",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_get_routes_require_identity_and_keep_non_reviewers_read_only()"
     },
     {
@@ -5337,7 +5337,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L476",
       "id": "test_etroc_reviews_reviewapitests_test_history_and_audit_return_structured_store_unavailable",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_history_and_audit_return_structured_store_unavailable()"
     },
     {
@@ -5346,7 +5346,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L496",
       "id": "test_etroc_reviews_reviewapitests_test_post_validates_shape_before_loading_evidence_and_replays_during_outage",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_post_validates_shape_before_loading_evidence_and_replays_during_outage()"
     },
     {
@@ -5355,7 +5355,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L534",
       "id": "test_etroc_reviews_reviewapitests_test_warmed_get_cache_cannot_permit_a_new_post_after_asset_byte_drift",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_warmed_get_cache_cannot_permit_a_new_post_after_asset_byte_drift()"
     },
     {
@@ -5364,7 +5364,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L569",
       "id": "test_etroc_reviews_reviewapitests_test_cern_principal_validation_is_shared_by_header_and_allowlist",
-      "community": 2,
+      "community": 3,
       "norm_label": ".test_cern_principal_validation_is_shared_by_header_and_allowlist()"
     },
     {
@@ -5373,7 +5373,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L592",
       "id": "test_etroc_reviews_reviewapitests_test_read_json_rejects_invalid_content_length_before_reading",
-      "community": 2,
+      "community": 3,
       "norm_label": ".test_read_json_rejects_invalid_content_length_before_reading()"
     },
     {
@@ -5382,7 +5382,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L618",
       "id": "test_etroc_reviews_reviewapitests_test_asset_oserror_returns_json_503_for_every_review_read_route",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_asset_oserror_returns_json_503_for_every_review_read_route()"
     },
     {
@@ -5391,7 +5391,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L639",
       "id": "test_etroc_reviews_reviewapitests_test_invalid_get_queries_fail_before_evidence_loading_during_outage",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_invalid_get_queries_fail_before_evidence_loading_during_outage()"
     },
     {
@@ -5400,7 +5400,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_etroc_reviews.py",
       "source_location": "L660",
       "id": "test_etroc_reviews_reviewapitests_test_missing_evidence_files_return_structured_unavailable",
-      "community": 6,
+      "community": 3,
       "norm_label": ".test_missing_evidence_files_return_structured_unavailable()"
     },
     {
@@ -5490,7 +5490,7 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L1",
       "id": "tests_test_etroc_results_release_py",
-      "community": 3,
+      "community": 2,
       "norm_label": "test_etroc_results_release.py"
     },
     {
@@ -5499,7 +5499,7 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L16",
       "id": "test_etroc_results_release_test_results_script_in_release_download_checksum_and_http_closure",
-      "community": 3,
+      "community": 2,
       "norm_label": "test_results_script_in_release_download_checksum_and_http_closure()"
     },
     {
@@ -5508,7 +5508,7 @@
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L30",
       "id": "test_etroc_results_release_test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial",
-      "community": 3,
+      "community": 2,
       "norm_label": "test_embedded_results_probe_accepts_real_service_contract_and_rejects_partial()"
     },
     {
@@ -5516,7 +5516,7 @@
       "file_type": "rationale",
       "source_file": "tests/test_etroc_results_release.py",
       "source_location": "L1",
-      "community": 3,
+      "community": 2,
       "norm_label": "release closure for the result-first etroc entry document.",
       "id": "test_etroc_results_release_rationale_1"
     },
@@ -5616,7 +5616,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_pair_correction.py",
       "source_location": "L1",
       "id": "tmp_bbqc_etroc_oi_2608_tests_test_hybrid_pair_correction_py",
-      "community": 19,
+      "community": 18,
       "norm_label": "test_hybrid_pair_correction.py"
     },
     {
@@ -5625,7 +5625,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_pair_correction.py",
       "source_location": "L12",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests",
-      "community": 19,
+      "community": 18,
       "norm_label": "hybridpaircorrectiontests"
     },
     {
@@ -5634,7 +5634,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_pair_correction.py",
       "source_location": "L13",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_manifest_preserves_w04f2_34_and_corrects_w04f2_81",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_manifest_preserves_w04f2_34_and_corrects_w04f2_81()"
     },
     {
@@ -5643,7 +5643,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_pair_correction.py",
       "source_location": "L21",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_dashboard_uses_only_the_corrected_w04f2_81_slug",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_dashboard_uses_only_the_corrected_w04f2_81_slug()"
     },
     {
@@ -5652,7 +5652,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_pair_correction.py",
       "source_location": "L28",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_corrected_detail_page_keeps_an_old_url_redirect",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_corrected_detail_page_keeps_an_old_url_redirect()"
     },
     {
@@ -5661,7 +5661,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_pair_correction.py",
       "source_location": "L43",
       "id": "test_hybrid_pair_correction_hybridpaircorrectiontests_test_concordance_snapshot_uses_the_corrected_comment_target",
-      "community": 19,
+      "community": 18,
       "norm_label": ".test_concordance_snapshot_uses_the_corrected_comment_target()"
     },
     {
@@ -5706,7 +5706,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1",
       "id": "tmp_bbqc_etroc_oi_2608_tests_test_hybrid_registry_py",
-      "community": 2,
+      "community": 5,
       "norm_label": "test_hybrid_registry.py"
     },
     {
@@ -5715,7 +5715,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L43",
       "id": "test_hybrid_registry_additionaltestmanifesttests",
-      "community": 2,
+      "community": 5,
       "norm_label": "additionaltestmanifesttests"
     },
     {
@@ -5724,7 +5724,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L44",
       "id": "test_hybrid_registry_additionaltestmanifesttests_test_manifest_rejects_invalid_types_duplicates_revisions_and_crosswalks",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_manifest_rejects_invalid_types_duplicates_revisions_and_crosswalks()"
     },
     {
@@ -5751,7 +5751,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L170",
       "id": "test_hybrid_registry_load_server_module",
-      "community": 2,
+      "community": 5,
       "norm_label": "load_server_module()"
     },
     {
@@ -5760,7 +5760,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L179",
       "id": "test_hybrid_registry_create_legacy_comments_db",
-      "community": 2,
+      "community": 5,
       "norm_label": "create_legacy_comments_db()"
     },
     {
@@ -5769,7 +5769,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L214",
       "id": "test_hybrid_registry_create_static_site",
-      "community": 2,
+      "community": 5,
       "norm_label": "create_static_site()"
     },
     {
@@ -5778,7 +5778,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L234",
       "id": "test_hybrid_registry_write_additional_test_manifest",
-      "community": 2,
+      "community": 5,
       "norm_label": "write_additional_test_manifest()"
     },
     {
@@ -5787,7 +5787,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L258",
       "id": "test_hybrid_registry_hybridregistrymigrationtests",
-      "community": 2,
+      "community": 5,
       "norm_label": "hybridregistrymigrationtests"
     },
     {
@@ -5796,7 +5796,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L259",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_setup",
-      "community": 2,
+      "community": 5,
       "norm_label": ".setup()"
     },
     {
@@ -5805,7 +5805,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L269",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_required_missing_manifest_fails_before_database_mutation",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_required_missing_manifest_fails_before_database_mutation()"
     },
     {
@@ -5814,7 +5814,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L286",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_incompatible_partial_schema_rolls_back_all_migration_changes",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_incompatible_partial_schema_rolls_back_all_migration_changes()"
     },
     {
@@ -5823,7 +5823,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L303",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_schema_validator_rejects_partial_unique_identity_indexes",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_schema_validator_rejects_partial_unique_identity_indexes()"
     },
     {
@@ -5832,7 +5832,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L347",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_unsupported_schema_version_fails_without_mutation",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_unsupported_schema_version_fails_without_mutation()"
     },
     {
@@ -5841,7 +5841,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L363",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_invalid_additional_test_manifest_fails_before_database_mutation",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_invalid_additional_test_manifest_fails_before_database_mutation()"
     },
     {
@@ -5850,7 +5850,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L400",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_init_db_seeds_registry_aliases_and_backfills_legacy_comments",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_init_db_seeds_registry_aliases_and_backfills_legacy_comments()"
     },
     {
@@ -5859,7 +5859,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L442",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_init_db_is_idempotent",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_init_db_is_idempotent()"
     },
     {
@@ -5868,7 +5868,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L469",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_init_db_rejects_duplicate_active_child_assignments",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_init_db_rejects_duplicate_active_child_assignments()"
     },
     {
@@ -5877,7 +5877,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L487",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_init_db_rejects_missing_or_empty_dashboard",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_init_db_rejects_missing_or_empty_dashboard()"
     },
     {
@@ -5886,7 +5886,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L500",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_pair_correction_preserves_registry_id_etl_binding_and_comments",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_pair_correction_preserves_registry_id_etl_binding_and_comments()"
     },
     {
@@ -5895,7 +5895,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L580",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_etroc_side_pair_correction_preserves_stable_identity",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_etroc_side_pair_correction_preserves_stable_identity()"
     },
     {
@@ -5904,7 +5904,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L636",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_pair_correction_rejects_exact_vs_redirect_identity_conflict",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_pair_correction_rejects_exact_vs_redirect_identity_conflict()"
     },
     {
@@ -5913,7 +5913,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L659",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_redirect_retarget_rejects_existing_alias_and_comment_owner_conflict",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_redirect_retarget_rejects_existing_alias_and_comment_owner_conflict()"
     },
     {
@@ -5922,7 +5922,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L697",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_stale_alias_comment_owner_conflict_fails_without_mutation",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_stale_alias_comment_owner_conflict_fails_without_mutation()"
     },
     {
@@ -5931,7 +5931,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L756",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_pair_correction_rejects_ambiguous_existing_children",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_pair_correction_rejects_ambiguous_existing_children()"
     },
     {
@@ -5940,7 +5940,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L774",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_legacy_and_canonical_targets_resolve_to_one_stable_registry",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_legacy_and_canonical_targets_resolve_to_one_stable_registry()"
     },
     {
@@ -5949,7 +5949,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L786",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_bind_hybrid_persists_etl_identity_and_provenance",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_bind_hybrid_persists_etl_identity_and_provenance()"
     },
     {
@@ -5958,7 +5958,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L844",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_bind_hybrid_rejects_invalid_or_conflicting_identity",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_bind_hybrid_rejects_invalid_or_conflicting_identity()"
     },
     {
@@ -5967,7 +5967,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L921",
       "id": "test_hybrid_registry_hybridregistrymigrationtests_test_concurrent_binding_is_first_writer_wins",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_concurrent_binding_is_first_writer_wins()"
     },
     {
@@ -5976,7 +5976,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L952",
       "id": "test_hybrid_registry_hybridregistryhttptests",
-      "community": 17,
+      "community": 5,
       "norm_label": "hybridregistryhttptests"
     },
     {
@@ -5985,7 +5985,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L953",
       "id": "test_hybrid_registry_hybridregistryhttptests_setup",
-      "community": 2,
+      "community": 5,
       "norm_label": ".setup()"
     },
     {
@@ -5994,7 +5994,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L977",
       "id": "test_hybrid_registry_hybridregistryhttptests_stop_server",
-      "community": 17,
+      "community": 5,
       "norm_label": "._stop_server()"
     },
     {
@@ -6003,7 +6003,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L982",
       "id": "test_hybrid_registry_hybridregistryhttptests_request",
-      "community": 17,
+      "community": 5,
       "norm_label": ".request()"
     },
     {
@@ -6012,7 +6012,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1011",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_registry_read_and_admin_bind_api",
-      "community": 17,
+      "community": 5,
       "norm_label": ".test_registry_read_and_admin_bind_api()"
     },
     {
@@ -6021,7 +6021,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1040",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads",
-      "community": 17,
+      "community": 5,
       "norm_label": ".test_bind_api_rejects_spoofed_identity_csrf_and_partial_payloads()"
     },
     {
@@ -6030,7 +6030,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1102",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_legacy_comment_target_reads_and_writes_canonical_registry",
-      "community": 17,
+      "community": 5,
       "norm_label": ".test_legacy_comment_target_reads_and_writes_canonical_registry()"
     },
     {
@@ -6039,7 +6039,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1145",
       "id": "test_hybrid_registry_hybridregistryhttptests_test_summary_targets_parameter_preserves_non_hybrid_behavior",
-      "community": 17,
+      "community": 5,
       "norm_label": ".test_summary_targets_parameter_preserves_non_hybrid_behavior()"
     },
     {
@@ -6048,7 +6048,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1187",
       "id": "test_hybrid_registry_hybridregistryrealstatictests",
-      "community": 2,
+      "community": 5,
       "norm_label": "hybridregistryrealstatictests"
     },
     {
@@ -6057,7 +6057,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1188",
       "id": "test_hybrid_registry_hybridregistryrealstatictests_test_removed_membership_is_retained_inactive",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_removed_membership_is_retained_inactive()"
     },
     {
@@ -6066,7 +6066,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1261",
       "id": "test_hybrid_registry_hybridregistryrealstatictests_test_removed_test_and_memberships_are_retained_then_reactivated",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_removed_test_and_memberships_are_retained_then_reactivated()"
     },
     {
@@ -6075,7 +6075,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1324",
       "id": "test_hybrid_registry_hybridregistryrealstatictests_test_list_hybrids_requires_active_registry_test_and_membership",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_list_hybrids_requires_active_registry_test_and_membership()"
     },
     {
@@ -6084,7 +6084,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1362",
       "id": "test_hybrid_registry_hybridregistryrealstatictests_test_list_hybrids_exposes_deterministic_additional_tests",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_list_hybrids_exposes_deterministic_additional_tests()"
     },
     {
@@ -6093,7 +6093,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1389",
       "id": "test_hybrid_registry_hybridregistryrealstatictests_test_real_dashboard_migrates_exact_additional_test_memberships_idempotently",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_real_dashboard_migrates_exact_additional_test_memberships_idempotently()"
     },
     {
@@ -6102,7 +6102,7 @@
       "source_file": "/tmp/bbqc-etroc-oi-2608/tests/test_hybrid_registry.py",
       "source_location": "L1482",
       "id": "test_hybrid_registry_hybridregistryrealstatictests_test_real_dashboard_seeds_exact_unique_72_pair_registry",
-      "community": 2,
+      "community": 5,
       "norm_label": ".test_real_dashboard_seeds_exact_unique_72_pair_registry()"
     },
     {
@@ -6241,10 +6241,19 @@
       "norm_label": "test_release_closure_runs_before_auth_and_at_all_boundaries()"
     },
     {
-      "label": "test_final_available_files_match_pins_or_explicit_unpinned()",
+      "label": "test_network_downloads_have_bounded_retry_without_relaxing_hashes()",
       "file_type": "code",
       "source_file": "tests/test_new_hybrids_release.py",
       "source_location": "L118",
+      "id": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
+      "community": 0,
+      "norm_label": "test_network_downloads_have_bounded_retry_without_relaxing_hashes()"
+    },
+    {
+      "label": "test_final_available_files_match_pins_or_explicit_unpinned()",
+      "file_type": "code",
+      "source_file": "tests/test_new_hybrids_release.py",
+      "source_location": "L149",
       "id": "test_new_hybrids_release_test_final_available_files_match_pins_or_explicit_unpinned",
       "community": 0,
       "norm_label": "test_final_available_files_match_pins_or_explicit_unpinned()"
@@ -6264,7 +6273,7 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L1",
       "id": "tests_test_etroc_results_frontend_py",
-      "community": 3,
+      "community": 2,
       "norm_label": "test_etroc_results_frontend.py"
     },
     {
@@ -6273,7 +6282,7 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L10",
       "id": "test_etroc_results_frontend_resultfrontendtests",
-      "community": 3,
+      "community": 2,
       "norm_label": "resultfrontendtests"
     },
     {
@@ -6282,7 +6291,7 @@
       "source_file": "tests/test_etroc_results_frontend.py",
       "source_location": "L11",
       "id": "test_etroc_results_frontend_resultfrontendtests_test_effective_results_contract_complete_pending_correction_and_malformed",
-      "community": 3,
+      "community": 2,
       "norm_label": ".test_effective_results_contract_complete_pending_correction_and_malformed()"
     },
     {
@@ -6291,7 +6300,7 @@
       "source_file": "tests/test_new_hybrids.py",
       "source_location": "L1",
       "id": "tests_test_new_hybrids_py",
-      "community": 5,
+      "community": 6,
       "norm_label": "test_new_hybrids.py"
     },
     {
@@ -6300,7 +6309,7 @@
       "source_file": "tests/test_new_hybrids.py",
       "source_location": "L17",
       "id": "test_new_hybrids_builder",
-      "community": 5,
+      "community": 6,
       "norm_label": "builder()"
     },
     {
@@ -6309,7 +6318,7 @@
       "source_file": "tests/test_new_hybrids.py",
       "source_location": "L24",
       "id": "test_new_hybrids_test_publication_preserves_corrected_separate_cohort",
-      "community": 5,
+      "community": 6,
       "norm_label": "test_publication_preserves_corrected_separate_cohort()"
     },
     {
@@ -6318,7 +6327,7 @@
       "source_file": "tests/test_new_hybrids.py",
       "source_location": "L52",
       "id": "test_new_hybrids_test_archive_rejects_invalid_input",
-      "community": 5,
+      "community": 6,
       "norm_label": "test_archive_rejects_invalid_input()"
     },
     {
@@ -6327,7 +6336,7 @@
       "source_file": "tests/test_new_hybrids.py",
       "source_location": "L88",
       "id": "test_new_hybrids_test_frontend_contract_executable",
-      "community": 5,
+      "community": 6,
       "norm_label": "test_frontend_contract_executable()"
     },
     {
@@ -24438,6 +24447,18 @@
       "source_location": "L118",
       "weight": 1.0,
       "_src": "tests_test_new_hybrids_release_py",
+      "_tgt": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
+      "source": "tests_test_new_hybrids_release_py",
+      "target": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "contains",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_new_hybrids_release.py",
+      "source_location": "L149",
+      "weight": 1.0,
+      "_src": "tests_test_new_hybrids_release_py",
       "_tgt": "test_new_hybrids_release_test_final_available_files_match_pins_or_explicit_unpinned",
       "source": "tests_test_new_hybrids_release_py",
       "target": "test_new_hybrids_release_test_final_available_files_match_pins_or_explicit_unpinned",
@@ -24483,6 +24504,18 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_new_hybrids_release.py",
+      "source_location": "L139",
+      "weight": 1.0,
+      "_src": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
+      "_tgt": "test_new_hybrids_release_verifier",
+      "source": "test_new_hybrids_release_verifier",
+      "target": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_new_hybrids_release.py",
       "source_location": "L30",
       "weight": 1.0,
       "_src": "test_new_hybrids_release_fixture",
@@ -24519,7 +24552,7 @@
       "relation": "calls",
       "confidence": "EXTRACTED",
       "source_file": "tests/test_new_hybrids_release.py",
-      "source_location": "L127",
+      "source_location": "L158",
       "weight": 1.0,
       "_src": "test_new_hybrids_release_test_final_available_files_match_pins_or_explicit_unpinned",
       "_tgt": "test_new_hybrids_release_sha",
@@ -24561,6 +24594,18 @@
       "_tgt": "test_new_hybrids_release_fixture",
       "source": "test_new_hybrids_release_fixture",
       "target": "test_new_hybrids_release_test_runtime_http_reads_entire_bundle",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_new_hybrids_release.py",
+      "source_location": "L121",
+      "weight": 1.0,
+      "_src": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
+      "_tgt": "test_new_hybrids_release_fixture",
+      "source": "test_new_hybrids_release_fixture",
+      "target": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
       "confidence_score": 1.0
     },
     {
@@ -24609,6 +24654,18 @@
       "_tgt": "test_new_hybrids_release_run",
       "source": "test_new_hybrids_release_run",
       "target": "test_new_hybrids_release_test_current_builder_bundle_closure_when_available",
+      "confidence_score": 1.0
+    },
+    {
+      "relation": "calls",
+      "confidence": "EXTRACTED",
+      "source_file": "tests/test_new_hybrids_release.py",
+      "source_location": "L140",
+      "weight": 1.0,
+      "_src": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
+      "_tgt": "test_new_hybrids_release_run",
+      "source": "test_new_hybrids_release_run",
+      "target": "test_new_hybrids_release_test_network_downloads_have_bounded_retry_without_relaxing_hashes",
       "confidence_score": 1.0
     },
     {
