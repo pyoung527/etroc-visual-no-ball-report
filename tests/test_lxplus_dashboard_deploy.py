@@ -634,11 +634,11 @@ measure_dashboard_headroom
     def test_helper_pins_release_and_download_checksums(self):
         script = SCRIPT.read_text(encoding="utf-8")
         self.assertIn(
-            "SOURCE_REVISION='16e529a4444b1a17560fdd6e2e5bc3d32c0ee1c8'",
+            "SOURCE_REVISION='cca764df2dda69e2322d16a70ceb9d6ecfa574f4'",
             script,
         )
         expected = {
-            "index.html": "f6ca633448a28b8a2b4872dbdf36b7cba6277266ee41d8615efc44dbd8ff6a5b",
+            "index.html": "f1beaee83b36df806b922dfab144924c6a516fbebf9d8e3f9042867a73ea437a",
             "dashboard.css": "5f9d7e3bab4ac732d6e7800f2c2a70fe75184db6f00a6e41da2d677e1d1a5b8f",
             "dashboard.js": "317e358631a8cea15ea4dabe6369ab1f5480454baf6e7ddcfae66d9c1b3d1644",
             "etroc-optical.css": "6d3b4d331e83e4efdd0e668c05bb3271c3f7a8cbf6be960f25fbbee16f46bf0b",
