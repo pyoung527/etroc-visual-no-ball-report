@@ -265,6 +265,17 @@
   const category = root.querySelector("[data-etroc-result-category]");
   const completion = root.querySelector("[data-etroc-result-completion]");
   let publication = null, models = null, generation = 0;
+  // Only a current reconciled model may cross this read-only boundary.
+  globalThis.addEventListener("etroc-results-open-request", event => {
+    const detail = event.detail;
+    if (!event.cancelable || !exact(detail, ["etroc_serial", "trigger"])
+      || typeof detail.etroc_serial !== "string" || !/^W(?:02G4|03F7|05E5)-[0-9]{2}$/.test(detail.etroc_serial)
+      || !detail.trigger || detail.trigger.tagName !== "BUTTON" || !detail.trigger.isConnected) return;
+    const matches = models?.filter(model => model.etroc_serial === detail.etroc_serial) || [];
+    if (matches.length !== 1) return;
+    event.preventDefault();
+    openResultViewer(matches[0], detail.trigger);
+  });
 
   function clear(message, failed = false) {
     resultViewer?.close();
