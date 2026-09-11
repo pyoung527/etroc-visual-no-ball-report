@@ -5525,9 +5525,9 @@
       "file_type": "rationale",
       "source_file": "tests/test_hybrid_comparison.py",
       "source_location": "L1",
-      "id": "test_hybrid_comparison_rationale_1",
       "community": 3,
-      "norm_label": "executable comparison contract; native dom/decode boundary stand-ins only."
+      "norm_label": "executable comparison contract; native dom/decode boundary stand-ins only.",
+      "id": "test_hybrid_comparison_rationale_1"
     },
     {
       "label": "test_etroc_results_release.py",
@@ -17844,8 +17844,8 @@
       "source_file": "tests/test_hybrid_comparison.py",
       "source_location": "L71",
       "weight": 1.0,
-      "_src": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
-      "_tgt": "etroc_position_reviews_load_evidence",
+      "_src": "etroc_position_reviews_load_evidence",
+      "_tgt": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
       "source": "etroc_position_reviews_load_evidence",
       "target": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously"
     },
@@ -18168,8 +18168,8 @@
       "source_file": "tests/test_hybrid_comparison.py",
       "source_location": "L73",
       "weight": 1.0,
-      "_src": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
-      "_tgt": "etroc_position_reviews_init_schema",
+      "_src": "etroc_position_reviews_init_schema",
+      "_tgt": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
       "source": "etroc_position_reviews_init_schema",
       "target": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously"
     },
@@ -18396,8 +18396,8 @@
       "source_file": "tests/test_hybrid_comparison.py",
       "source_location": "L76",
       "weight": 1.0,
-      "_src": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
-      "_tgt": "etroc_position_reviews_results_summary",
+      "_src": "etroc_position_reviews_results_summary",
+      "_tgt": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
       "source": "etroc_position_reviews_results_summary",
       "target": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously"
     },
@@ -19368,8 +19368,8 @@
       "source_file": "tests/test_hybrid_comparison.py",
       "source_location": "L74",
       "weight": 1.0,
-      "_src": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
-      "_tgt": "test_etroc_results_seed_reviews",
+      "_src": "test_etroc_results_seed_reviews",
+      "_tgt": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
       "source": "test_etroc_results_seed_reviews",
       "target": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously"
     },
@@ -22128,8 +22128,8 @@
       "source_file": "tests/test_hybrid_comparison.py",
       "source_location": "L70",
       "weight": 1.0,
-      "_src": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
-      "_tgt": "test_etroc_position_reviews_load_module",
+      "_src": "test_etroc_position_reviews_load_module",
+      "_tgt": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously",
       "source": "test_etroc_position_reviews_load_module",
       "target": "test_hybrid_comparison_test_current_results_bridge_is_cloned_and_invalidates_synchronously"
     },
