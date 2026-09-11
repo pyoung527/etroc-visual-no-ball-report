@@ -5786,9 +5786,9 @@
       "file_type": "rationale",
       "source_file": "tests/test_comparison_comments_red.py",
       "source_location": "L1",
-      "id": "test_comparison_comments_red_rationale_1",
       "community": 6,
-      "norm_label": "run the real comparison controller; only native dom/network boundaries are faked"
+      "norm_label": "run the real comparison controller; only native dom/network boundaries are faked",
+      "id": "test_comparison_comments_red_rationale_1"
     },
     {
       "label": "test_hybrid_registry.py",
@@ -19965,8 +19965,8 @@
       "source_file": "tests/test_comparison_comments_red.py",
       "source_location": "L12",
       "weight": 1.0,
-      "_src": "test_comparison_comments_red_test_comments_and_red",
-      "_tgt": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "_src": "test_tab_local_dashboards_tablocaldashboardtests_parse",
+      "_tgt": "test_comparison_comments_red_test_comments_and_red",
       "source": "test_tab_local_dashboards_tablocaldashboardtests_parse",
       "target": "test_comparison_comments_red_test_comments_and_red"
     },
