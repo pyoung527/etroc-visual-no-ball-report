@@ -265,6 +265,14 @@
   const category = root.querySelector("[data-etroc-result-category]");
   const completion = root.querySelector("[data-etroc-result-completion]");
   let publication = null, models = null, generation = 0;
+  // Synchronous read-only bridge: never return the controller's mutable models.
+  globalThis.addEventListener("etroc-results-model-request", event => {
+    const detail = event.detail;
+    if (!exact(detail, ["etroc_serial", "receive"]) || typeof detail.receive !== "function"
+      || typeof detail.etroc_serial !== "string" || !/^W(?:02G4|03F7|05E5)-[0-9]{2}$/.test(detail.etroc_serial)) return;
+    const matches = models?.filter(model => model.etroc_serial === detail.etroc_serial) || [];
+    if (matches.length === 1) detail.receive(structuredClone(matches[0]));
+  });
   // Only a current reconciled model may cross this read-only boundary.
   globalThis.addEventListener("etroc-results-open-request", event => {
     const detail = event.detail;
@@ -279,7 +287,9 @@
 
   function clear(message, failed = false) {
     resultViewer?.close();
-    models = null; pool.replaceChildren(); metrics.replaceChildren(); categories.replaceChildren();
+    models = null;
+    globalThis.dispatchEvent?.(new Event("etroc-results-invalidated"));
+    pool.replaceChildren(); metrics.replaceChildren(); categories.replaceChildren();
     status.textContent = message; status.classList.toggle("failed", failed);
     root.setAttribute("aria-busy", String(!failed)); pool.setAttribute("aria-busy", String(!failed));
     filterState.textContent = "Current results unavailable until validated";
@@ -308,9 +318,9 @@
   }
   async function refresh() {
     resultViewer?.close();
-    if (!publication) return;
     const token = ++generation;
     clear("Loading current reviewed results…");
+    if (!publication) return;
     try {
       const response = await fetch(`/api/etroc-position-reviews/results?dataset_id=${DATASET}`, {credentials: "same-origin", cache: "no-store", headers: {Accept: "application/json"}});
       if (!response.ok) throw new Error(`Result service HTTP ${response.status}`);
@@ -320,6 +330,7 @@
       const totals = summarize(models);
       status.textContent = `${totals.records} ETROCs · ${totals.human}/${totals.targets} human target labels · ${totals.pending} unreviewed · ${totals.noTargets} without targets`;
       root.setAttribute("aria-busy", "false"); pool.setAttribute("aria-busy", "false");
+      globalThis.dispatchEvent?.(new Event("etroc-results-ready"));
     } catch (error) {
       if (token !== generation) return;
       clear("Current reviewed results unavailable — no final counts or montage fallback. Retry when the review service is available.", true);
@@ -330,5 +341,6 @@
   root.querySelector("[data-etroc-results-refresh]").addEventListener("click", refresh);
   globalThis.addEventListener("etroc-optical-publication", event => { publication = event.detail; void refresh(); });
   globalThis.addEventListener("etroc-position-review-updated", () => { void refresh(); });
-  globalThis.addEventListener("etroc-optical-unavailable", () => { ++generation; clear("ETROC publication unavailable — current reviewed results cannot be verified.", true); });
+  globalThis.addEventListener("etroc-optical-loading", () => { publication = null; ++generation; clear("Loading ETROC publication…"); });
+  globalThis.addEventListener("etroc-optical-unavailable", () => { publication = null; ++generation; clear("ETROC publication unavailable — current reviewed results cannot be verified.", true); });
 })();

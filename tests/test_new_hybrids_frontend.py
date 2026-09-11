@@ -11,7 +11,7 @@ def test_supplied_viewer_lifecycle(scenario):
 const assert=require('node:assert/strict'),fs=require('node:fs');
 const scenario=process.argv[2],nodes=[],revoked=[],blobs=[];let gate=null,decodeGate=null,focused=null;
 class E {
- constructor(tag){this.tagName=tag.toUpperCase();this.attrs={};this.events={};this.children=[];this.dataset={};this.open=false;this.isConnected=true;nodes.push(this)}
+ constructor(tag){this.tagName=tag.toUpperCase();this.attrs={};this.events={};this.children=[];this.dataset={};this.style={};this.open=false;this.isConnected=true;nodes.push(this)}
  append(...c){this.children.push(...c)} replaceChildren(...c){this.children=c}
  setAttribute(k,v){this.attrs[k]=v} addEventListener(k,f){(this.events[k]??=[]).push(f)}
  fire(k,e={}){for(const f of this.events[k]||[])f({target:this,preventDefault(){},...e})}
@@ -20,6 +20,7 @@ class E {
  async decode(){if(decodeGate)await decodeGate.promise;if(scenario==='decode')throw Error('decode');this.naturalWidth=scenario==='dimensions'?1:1142;this.naturalHeight=1142}
 }
 global.document={querySelector:()=>null,createElement:t=>new E(t),body:new E('body')};
+global.addEventListener=()=>{};global.dispatchEvent=()=>{};global.CustomEvent=class{constructor(type,o){this.type=type;Object.assign(this,o)}};
 global.crypto=require('node:crypto').webcrypto;
 const bytes=new Uint8Array([1,2,3]);
 global.fetch=async()=>{if(gate)await gate.promise;return {ok:scenario!=='http',arrayBuffer:async()=>bytes.buffer}};
@@ -30,11 +31,8 @@ require(process.argv[1]+'/new-hybrids.js');
 (async()=>{
  const r={etroc_serial:'W05E5-30',lgad_label:'HPK-W7-4',individual_lgad_serial_supplied:true,channel:null,source_notes:'solder bump missing: 0개 (optical inspection 기준)',image:{uri:'image.png',bytes:3,sha256:Buffer.from(await crypto.subtle.digest('SHA-256',bytes)).toString('hex')}};
  if(scenario==='secondary'){
-  global.CustomEvent=class {constructor(type,o){this.type=type;Object.assign(this,o);this.defaultPrevented=false}preventDefault(){this.defaultPrevented=true}};
-  let accepted=false,request;global.dispatchEvent=e=>{request=e;if(accepted)e.preventDefault()};
-  const card=NewHybridsContract.renderCard(r,{open(){}}),button=hook('data-new-hybrid-reviewed-button');button.fire('click');
-  assert.equal(request.type,'etroc-results-open-request');assert.equal(request.detail.etroc_serial,r.etroc_serial);assert(card.children.at(-1).textContent.includes('unavailable'));
-  accepted=true;button.fire('click');assert.equal(card.children.at(-1).textContent,'');return;
+  const opens=[];const card=NewHybridsContract.renderCard(r,{open(...args){opens.push(args)}}),button=hook('data-new-hybrid-compare');button.fire('click');
+  hook('data-new-hybrid-image-button').fire('click');assert.equal(opens.length,2);assert.equal(opens[0][0],r);assert.equal(opens[0][1],button);assert.equal(opens[1][0],r);assert(!nodes.some(n=>n.attrs['data-new-hybrid-reviewed-button']!==undefined));return;
  }
  if(scenario==='hash')r.image.sha256='0'.repeat(64);
  const viewer=NewHybridsContract.createViewer(),trigger=new E('button');
@@ -47,7 +45,7 @@ require(process.argv[1]+'/new-hybrids.js');
  if(scenario==='cancel_decode'){dialog.fire('cancel');decodeGate.resolve();await opening;assert(!dialog.open);assert.deepEqual(revoked,['blob:1']);assert.equal(focused,trigger);return}
  if(scenario==='reopen'){const old=decodeGate;viewer.close();decodeGate=null;await viewer.open(r,trigger);old.resolve();await opening;assert(dialog.open);assert.equal(hook('data-new-hybrid-image').src,'blob:2');assert.deepEqual(revoked,['blob:1']);viewer.close();assert.deepEqual(revoked,['blob:1','blob:2']);return}
  await opening;
- if(['http','hash','decode','dimensions'].includes(scenario)){assert(hook('data-new-hybrid-status').textContent.includes('unavailable'));assert(!hook('data-new-hybrid-image'));assert.equal(revoked.length,['decode','dimensions'].includes(scenario)?1:0)}
+ if(['http','hash','decode','dimensions'].includes(scenario)){assert(hook('data-new-hybrid-xray-status').textContent.includes('unavailable'));assert(!hook('data-new-hybrid-image'));assert.equal(revoked.length,['decode','dimensions'].includes(scenario)?1:0)}
  else {assert.equal(hook('data-new-hybrid-image').src,'blob:1');assert.deepEqual(new Uint8Array(await blobs[0].arrayBuffer()),bytes);dialog.fire('click',{clientX:0,clientY:0});assert(!dialog.open);assert.equal(focused,trigger);assert.deepEqual(revoked,['blob:1'])}
 })().catch(e=>{console.error(e);process.exitCode=1});
 '''
