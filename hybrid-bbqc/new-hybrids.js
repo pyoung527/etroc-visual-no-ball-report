@@ -46,6 +46,57 @@
     if (!match || (match[1] === '6' && !match[2]) || (match[2] && !['2','6'].includes(match[1]))) throw Error('Supplied note translation unavailable');
     return `Missing solder bumps: ${match[1]} (based on optical inspection).${match[2] ? ' Used for shear force testing.' : ''}`;
   }
+  function commentTarget(record) {
+    if (!record || !Object.hasOwn(CROSSWALK,record.etroc_serial)) throw Error('Unknown supplied pair');
+    return `hybrid-comparison:${DATASET}:${record.etroc_serial}`;
+  }
+  function createComments() {
+    const root=node('section',undefined,'new-hybrids-comments'); root.setAttribute('data-comparison-comments','');
+    const hook=(tag,key,text)=>{const e=node(tag,text);e.setAttribute(`data-comparison-comments-${key}`,'');return e;};
+    const list=hook('div','list'),form=hook('form','form'),body=hook('textarea','body'),save=hook('button','save','Save comment'),message=hook('p','message'),refresh=hook('button','refresh','Refresh comments'),auth=node('p');
+    body.value='';body.maxLength=2000;body.rows=3;body.setAttribute('aria-label','Comment (maximum 2000 characters)');save.type='submit';refresh.type='button';message.setAttribute('role','status');
+    form.append(body,save);root.append(node('h3','Comments'),node('p','Latest comments (up to 100)'),auth,list,form,message,refresh,node('p','Unsaved drafts remain only while this page stays open. The server trims outer whitespace.'));
+    const states=new Map();let activeTarget=null,authGeneration=0;
+    const state=t=>{if(!states.has(t))states.set(t,{draft:'',rows:null,read:0,loading:false,auth:false,authText:'Checking sign-in…',phase:'idle',receipt:null,submitted:null,message:''});return states.get(t);};
+    const validRow=(r,t)=>r&&Number.isSafeInteger(r.id)&&r.id>0&&r.target===t&&typeof r.body==='string'&&r.body.length>0&&Array.from(r.body).length<=2000&&['note','review','pass','fail','follow-up'].includes(r.status)&&typeof r.author_display==='string'&&Number.isSafeInteger(r.created_at)&&Number.isSafeInteger(r.updated_at);
+    function render(t) {
+      if(t!==activeTarget)return;const s=state(t);body.value=s.draft;auth.textContent=s.authText;message.textContent=s.message;
+      body.disabled=!s.auth||s.phase!=='idle';save.disabled=body.disabled||!s.draft.trim()||Array.from(s.draft).length>2000;refresh.disabled=s.loading||s.phase==='posting';
+      list.textContent='';list.replaceChildren();
+      if(s.rows===null)list.textContent=s.loading?'Loading comments…':'Comments unavailable — refresh to retry.';
+      else if(!s.rows.length)list.textContent='No comments yet.';
+      else for(const r of s.rows){const item=node('article');item.append(node('p',`${r.author_display} · ${new Date(r.created_at*1000).toLocaleString()} · ${r.status}`),node('p',r.body));list.append(item);}
+    }
+    async function read(t) {
+      const s=state(t),version=++s.read;s.loading=true;render(t);
+      try {
+        const response=await fetch(`/api/comments?target=${encodeURIComponent(t)}`,{credentials:'same-origin',cache:'no-store'});if(!response.ok)throw Error('read');const rows=await response.json();
+        if(!Array.isArray(rows)||rows.length>100||!rows.every(r=>validRow(r,t)&&typeof r.can_edit==='boolean')||new Set(rows.map(r=>r.id)).size!==rows.length)throw Error('shape');
+        if(version!==s.read)return;s.rows=rows.sort((a,b)=>b.created_at-a.created_at||b.id-a.id);
+        if(s.receipt){const receipt=s.receipt;const found=rows.some(r=>['id','target','body','status','author_display','created_at','updated_at'].every(k=>r[k]===receipt[k]));
+          if(found){if(s.draft===s.submitted)s.draft='';s.receipt=null;s.submitted=null;s.phase='idle';s.message='Saved — verified in comments.';}
+          else s.message='Save receipt received, but read-back not verified. Refresh comments; do not resubmit.';
+        }
+      }catch(error){if(version===s.read){s.rows=null;if(s.receipt)s.message='Save receipt received; read-back unavailable. Refresh comments; do not resubmit.';}}
+      finally{if(version===s.read){s.loading=false;render(t);}}
+    }
+    async function loadAuth(t){const s=state(t),version=++authGeneration;s.auth=false;s.authText='Checking sign-in…';render(t);try{const r=await fetch('/api/me',{credentials:'same-origin',cache:'no-store'});if(!r.ok)throw Error('auth');const me=await r.json();if(version!==authGeneration)return;s.auth=me.authenticated===true&&me.user&&typeof(me.user.display||me.user.user)==='string';s.authText=s.auth?`Signed in as ${me.user.display||me.user.user}`:'Sign in with CERN SSO to add comments.';}catch(error){if(version!==authGeneration)return;s.auth=false;s.authText='Sign-in unavailable — writing disabled.';}render(t);}
+    body.addEventListener('input',()=>{if(activeTarget){state(activeTarget).draft=body.value;render(activeTarget);}});
+    refresh.addEventListener('click',()=>{if(activeTarget){void read(activeTarget);void loadAuth(activeTarget);}});
+    form.addEventListener('submit',async event=>{
+      event.preventDefault();const t=activeTarget;if(!t)return;const s=state(t);
+      if(!s.auth||s.phase!=='idle'||!s.draft.trim()||Array.from(s.draft).length>2000)return;
+      const draft=s.draft,expected=draft.trim();s.phase='posting';s.submitted=draft;s.message='Saving…';++s.read;s.loading=false;render(t);
+      try{
+        const response=await fetch('/api/comments',{method:'POST',credentials:'same-origin',headers:{'Content-Type':'application/json'},body:JSON.stringify({target:t,body:draft,status:'note'})});
+        if([400,401,403,404,413,422,429].includes(response.status)){s.phase='idle';s.message='Comment rejected; draft retained. Check sign-in and comment length before trying again.';if([401,403].includes(response.status)){s.auth=false;s.authText='Sign in with CERN SSO to add comments.';}render(t);return;}
+        if(response.status!==201)throw Error('unknown');const receipt=await response.json();
+        if(!validRow(receipt,t)||receipt.body!==expected||receipt.status!=='note')throw Error('receipt');
+        s.receipt=receipt;s.phase='receipt';s.message='Receipt received — verifying comments…';render(t);await read(t);
+      }catch(error){s.phase='unknown';s.message='Save status unknown; refresh/check comments before resubmitting. No automatic retry. This draft is locked to prevent duplicates; reload only after checking the thread.';render(t);}
+    });
+    return {root,open(record){activeTarget=commentTarget(record);render(activeTarget);void loadAuth(activeTarget);void read(activeTarget);},close(){activeTarget=null;++authGeneration;}};
+  }
   function createViewer() {
     const dialog = node('dialog',undefined,'new-hybrids-dialog');
     const heading = node('h2'); heading.id = 'new-hybrids-dialog-title'; dialog.setAttribute('aria-labelledby',heading.id); dialog.setAttribute('data-new-hybrid-dialog','');
@@ -53,7 +104,9 @@
     const header = node('header',undefined,'new-hybrids-dialog-header'); header.append(heading,closeButton);
     const notes = node('p',undefined,'new-hybrids-comparison-notes');
     const status = node('p'); status.setAttribute('role','status'); status.setAttribute('data-new-hybrid-status','');
-    const content = node('div',undefined,'new-hybrids-comparison'); dialog.append(header,notes,status,content); document.body.append(dialog);
+    const content = node('div',undefined,'new-hybrids-comparison');
+    const body=node('div',undefined,'new-hybrids-comparison-body');body.setAttribute('data-comparison-body','');
+    const comments=createComments();body.append(notes,status,content,comments.root);dialog.append(header,body);document.body.append(dialog);
     let generation = 0, trigger = null, active = null;
     const urls = new Set();
     const release = url => { if (urls.delete(url)) URL.revokeObjectURL(url); };
@@ -66,6 +119,7 @@
       const stage = node('div',undefined,'new-hybrids-pane-stage'); stage.setAttribute(`data-new-hybrid-${kind}-stage`,''); stage.setAttribute(`data-new-hybrid-${kind}-content`,''); scroll.append(stage);
       const p = {kind,root,state,scroll,stage,width,height,version:0,controller:null,url:null,ready:false,scale:1,overview:true};
       function scale(value,overview=false) { p.overview=overview; p.scale=Math.max(.02,Math.min(4,value)); stage.style.width=`${width*p.scale}px`; stage.style.height=`${height*p.scale}px`; zoom.textContent=overview?'Fit overview':`Detail ${Math.round(p.scale*100)}%`; }
+      p.detail = () => scale(Math.max(.5,p.scale));
       p.fit = () => scale(Math.min((scroll.clientWidth || 300)/width,(scroll.clientHeight || 300)/height),true);
       const zoom = node('span','Fit overview'); zoom.setAttribute('aria-live','polite');
       for (const [key,text,action] of [['fit','Fit',p.fit],['detail','Detail',()=>scale(Math.max(.5,p.scale))],['minus','−',()=>{if(!p.overview&&p.scale>.5)scale(Math.max(.5,p.scale/1.5));}],['plus','+',()=>scale(Math.max(.5,p.scale*1.5))]]) {
@@ -74,8 +128,23 @@
       controls.append(zoom); root.append(label,controls,state,scroll); content.append(root); return p;
     }
     const xray = pane('xray','X-ray',1142,1142), optical = pane('optical','Current reviewed pre-bonding montage',2400,2176), panes=[xray,optical];
-    function invalidate(p,message) { ++p.version; p.controller?.abort(); p.controller=null; release(p.url); p.url=null; p.ready=false; p.stage.replaceChildren(); p.state.textContent=message; summary(); }
-    function cleanup() { ++generation; active=null; panes.forEach(p=>invalidate(p,'Not loaded')); }
+    const redRoot=node('div',undefined,'new-hybrids-red'),redSummary=node('p','RED locations unavailable'),redList=node('div');redSummary.setAttribute('data-comparison-red-summary','');redRoot.append(redSummary,redList);optical.root.append(redRoot);
+    function redOverlay(model) {
+      const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 2400 2176');svg.setAttribute('class','new-hybrids-red-overlay');svg.setAttribute('aria-hidden','true');
+      const reds=model.positions.filter(p=>p.label==='RED'),token=generation,version=optical.version;let selected=null;const buttons=[];
+      redSummary.textContent=reds.length?`RED locations (${reds.length}) · label, not a formal QC failure`:'No RED-labelled locations';redList.replaceChildren();
+      for(const p of reds){const x=p.position%16*150,y=Math.floor(p.position/16)*136;
+        let outline;
+        for(const [color,width] of [['#fff',9],['#c40020',4]]){const rect=document.createElementNS('http://www.w3.org/2000/svg','rect');for(const [k,v] of Object.entries({x:x+4,y:y+4,width:142,height:128,fill:'none',stroke:color,'stroke-width':width,'vector-effect':'non-scaling-stroke'}))rect.setAttribute(k,v);if(color!=='#fff'){rect.setAttribute('data-comparison-red-outline',p.position);outline=rect;}svg.append(rect);}
+        const button=node('button',String(p.position));button.type='button';button.setAttribute('data-comparison-red-position',p.position);button.setAttribute('aria-label',`Show RED location ${p.position}`);button.setAttribute('aria-pressed','false');buttons.push(button);
+        button.addEventListener('click',()=>{if(token!==generation||version!==optical.version||!optical.ready||!dialog.open)return;
+          if(selected){selected.setAttribute('stroke','#c40020');selected.setAttribute('stroke-dasharray','none');}selected=outline;outline.setAttribute('stroke','#820014');outline.setAttribute('stroke-dasharray','8 3');buttons.forEach(b=>b.setAttribute('aria-pressed',b===button?'true':'false'));
+          optical.detail();optical.scroll.scrollLeft=Math.max(0,(x+75)*optical.scale-optical.scroll.clientWidth/2);optical.scroll.scrollTop=Math.max(0,(y+68)*optical.scale-optical.scroll.clientHeight/2);
+        });redList.append(button);
+      }return svg;
+    }
+    function invalidate(p,message) { ++p.version; p.controller?.abort(); p.controller=null; release(p.url); p.url=null; p.ready=false; p.stage.replaceChildren(); if(p===optical){redList.replaceChildren();redSummary.textContent='RED locations unavailable';}p.state.textContent=message; summary(); }
+    function cleanup() { ++generation; active=null;comments.close(); panes.forEach(p=>invalidate(p,'Not loaded')); }
     function close() { const old=trigger; trigger=null; cleanup(); if(dialog.open)dialog.close(); if(old?.isConnected)old.focus(); }
     closeButton.addEventListener('click',close);
     dialog.addEventListener('cancel',e=>{e.preventDefault();close();});
@@ -97,7 +166,7 @@
         await image.decode(); if(!current())return;
         if(image.naturalWidth!==p.width||image.naturalHeight!==p.height)throw Error('Image dimensions mismatch');
         image.setAttribute('data-comparison-image',p.kind); image.setAttribute(model?'data-new-hybrid-optical-image':'data-new-hybrid-image','');
-        p.stage.replaceChildren(image,...(model?[globalThis.ETROCResultsContract.renderOverlay(model)]:[])); displayed=true;p.ready=true;p.fit();
+        p.stage.replaceChildren(image,...(model?[globalThis.ETROCResultsContract.renderOverlay(model),redOverlay(model)]:[])); displayed=true;p.ready=true;p.fit();
         p.state.textContent=model?'Verified clean montage · 256 effective positions (0–255). Fit overview / Detail for readable numbers.':'Verified supplied X-ray · original bytes and orientation.';summary();
       } catch(error) { if(current()){p.stage.replaceChildren();p.ready=false;p.state.textContent=`${model?'Current reviewed montage':'Supplied X-ray'} unavailable — integrity or decoding failed. Close and reopen to retry.`;summary();} }
       finally {if(url&&!displayed){release(url);if(p.url===url)p.url=null;}}
@@ -117,7 +186,7 @@
       close();trigger=opener;active=record;
       heading.textContent=`${record.etroc_serial} · ${record.lgad_label}`;
       try {notes.textContent=`Supplied pre-bonding optical note: ${translateNotes(record.source_notes)}`;} catch(error){notes.textContent='Supplied pre-bonding optical note unavailable — unrecognized source grammar.';}
-      dialog.showModal();closeButton.focus();
+      dialog.showModal();closeButton.focus();comments.open(record);
       await Promise.all([load(xray,{...record.image,uri:BASE+record.image.uri}),loadOptical()]);
     }
     return {open,close};
@@ -134,7 +203,7 @@
     const compare = node('button','Compare X-ray and montage'); compare.type='button'; compare.setAttribute('data-new-hybrid-compare',''); compare.setAttribute('aria-haspopup','dialog');
     compare.addEventListener('click',()=>{void viewer.open(r,compare);}); card.append(compare); return card;
   }
-  globalThis.NewHybridsContract = Object.freeze({validate,parseVerified,select,translateNotes,createViewer,renderCard});
+  globalThis.NewHybridsContract = Object.freeze({validate,parseVerified,select,translateNotes,commentTarget,createViewer,renderCard});
   const root = document.querySelector('[data-new-hybrids]'); if (!root) return;
   const status = root.querySelector('[data-new-hybrids-status]'), cards = root.querySelector('[data-new-hybrids-cards]'), search = root.querySelector('[data-new-hybrids-search]');
   (async () => {
